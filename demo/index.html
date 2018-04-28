@@ -9,26 +9,42 @@
     <div id="root"></div>
     <a href="#R1">点击去id1</a>
     <a href="#R2">点击去id2</a>
+    <p id="console"></p>
+    <button onclick="window.routerController.showAlert()">window.routerController</button>
+    <button onclick="testThis.showAlert()">window</button>
   </body>
   <script type="text/javascript">
+    const testThis = {};
+    testThis.showAlert = () => {
+       console.log('箭头函数的this === window :', this === window);
+    }
+    testThis.showAlert();
     class R1 {
       constructor() {
         console.log('init1');
-        this.template = '<p rtClick="this.showAlert1()">点我！！！！！</p>';
+        this.template = '<p rtClick="this.showAlert()">点我！！！！！啊哈哈</p>';
+        this.console = document.getElementById('console');
+        this.data = {};
       }
       $onInit() {
+        this.console.innerText = 'is $onInit';
         console.log('is $onInit');
       }
       $beforeMount() {
+        this.console.innerText = 'is $beforeMount';
         console.log('is $beforeMount');
       }
       $afterMount() {
+        this.console.innerText = 'is $afterMount';
         console.log('is $afterMount');
       }
       $onDestory() {
+        this.console.innerText = 'is $onDestory';
         console.log('is $onDestory');
       }
-      showAlert1() {
+      showAlert() {
+        console.log('this === window.routerController:', this === window.routerController);
+        console.log('this.data', this.data);
         alert('草拟吗1')
       }
     }
@@ -36,21 +52,29 @@
     class R2 {
       constructor() {
         console.log('init2');
-        this.template = '<p rtClick="this.showAlert2()">点我！！！！！啊</p>';
+        this.console = document.getElementById('console');
+        this.template = '<p rtClick="this.showAlert()">还是点我吧！！！！！啊</p>';
+        this.data = {};
       }
       $onInit() {
+        this.console.innerText = 'is $onInit';
         console.log('is $onInit');
       }
       $beforeMount() {
+        this.console.innerText = 'is $beforeMount';
         console.log('is $beforeMount');
       }
       $afterMount() {
+        this.console.innerText = 'is $afterMount';
         console.log('is $afterMount');
       }
       $onDestory() {
+        this.console.innerText = 'is $onDestory';
         console.log('is $onDestory');
       }
-      showAlert2() {
+      showAlert() {
+        console.log('this === window.routerController:', this === window.routerController);
+        this.data = {};
         alert('草拟吗2')
       }
     }

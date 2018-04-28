@@ -19,6 +19,7 @@ class Router {
         delete window.routerController;
       }
       const controller = new this.routes[this.currentUrl]();
+      window.routerController = controller;
       if (controller.$onInit) controller.$onInit();
       this.refreshDom(controller);
     }
@@ -55,7 +56,6 @@ class Router {
         this.rootDom.removeChild(childs.item(i));
       }
     }
-    window.routerController = controller;
     let templateDom = this.parseDom(template);
     let fragment = document.createDocumentFragment();
     fragment.appendChild(templateDom);

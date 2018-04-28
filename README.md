@@ -18,7 +18,7 @@ Create a controller for path:
 class R1 {
   constructor() {
     console.log('init1');
-    this.template = '<p rtClick="this.showAlert1()">1111111111</p>';
+    this.template = '<p rtClick="this.showAlert1()">点我！！！！！</p>';
   }
   $onInit() {
     console.log('is $onInit');

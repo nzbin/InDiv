@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>test路由</title>
+    <script type="text/javascript" src="../src/Route.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <a href="#R1">点击去id1</a>
+    <a href="#R2">点击去id2</a>
+  </body>
+  <script type="text/javascript">
+    class R1 {
+      constructor() {
+        console.log('init1');
+        this.template = '<p rtClick="this.showAlert1()">1111111111</p>';
+      }
+      $onInit() {
+        console.log('is $onInit');
+      }
+      $beforeMount() {
+        console.log('is $beforeMount');
+      }
+      $afterMount() {
+        console.log('is $afterMount');
+      }
+      $onDestory() {
+        console.log('is $onDestory');
+      }
+      showAlert1() {
+        alert('草拟吗1')
+      }
+    }
+
+    class R2 {
+      constructor() {
+        console.log('init2');
+        this.template = '<p rtClick="this.showAlert2()">22222222222</p>';
+      }
+      $onInit() {
+        console.log('is $onInit');
+      }
+      $beforeMount() {
+        console.log('is $beforeMount');
+      }
+      $afterMount() {
+        console.log('is $afterMount');
+      }
+      $onDestory() {
+        console.log('is $onDestory');
+      }
+      showAlert2() {
+        alert('草拟吗2')
+      }
+    }
+
+    const router = new Router();
+    const routes = [
+      {
+        path: 'R1',
+        controller: R1,
+      },
+      {
+        path: 'R2',
+        controller: R2,
+      },
+    ];
+    router.init(routes);
+  </script>
+</html>

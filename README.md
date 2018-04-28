@@ -63,4 +63,7 @@ $onDestory
 ```
 
 ## To do
-双向绑定 数据监听 动态渲染DOM
+1. 改用 history 模块的 pushState 方法去触发 url 更新
+2. 双向绑定
+3. 数据监听
+4. 动态渲染DOM

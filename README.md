@@ -86,8 +86,14 @@ $onDestory
 $watchState
 ```
 
+## Architecture
+route => controller => component
+
 ## To do
-1. 改用 history 模块的 pushState 方法去触发 url 更新
-2. 双向绑定
-3. 数据监听
-4. 动态渲染DOM
+- [ ] 组件化
+- [ ] 模块化
+- [ ] 改用 history 模块的 pushState 方法去触发 url 更新
+- [x] 数据监听
+- [ ] 双向绑定
+- [ ] 动态渲染DOM
+- [ ] ts实现 （强类型赛高）

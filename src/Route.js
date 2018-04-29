@@ -20,6 +20,7 @@ class Router {
       }
       const controller = new this.routes[this.currentUrl]();
       window.routerController = controller;
+      if (controller.$beforeInit) controller.$beforeInit();
       if (controller.$onInit) controller.$onInit();
       this.refreshDom(controller);
     }
@@ -28,7 +29,12 @@ class Router {
   init(arr) {
     if (arr && arr instanceof Array) {
       arr.forEach(route => {
-        this.route(route.path, route.controller);
+        if (route.path && route.controller && route.controller instanceof Function) {
+          this.route(route.path, route.controller);
+        } else {
+          console.error('need path or controller');
+          return false;
+        }
       });
       const rootDom = document.querySelector('#root');
       this.rootDom = rootDom || null;

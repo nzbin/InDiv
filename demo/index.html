@@ -3,6 +3,9 @@
   <head>
     <meta charset="utf-8">
     <title>test路由</title>
+    <script type="text/javascript" src="../src/Watcher.js"></script>
+    <script type="text/javascript" src="../src/Component.js"></script>
+    <script type="text/javascript" src="../src/Controller.js"></script>
     <script type="text/javascript" src="../src/Route.js"></script>
   </head>
   <body>
@@ -17,14 +20,13 @@
     const testThis = {};
     testThis.showAlert = () => {
        console.log('箭头函数的this === window :', this === window);
-    }
-    testThis.showAlert();
-    class R1 {
+    };
+    class R1 extends Controller {
       constructor() {
-        console.log('init1');
+        super();
         this.template = '<p rtClick="this.showAlert()">点我！！！！！啊哈哈</p>';
         this.console = document.getElementById('console');
-        this.data = {};
+        this.state = {a: 1};
       }
       $onInit() {
         this.console.innerText = 'is $onInit';
@@ -42,19 +44,26 @@
         this.console.innerText = 'is $onDestory';
         console.log('is $onDestory');
       }
+      $watchState(oldData, newData) {
+        console.log('oldData Component:', oldData);
+        console.log('newData Component:', newData);
+      }
       showAlert() {
-        console.log('this === window.routerController:', this === window.routerController);
-        console.log('this.data', this.data);
-        alert('草拟吗1')
+        this.setState('a',2);
+        alert('草拟吗1');
       }
     }
 
-    class R2 {
+    class R2 extends Controller {
       constructor() {
-        console.log('init2');
+        super();
         this.console = document.getElementById('console');
         this.template = '<p rtClick="this.showAlert()">还是点我吧！！！！！啊</p>';
-        this.data = {};
+        this.state = {a: 1};
+      }
+      $watchState(oldData, newData) {
+        console.log('oldData Component:', oldData);
+        console.log('newData Component:', newData);
       }
       $onInit() {
         this.console.innerText = 'is $onInit';
@@ -73,9 +82,8 @@
         console.log('is $onDestory');
       }
       showAlert() {
-        console.log('this === window.routerController:', this === window.routerController);
-        this.data = {};
-        alert('草拟吗2')
+        this.setState('a',2);
+        alert('草拟吗2');
       }
     }
 

@@ -19,7 +19,11 @@ class Watcher {
         },
         set(newVal) {
           if (newVal === val) return;
-          that.callback(val, newVal);
+          const oldData = {};
+          oldData[key] = val;
+          const newData = {};
+          newData[key] = newVal;
+          that.callback(oldData, newData);
           val = newVal;
           that.watchData(val);
         },

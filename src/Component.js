@@ -1,5 +1,6 @@
 class Component {
   constructor() {
+    this.template = '';
     this.state = {};
   }
 
@@ -33,14 +34,23 @@ class Component {
     console.log('is $onDestory');
   }
 
-  setState(key, value) {
-    console.log('key', key);
-    console.log('value', value);
-    console.log('this.state', this.state);
-    if (this.state[key]) {
-      this.state[key] = value;
-    } else {
-      console.error(`setState failed: ${key} isn't exit`);
+  setState(newState) {
+    if (newState && newState instanceof Function) {
+      const _newState = newState();
+      if (_newState && _newState instanceof Object) {
+        for (var key in _newState) {
+          if (this.state[key] && this.state[key] !== _newState[key]) {
+            this.state[key] = _newState[key];
+          }
+        }
+      }
+    }
+    if (newState && newState instanceof Object) {
+      for (var key in newState) {
+        if (this.state[key] && this.state[key] !== newState[key]) {
+          this.state[key] = newState[key];
+        }
+      }
     }
   }
 }

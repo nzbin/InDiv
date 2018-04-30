@@ -23,8 +23,6 @@ const router = new Router();
 
 3. Create a controller for path:
   - must extends`class Controller`
-  - if u have some variable, u can set `this.state` in `constructor(){}`
-  - and u can recive this change in life cycle
 ``` javascript
 class R1 extends Controller {
   constructor() {
@@ -54,7 +52,8 @@ class R1 extends Controller {
     console.log('newData Component:', newData);
   }
   showAlert() {
-    this.setState('a',2);
+    this.setState({a: 2});
+    this.setState(() => {a: 2});
     alert('草拟吗1');
   }
 }
@@ -74,8 +73,14 @@ const routes = [
 ];
 router.init(routes);
 ```
+5. Data monitor: this.state && this.setState
+- use `this.state: Object` and `this.setState(parmars: Function || Object)`
+- if u have some variable, u can set `this.state` in `constructor(){}`
+- if u want to change State, plz use `this.setState`, parmars can be `Object` or `Function` which must return an `Object`
+- and u can recive this change in life cycle `$watchState(oldData, newData)`
 
-5. Life cycle is:
+
+6. Life cycle is:
 ```javascript
 constructor
 $beforeInit // don't use this ,because it's prepare for watch state
@@ -90,10 +95,13 @@ $watchState
 route => controller => component
 
 ## To do
+- [x] 路由变化渲染dom
+- [x] 数据监听
+- [ ] 双向绑定html模板
+- [ ] 组件渲染
 - [ ] 组件化
 - [ ] 模块化
 - [ ] 改用 history 模块的 pushState 方法去触发 url 更新
-- [x] 数据监听
 - [ ] 双向绑定
 - [ ] 动态渲染DOM
 - [ ] ts实现 （强类型赛高）

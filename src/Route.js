@@ -20,9 +20,10 @@ class Router {
       }
       const controller = new this.routes[this.currentUrl]();
       window.routerController = controller;
+      console.log('controller', controller);
       if (controller.$beforeInit) controller.$beforeInit();
       if (controller.$onInit) controller.$onInit();
-      this.refreshDom(controller);
+      this.renderDom(controller);
     }
   }
 
@@ -43,14 +44,14 @@ class Router {
     }
   }
 
-  refreshDom(controller) {
+  renderDom(controller) {
     const template = controller.template;
     if (template && typeof template === 'string' && this.rootDom) {
       if (controller.$beforeMount) controller.$beforeMount();
       this.replaceDom(controller);
       if (controller.$afterMount) controller.$afterMount();
     } else {
-      console.error('refreshDom failed: template or rootDom is not exit');
+      console.error('renderDom failed: template or rootDom is not exit');
     }
   }
 
@@ -72,7 +73,7 @@ class Router {
     const elementCreated = document.createElement('div');
     let newTemplate = null;
     if (window.routerController) {
-      newTemplate = template.replace(/( )(rt)([A-Za-z]+="|[A-Za-z]+="')(this)/g, (...args) => `${args[1]}on${args[3]}window.routerController`);
+      newTemplate = template.replace(/( )(rt)([A-Z]{1})([A-Za-z]+="|[A-Za-z]+=')(this)/g, (...args) => `${args[1]}on${args[3].toLowerCase()}${args[4]}window.routerController`);
     }
     elementCreated.innerHTML = newTemplate;
     return elementCreated;

@@ -10,8 +10,8 @@
   </head>
   <body>
     <div id="root"></div>
-    <a href="#R1">点击去id1</a>
-    <a href="#R2">点击去id2</a>
+    <a href="#R1">点击去R1</a>
+    <a href="#R2">点击去R2</a>
     <p id="console"></p>
     <button onclick="window.routerController.showAlert()">window.routerController</button>
   </body>
@@ -20,7 +20,7 @@
     class R1 extends Controller {
       constructor() {
         super();
-        this.template = '<p rtClick="this.showAlert()">点我！！！！！啊哈哈</p>';
+        this.template = '<p rtClick="this.showAlert()">R1 点我然后打开控制台看看</p>';
         this.console = document.getElementById('console');
         this.state = {a: 1};
       }
@@ -46,7 +46,7 @@
       }
       showAlert() {
         alert('我错了 点下控制台看看吧');
-        this.setState('a',2);
+        this.setState({a: 2});
       }
     }
 
@@ -54,7 +54,7 @@
       constructor() {
         super();
         this.console = document.getElementById('console');
-        this.template = '<p rtClick="this.showAlert()">还是点我吧！！！！！啊</p>';
+        this.template = '<p rtClick="this.showAlert()">R2 点我然后打开控制台看看</p>';
         this.state = {a: 1};
       }
       $watchState(oldData, newData) {
@@ -79,7 +79,9 @@
       }
       showAlert() {
         alert('我错了 点下控制台看看吧');
-        this.setState('a',2);
+        this.setState(function() {
+          return {a: 2};
+        });
       }
     }
 

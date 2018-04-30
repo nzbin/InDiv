@@ -20,8 +20,8 @@ class Router {
       }
       const controller = new this.routes[this.currentUrl]();
       window.routerController = controller;
-      console.log('controller', controller);
       if (controller.$beforeInit) controller.$beforeInit();
+      if (controller.$beforeInit) controller.$renderComponent();
       if (controller.$onInit) controller.$onInit();
       this.renderDom(controller);
     }
@@ -45,7 +45,7 @@ class Router {
   }
 
   renderDom(controller) {
-    const template = controller.template;
+    const template = controller.declareTemplate;
     if (template && typeof template === 'string' && this.rootDom) {
       if (controller.$beforeMount) controller.$beforeMount();
       this.replaceDom(controller);
@@ -56,7 +56,7 @@ class Router {
   }
 
   replaceDom(controller) {
-    const template = controller.template;
+    const template = controller.declareTemplate;
     if (this.rootDom.hasChildNodes()) {
       let childs = this.rootDom.childNodes;
       for (let i = childs.length - 1; i >= 0; i--) {

@@ -12,37 +12,44 @@
     <div id="root"></div>
     <a href="#R1">点击去R1</a>
     <a href="#R2">点击去R2</a>
-    <p id="console"></p>
     <button onclick="window.routerController.showAlert()">window.routerController</button>
   </body>
   <script type="text/javascript">
-    const testThis = {};
+    class pComponent extends Component {
+      constructor() {
+        super();
+        this.declareTemplate = '<p rtClick="this.componentClick()">被替换的组件</p>';
+        this.state = {a: 1};
+      }
+      componentClick() {
+        this.setState({a: 2});
+        alert('点击了组件');
+      }
+    }
     class R1 extends Controller {
       constructor() {
         super();
-        this.template = '<p rtClick="this.showAlert()">R1 点我然后打开控制台看看</p>';
-        this.console = document.getElementById('console');
+        this.declareTemplate = '<p rtClick="this.showAlert()">R1 点我然后打开控制台看看</p><pComponent/><pComponent/>';
+        this.declareComponents = {
+          pComponent: new pComponent(),
+        };
         this.state = {a: 1};
       }
       $onInit() {
-        this.console.innerText = 'is $onInit';
-        console.log('is $onInit');
+        // console.log('is $onInit');
       }
       $beforeMount() {
-        this.console.innerText = 'is $beforeMount';
-        console.log('is $beforeMount');
+        // console.log('is $beforeMount');
       }
       $afterMount() {
-        this.console.innerText = 'is $afterMount';
-        console.log('is $afterMount');
+        // console.log('is $afterMount');
       }
       $onDestory() {
-        this.console.innerText = 'is $onDestory';
-        console.log('is $onDestory');
+        // console.log('is $onDestory');
       }
       $watchState(oldData, newData) {
-        console.log('oldData Component:', oldData);
-        console.log('newData Component:', newData);
+        console.log('oldData Controller:', oldData);
+        console.log('newData Controller:', newData);
       }
       showAlert() {
         alert('我错了 点下控制台看看吧');
@@ -53,29 +60,27 @@
     class R2 extends Controller {
       constructor() {
         super();
-        this.console = document.getElementById('console');
-        this.template = '<p rtClick="this.showAlert()">R2 点我然后打开控制台看看</p>';
+        this.declareTemplate = '<p rtClick="this.showAlert()">R2 点我然后打开控制台看看</p>';
+        this.declareComponents = {
+          pComponent: new pComponent(),
+        };
         this.state = {a: 1};
       }
-      $watchState(oldData, newData) {
-        console.log('oldData Component:', oldData);
-        console.log('newData Component:', newData);
-      }
       $onInit() {
-        this.console.innerText = 'is $onInit';
-        console.log('is $onInit');
+        // console.log('is $onInit');
       }
       $beforeMount() {
-        this.console.innerText = 'is $beforeMount';
-        console.log('is $beforeMount');
+        // console.log('is $beforeMount');
       }
       $afterMount() {
-        this.console.innerText = 'is $afterMount';
-        console.log('is $afterMount');
+        // console.log('is $afterMount');
       }
       $onDestory() {
-        this.console.innerText = 'is $onDestory';
-        console.log('is $onDestory');
+        // console.log('is $onDestory');
+      }
+      $watchState(oldData, newData) {
+        console.log('oldData Controller:', oldData);
+        console.log('newData Controller:', newData);
       }
       showAlert() {
         alert('我错了 点下控制台看看吧');

@@ -1,38 +1,36 @@
-class Component {
+class CommonChunk {
   constructor() {
-    this.declareTemplate = '';
     this.state = {};
   }
 
   $beforeInit() {
-    console.log('is $beforeInit 22222');
-    console.log('this.state', this.state);
+    console.log('is $beforeInit');
     this.watcher = new Watcher(this.state, this.$watchState);
   }
 
   $watchState(oldData, newData) {
-    console.log('oldData Component:', oldData);
-    console.log('newData Component:', newData);
+    console.log('oldData:', oldData);
+    console.log('newData:', newData);
   }
 
   $onInit() {
-    // this.console.innerText = 'is $onInit';
-    // console.log('is $onInit');
+    this.console.innerText = 'is $onInit';
+    console.log('is $onInit');
   }
 
   $beforeMount() {
-    // this.console.innerText = 'is $beforeMount';
-    // console.log('is $beforeMount');
+    this.console.innerText = 'is $beforeMount';
+    console.log('is $beforeMount');
   }
 
   $afterMount() {
-    // this.console.innerText = 'is $afterMount';
-    // console.log('is $afterMount');
+    this.console.innerText = 'is $afterMount';
+    console.log('is $afterMount');
   }
 
   $onDestory() {
-    // this.console.innerText = 'is $onDestory';
-    // console.log('is $onDestory');
+    this.console.innerText = 'is $onDestory';
+    console.log('is $onDestory');
   }
 
   setState(newState) {

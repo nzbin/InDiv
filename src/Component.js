@@ -1,57 +1,25 @@
-class Component {
-  constructor() {
+class Component extends Lifecycle {
+  constructor(declareTemplateName, props) {
+    super();
+    this.declareTemplateName = declareTemplateName;
+    this.props = props;
     this.declareTemplate = '';
     this.state = {};
   }
 
   $beforeInit() {
-    console.log('is $beforeInit 22222');
-    console.log('this.state', this.state);
-    this.watcher = new Watcher(this.state, this.$watchState);
+    this.watcher = new Watcher(this.state, this.$watchState.bind(this), this.$renderDOM.bind(this));
   }
 
-  $watchState(oldData, newData) {
-    console.log('oldData Component:', oldData);
-    console.log('newData Component:', newData);
-  }
-
-  $onInit() {
-    // this.console.innerText = 'is $onInit';
-    // console.log('is $onInit');
-  }
-
-  $beforeMount() {
-    // this.console.innerText = 'is $beforeMount';
-    // console.log('is $beforeMount');
-  }
-
-  $afterMount() {
-    // this.console.innerText = 'is $afterMount';
-    // console.log('is $afterMount');
-  }
-
-  $onDestory() {
-    // this.console.innerText = 'is $onDestory';
-    // console.log('is $onDestory');
-  }
-
-  setState(newState) {
-    if (newState && newState instanceof Function) {
-      const _newState = newState();
-      if (_newState && _newState instanceof Object) {
-        for (var key in _newState) {
-          if (this.state[key] && this.state[key] !== _newState[key]) {
-            this.state[key] = _newState[key];
-          }
-        }
+  $renderDOM() {
+    const dom = document.getElementById(`component_${this.declareTemplateName}`);
+    if (dom.hasChildNodes()) {
+      let childs = dom.childNodes;
+      for (let i = childs.length - 1; i >= 0; i--) {
+        dom.removeChild(childs.item(i));
       }
+      if (this.$onDestory) this.$onDestory();
     }
-    if (newState && newState instanceof Object) {
-      for (var key in newState) {
-        if (this.state[key] && this.state[key] !== newState[key]) {
-          this.state[key] = newState[key];
-        }
-      }
-    }
+    dom.innerHTML = this.declareTemplate;
   }
 }

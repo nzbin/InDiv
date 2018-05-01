@@ -1,7 +1,8 @@
 class Watcher {
-  constructor(data, callback) {
+  constructor(data, callback, render) {
     this.data = data;
     this.callback = callback;
+    this.render = render;
     this.watchData(this.data);
   }
 
@@ -23,7 +24,8 @@ class Watcher {
           oldData[key] = val;
           const newData = {};
           newData[key] = newVal;
-          that.callback(oldData, newData);
+          if (that.callback) that.callback(oldData, newData);
+          if (that.render) that.render();
           val = newVal;
           that.watchData(val);
         },

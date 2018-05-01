@@ -2,30 +2,13 @@ class Router {
   constructor() {
     this.routes = {};
     this.currentUrl = '';
+    this.lastRoute = null;
     this.rootDom = null;
     window.addEventListener('load', this.refresh.bind(this), false);
     window.addEventListener('hashchange', this.refresh.bind(this), false);
   }
 
-  route(path, controller) {
-    this.routes[path] = controller || function () {};
-  }
-
-  refresh() {
-    this.currentUrl = location.hash.slice(1) || '/';
-    if (this.routes[this.currentUrl]) {
-      if (window.routerController) {
-        if (window.routerController.$onDestory) window.routerController.$onDestory();
-        delete window.routerController;
-      }
-      const controller = new this.routes[this.currentUrl]();
-      window.routerController = controller;
-      if (controller.$beforeInit) controller.$beforeInit();
-      if (controller.$beforeInit) controller.$renderComponent();
-      if (controller.$onInit) controller.$onInit();
-      this.renderDom(controller);
-    }
-  }
+  $routeChange(lastRoute, nextRoute) {}
 
   init(arr) {
     if (arr && arr instanceof Array) {
@@ -44,14 +27,47 @@ class Router {
     }
   }
 
+  route(path, controller) {
+    this.routes[path] = controller || function () {};
+  }
+
+  refresh() {
+    this.currentUrl = location.hash.slice(1) || '/';
+    if (this.routes[this.currentUrl]) {
+      if (window.routerController) {
+        if (window.routerController.$onDestory) window.routerController.$onDestory();
+        delete window.routerController;
+      }
+      const controller = new this.routes[this.currentUrl]();
+      window.routerController = controller;
+      if (controller.$beforeInit) controller.$beforeInit();
+      if (controller.$beforeInit) controller.$renderComponent();
+      if (controller.$onInit) controller.$onInit();
+      this.renderDom(controller).then(() => {
+        this.$routeChange(this.lastRoute, this.currentUrl);
+        this.lastRoute = this.currentUrl;
+      }).catch(() => {
+        console.error('route change failed');
+      });
+    }
+  }
+
   renderDom(controller) {
     const template = controller.declareTemplate;
     if (template && typeof template === 'string' && this.rootDom) {
       if (controller.$beforeMount) controller.$beforeMount();
-      this.replaceDom(controller);
-      if (controller.$afterMount) controller.$afterMount();
+      this.replaceDom(controller).then(() => {
+        if (controller.declareComponents) {
+          for (let key in controller.declareComponents) {
+            if (controller.declareComponents[key].$afterMount) controller.declareComponents[key].$afterMount();
+          }
+        }
+        if (controller.$afterMount) controller.$afterMount();
+      });
+      return Promise.resolve();
     } else {
       console.error('renderDom failed: template or rootDom is not exit');
+      return Promise.reject();
     }
   }
 
@@ -67,6 +83,7 @@ class Router {
     let fragment = document.createDocumentFragment();
     fragment.appendChild(templateDom);
     this.rootDom.appendChild(fragment);
+    return Promise.resolve();
   }
 
   parseDom(template) {

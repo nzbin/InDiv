@@ -3,10 +3,11 @@
   <head>
     <meta charset="utf-8">
     <title>test路由</title>
+    <script type="text/javascript" src="../src/Lifecycle.js"></script>
     <script type="text/javascript" src="../src/Watcher.js"></script>
     <script type="text/javascript" src="../src/Component.js"></script>
     <script type="text/javascript" src="../src/Controller.js"></script>
-    <script type="text/javascript" src="../src/Route.js"></script>
+    <script type="text/javascript" src="../src/Router.js"></script>
   </head>
   <body>
     <div id="root"></div>
@@ -14,93 +15,5 @@
     <a href="#R2">点击去R2</a>
     <button onclick="window.routerController.showAlert()">window.routerController</button>
   </body>
-  <script type="text/javascript">
-    class pComponent extends Component {
-      constructor() {
-        super();
-        this.declareTemplate = '<p rtClick="this.componentClick()">被替换的组件</p>';
-        this.state = {a: 1};
-      }
-      componentClick() {
-        this.setState({a: 2});
-        alert('点击了组件');
-      }
-    }
-    class R1 extends Controller {
-      constructor() {
-        super();
-        this.declareTemplate = '<p rtClick="this.showAlert()">R1 点我然后打开控制台看看</p><pComponent/><pComponent/>';
-        this.declareComponents = {
-          pComponent: new pComponent(),
-        };
-        this.state = {a: 1};
-      }
-      $onInit() {
-        // console.log('is $onInit');
-      }
-      $beforeMount() {
-        // console.log('is $beforeMount');
-      }
-      $afterMount() {
-        // console.log('is $afterMount');
-      }
-      $onDestory() {
-        // console.log('is $onDestory');
-      }
-      $watchState(oldData, newData) {
-        console.log('oldData Controller:', oldData);
-        console.log('newData Controller:', newData);
-      }
-      showAlert() {
-        alert('我错了 点下控制台看看吧');
-        this.setState({a: 2});
-      }
-    }
-
-    class R2 extends Controller {
-      constructor() {
-        super();
-        this.declareTemplate = '<p rtClick="this.showAlert()">R2 点我然后打开控制台看看</p>';
-        this.declareComponents = {
-          pComponent: new pComponent(),
-        };
-        this.state = {a: 1};
-      }
-      $onInit() {
-        // console.log('is $onInit');
-      }
-      $beforeMount() {
-        // console.log('is $beforeMount');
-      }
-      $afterMount() {
-        // console.log('is $afterMount');
-      }
-      $onDestory() {
-        // console.log('is $onDestory');
-      }
-      $watchState(oldData, newData) {
-        console.log('oldData Controller:', oldData);
-        console.log('newData Controller:', newData);
-      }
-      showAlert() {
-        alert('我错了 点下控制台看看吧');
-        this.setState(function() {
-          return {a: 2};
-        });
-      }
-    }
-
-    const router = new Router();
-    const routes = [
-      {
-        path: 'R1',
-        controller: R1,
-      },
-      {
-        path: 'R2',
-        controller: R2,
-      },
-    ];
-    router.init(routes);
-  </script>
+  <script type="text/javascript" src="./index.js"></script>
 </html>

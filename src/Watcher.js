@@ -1,7 +1,8 @@
 class Watcher {
-  constructor(data, callback, render) {
+  constructor(data, watcher, updater, render) {
     this.data = data;
-    this.callback = callback;
+    this.watcher = watcher;
+    this.updater = updater;
     this.render = render;
     this.watchData(this.data);
   }
@@ -19,15 +20,19 @@ class Watcher {
           return val;
         },
         set(newVal) {
+          if (newVal instanceof Object) {
+            if (newVal === val || JSON.stringify(newVal) === JSON.stringify(val)) return;
+          }
           if (newVal === val) return;
           const oldData = {};
           oldData[key] = val;
           const newData = {};
           newData[key] = newVal;
-          if (that.callback) that.callback(oldData, newData);
-          if (that.render) that.render();
           val = newVal;
           that.watchData(val);
+          if (that.watcher) that.watcher(oldData, newData);
+          if (that.updater) that.updater(key, newVal);
+          if (that.render) that.render();
         },
       });
     }

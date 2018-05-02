@@ -41,9 +41,9 @@ class Router {
       const controller = new this.routes[this.currentUrl]();
       window.routerController = controller;
       if (controller.$beforeInit) controller.$beforeInit();
-      if (controller.$beforeInit) controller.$renderComponent();
+      if (controller.$renderComponent) controller.$renderComponent();
       if (controller.$onInit) controller.$onInit();
-      this.renderDom(controller).then(() => {
+      this.renderController(controller).then(() => {
         this.$routeChange(this.lastRoute, this.currentUrl);
         this.lastRoute = this.currentUrl;
       }).catch(() => {
@@ -52,7 +52,7 @@ class Router {
     }
   }
 
-  renderDom(controller) {
+  renderController(controller) {
     const template = controller.declareTemplate;
     if (template && typeof template === 'string' && this.rootDom) {
       if (controller.$beforeMount) controller.$beforeMount();
@@ -66,7 +66,7 @@ class Router {
       });
       return Promise.resolve();
     } else {
-      console.error('renderDom failed: template or rootDom is not exit');
+      console.error('renderController failed: template or rootDom is not exit');
       return Promise.reject();
     }
   }
@@ -88,6 +88,7 @@ class Router {
 
   parseDom(template) {
     const elementCreated = document.createElement('div');
+    elementCreated.id = 'route-container';
     let newTemplate = null;
     if (window.routerController) {
       newTemplate = template.replace(/( )(rt)([A-Z]{1})([A-Za-z]+="|[A-Za-z]+=')(this)/g, (...args) => `${args[1]}on${args[3].toLowerCase()}${args[4]}window.routerController`);

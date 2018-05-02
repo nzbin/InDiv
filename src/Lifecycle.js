@@ -12,6 +12,8 @@ class Lifecycle {
 
   $onDestory() {}
 
+  $hasRender() {}
+
   $watchState(oldData, newData) {}
 
   setState(newState) {

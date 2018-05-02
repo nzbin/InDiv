@@ -21,6 +21,13 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
   - add new life cycle: `$routeChange` in class `Router`
   - optimize `Controller` and `Component`
   - fix lifecycle of class `Component`
+4. 2018-05-02 optimize `Component` and `Controller`
+  - add `props` in `Component` when new an instance in `Controller`
+  - add two types for `props` for `Component` : value or action
+  - optimize `Controller` and `Component`, update `props` in `Component`
+  - update the declaration of `Component` in `Controller`
+  - add new function `setProps` for update `props` in `Component`
+  - add new lifecycle `$hasRender` for update `props` in `Component` and `Controller`
 
 ## Basic Usage
 
@@ -56,9 +63,12 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
 3. Create a Component:
   - must extends`class Component`
   - must `super(name, props);`
+  - **plz setState or setProps after lifecycle `constructor()`**
   - u need to declare template in `constructor` and use `this.declareTemplate: String`
-  - `name` is this component use in `Controller`
-  - `props` is data which `Controller` sends to `Component`
+  - `name: String` is this component use in `class Controller`
+  - `props: Object` is data which `class Controller` sends to `class Component`
+  - **`props: Object` can only be changed or used after lifecycle `constructor()`**
+  - `props: Object` can only be changed by action `this.setProps()` and `this.setProps()` is equal to `setState`
 
   ```javascript
   class pComponent extends Component {
@@ -66,13 +76,16 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
       super(name, props);
       this.declareTemplate = '<p rtClick="this.componentClick()">被替换的组件</p>';
       this.state = {b: 100};
+    }
+    $onInit() {
       console.log('props', this.props);
     }
     componentClick() {
       alert('点击了组件');
       this.declareTemplate = '<p>我改变了component</>';
       this.setState({b: 2});
-      this.props.b(3);
+      this.setProps({ax: 5});
+      // this.props.b(3);
     }
     $watchState(oldData, newData) {
       console.log('oldData Component:', oldData);
@@ -86,7 +99,10 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
   - must declare template in `this.declareTemplate : String`
   - must declare components in `this.declareComponents : Object`
   - if u want to rerender Component, plz use `this.$renderComponent();`
-
+  - declare Component, `class Component` needs two parmars: `declareTemplateName, props`
+  - `declareTemplateName: String` must be as same as the `html tag` which is used in `this.declareTemplate`
+  -  `props: Object`'s key is used in `class Component as props's key`
+  -  `props: Object`'s value is the data which is send to `class Component` and must belongs to `this.state` in `class Controller`
   ``` javascript
   class R1 extends Controller {
     constructor() {
@@ -95,11 +111,11 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
       this.declareTemplate = '<p rtClick="this.showAlert()">R1 点我然后打开控制台看看</p><pComponent1/><pComponent2/>';
       this.declareComponents = {
         pComponent1: new pComponent('pComponent1', {
-          a: this.state.a,
-          b: this.getProps.bind(this),
+          ax: 'a', // key in this.state
+          b: this.getProps.bind(this), // action in this
         }),
         pComponent2: new pComponent('pComponent2', {
-          a: this.state.a,
+          ax: 'a',
           b: this.getProps.bind(this),
         }),
       };
@@ -121,9 +137,13 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
       console.log('newData Controller:', newData);
     }
     showAlert() {
+      alert('我错了 点下控制台看看吧');
       this.setState({a: 2});
-      this.setState(() => {a: 2});
-      alert('草拟吗1');
+      console.log('state', this.state);
+    }
+    getProps(a) {
+      alert('里面传出来了');
+      this.setState({a: a});
     }
   }
   ```
@@ -139,11 +159,12 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
   - Component
     ```javascript
       constructor()
+      $initProps // don't use this ,because it's prepare for init props
       $beforeInit() // don't use this ,because it's prepare for watch state
-      $renderDOM() // don't use this ,because it's prepare for render Dom
       $onInit()
       $beforeMount()
       $afterMount()
+      $hasRender()
       $onDestory()
       $watchState(oldData, newData)
     ```
@@ -156,6 +177,7 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
       $onInit()
       $beforeMount()
       $afterMount()
+      $hasRender()
       $onDestory()
       $watchState(oldData, newData)
     ```
@@ -173,10 +195,11 @@ route => controller => component
 - [x] 路由变化渲染dom
 - [x] 数据监听
 - [ ] 双向绑定html模板
+- [x] 组件传入传出props
 - [x] 组件渲染
-- [x] 组件化(2/3)
+- [X] 组件化(2/3)
 - [ ] 模块化
 - [ ] 改用 history 模块的 pushState 方法去触发 url 更新
-- [ ] 双向绑定
-- [ ] 动态渲染DOM
+- [X] 双向绑定
+- [X] 动态渲染DOM(1/2)
 - [ ] ts实现 （强类型赛高）

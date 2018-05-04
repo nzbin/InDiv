@@ -1,18 +1,26 @@
 class pComponent extends Component {
   constructor(name, props) {
     super(name, props);
-    this.declareTemplate = '<p rtClick="this.componentClick()">被替换的组件</p>';
-    this.state = {b: 100};
+    // this.declareTemplate = '<p rt-on:click="this.componentClick()">被替换的组件</p>';
+    // this.declareTemplate = '<p rt-on:click="this.componentClick()" rt-text="this.state.b"></p>';
+    // this.declareTemplate = '<p rt-on:click="this.componentClick()">{{this.state.b}}</p>';
+    // this.declareTemplate = '<p rt-on:click="this.componentClick()" rt-html="this.state.c"></p>';
+    // this.declareTemplate = '<p rt-on:click="this.componentClick()" class="b" rt-class="this.state.a">rt-class</p>';
+    this.declareTemplate = '<input rt-model="this.state.b" />';
+    this.state = {
+      a: 'a',
+      b: 100,
+      c: '<p>1111</p>'
+    };
   }
   $onInit() {
     console.log('props', this.props);
   }
   componentClick() {
     alert('点击了组件');
-    this.declareTemplate = '<p>我改变了component</>';
     this.setState({b: 2});
-    this.setProps({ax: 5});
-    this.props.b(3);
+    // this.setProps({ax: 5});
+    // this.props.b(3);
   }
   $watchState(oldData, newData) {
     console.log('oldData Component:', oldData);
@@ -24,7 +32,7 @@ class R1 extends Controller {
   constructor() {
     super();
     this.state = {a: 1};
-    this.declareTemplate = '<p rtClick="this.showAlert()">R1 点我然后打开控制台看看</p><pComponent1/><pComponent2/>';
+    this.declareTemplate = '<p rt-click="this.showAlert()">R1 点我然后打开控制台看看</p><pComponent1/><pComponent2/>';
     this.declareComponents = {
       pComponent1: new pComponent('pComponent1', {
         ax: 'a', // key in this.state

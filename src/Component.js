@@ -9,6 +9,7 @@ class Component extends Lifecycle {
     this.declareTemplate = '';
     this.state = {};
     this.fatherController = {};
+    // this.compile = new Compile(`#component_${this.declareTemplateName}`, this);
   }
 
   $initProps(preProps) {
@@ -38,21 +39,19 @@ class Component extends Lifecycle {
 
   $reRender() {
     const dom = document.getElementById(`component_${this.declareTemplateName}`);
-    if (dom.hasChildNodes()) {
+    if (dom && dom.hasChildNodes()) {
       let childs = dom.childNodes;
       for (let i = childs.length - 1; i >= 0; i--) {
         dom.removeChild(childs.item(i));
       }
     }
     if (this.$onDestory) this.$onDestory();
-    this.$renderDom();
-    dom.innerHTML = this.declareTemplate;
+    this.renderDom();
     if (this.$hasRender) this.$hasRender();
   }
 
-  $renderDom() {
-    let variableReg = /\{\{(.*?)\}\}/g;
-    this.declareTemplate = this.declareTemplate.replace(/( )(rt)([A-Z]{1})([A-Za-z]+="|[A-Za-z]+=')(this)/g, (...args) => `${args[1]}on${args[3].toLowerCase()}${args[4]}window.routerController.declareComponents.${this.declareTemplateName}`);
+  renderDom() {
+    this.compile = new Compile(`#component_${this.declareTemplateName}`, this);
   }
 
   setProps(newProps) {

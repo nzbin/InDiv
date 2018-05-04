@@ -1,193 +1,4 @@
-function Compile(el, vm) {
-    this.$vm = vm;
-    this.$el = this.isElementNode(el) ? el : document.querySelector(el);
-
-    if (this.$el) {
-        this.$fragment = this.node2Fragment(this.$el);
-        this.init();
-        this.$el.appendChild(this.$fragment);
-    }
-}
-
-Compile.prototype = {
-    node2Fragment: function(el) {
-        var fragment = document.createDocumentFragment(),
-            child;
-
-        // 将原生节点拷贝到fragment
-        while (child = el.firstChild) {
-            fragment.appendChild(child);
-        }
-
-        return fragment;
-    },
-
-    init: function() {
-        this.compileElement(this.$fragment);
-    },
-
-    compileElement: function(el) {
-        var childNodes = el.childNodes,
-            me = this;
-
-        [].slice.call(childNodes).forEach(function(node) {
-            var text = node.textContent;
-            var reg = /\{\{(.*)\}\}/;
-
-            if (me.isElementNode(node)) {
-                me.compile(node);
-
-            } else if (me.isTextNode(node) && reg.test(text)) {
-                me.compileText(node, RegExp.$1);
-            }
-
-            if (node.childNodes && node.childNodes.length) {
-                me.compileElement(node);
-            }
-        });
-    },
-
-    compile: function(node) {
-        var nodeAttrs = node.attributes,
-            me = this;
-
-        [].slice.call(nodeAttrs).forEach(function(attr) {
-            var attrName = attr.name;
-            if (me.isDirective(attrName)) {
-                var exp = attr.value;
-                var dir = attrName.substring(2);
-                // 事件指令
-                if (me.isEventDirective(dir)) {
-                    compileUtil.eventHandler(node, me.$vm, exp, dir);
-                    // 普通指令
-                } else {
-                    compileUtil[dir] && compileUtil[dir](node, me.$vm, exp);
-                }
-
-                node.removeAttribute(attrName);
-            }
-        });
-    },
-
-    compileText: function(node, exp) {
-        compileUtil.text(node, this.$vm, exp);
-    },
-
-    isDirective: function(attr) {
-        return attr.indexOf('v-') == 0;
-    },
-
-    isEventDirective: function(dir) {
-        return dir.indexOf('on') === 0;
-    },
-
-    isElementNode: function(node) {
-        return node.nodeType == 1;
-    },
-
-    isTextNode: function(node) {
-        return node.nodeType == 3;
-    }
-};
-
-// 指令处理集合
-var compileUtil = {
-    text: function(node, vm, exp) {
-        this.bind(node, vm, exp, 'text');
-    },
-
-    html: function(node, vm, exp) {
-        this.bind(node, vm, exp, 'html');
-    },
-
-    model: function(node, vm, exp) {
-        this.bind(node, vm, exp, 'model');
-
-        var me = this,
-            val = this._getVMVal(vm, exp);
-        node.addEventListener('input', function(e) {
-            var newValue = e.target.value;
-            if (val === newValue) {
-                return;
-            }
-
-            me._setVMVal(vm, exp, newValue);
-            val = newValue;
-        });
-    },
-
-    class: function(node, vm, exp) {
-        this.bind(node, vm, exp, 'class');
-    },
-
-    bind: function(node, vm, exp, dir) {
-        var updaterFn = updater[dir + 'Updater'];
-
-        updaterFn && updaterFn(node, this._getVMVal(vm, exp));
-
-        new Watcher(vm, exp, function(value, oldValue) {
-            updaterFn && updaterFn(node, value, oldValue);
-        });
-    },
-
-    // 事件处理
-    eventHandler: function(node, vm, exp, dir) {
-        var eventType = dir.split(':')[1],
-            fn = vm.$options.methods && vm.$options.methods[exp];
-
-        if (eventType && fn) {
-            node.addEventListener(eventType, fn.bind(vm), false);
-        }
-    },
-
-    _getVMVal: function(vm, exp) {
-        var val = vm;
-        exp = exp.split('.');
-        exp.forEach(function(k) {
-            val = val[k];
-        });
-        return val;
-    },
-
-    _setVMVal: function(vm, exp, value) {
-        var val = vm;
-        exp = exp.split('.');
-        exp.forEach(function(k, i) {
-            // 非最后一个key，更新val的值
-            if (i < exp.length - 1) {
-                val = val[k];
-            } else {
-                val[k] = value;
-            }
-        });
-    }
-};
-
-
-var updater = {
-    textUpdater: function(node, value) {
-        node.textContent = typeof value == 'undefined' ? '' : value;
-    },
-
-    htmlUpdater: function(node, value) {
-        node.innerHTML = typeof value == 'undefined' ? '' : value;
-    },
-
-    classUpdater: function(node, value, oldValue) {
-        var className = node.className;
-        className = className.replace(oldValue, '').replace(/\s$/, '');
-
-        var space = className && String(value) ? ' ' : '';
-
-        node.className = className + space + value;
-    },
-
-    modelUpdater: function(node, value, oldValue) {
-        node.value = typeof value == 'undefined' ? '' : value;
-    }
-};
-
-class Compile() {
+class Compile {
   constructor(el, vm) {
     this.$vm = vm;
     this.$el = this.isElementNode(el) ? el : document.querySelector(el);
@@ -202,54 +13,139 @@ class Compile() {
       this.compileElement(this.$fragment);
   }
 
-  compileElement(el) {
-      let childNodes = el.childNodes;
-      let vm = this;
-
-      [].slice.call(childNodes).forEach(function(node) {
-          var text = node.textContent;
-          var reg = /\{\{(.*)\}\}/;
-
-          if (vm.isElementNode(node)) {
-              vm.compile(node);
-
-          } else if (vm.isTextNode(node) && reg.test(text)) {
-              vm.compileText(node, RegExp.$1);
-          }
-
-          if (node.childNodes && node.childNodes.length) {
-              vm.compileElement(node);
-          }
+  compileElement(fragment) {
+      const elementCreated = document.createElement('div');
+      elementCreated.innerHTML = this.$vm.declareTemplate;
+      let childNodes = elementCreated.childNodes;
+      Array.from(childNodes).forEach(node => {
+        const text = node.textContent;
+        const reg = /\{\{(.*)\}\}/;
+        if (this.isElementNode(node)) {
+          this.compile(node);
+          if (reg.test(text)) this.compileText(node, RegExp.$1);
+        }
+        fragment.appendChild(node);
       });
-  },
+  }
+
+  compile(node) {
+    const nodeAttrs = node.attributes;
+    Array.from(nodeAttrs).forEach(attr => {
+      const attrName = attr.name;
+      if (this.isDirective(attrName)) {
+        const dir = attrName.substring(3);
+        const exp = attr.value;
+        if (this.isEventDirective(dir)) {
+          this.eventHandler(node, this.$vm, exp, dir);
+        } else {
+          new CompileUtil().bind(node, this.$vm, exp, dir);
+        }
+        // node.removeAttribute(attrName);
+      }
+    });
+  }
 
   node2Fragment(el) {
-      let fragment = document.createDocumentFragment();
-      let child = undefined;
-      while (child = el.firstChild) {
-          fragment.appendChild(child);
-      }
-      return fragment;
+    const fragment = document.createDocumentFragment();
+    let child = undefined;
+    while (child = el.firstChild) {
+        fragment.appendChild(child);
+    }
+    return fragment;
   }
 
-  // compileText(node, exp) {
-  //     compileUtil.text(node, this.$vm, exp);
-  // }
+  compileText(node, exp) {
+    new CompileUtil().text(node, this.$vm, exp);
+  }
 
-  // isDirective(attr) {
-  //     return attr.indexOf('v-') == 0;
-  // }
-  //
-  // isEventDirective(dir) {
-  //     return dir.indexOf('on') === 0;
-  // },
+  eventHandler(node, vm, exp, event) {
+    const eventType = event.split(':')[1];
+    const fnList = exp.replace('()', '').split('.');
+    let fn = vm;
+    fnList.forEach(f => {
+      if (f === 'this') return;
+      fn = fn[f];
+    });
+    if (eventType && fn) node.addEventListener(eventType, fn.bind(vm), false);
+  }
+
+  isDirective(attr) {
+    return attr.indexOf('rt-') === 0;
+  }
+
+  isEventDirective(event) {
+    return event.indexOf('on') === 0;
+  }
 
   isElementNode(node) {
-      return node.nodeType == 1;
-  },
-
-  isTextNode: function(node) {
-      return node.nodeType == 3;
+    return node.nodeType == 1;
   }
 
+  // isTextNode(node) {
+  //   return node.nodeType == 3;
+  // }
+
+}
+
+class CompileUtil {
+  _getVMVal(vm, exp) {
+    const valueList = exp.replace('()', '').split('.');
+    let value = vm;
+    valueList.forEach(v => {
+      if (v === 'this') return;
+      value = value[v];
+    });
+    return value;
+  }
+
+  _setVMVal(vm, exp, value) {
+    var val = vm;
+    exp = exp.split('.');
+    exp.forEach(function(k, i) {
+        if (i < exp.length - 1) {
+            val = val[k];
+        } else {
+            val[k] = value;
+        }
+    });
+  }
+
+  text(node, vm, exp) {
+    this.bind(node, vm, exp, 'text');
+  }
+
+  bind(node, vm, exp, dir) {
+    const updaterFn = this[`${dir}Updater`];
+    if (dir === 'model') {
+      updaterFn && updaterFn(node, this._getVMVal(vm, exp), exp, vm);
+    } else {
+      updaterFn && updaterFn(node, this._getVMVal(vm, exp));
+    }
+  }
+
+  textUpdater(node, value) {
+    node.textContent = typeof value == 'undefined' ? '' : value;
+  }
+
+  htmlUpdater(node, value) {
+    node.innerHTML = typeof value == 'undefined' ? '' : value;
+  }
+
+  classUpdater(node, value, oldValue) {
+    let className = node.className;
+    className = className.replace(oldValue, '').replace(/\s$/, '');
+    const space = className && String(value) ? ' ' : '';
+    node.className = className + space + value;
+  }
+
+  modelUpdater(node, value, exp, vm) {
+    let hasOnEmit = false;
+    node.value = typeof value == 'undefined' ? '' : value;
+    const val = exp.replace(/(this.state.)|(this.props)/, '');
+    const fn = function() {
+      if (/(this.state.).*/.test(exp)) vm.state[val] = node.value;
+      if (/(this.props.).*/.test(exp)) vm.props[val] = node.value;
+    }
+    node.addEventListener('change', fn, false);
+  }
 }

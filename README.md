@@ -21,13 +21,20 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
   - add new life cycle: `$routeChange` in class `Router`
   - optimize `Controller` and `Component`
   - fix lifecycle of class `Component`
-4. 2018-05-02 optimize `Component` and `Controller`
+5. 2018-05-02 optimize `Component` and `Controller`
   - add `props` in `Component` when new an instance in `Controller`
   - add two types for `props` for `Component` : value or action
   - optimize `Controller` and `Component`, update `props` in `Component`
   - update the declaration of `Component` in `Controller`
   - add new function `setProps` for update `props` in `Component`
   - add new lifecycle `$hasRender` for update `props` in `Component` and `Controller`
+6. 2018-05-03/04 optimize
+  - add new class `Utils`
+  - add new class `Compile`
+  - change renderComponent and use class `Compile`
+  - add new **Template Syntax**
+
+
 
 ## Basic Usage
 
@@ -74,7 +81,7 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
   class pComponent extends Component {
     constructor(name, props) {
       super(name, props);
-      this.declareTemplate = '<p rtClick="this.componentClick()">被替换的组件</p>';
+      this.declareTemplate = '<p rt-click="this.componentClick()">被替换的组件</p>';
       this.state = {b: 100};
     }
     $onInit() {
@@ -108,7 +115,7 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
     constructor() {
       super();
       this.state = {a: 1};
-      this.declareTemplate = '<p rtClick="this.showAlert()">R1 点我然后打开控制台看看</p><pComponent1/><pComponent2/>';
+      this.declareTemplate = '<p rt-click="this.showAlert()">R1 点我然后打开控制台看看</p><pComponent1/><pComponent2/>';
       this.declareComponents = {
         pComponent1: new pComponent('pComponent1', {
           ax: 'a', // key in this.state
@@ -148,7 +155,19 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
   }
   ```
 
-5. Data monitor: this.state && this.setState
+5. Template Syntax
+  - 规定：指令以 rt-xxx 命名
+  - rt-text rt-html rt-model rt-class rt-bind
+  - 事件指令, 如 rt-on:click
+  - Text1: `this.declareTemplate = '<p rt-text="this.state.b"></p>';`
+  - Text2: `this.declareTemplate = '<p>{{this.state.b}}</p>';`
+  - HTML: `this.declareTemplate = '<p rt-html="this.state.c"></p>';`
+  - Model for input: `this.declareTemplate = '<p rt-model="this.state.c"></p>';`
+  - Class: `this.declareTemplate = '<p  class="b" rt-class="this.state.a"></p>';`
+  - Directives: ues `rt-on:event`
+    - `this.declareTemplate = '<p rt-on:click="this.componentClick()"></p>';`
+
+6. Data monitor: this.state && this.setState
   - use `this.state: Object` and `this.setState(parmars: Function || Object)`
   - if u have some variable, u can set `this.state` in `constructor(){}`
   - if u want to change State, plz use `this.setState`, parmars can be `Object` or `Function` which must return an `Object`
@@ -159,8 +178,6 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
   - Component
     ```javascript
       constructor()
-      $initProps // don't use this ,because it's prepare for init props
-      $beforeInit() // don't use this ,because it's prepare for watch state
       $onInit()
       $beforeMount()
       $afterMount()
@@ -172,8 +189,6 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
   - Controller
     ```javascript
       constructor()
-      $beforeInit() // don't use this ,because it's prepare for watch state
-      $replaceComponent() // don't use this ,because it's prepare for render Component
       $onInit()
       $beforeMount()
       $afterMount()
@@ -194,7 +209,7 @@ route => controller => component
 - [x] 公共类提取
 - [x] 路由变化渲染dom
 - [x] 数据监听
-- [ ] 双向绑定html模板
+- [x] 双向绑定html模板
 - [x] 组件传入传出props
 - [x] 组件渲染
 - [X] 组件化(2/3)

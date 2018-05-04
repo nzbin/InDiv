@@ -60,6 +60,7 @@ class Router {
       this.replaceDom(controller).then(() => {
         if (controller.declareComponents) {
           for (let key in controller.declareComponents) {
+            if (controller.declareComponents[key].$reRender) controller.declareComponents[key].$reRender();
             if (controller.declareComponents[key].$afterMount) controller.declareComponents[key].$afterMount();
           }
         }
@@ -92,7 +93,7 @@ class Router {
     elementCreated.id = 'route-container';
     let newTemplate = null;
     if (window.routerController) {
-      newTemplate = template.replace(/( )(rt)([A-Z]{1})([A-Za-z]+="|[A-Za-z]+=')(this)/g, (...args) => `${args[1]}on${args[3].toLowerCase()}${args[4]}window.routerController`);
+      newTemplate = template.replace(/( )(rt-)([A-Za-z]+="|[A-Za-z]+=')(this)/g, (...args) => `${args[1]}on${args[3]}window.routerController`);
     }
     elementCreated.innerHTML = newTemplate;
     return elementCreated;

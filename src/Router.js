@@ -4,6 +4,7 @@ class Router {
     this.currentUrl = '';
     this.lastRoute = null;
     this.rootDom = null;
+    this.utils = new Utils();
     window.addEventListener('load', this.refresh.bind(this), false);
     window.addEventListener('hashchange', this.refresh.bind(this), false);
   }
@@ -13,7 +14,7 @@ class Router {
   init(arr) {
     if (arr && arr instanceof Array) {
       arr.forEach(route => {
-        if (route.path && route.controller && route.controller instanceof Function) {
+        if (route.path && route.controller && this.utils.isFunction(route.controller)) {
           this.route(route.path, route.controller);
         } else {
           console.error('need path or controller');

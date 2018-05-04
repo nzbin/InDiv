@@ -12,7 +12,7 @@ class pComponent extends Component {
     this.declareTemplate = '<p>我改变了component</>';
     this.setState({b: 2});
     this.setProps({ax: 5});
-    // this.props.b(3);
+    this.props.b(3);
   }
   $watchState(oldData, newData) {
     console.log('oldData Component:', oldData);

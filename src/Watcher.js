@@ -5,14 +5,15 @@ class Watcher {
     this.updater = updater;
     this.render = render;
     this.watchData(this.data);
+    this.utils = new Utils();
   }
 
   watchData(data) {
     if (!data || typeof data !== 'object') return;
-    const that = this;
+    const vm = this;
     for (let key in data) {
       let val = data[key];
-      that.watchData(val);
+      vm.watchData(val);
       Object.defineProperty(data, key, {
         configurable: true,
         enumerable: false,
@@ -20,19 +21,16 @@ class Watcher {
           return val;
         },
         set(newVal) {
-          if (newVal instanceof Object) {
-            if (newVal === val || JSON.stringify(newVal) === JSON.stringify(val)) return;
-          }
-          if (newVal === val) return;
+          if (vm.utils.isEqual(newVal, val)) return;
           const oldData = {};
           oldData[key] = val;
           const newData = {};
           newData[key] = newVal;
           val = newVal;
-          that.watchData(val);
-          if (that.watcher) that.watcher(oldData, newData);
-          if (that.updater) that.updater(key, newVal);
-          if (that.render) that.render();
+          vm.watchData(val);
+          if (vm.watcher) vm.watcher(oldData, newData);
+          if (vm.updater) vm.updater(key, newVal);
+          if (vm.render) vm.render();
         },
       });
     }

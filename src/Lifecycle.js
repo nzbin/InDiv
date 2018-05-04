@@ -2,6 +2,7 @@ class Lifecycle {
   constructor() {
     this.declareTemplate = '';
     this.state = {};
+    this.utils = new Utils();
   }
 
   $onInit() {}
@@ -17,7 +18,7 @@ class Lifecycle {
   $watchState(oldData, newData) {}
 
   setState(newState) {
-    if (newState && newState instanceof Function) {
+    if (newState && this.utils.isFunction(newState)) {
       const _newState = newState();
       if (_newState && _newState instanceof Object) {
         for (var key in _newState) {

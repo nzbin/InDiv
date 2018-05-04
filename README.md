@@ -14,7 +14,7 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
 
 3. 2018-04-30 separate `Controller` and `Component`
   - add new class: `Component`
-  - add new life cycle: `$renderComponent` in class `Controller`
+  - add new life cycle: `$replaceComponent` in class `Controller`
 
 4. 2018-05-01 optimize `Controller` and `Component`
   - add new class `Lifecycle`
@@ -98,7 +98,7 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
   - must extends`class Controller`
   - must declare template in `this.declareTemplate : String`
   - must declare components in `this.declareComponents : Object`
-  - if u want to rerender Component, plz use `this.$renderComponent();`
+  - if u want to rerender Component, plz use `this.$replaceComponent();`
   - declare Component, `class Component` needs two parmars: `declareTemplateName, props`
   - `declareTemplateName: String` must be as same as the `html tag` which is used in `this.declareTemplate`
   -  `props: Object`'s key is used in `class Component as props's key`
@@ -173,7 +173,7 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
     ```javascript
       constructor()
       $beforeInit() // don't use this ,because it's prepare for watch state
-      $renderComponent() // don't use this ,because it's prepare for render Component
+      $replaceComponent() // don't use this ,because it's prepare for render Component
       $onInit()
       $beforeMount()
       $afterMount()

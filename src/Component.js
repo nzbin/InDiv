@@ -18,7 +18,7 @@ class Component extends Lifecycle {
       this.fatherController = window.routerController.declareComponents[this.declareTemplateName].preProps;
       for (let key in this.fatherController) {
         if (typeof this.preProps[key] === 'string') this.props[key] = window.routerController.state[this.fatherController[key]];
-        if (this.preProps[key] instanceof Function) this.props[key] = this.preProps[key];
+        if (this.utils.isFunction(this.preProps[key])) this.props[key] = this.preProps[key];
       }
     }
   }
@@ -57,7 +57,7 @@ class Component extends Lifecycle {
 
   setProps(newProps) {
     if (!this.preProps) return;
-    if (newProps && newProps instanceof Function) {
+    if (newProps && this.utils.isFunction(newProps)) {
       const _newProps = newProps();
       if (_newProps && _newProps instanceof Object) {
         for (var key in _newProps) {

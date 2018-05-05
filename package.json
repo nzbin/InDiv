@@ -2,7 +2,7 @@
   "name": "router",
   "version": "1.0.0",
   "description": "a simple and naive front-end router and DOM render 一个图样、图乃义务的前端路由和DOM渲染",
-  "main": ".eslintrc.js",
+  "main": "./src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "parcel ./demo/index.html -d dist"
@@ -17,7 +17,7 @@
     "url": "https://github.com/DimaLiLongJi/router.js/issues"
   },
   "homepage": "https://github.com/DimaLiLongJi/router.js#readme",
-  "dependencies": {
+  "devDependencies": {
     "babel-eslint": "^8.2.0",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^11.1.1",

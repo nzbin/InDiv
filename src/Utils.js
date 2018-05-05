@@ -3,6 +3,20 @@ export default class Utils {
     this.toString = Object.prototype.toString;
   }
 
+  getQuery(name) {
+    let parts = window.location.search.replace('?', '').split('&');
+    let params = {};
+    for (let i = 0, len = parts.length; i < len; i++) {
+      let pairs = parts[i].split('=');
+      params[pairs[0]] = pairs[1];
+    }
+    if (params[name]) {
+      return params[name];
+    } else {
+      return '';
+    }
+  }
+
   isFunction(func) {
     return this.toString.call(func) === '[object Function]';
   }

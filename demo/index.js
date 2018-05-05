@@ -5,7 +5,9 @@ class PComponent extends Component {
     super(name, props);
     // this.declareTemplate = '<p rt-on:click="this.componentClick()">被替换的组件</p>';
     // this.declareTemplate = '<p rt-on:click="this.componentClick()" rt-text="this.state.b"></p>';
-    this.declareTemplate = '<p rt-on:click="this.componentClick()">{{this.props.ax}}</p>';
+    this.declareTemplate = `
+      <p rt-on:click="this.componentClick()">{{this.props.ax}}</p>
+    `;
     // this.declareTemplate = '<p rt-on:click="this.componentClick()" rt-html="this.state.c"></p>';
     // this.declareTemplate = '<p rt-on:click="this.componentClick()" class="b" rt-class="this.state.a">rt-class</p>';
     // this.declareTemplate = '<input rt-model="this.state.b" />';
@@ -33,15 +35,24 @@ class PComponent extends Component {
 class R1 extends Controller {
   constructor() {
     super();
-    this.state = { a: 1 };
-    // this.declareTemplate = '<p rt-click="this.showAlert()">R1 点我然后打开控制台看看</p><pComponent1/><pComponent2/>';
-    this.declareTemplate = '<p rt-on:click="this.showAlert()">R1 点我然后打开控制台看看</p><pComponent1/>';
+    this.state = {
+      a: 1,
+      b: 2,
+    };
+    this.declareTemplate = (`
+      <p rt-on:click="this.showAlert()">R1 点我然后打开控制台看看</p>
+      <pComponent1/><pComponent2/>
+      <p rt-click="this.showAlert()">R1 点我然后打开控制台看看</p>
+    `);
     this.declareComponents = {
       pComponent1: new PComponent('pComponent1', {
         ax: 'a', // key in this.state
         b: this.getProps.bind(this), // action in this
       }),
-      // pComponent2: new PComponent('pComponent2'),
+      pComponent2: new PComponent('pComponent2', {
+        ax: 'a', // key in this.state
+        b: this.getProps.bind(this), // action in this
+      }),
     };
   }
   $onInit() {
@@ -61,7 +72,7 @@ class R1 extends Controller {
     console.log('newData Controller:', newData);
   }
   showAlert() {
-    // alert('我错了 点下控制台看看吧');
+    alert('我错了 点下控制台看看吧');
     this.setState({ a: 2 });
     console.log('state', this.state);
   }

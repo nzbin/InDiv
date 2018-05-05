@@ -4,7 +4,7 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
 
 ## demo
   - `npm run start`
-  - opem `http://localhost:1234`
+  - open `http://localhost:1234`
 
 ## log
 
@@ -119,7 +119,7 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
     constructor() {
       super();
       this.state = {a: 1};
-      this.declareTemplate = '<p rt-click="this.showAlert()">R1 点我然后打开控制台看看</p><pComponent1/><pComponent2/>';
+      this.declareTemplate = '<p rt-on:click="this.showAlert()">R1 点我然后打开控制台看看</p><pComponent1/><pComponent2/>';
       this.declareComponents = {
         pComponent1: new pComponent('pComponent1', {
           ax: 'a', // key in this.state
@@ -216,7 +216,8 @@ route => controller => component
 - [x] 双向绑定html模板
 - [x] 组件传入传出props
 - [x] 组件渲染
-- [X] 组件化(2/3)
+- [X] 组件化(3/3)
+- [ ] 子路由
 - [ ] 模块化
 - [ ] 改用 history 模块的 pushState 方法去触发 url 更新
 - [X] 双向绑定

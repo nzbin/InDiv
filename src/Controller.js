@@ -1,4 +1,7 @@
-class Controller extends Lifecycle {
+import Lifecycle from './Lifecycle';
+import Watcher from './Watcher';
+
+export default class Controller extends Lifecycle {
   constructor() {
     super();
     this.declareTemplate = '';
@@ -24,7 +27,7 @@ class Controller extends Lifecycle {
   }
 
   $renderComponent() {
-    let variableReg = /\{\{(.*?)\}\}/g;
+    // let variableReg = /\{\{(.*?)\}\}/g;
     for (let key in this.declareComponents) {
       if (this.declareComponents[key].$beforeInit) this.declareComponents[key].$beforeInit();
       if (this.declareComponents[key].$onInit) this.declareComponents[key].$onInit();

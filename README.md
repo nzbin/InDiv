@@ -2,6 +2,10 @@
 
 a simple and naive front-end router and DOM render 一个图样、图乃义务的前端路由和DOM渲染
 
+## demo
+  - `npm run start`
+  - opem `http://localhost:1234`
+
 ## log
 
 1. 2018-04-28 init program

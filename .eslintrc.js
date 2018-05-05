@@ -26,7 +26,6 @@ module.exports = {
     'import/no-absolute-path': 0,
     'no-useless-constructor': 0,
     'import/no-extraneous-dependencies': 0,
-    'import/no-absolute-path': 0,
     'no-use-before-define': [
       'error',
       {
@@ -35,12 +34,14 @@ module.exports = {
         variables: true,
       },
     ],
-    'no-param-reassign': [
-      'error',
-      {
-        props: false,
-      },
-    ],
+    // 'no-param-reassign': [
+    //   'error',
+    //   {
+    //     props: false,
+    //   },
+    // ],
+    'no-prototype-builtins': 0,
+    'no-self-compare': 0,
     'no-dynamic-require': 0,
     'no-plusplus': 0,
     'no-return-assign': 0,
@@ -64,9 +65,8 @@ module.exports = {
     'react/jsx-uses-react': 1,
     'react/jsx-uses-vars': 1,
     'react/prop-types': 0,
-    'import/no-extraneous-dependencies': 0,
     'max-params': [0, 20],
-    'import/no-absolute-path': 0,
+    'no-unused-expressions': 0,
     'max-nested-callbacks': [0, 5],
   },
   settings: {

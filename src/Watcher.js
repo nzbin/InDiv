@@ -1,4 +1,6 @@
-class Watcher {
+import Utils from './Utils';
+
+export default class Watcher {
   constructor(data, watcher, updater, render) {
     this.data = data;
     this.watcher = watcher;

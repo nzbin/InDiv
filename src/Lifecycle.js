@@ -1,4 +1,6 @@
-class Lifecycle {
+import Utils from './Utils';
+
+export default class Lifecycle {
   constructor() {
     this.declareTemplate = '';
     this.state = {};
@@ -27,7 +29,7 @@ class Lifecycle {
       }
     }
     if (newState && newState instanceof Object) {
-      for (var key in newState) {
+      for (let key in newState) {
         if (this.state[key] && this.state[key] !== newState[key]) this.state[key] = newState[key];
       }
     }

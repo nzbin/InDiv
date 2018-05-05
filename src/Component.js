@@ -1,4 +1,8 @@
-class Component extends Lifecycle {
+import Lifecycle from './Lifecycle';
+import Compile from './Compile';
+import Watcher from './Watcher';
+
+export default class Component extends Lifecycle {
   constructor(declareTemplateName, props) {
     super();
     this.declareTemplateName = declareTemplateName;
@@ -29,7 +33,7 @@ class Component extends Lifecycle {
       this.$initProps(this.preProps);
       this.propsWatcher = new Watcher(this.props, this.$watchState.bind(this), this.$updateProps.bind(this), this.$reRender.bind(this));
     }
-    this.stateWatcher = new Watcher(this.state, this.$watchState.bind(this), null ,this.$reRender.bind(this));
+    this.stateWatcher = new Watcher(this.state, this.$watchState.bind(this), null, this.$reRender.bind(this));
   }
 
   $updateProps(key, newVal) {
@@ -65,7 +69,7 @@ class Component extends Lifecycle {
       }
     }
     if (newProps && newProps instanceof Object) {
-      for (var key in newProps) {
+      for (let key in newProps) {
         if (this.props[key] && this.props[key] !== newProps[key]) {
           this.props[key] = newProps[key];
         }

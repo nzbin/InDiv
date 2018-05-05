@@ -1,0 +1,32 @@
+{
+  "name": "router",
+  "version": "1.0.0",
+  "description": "a simple and naive front-end router and DOM render 一个图样、图乃义务的前端路由和DOM渲染",
+  "main": ".eslintrc.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel ./demo/index.html -d build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DimaLiLongJi/router.js.git"
+  },
+  "author": "DimaLiLongJi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DimaLiLongJi/router.js/issues"
+  },
+  "homepage": "https://github.com/DimaLiLongJi/router.js#readme",
+  "dependencies": {
+    "babel-eslint": "^8.2.0",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^11.1.1",
+    "eslint-config-react": "^1.1.7",
+    "eslint-import-resolver-babel-module": "^4.0.0-beta.3",
+    "eslint-import-resolver-webpack": "^0.8.4",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-react": "^7.5.1",
+    "eslint-plugin-import": "^2.11.0",
+    "parcel-bundler": "^1.8.1"
+  }
+}

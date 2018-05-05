@@ -1,4 +1,6 @@
-class Router {
+import Utils from './Utils';
+
+export default class Router {
   constructor() {
     this.routes = {};
     this.currentUrl = '';

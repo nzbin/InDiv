@@ -35,7 +35,7 @@ class R1 extends Controller {
     super();
     this.state = { a: 1 };
     // this.declareTemplate = '<p rt-click="this.showAlert()">R1 点我然后打开控制台看看</p><pComponent1/><pComponent2/>';
-    this.declareTemplate = '<p rt-click="this.showAlert()">R1 点我然后打开控制台看看</p><pComponent1/>';
+    this.declareTemplate = '<p rt-on:click="this.showAlert()">R1 点我然后打开控制台看看</p><pComponent1/>';
     this.declareComponents = {
       pComponent1: new PComponent('pComponent1', {
         ax: 'a', // key in this.state

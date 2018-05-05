@@ -41,6 +41,18 @@ export default class Component extends Lifecycle {
     window.routerController.state[controllerStateKey] = newVal;
   }
 
+  $render() {
+    const dom = document.getElementById(`component_${this.declareTemplateName}`);
+    if (dom && dom.hasChildNodes()) {
+      let childs = dom.childNodes;
+      for (let i = childs.length - 1; i >= 0; i--) {
+        dom.removeChild(childs.item(i));
+      }
+    }
+    this.compile = new Compile(`#component_${this.declareTemplateName}`, this);
+    if (this.$hasRender) this.$hasRender();
+  }
+
   $reRender() {
     const dom = document.getElementById(`component_${this.declareTemplateName}`);
     if (dom && dom.hasChildNodes()) {
@@ -50,12 +62,8 @@ export default class Component extends Lifecycle {
       }
     }
     if (this.$onDestory) this.$onDestory();
-    this.renderDom();
-    if (this.$hasRender) this.$hasRender();
-  }
-
-  renderDom() {
     this.compile = new Compile(`#component_${this.declareTemplateName}`, this);
+    if (this.$hasRender) this.$hasRender();
   }
 
   setProps(newProps) {

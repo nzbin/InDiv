@@ -1,22 +1,36 @@
 {
-  "name": "router",
+  "name": "triangleJS",
   "version": "1.0.0",
-  "description": "a simple and naive front-end router and DOM render 一个图样、图乃义务的前端路由和DOM渲染",
-  "main": "./src/index.js",
+  "description": "A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。",
+  "main": "build/index.js",
+  "keywords": [
+    "mvvm",
+    "model",
+    "view",
+    "Class",
+    "controller",
+    "front-end",
+    "router",
+    "DOM",
+    "render",
+    "triangle",
+    "framework"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "parcel ./demo/index.html -d dist"
+    "start": "parcel ./demo/index.html -d dist",
+    "build": "parcel build ./src/index.js -d build"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DimaLiLongJi/router.js.git"
+    "url": "git+https://github.com/DimaLiLongJi/triangleJS.git"
   },
   "author": "DimaLiLongJi",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/DimaLiLongJi/router.js/issues"
+    "url": "https://github.com/DimaLiLongJi/triangleJS/issues"
   },
-  "homepage": "https://github.com/DimaLiLongJi/router.js#readme",
+  "homepage": "https://github.com/DimaLiLongJi/triangleJS#readme",
   "devDependencies": {
     "babel-eslint": "^8.2.0",
     "eslint": "^4.19.1",

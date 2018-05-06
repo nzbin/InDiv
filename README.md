@@ -1,6 +1,6 @@
-# router.js
+# triangleJS
 
-a simple and naive front-end router and DOM render 一个图样、图乃义务的前端路由和DOM渲染
+A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 
 ## demo
   - `npm run start`
@@ -86,7 +86,7 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
     constructor(name, props) {
       super(name, props);
       this.declareTemplate = `
-        <p rt-click="this.componentClick()">被替换的组件</p>
+        <p tr-click="this.componentClick()">被替换的组件</p>
       `;
       this.state = {b: 100};
     }
@@ -122,7 +122,7 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
       super();
       this.state = {a: 1};
       this.declareTemplate = `
-        <p rt-on:click="this.showAlert()">R1 点我然后打开控制台看看</p>
+        <p tr-on:click="this.showAlert()">R1 点我然后打开控制台看看</p>
         <pComponent1/>
         <pComponent2/>
       `;
@@ -166,16 +166,16 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
   ```
 
 5. Template Syntax
-  - 规定：指令以 rt-xxx 命名
-  - rt-text rt-html rt-model rt-class rt-bind
-  - 事件指令, 如 rt-on:click
-  - Text1: `this.declareTemplate = '<p rt-text="this.state.b"></p>';`
+  - 规定：指令以 tr-xxx 命名
+  - tr-text tr-html tr-model tr-class tr-bind
+  - 事件指令, 如 tr-on:click
+  - Text1: `this.declareTemplate = '<p tr-text="this.state.b"></p>';`
   - Text2: `this.declareTemplate = '<p>{{this.state.b}}</p>';`
-  - HTML: `this.declareTemplate = '<p rt-html="this.state.c"></p>';`
-  - Model for input: `this.declareTemplate = '<p rt-model="this.state.c"></p>';`
-  - Class: `this.declareTemplate = '<p  class="b" rt-class="this.state.a"></p>';`
-  - Directives: ues `rt-on:event`
-    - `this.declareTemplate = '<p rt-on:click="this.componentClick()"></p>';`
+  - HTML: `this.declareTemplate = '<p tr-html="this.state.c"></p>';`
+  - Model for input: `this.declareTemplate = '<p tr-model="this.state.c"></p>';`
+  - Class: `this.declareTemplate = '<p  class="b" tr-class="this.state.a"></p>';`
+  - Directives: ues `tr-on:event`
+    - `this.declareTemplate = '<p tr-on:click="this.componentClick()"></p>';`
 
 6. Data monitor: this.state && this.setState
   - use `this.state: Object` and `this.setState(parmars: Function || Object)`

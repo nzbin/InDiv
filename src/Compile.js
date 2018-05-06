@@ -132,7 +132,7 @@ export default class Compile {
   }
 
   isDirective(attr) {
-    return attr.indexOf('rt-') === 0;
+    return attr.indexOf('tr-') === 0;
   }
 
   isEventDirective(event) {

@@ -15,3 +15,13 @@ export {
   Controller,
   Router,
 };
+
+module.exports = {
+  Utils,
+  Lifecycle,
+  Watcher,
+  Compile,
+  Component,
+  Controller,
+  Router,
+};

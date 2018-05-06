@@ -1,4 +1,5 @@
-import { Component, Controller, Router } from '../src';
+// import { Component, Controller, Router } from '../src';
+const { Component, Controller, Router } = require('../src');
 
 class PComponent extends Component {
   constructor(name, props) {

@@ -65,6 +65,7 @@ module.exports = {
     'react/jsx-uses-react': 1,
     'react/jsx-uses-vars': 1,
     'react/prop-types': 0,
+    'no-alert': 0,
     'max-params': [0, 20],
     'no-unused-expressions': 0,
     'max-nested-callbacks': [0, 5],

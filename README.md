@@ -85,7 +85,9 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
   class pComponent extends Component {
     constructor(name, props) {
       super(name, props);
-      this.declareTemplate = '<p rt-click="this.componentClick()">被替换的组件</p>';
+      this.declareTemplate = `
+        <p rt-click="this.componentClick()">被替换的组件</p>
+      `;
       this.state = {b: 100};
     }
     $onInit() {
@@ -119,7 +121,11 @@ a simple and naive front-end router and DOM render 一个图样、图乃义务�
     constructor() {
       super();
       this.state = {a: 1};
-      this.declareTemplate = '<p rt-on:click="this.showAlert()">R1 点我然后打开控制台看看</p><pComponent1/><pComponent2/>';
+      this.declareTemplate = `
+        <p rt-on:click="this.showAlert()">R1 点我然后打开控制台看看</p>
+        <pComponent1/>
+        <pComponent2/>
+      `;
       this.declareComponents = {
         pComponent1: new pComponent('pComponent1', {
           ax: 'a', // key in this.state

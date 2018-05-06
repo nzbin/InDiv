@@ -1,5 +1,5 @@
 {
-  "name": "triangleJS",
+  "name": "trianglejs",
   "version": "1.0.0",
   "description": "A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。",
   "main": "build/index.js",
@@ -23,14 +23,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DimaLiLongJi/triangleJS.git"
+    "url": "git+https://github.com/DimaLiLongJi/trianglejs.git"
   },
   "author": "DimaLiLongJi",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/DimaLiLongJi/triangleJS/issues"
+    "url": "https://github.com/DimaLiLongJi/trianglejs/issues"
   },
-  "homepage": "https://github.com/DimaLiLongJi/triangleJS#readme",
+  "homepage": "https://github.com/DimaLiLongJi/trianglejs#readme",
   "devDependencies": {
     "babel-eslint": "^8.2.0",
     "eslint": "^4.19.1",

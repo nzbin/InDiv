@@ -1,4 +1,4 @@
-# triangleJS
+# trianglejs
 
 A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 

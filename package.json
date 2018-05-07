@@ -1,6 +1,6 @@
 {
   "name": "trianglejs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。",
   "main": "build/index.js",
   "keywords": [

@@ -1,6 +1,7 @@
-import Utils from './Utils';
+// import Utils from './Utils';
+const Utils = require('./Utils');
 
-export default class Router {
+class Router {
   constructor() {
     this.routes = {};
     this.currentUrl = '';
@@ -73,3 +74,6 @@ export default class Router {
     return Promise.resolve();
   }
 }
+
+// export default Router;
+module.exports = Router;

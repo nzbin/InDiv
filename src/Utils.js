@@ -1,4 +1,4 @@
-export default class Utils {
+class Utils {
   constructor() {
     this.toString = Object.prototype.toString;
   }
@@ -122,3 +122,6 @@ export default class Utils {
     this.setCookie(name, -1, -1);
   }
 }
+
+// export default Utils;
+module.exports = Utils;

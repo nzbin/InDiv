@@ -1,6 +1,7 @@
-import Utils from './Utils';
+// import Utils from './Utils';
+const Utils = require('./Utils');
 
-export default class Lifecycle {
+class Lifecycle {
   constructor() {
     this.declareTemplate = '';
     this.state = {};
@@ -35,3 +36,6 @@ export default class Lifecycle {
     }
   }
 }
+
+// export default Lifecycle;
+module.exports = Lifecycle;

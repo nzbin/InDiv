@@ -1,8 +1,11 @@
-import Lifecycle from './Lifecycle';
-import Watcher from './Watcher';
-import Compile from './Compile';
+// import Lifecycle from './Lifecycle';
+// import Watcher from './Watcher';
+// import Compile from './Compile';
+const Lifecycle = require('./Lifecycle');
+const Watcher = require('./Watcher');
+const Compile = require('./Compile');
 
-export default class Controller extends Lifecycle {
+class Controller extends Lifecycle {
   constructor() {
     super();
     this.declareTemplate = '';
@@ -76,3 +79,6 @@ export default class Controller extends Lifecycle {
     if (this.$hasRender) this.$hasRender();
   }
 }
+
+// export default Controller;
+module.exports = Controller;

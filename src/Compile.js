@@ -60,7 +60,7 @@ class CompileUtil {
   }
 }
 
-export default class Compile {
+class Compile {
   constructor(el, vm) {
     this.$vm = vm;
     this.$el = this.isElementNode(el) ? el : document.querySelector(el);
@@ -147,3 +147,5 @@ export default class Compile {
   //   return node.nodeType == 3;
   // }
 }
+// export default Compile;
+module.exports = Compile;

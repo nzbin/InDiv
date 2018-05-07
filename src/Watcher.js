@@ -1,6 +1,7 @@
-import Utils from './Utils';
+// import Utils from './Utils';
+const Utils = require('./Utils');
 
-export default class Watcher {
+class Watcher {
   constructor(data, watcher, updater, render) {
     this.data = data;
     this.watcher = watcher;
@@ -38,3 +39,6 @@ export default class Watcher {
     }
   }
 }
+
+// export default Watcher;
+module.exports = Watcher;

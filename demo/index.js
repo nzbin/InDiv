@@ -1,5 +1,8 @@
-import { Component, Controller, Router } from '../src';
+// import { Component, Controller, Router } from '../src';
 // const { Component, Controller, Router } = require('../src');
+
+import { Component, Controller, Router } from '../build';
+// const { Component, Controller, Router } = require('../build');
 
 class PComponent extends Component {
   constructor(name, props) {
@@ -43,7 +46,7 @@ class R1 extends Controller {
     this.declareTemplate = (`
       <p tr-on:click="this.showAlert()">R1 点我然后打开控制台看看</p>
       <pComponent1/><pComponent2/>
-      <p tr-on:click="this.showAlert()">R1 点我然后打开控制台看看</p>
+      <p>{{this.state.b}}</p>
     `);
     this.declareComponents = {
       pComponent1: new PComponent('pComponent1', {

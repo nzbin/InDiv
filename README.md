@@ -1,4 +1,4 @@
-# trianglejs
+# easiest
 
 A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 
@@ -86,7 +86,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
     constructor(name, props) {
       super(name, props);
       this.declareTemplate = `
-        <p tr-click="this.componentClick()">被替换的组件</p>
+        <p es-on:click="this.componentClick()">被替换的组件</p>
       `;
       this.state = {b: 100};
     }
@@ -122,7 +122,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
       super();
       this.state = {a: 1};
       this.declareTemplate = `
-        <p tr-on:click="this.showAlert()">R1 点我然后打开控制台看看</p>
+        <p es-on:click="this.showAlert()">R1 点我然后打开控制台看看</p>
         <pComponent1/>
         <pComponent2/>
       `;
@@ -166,16 +166,16 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   ```
 
 5. Template Syntax
-  - 规定：指令以 tr-xxx 命名
-  - tr-text tr-html tr-model tr-class tr-bind
-  - 事件指令, 如 tr-on:click
-  - Text1: `this.declareTemplate = '<p tr-text="this.state.b"></p>';`
+  - 规定：指令以 esxxx 命名
+  - estext eshtml esmodel esclass esbind
+  - 事件指令, 如 eson:click
+  - Text1: `this.declareTemplate = '<p es-text="this.state.b"></p>';`
   - Text2: `this.declareTemplate = '<p>{{this.state.b}}</p>';`
-  - HTML: `this.declareTemplate = '<p tr-html="this.state.c"></p>';`
-  - Model for input: `this.declareTemplate = '<p tr-model="this.state.c"></p>';`
-  - Class: `this.declareTemplate = '<p  class="b" tr-class="this.state.a"></p>';`
-  - Directives: ues `tr-on:event`
-    - `this.declareTemplate = '<p tr-on:click="this.componentClick()"></p>';`
+  - HTML: `this.declareTemplate = '<p es-html="this.state.c"></p>';`
+  - Model for input: `this.declareTemplate = '<p es-model="this.state.c"></p>';`
+  - Class: `this.declareTemplate = '<p  class="b" es-class="this.state.a"></p>';`
+  - Directives: ues `es-on:event`
+    - `this.declareTemplate = '<p es-on:click="this.componentClick()"></p>';`
 
 6. Data monitor: this.state && this.setState
   - use `this.state: Object` and `this.setState(parmars: Function || Object)`

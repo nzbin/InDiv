@@ -132,7 +132,7 @@ class Compile {
   }
 
   isDirective(attr) {
-    return attr.indexOf('tr-') === 0;
+    return attr.indexOf('es-') === 0;
   }
 
   isEventDirective(event) {

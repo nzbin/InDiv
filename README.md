@@ -25,6 +25,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   - add new life cycle: `$routeChange` in class `Router`
   - optimize `Controller` and `Component`
   - fix lifecycle of class `Component`
+
 5. 2018-05-02 optimize `Component` and `Controller`
   - add `props` in `Component` when new an instance in `Controller`
   - add two types for `props` for `Component` : value or action
@@ -32,13 +33,19 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   - update the declaration of `Component` in `Controller`
   - add new function `setProps` for update `props` in `Component`
   - add new lifecycle `$hasRender` for update `props` in `Component` and `Controller`
+
 6. 2018-05-03/04 optimize
   - add new class `Utils`
   - add new class `Compile`
   - change renderComponent and use class `Compile`
   - add new **Template Syntax**
 
-
+7. 2018-05-08 add `Watcher`
+  - u can use this class `Watcher` to watch some data `new Watcher(data, func.bind(this))`
+  - `func` must respect two arguments `(oldData, newData)` like
+    ```
+    watchSomething(oldData, newData) {}
+    ```
 
 ## Basic Usage
 

@@ -73,6 +73,7 @@ class CompileUtilForRepeat {
   modelUpdater(node, value, exp, vm) {
     node.value = typeof value === 'undefined' ? '' : value;
     const val = exp.replace(/(this.state.)|(this.props)/, '');
+    console.log('val', val);
     const fn = function () {
       if (/(this.state.).*/.test(exp)) vm.state[val] = node.value;
       if (/(this.props.).*/.test(exp)) vm.props[val] = node.value;
@@ -88,11 +89,7 @@ class CompileUtilForRepeat {
       if (f === 'this') return;
       fn = fn[f];
     });
-    if (eventType && fn) {
-      node.addEventListener('click', () => { console.log('ccc'); });
-      console.log('node', node);
-      // node.addEventListener(eventType, fn.bind(vm), false);
-    }
+    if (eventType && fn) node.addEventListener(eventType, fn.bind(vm), false);
   }
 }
 
@@ -186,8 +183,7 @@ class CompileUtil {
             const dir = attrName.substring(3);
             const exp = attr.value;
             if (this.isEventDirective(dir)) {
-              console.log('1dirdirdirdirdirdir');
-              // new CompileUtilForRepeat().eventHandler(node, vm, exp, dir);
+              new CompileUtilForRepeat().eventHandler(newElement, vm, exp, dir);
             } else {
               new CompileUtilForRepeat().bind(newElement, val, key, dir, exp, vm);
             }

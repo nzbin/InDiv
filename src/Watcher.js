@@ -1,4 +1,3 @@
-// import Utils from './Utils';
 const Utils = require('./Utils');
 
 class Watcher {
@@ -40,5 +39,4 @@ class Watcher {
   }
 }
 
-// export default Watcher;
 module.exports = Watcher;

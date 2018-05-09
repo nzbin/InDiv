@@ -1,4 +1,3 @@
-// import Utils from './Utils';
 const Utils = require('./Utils');
 
 class Lifecycle {
@@ -37,5 +36,4 @@ class Lifecycle {
   }
 }
 
-// export default Lifecycle;
 module.exports = Lifecycle;

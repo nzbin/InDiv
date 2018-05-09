@@ -1,4 +1,3 @@
-// import Utils from './Utils';
 const Utils = require('./Utils');
 
 class Router {
@@ -75,5 +74,4 @@ class Router {
   }
 }
 
-// export default Router;
 module.exports = Router;

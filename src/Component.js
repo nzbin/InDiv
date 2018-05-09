@@ -1,6 +1,3 @@
-// import Lifecycle from './Lifecycle';
-// import Compile from './Compile';
-// import Watcher from './Watcher';
 const Lifecycle = require('./Lifecycle');
 const Compile = require('./Compile');
 const Watcher = require('./Watcher');
@@ -89,5 +86,4 @@ class Component extends Lifecycle {
   }
 }
 
-// export default Component;
 module.exports = Component;

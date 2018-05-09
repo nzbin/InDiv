@@ -1,8 +1,4 @@
-// import { Component, Controller, Router } from '../src';
-// const { Component, Controller, Router } = require('../src');
-
-import { Component, Controller, Router } from '../build';
-// const { Component, Controller, Router } = require('../build');
+import { Component, Controller, Router } from '../src';
 
 class PComponent extends Component {
   constructor(name, props) {
@@ -10,7 +6,8 @@ class PComponent extends Component {
     // this.declareTemplate = '<p es-on:click="this.componentClick()">被替换的组件</p>';
     // this.declareTemplate = '<p es-on:click="this.componentClick()" es-text="this.state.b"></p>';
     this.declareTemplate = `
-      <p es-on:click="this.componentClick()">{{this.props.ax}}</p>
+    <p es-repeat="let a in this.state.d"  es-on:click="this.componentClick()" es-class="this.state.a">{{a.z}}</p>
+    <p es-on:click="this.componentClick()">{{this.props.ax}}</p>
     `;
     // this.declareTemplate = '<p es-on:click="this.componentClick()" es-html="this.state.c"></p>';
     // this.declareTemplate = '<p es-on:click="this.componentClick()" class="b" es-class="this.state.a">trclass</p>';
@@ -19,13 +16,23 @@ class PComponent extends Component {
       a: 'a',
       b: 100,
       c: '<p>1111</p>',
+      d: [
+        {
+          z: 111111111111111,
+          b: 'a',
+        },
+        {
+          z: 33333333333333,
+          b: 'a',
+        },
+      ],
     };
   }
   $onInit() {
     console.log('props', this.props);
   }
   componentClick() {
-    // alert('点击了组件');
+    alert('点击了组件');
     this.setState({ b: 2 });
     this.setProps({ ax: 5 });
     // this.props.b(3);
@@ -43,9 +50,10 @@ class R1 extends Controller {
       a: 1,
       b: 2,
     };
+    // <pComponent2/>
     this.declareTemplate = (`
       <p es-on:click="this.showAlert()">R1 点我然后打开控制台看看</p>
-      <pComponent1/><pComponent2/>
+      <pComponent1/>
       <p>{{this.state.b}}</p>
     `);
     this.declareComponents = {
@@ -53,10 +61,10 @@ class R1 extends Controller {
         ax: 'a', // key in this.state
         b: this.getProps.bind(this), // action in this
       }),
-      pComponent2: new PComponent('pComponent2', {
-        ax: 'a', // key in this.state
-        b: this.getProps.bind(this), // action in this
-      }),
+      // pComponent2: new PComponent('pComponent2', {
+      //   ax: 'a', // key in this.state
+      //   b: this.getProps.bind(this), // action in this
+      // }),
     };
   }
   $onInit() {

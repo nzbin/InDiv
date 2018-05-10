@@ -7,7 +7,8 @@ class PComponent extends Component {
     // this.declareTemplate = '<p es-on:click="this.componentClick()" es-text="this.state.b"></p>';
     this.declareTemplate = `
       <p es-repeat="let a in this.state.d"  es-on:click="this.componentClick()" es-class="this.state.a">{{a.z}}</p>
-      <p es-on:click="this.componentClick()">{{this.props.ax}}</p>
+      <p es-on:click="this.componentClick($event, '111', this.state.b, 1, false, true)">{{this.state.b}}</p>
+      <input es-repeat="let a in this.state.d" es-model="a.z" />
     `;
     // this.declareTemplate = '<p es-on:click="this.componentClick()" es-html="this.state.c"></p>';
     // this.declareTemplate = '<p es-on:click="this.componentClick()" class="b" es-class="this.state.a">trclass</p>';
@@ -31,11 +32,12 @@ class PComponent extends Component {
   $onInit() {
     console.log('props', this.props);
   }
-  componentClick() {
+  componentClick(e) {
+    console.log('e', e);
     alert('点击了组件');
     this.setState({ b: 2 });
     this.setProps({ ax: 5 });
-    // this.props.b(3);
+    this.props.b(3);
   }
   $watchState(oldData, newData) {
     console.log('oldData Component:', oldData);

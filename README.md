@@ -47,6 +47,8 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
     watchSomething(oldData, newData) {}
     ```
 
+8. 2018-05-03/04 add Template Syntax : `es-repeat="let x in this.state.xxx"`
+
 ## Basic Usage
 
 1. Create a root DOM for route which id is root:
@@ -176,13 +178,14 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   - 规定：指令以 esxxx 命名
   - estext eshtml esmodel esclass esbind
   - 事件指令, 如 eson:click
-  - Text1: `this.declareTemplate = '<p es-text="this.state.b"></p>';`
-  - Text2: `this.declareTemplate = '<p>{{this.state.b}}</p>';`
-  - HTML: `this.declareTemplate = '<p es-html="this.state.c"></p>';`
-  - Model for input: `this.declareTemplate = '<p es-model="this.state.c"></p>';`
-  - Class: `this.declareTemplate = '<p  class="b" es-class="this.state.a"></p>';`
-  - Directives: ues `es-on:event`
-    - `this.declareTemplate = '<p es-on:click="this.componentClick()"></p>';`
+    - Text1: `this.declareTemplate = '<p es-text="this.state.b"></p>';`
+    - Text2: `this.declareTemplate = '<p>{{this.state.b}}</p>';`
+    - HTML: `this.declareTemplate = '<p es-html="this.state.c"></p>';`
+    - Model for input: `this.declareTemplate = '<p es-model="this.state.c"></p>';`
+    - Class: `this.declareTemplate = '<p  class="b" es-class="this.state.a"></p>';`
+    - Directives: ues `es-on:event`
+      - `this.declareTemplate = '<p es-on:click="this.componentClick()"></p>';`
+    - Repeat: `es-repeat="let a in this.state.d"` **can't use es-model in Component which has `es-repeat`**
 
 6. Data monitor: this.state && this.setState
   - use `this.state: Object` and `this.setState(parmars: Function || Object)`
@@ -190,8 +193,17 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   - if u want to change State, plz use `this.setState`, parmars can be `Object` or `Function` which must return an `Object`
   - and u can recive this change in life cycle `$watchState(oldData, newData)`
 
+7. `Watcher`
+  - import {Watcher}
+  - Watcher expects two arguments: `data, watcher`
+  - data is an Object
+  - watcher is a function which has two arguments: `oldData, newData`
+    ```
+    new Watcher(this.object, (oldData, newData) => {})
+    ```
 
-7. Life cycle is:
+
+8. Life cycle is:
   - Component
     ```javascript
       constructor()
@@ -227,6 +239,7 @@ route => controller => component
 - [x] 路由变化渲染dom
 - [x] 数据监听
 - [x] 双向绑定html模板
+- [x] es-repeat (1/3)
 - [x] 组件传入传出props
 - [x] 组件渲染
 - [X] 组件化(3/3)

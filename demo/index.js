@@ -6,8 +6,8 @@ class PComponent extends Component {
     // this.declareTemplate = '<p es-on:click="this.componentClick()">被替换的组件</p>';
     // this.declareTemplate = '<p es-on:click="this.componentClick()" es-text="this.state.b"></p>';
     this.declareTemplate = `
-    <p es-repeat="let a in this.state.d"  es-on:click="this.componentClick()" es-class="this.state.a">{{a.z}}</p>
-    <p es-on:click="this.componentClick()">{{this.props.ax}}</p>
+      <p es-repeat="let a in this.state.d"  es-on:click="this.componentClick()" es-class="this.state.a">{{a.z}}</p>
+      <p es-on:click="this.componentClick()">{{this.props.ax}}</p>
     `;
     // this.declareTemplate = '<p es-on:click="this.componentClick()" es-html="this.state.c"></p>';
     // this.declareTemplate = '<p es-on:click="this.componentClick()" class="b" es-class="this.state.a">trclass</p>';

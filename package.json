@@ -1,6 +1,6 @@
 {
   "name": "easiest",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。",
   "main": "build/index.js",
   "keywords": [
@@ -19,7 +19,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "parcel ./demo/index.html -d dist --open",
-    "build": "parcel build ./src/index.js -d build"
+    "build": "parcel build ./src/index.js -d build",
+    "pub-prod": "npm run build && npm publish"
   },
   "repository": {
     "type": "git",

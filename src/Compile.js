@@ -22,19 +22,22 @@ class CompileUtilForRepeat {
     return value;
   }
 
-  bind(node, val, key, dir, exp, vm) {
+  bind(node, val, key, dir, exp, index, vm, watchData) {
     let value;
     if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
       value = this._getVMRepeatVal(val, exp, key);
     } else {
       value = this._getVMVal(vm, exp);
     }
+    const watchValue = this._getVMVal(vm, watchData);
+    // console.log('watchData', watchData);
+    // const watchDataName = watchData.split('.');
     this.text(node, val, key, vm);
     const updaterFn = this[`${dir}Updater`];
     switch (dir) {
-    case 'model':
-      updaterFn && updaterFn.call(this, node, value, exp, vm);
-      break;
+    // case 'model':
+    //   updaterFn && updaterFn.call(this, node, value, exp, key, index, watchValue, watchData, vm);
+    //   break;
     default:
       updaterFn && updaterFn.call(this, node, value);
     }
@@ -70,16 +73,28 @@ class CompileUtilForRepeat {
     node.className = className + space + value;
   }
 
-  modelUpdater(node, value, exp, vm) {
-    node.value = typeof value === 'undefined' ? '' : value;
-    const val = exp.replace(/(this.state.)|(this.props)/, '');
-    console.log('val', val);
-    const fn = function () {
-      if (/(this.state.).*/.test(exp)) vm.state[val] = node.value;
-      if (/(this.props.).*/.test(exp)) vm.props[val] = node.value;
-    };
-    node.addEventListener('change', fn, false);
-  }
+  // modelUpdater(node, value, exp, key, index, watchValue, watchData, vm) {
+  //   node.value = typeof value === 'undefined' ? '' : value;
+  //   const val = exp.replace(`${key}.`, '');
+  //   const valKey = watchData.replace(/(this.state.)|(this.props)/, '');
+  //   // console.log('valKey', valKey);
+  //   const fn = function () {
+  //     // console.log('exp', val);
+  //     const backup = [].concat(watchValue);
+  //     backup[index][exp] = node.value;
+  //     console.log('backup', backup);
+  //     // console.log('111', node.value);
+  //     // console.log('value', value);
+  //     // console.log('index', index);
+  //     // console.log('watchValue', watchValue);
+  //     // console.log('watchData', watchData);
+  //     // value = node.value;
+  //     console.log('vm.state[valKey]', vm.state[valKey]);
+  //     // if (/(this.state.).*/.test(watchData)) vm.state[valKey] = backup;
+  //     // if (/(this.props.).*/.test(watchData)) vm.props[valKey] = backup;
+  //   };
+  //   node.addEventListener('change', fn, false);
+  // }
 
   eventHandler(node, vm, exp, event) {
     const eventType = event.split(':')[1];
@@ -164,7 +179,6 @@ class CompileUtil {
     node.value = typeof value === 'undefined' ? '' : value;
     const val = exp.replace(/(this.state.)|(this.props)/, '');
     const fn = function () {
-      console.log('fuck');
       if (/(this.state.).*/.test(exp)) vm.state[val] = node.value;
       if (/(this.props.).*/.test(exp)) vm.props[val] = node.value;
     };
@@ -173,7 +187,8 @@ class CompileUtil {
 
   repeatUpdater(node, value, expFather, vm) {
     const key = expFather.split(' ')[1];
-    value.forEach(val => {
+    const watchData = expFather.split(' ')[3];
+    value.forEach((val, index) => {
       const newElement = node.cloneNode(true);
       const nodeAttrs = newElement.attributes;
       if (nodeAttrs) {
@@ -185,7 +200,7 @@ class CompileUtil {
             if (this.isEventDirective(dir)) {
               new CompileUtilForRepeat().eventHandler(newElement, vm, exp, dir);
             } else {
-              new CompileUtilForRepeat().bind(newElement, val, key, dir, exp, vm);
+              new CompileUtilForRepeat().bind(newElement, val, key, dir, exp, index, vm, watchData);
             }
             // node.removeAttribute(attrName);
           }

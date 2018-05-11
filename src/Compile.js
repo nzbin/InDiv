@@ -80,7 +80,7 @@ class CompileUtilForRepeat {
     node.addEventListener('change', fn, false);
   }
 
-  eventHandler(node, vm, exp, event) {
+  eventHandler(node, vm, exp, event, key, val) {
     const eventType = event.split(':')[1];
     const fnList = exp.replace(/\(.*\)/, '').split('.');
     const args = exp.match(/\((.*)\)/)[1].replace(/ /g, '').split(',');
@@ -89,7 +89,20 @@ class CompileUtilForRepeat {
       if (f === 'this') return;
       fn = fn[f];
     });
-    if (eventType && fn) node.addEventListener(eventType, () => { fn.call(vm); }, false);
+    const func = (event) => {
+      let argsList = [];
+      args.forEach(arg => {
+        if (arg === '') return false;
+        if (arg === '$event') argsList.push(event);
+        if (/(this.).*/g.test(arg) || /(this.state.).*/g.test(arg) || /(this.props.).*/g.test(arg)) argsList.push(this._getVMVal(vm, arg));
+        if (/\'.*\'/g.test(arg)) argsList.push(arg.match(/\'(.*)\'/)[1]);
+        if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) argsList.push(Number(arg));
+        if (arg === 'true' || arg === 'false') argsList.push(arg === 'true');
+        if (arg.indexOf(key) === 0 || arg.indexOf(`${key}.`) === 0) argsList.push(this._getVMRepeatVal(val, arg, key));
+      });
+      fn.apply(vm, argsList);
+    };
+    if (eventType && fn) node.addEventListener(eventType, func, false);
   }
 }
 
@@ -183,7 +196,7 @@ class CompileUtil {
             const dir = attrName.substring(3);
             const exp = attr.value;
             if (this.isEventDirective(dir)) {
-              new CompileUtilForRepeat().eventHandler(newElement, vm, exp, dir);
+              new CompileUtilForRepeat().eventHandler(newElement, vm, exp, dir, key, val);
             } else {
               new CompileUtilForRepeat().bind(newElement, val, key, dir, exp, index, vm, watchData);
             }
@@ -299,10 +312,11 @@ class Compile {
       args.forEach(arg => {
         if (arg === '') return false;
         if (arg === '$event') argsList.push(event);
-        if (/(this.state.).*/g.test(arg) || /(this.props.).*/g.test(arg)) argsList.push(compileUtil._getVMVal(vm, arg));
+        if (/(this.).*/g.test(arg) || /(this.state.).*/g.test(arg) || /(this.props.).*/g.test(arg)) argsList.push(compileUtil._getVMVal(vm, arg));
         if (/\'.*\'/g.test(arg)) argsList.push(arg.match(/\'(.*)\'/)[1]);
         if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) argsList.push(Number(arg));
         if (arg === 'true' || arg === 'false') argsList.push(arg === 'true');
+        // if (/(this.).*/g.test(arg) && !/(this.state.).*/g.test(arg) && !/(this.props.).*/g.test(arg)) argsList.push(this._getVMVal(vm, arg));
       });
       fn.apply(vm, argsList);
     };

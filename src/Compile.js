@@ -74,8 +74,10 @@ class CompileUtilForRepeat {
   modelUpdater(node, value, exp, key, index, watchValue, watchData, vm) {
     node.value = typeof value === 'undefined' ? '' : value;
     const val = exp.replace(`${key}.`, '');
-    const fn = function () {
-      watchValue[index][val] = node.value;
+    const fn = function (event) {
+      event.preventDefault();
+      if (event.target.value === watchValue[index][val]) return;
+      watchValue[index][val] = event.target.value;
     };
     node.addEventListener('change', fn, false);
   }
@@ -176,9 +178,10 @@ class CompileUtil {
   modelUpdater(node, value, exp, vm) {
     node.value = typeof value === 'undefined' ? '' : value;
     const val = exp.replace(/(this.state.)|(this.props)/, '');
-    const fn = function () {
-      if (/(this.state.).*/.test(exp)) vm.state[val] = node.value;
-      if (/(this.props.).*/.test(exp)) vm.props[val] = node.value;
+    const fn = function (event) {
+      event.preventDefault();
+      if (/(this.state.).*/.test(exp)) vm.state[val] = event.target.value;
+      if (/(this.props.).*/.test(exp)) vm.props[val] = event.target.value;
     };
     node.addEventListener('change', fn, false);
   }
@@ -252,7 +255,14 @@ class Compile {
     const elementCreated = document.createElement('div');
     elementCreated.innerHTML = this.$vm.declareTemplate;
     let childNodes = elementCreated.childNodes;
+    this.domRecursion(childNodes, fragment);
+  }
+
+  domRecursion(childNodes, fragment) {
     Array.from(childNodes).forEach(node => {
+      if (node.hasChildNodes()) {
+        this.domRecursion(node.childNodes, node);
+      }
       const text = node.textContent;
       const reg = /\{\{(.*)\}\}/g;
       if (this.isElementNode(node)) {
@@ -316,7 +326,6 @@ class Compile {
         if (/\'.*\'/g.test(arg)) argsList.push(arg.match(/\'(.*)\'/)[1]);
         if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) argsList.push(Number(arg));
         if (arg === 'true' || arg === 'false') argsList.push(arg === 'true');
-        // if (/(this.).*/g.test(arg) && !/(this.state.).*/g.test(arg) && !/(this.props.).*/g.test(arg)) argsList.push(this._getVMVal(vm, arg));
       });
       fn.apply(vm, argsList);
     };

@@ -43,26 +43,38 @@ class R1 extends Controller {
   constructor() {
     super();
     this.state = {
-      a: 1,
+      a: 'a',
       b: 2,
+      d: [{
+          z: 111111111111111,
+          b: 'a',
+        },
+        {
+          z: 33333333333333,
+          b: 'a',
+        },
+      ],
     };
     // <pComponent2/>
+    // <p es-on:click="this.showAlert()">R1 点我然后打开控制台看看</p>
+    //   <pComponent1/>
+    //   <pComponent2/>
+    //   <p>{{this.state.b}}</p>
     this.declareTemplate = (`
-      <p es-on:click="this.showAlert()">R1 点我然后打开控制台看看</p>
-      <pComponent1/>
-      <pComponent2/>
-      <p>{{this.state.b}}</p>
+      <div es-class="this.state.a">
+       <p es-on:click="this.showAlert()">{{this.state.b}}</p>
+      </div>
     `);
-    this.declareComponents = {
-      pComponent1: new PComponent('pComponent1', {
-        ax: 'a', // key in this.state
-        b: this.getProps.bind(this), // action in this
-      }),
-      pComponent2: new PComponent('pComponent2', {
-        ax: 'a', // key in this.state
-        b: this.getProps.bind(this), // action in this
-      }),
-    };
+    // this.declareComponents = {
+      // pComponent1: new PComponent('pComponent1', {
+      //   ax: 'a', // key in this.state
+      //   b: this.getProps.bind(this), // action in this
+      // }),
+      // pComponent2: new PComponent('pComponent2', {
+      //   ax: 'a', // key in this.state
+      //   b: this.getProps.bind(this), // action in this
+      // }),
+    // };
   }
   $onInit() {
     // console.log('is $onInit');
@@ -83,7 +95,7 @@ class R1 extends Controller {
   showAlert() {
     alert('我错了 点下控制台看看吧');
     this.setState({
-      a: 2,
+      a: 'a',
       b: 100,
     });
     console.log('state', this.state);

@@ -46,13 +46,13 @@ class R1 extends Controller {
       a: 'a',
       b: 2,
       d: [{
-          z: 111111111111111,
-          b: 'a',
-        },
-        {
-          z: 33333333333333,
-          b: 'a',
-        },
+        z: 111111111111111,
+        b: 'a',
+      },
+      {
+        z: 33333333333333,
+        b: 'a',
+      },
       ],
     };
     // <pComponent2/>
@@ -66,14 +66,14 @@ class R1 extends Controller {
       </div>
     `);
     // this.declareComponents = {
-      // pComponent1: new PComponent('pComponent1', {
-      //   ax: 'a', // key in this.state
-      //   b: this.getProps.bind(this), // action in this
-      // }),
-      // pComponent2: new PComponent('pComponent2', {
-      //   ax: 'a', // key in this.state
-      //   b: this.getProps.bind(this), // action in this
-      // }),
+    // pComponent1: new PComponent('pComponent1', {
+    //   ax: 'a', // key in this.state
+    //   b: this.getProps.bind(this), // action in this
+    // }),
+    // pComponent2: new PComponent('pComponent2', {
+    //   ax: 'a', // key in this.state
+    //   b: this.getProps.bind(this), // action in this
+    // }),
     // };
   }
   $onInit() {

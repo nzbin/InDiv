@@ -60,9 +60,11 @@ class R1 extends Controller {
     //   <pComponent1/>
     //   <pComponent2/>
     //   <p>{{this.state.b}}</p>
+    // <p es-on:click="this.showAlert()">{{this.state.b}}</p>
+    // <p es-repeat="let a in this.state.d">{{a.z}}</p>
     this.declareTemplate = (`
       <div es-class="this.state.a">
-       <p es-on:click="this.showAlert()">{{this.state.b}}</p>
+        <input es-repeat="let a in this.state.d" es-model="a.z" />
       </div>
     `);
     // this.declareComponents = {

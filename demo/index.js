@@ -61,8 +61,10 @@ class R1 extends Controller {
     //   <pComponent2/>
     //   <p>{{this.state.b}}</p>
     this.declareTemplate = (`
-      <div es-class="this.state.a">
-       <p es-on:click="this.showAlert()">{{this.state.b}}</p>
+      <div>
+       <div es-class="this.state.a">
+        <p es-on:click="this.showAlert()">{{this.state.b}}</p>
+       </div>
       </div>
     `);
     // this.declareComponents = {

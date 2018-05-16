@@ -266,7 +266,7 @@ class Compile {
       const text = node.textContent;
       const reg = /\{\{(.*)\}\}/g;
       if (this.isElementNode(node)) {
-        this.compile(node);
+        this.compile(node, fragment);
         if (reg.test(text)) this.compileText(node, RegExp.$1);
       }
       if (!this.isRepeatNode(node)) {
@@ -275,7 +275,7 @@ class Compile {
     });
   }
 
-  compile(node) {
+  compile(node, fragment) {
     const nodeAttrs = node.attributes;
     if (nodeAttrs) {
       Array.from(nodeAttrs).forEach(attr => {
@@ -286,7 +286,7 @@ class Compile {
           if (this.isEventDirective(dir)) {
             this.eventHandler(node, this.$vm, exp, dir);
           } else {
-            new CompileUtil(this.$fragment).bind(node, this.$vm, exp, dir);
+            new CompileUtil(fragment).bind(node, this.$vm, exp, dir);
           }
           // node.removeAttribute(attrName);
         }

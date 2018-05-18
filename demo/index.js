@@ -3,16 +3,12 @@ import { Component, Controller, Router } from '../src';
 class PComponent extends Component {
   constructor(name, props) {
     super(name, props);
-    // this.declareTemplate = '<p es-on:click="this.componentClick()">被替换的组件</p>';
-    // this.declareTemplate = '<p es-on:click="this.componentClick()" es-text="this.state.b"></p>';
     this.declareTemplate = `
-      <p es-repeat="let a in this.state.d"  es-on:click="this.componentClick()" es-class="this.state.a">{{a.z}}</p>
-      <p es-on:click="this.componentClick($event, '111', this.state.b, 1, false, true)">{{this.state.b}}</p>
-      <input es-repeat="let a in this.state.d" es-model="a.z" />
+      <div>
+        <p es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick($event, this.state.b, '111', 1, false, true, a, this.aaa)">{{a.z}}</p>
+        <input es-repeat="let a in this.state.d" es-model="a.z" />
+      </div>
     `;
-    // this.declareTemplate = '<p es-on:click="this.componentClick()" es-html="this.state.c"></p>';
-    // this.declareTemplate = '<p es-on:click="this.componentClick()" class="b" es-class="this.state.a">trclass</p>';
-    // this.declareTemplate = '<input es-model="this.state.b" />';
     this.state = {
       a: 'a',
       b: 100,
@@ -33,7 +29,6 @@ class PComponent extends Component {
     console.log('props', this.props);
   }
   componentClick(e) {
-    console.log('e', e);
     alert('点击了组件');
     this.setState({ b: 2 });
     this.setProps({ ax: 5 });
@@ -49,24 +44,55 @@ class R1 extends Controller {
   constructor() {
     super();
     this.state = {
-      a: 1,
+      a: 'a',
       b: 2,
+      d: [{
+        z: 111111111111111,
+        b: 'a',
+      },
+      {
+        z: 33333333333333,
+        b: 'a',
+      }],
+      e: [{
+        z: 232323,
+        b: 'a',
+      },
+      {
+        z: 1111,
+        b: 'a',
+      }],
     };
     // <pComponent2/>
+    // <p es-on:click="this.showAlert()">R1 点我然后打开控制台看看</p>
+    //   <pComponent1/>
+    //   <pComponent2/>
+    //   <p>{{this.state.b}}</p>
+    // <p es-on:click="this.showAlert()">{{this.state.b}}</p>
+    // <p es-repeat="let a in this.state.d">{{a.z}}</p>
+    // <input es-repeat="let a in this.state.d" es-model="a.z" />
+    // <p es-repeat="let a in this.state.d">{{a.z}}</p>
     this.declareTemplate = (`
-      <p es-on:click="this.showAlert()">R1 点我然后打开控制台看看</p>
-      <pComponent1/>
-      <p>{{this.state.b}}</p>
+      <div>
+        <pComponent1/>
+        <p es-class="this.state.a" es-repeat="let a in this.state.d">{{this.state.b}}</p>
+        <div>
+          <p es-repeat="let a in this.state.e" es-on:click="this.showAlert(a)">{{a.z}}</p>
+        </div>
+       <div es-class="this.state.a">
+        <p es-on:click="this.showAlert()">{{this.state.b}}</p>
+       </div>
+      </div>
     `);
     this.declareComponents = {
       pComponent1: new PComponent('pComponent1', {
         ax: 'a', // key in this.state
         b: this.getProps.bind(this), // action in this
       }),
-      // pComponent2: new PComponent('pComponent2', {
-      //   ax: 'a', // key in this.state
-      //   b: this.getProps.bind(this), // action in this
-      // }),
+    // pComponent2: new PComponent('pComponent2', {
+    //   ax: 'a', // key in this.state
+    //   b: this.getProps.bind(this), // action in this
+    // }),
     };
   }
   $onInit() {
@@ -85,16 +111,17 @@ class R1 extends Controller {
     console.log('oldData Controller:', oldData);
     console.log('newData Controller:', newData);
   }
-  showAlert() {
+  showAlert(a) {
     alert('我错了 点下控制台看看吧');
+    console.log('aa', a);
     this.setState({
-      a: 2,
+      a: 'a',
       b: 100,
     });
     console.log('state', this.state);
   }
   getProps(a) {
-    // alert('里面传出来了');
+    alert('里面传出来了');
     this.setState({ a: a });
   }
 }
@@ -127,7 +154,7 @@ class R2 extends Controller {
     console.log('newData Controller:', newData);
   }
   showAlert() {
-    // alert('我错了 点下控制台看看吧');
+    alert('我错了 点下控制台看看吧');
     this.setState(() => ({ a: 2 }));
   }
 }

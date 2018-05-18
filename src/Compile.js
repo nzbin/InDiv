@@ -74,13 +74,15 @@ class CompileUtilForRepeat {
   modelUpdater(node, value, exp, key, index, watchValue, watchData, vm) {
     node.value = typeof value === 'undefined' ? '' : value;
     const val = exp.replace(`${key}.`, '');
-    const fn = function () {
-      watchValue[index][val] = node.value;
+    const fn = function (event) {
+      event.preventDefault();
+      if (event.target.value === watchValue[index][val]) return;
+      watchValue[index][val] = event.target.value;
     };
     node.addEventListener('change', fn, false);
   }
 
-  eventHandler(node, vm, exp, event) {
+  eventHandler(node, vm, exp, event, key, val) {
     const eventType = event.split(':')[1];
     const fnList = exp.replace(/\(.*\)/, '').split('.');
     const args = exp.match(/\((.*)\)/)[1].replace(/ /g, '').split(',');
@@ -89,7 +91,20 @@ class CompileUtilForRepeat {
       if (f === 'this') return;
       fn = fn[f];
     });
-    if (eventType && fn) node.addEventListener(eventType, () => { fn.call(vm); }, false);
+    const func = (event) => {
+      let argsList = [];
+      args.forEach(arg => {
+        if (arg === '') return false;
+        if (arg === '$event') argsList.push(event);
+        if (/(this.).*/g.test(arg) || /(this.state.).*/g.test(arg) || /(this.props.).*/g.test(arg)) argsList.push(this._getVMVal(vm, arg));
+        if (/\'.*\'/g.test(arg)) argsList.push(arg.match(/\'(.*)\'/)[1]);
+        if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) argsList.push(Number(arg));
+        if (arg === 'true' || arg === 'false') argsList.push(arg === 'true');
+        if (arg.indexOf(key) === 0 || arg.indexOf(`${key}.`) === 0) argsList.push(this._getVMRepeatVal(val, arg, key));
+      });
+      fn.apply(vm, argsList);
+    };
+    if (eventType && fn) node.addEventListener(eventType, func, false);
   }
 }
 
@@ -137,6 +152,9 @@ class CompileUtil {
     case 'model':
       !isRepeatNode && updaterFn && updaterFn.call(this, node, this._getVMVal(vm, exp), exp, vm);
       break;
+    case 'text':
+      updaterFn && updaterFn.call(this, node, this._getVMVal(vm, exp), exp, vm);
+      break;
     case 'repeat':
       isRepeatNode && updaterFn && updaterFn.call(this, node, this._getVMRepeatVal(vm, exp), exp, vm);
       break;
@@ -163,9 +181,10 @@ class CompileUtil {
   modelUpdater(node, value, exp, vm) {
     node.value = typeof value === 'undefined' ? '' : value;
     const val = exp.replace(/(this.state.)|(this.props)/, '');
-    const fn = function () {
-      if (/(this.state.).*/.test(exp)) vm.state[val] = node.value;
-      if (/(this.props.).*/.test(exp)) vm.props[val] = node.value;
+    const fn = function (event) {
+      event.preventDefault();
+      if (/(this.state.).*/.test(exp)) vm.state[val] = event.target.value;
+      if (/(this.props.).*/.test(exp)) vm.props[val] = event.target.value;
     };
     node.addEventListener('change', fn, false);
   }
@@ -176,6 +195,11 @@ class CompileUtil {
     value.forEach((val, index) => {
       const newElement = node.cloneNode(true);
       const nodeAttrs = newElement.attributes;
+      const text = newElement.textContent;
+      const reg = /\{\{(.*)\}\}/g;
+      if (reg.test(text) && text.indexOf(`{{${key}`) >= 0) {
+        new CompileUtilForRepeat().text(newElement, val, key, vm);
+      }
       if (nodeAttrs) {
         Array.from(nodeAttrs).forEach(attr => {
           const attrName = attr.name;
@@ -183,7 +207,7 @@ class CompileUtil {
             const dir = attrName.substring(3);
             const exp = attr.value;
             if (this.isEventDirective(dir)) {
-              new CompileUtilForRepeat().eventHandler(newElement, vm, exp, dir);
+              new CompileUtilForRepeat().eventHandler(newElement, vm, exp, dir, key, val);
             } else {
               new CompileUtilForRepeat().bind(newElement, val, key, dir, exp, index, vm, watchData);
             }
@@ -239,20 +263,32 @@ class Compile {
     const elementCreated = document.createElement('div');
     elementCreated.innerHTML = this.$vm.declareTemplate;
     let childNodes = elementCreated.childNodes;
+    this.domRecursion(childNodes, fragment);
+  }
+
+  domRecursion(childNodes, fragment) {
     Array.from(childNodes).forEach(node => {
+      if (node.hasChildNodes()) {
+        this.domRecursion(node.childNodes, node);
+      }
       const text = node.textContent;
       const reg = /\{\{(.*)\}\}/g;
       if (this.isElementNode(node)) {
-        this.compile(node);
-        if (reg.test(text)) this.compileText(node, RegExp.$1);
+        if (reg.test(text)) {
+          const regText = RegExp.$1;
+          if (/(.*\{\{(this.state.).*\}\}.*)|(.*\{\{(this.props.).*\}\}.*)/g.test(text)) this.compileText(node, regText);
+        }
+        this.compile(node, fragment);
       }
       if (!this.isRepeatNode(node)) {
         fragment.appendChild(node);
+      } else if (fragment.contains(node)) {
+        fragment.removeChild(node);
       }
     });
   }
 
-  compile(node) {
+  compile(node, fragment) {
     const nodeAttrs = node.attributes;
     if (nodeAttrs) {
       Array.from(nodeAttrs).forEach(attr => {
@@ -263,7 +299,7 @@ class Compile {
           if (this.isEventDirective(dir)) {
             this.eventHandler(node, this.$vm, exp, dir);
           } else {
-            new CompileUtil(this.$fragment).bind(node, this.$vm, exp, dir);
+            new CompileUtil(fragment).bind(node, this.$vm, exp, dir);
           }
           // node.removeAttribute(attrName);
         }
@@ -299,7 +335,7 @@ class Compile {
       args.forEach(arg => {
         if (arg === '') return false;
         if (arg === '$event') argsList.push(event);
-        if (/(this.state.).*/g.test(arg) || /(this.props.).*/g.test(arg)) argsList.push(compileUtil._getVMVal(vm, arg));
+        if (/(this.).*/g.test(arg) || /(this.state.).*/g.test(arg) || /(this.props.).*/g.test(arg)) argsList.push(compileUtil._getVMVal(vm, arg));
         if (/\'.*\'/g.test(arg)) argsList.push(arg.match(/\'(.*)\'/)[1]);
         if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) argsList.push(Number(arg));
         if (arg === 'true' || arg === 'false') argsList.push(arg === 'true');
@@ -333,9 +369,9 @@ class Compile {
     return result;
   }
 
-  // isTextNode(node) {
-  //   return node.nodeType == 3;
-  // }
+  isTextNode(node) {
+    return node.nodeType === 3;
+  }
 }
 
 module.exports = Compile;

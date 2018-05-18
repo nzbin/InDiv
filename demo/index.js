@@ -62,6 +62,7 @@ class R1 extends Controller {
         z: 1111,
         b: 'a',
       }],
+      f: true,
     };
     // <pComponent2/>
     // <p es-on:click="this.showAlert()">R1 点我然后打开控制台看看</p>
@@ -74,13 +75,8 @@ class R1 extends Controller {
     // <p es-repeat="let a in this.state.d">{{a.z}}</p>
     this.declareTemplate = (`
       <div>
-        <pComponent1/>
-        <p es-class="this.state.a" es-repeat="let a in this.state.d">{{this.state.b}}</p>
-        <div>
-          <p es-repeat="let a in this.state.e" es-on:click="this.showAlert(a)">{{a.z}}</p>
-        </div>
-       <div es-class="this.state.a">
-        <p es-on:click="this.showAlert()">{{this.state.b}}</p>
+       <div es-class="this.state.a" es-if="this.state.f">
+        <p es-on:click="this.showAlert()" es-text="this.state.b"></p>
        </div>
       </div>
     `);

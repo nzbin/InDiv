@@ -4,9 +4,10 @@ class PComponent extends Component {
   constructor(name, props) {
     super(name, props);
     this.declareTemplate = `
-      <p es-repeat="let a in this.state.d"  es-on:click="this.componentClick($event, this.state.b, '111', 1, false, true, a, this.aaa)" es-class="this.state.a">{{a.z}}</p>
-      <p es-on:click="this.componentClick($event, '111', this.state.b, 111, false, true)">{{this.state.b}}</p>
-      <input es-repeat="let a in this.state.d" es-model="a.z" />
+      <div>
+        <p es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick($event, this.state.b, '111', 1, false, true, a, this.aaa)">{{a.z}}</p>
+        <input es-repeat="let a in this.state.d" es-model="a.z" />
+      </div>
     `;
     this.state = {
       a: 'a',
@@ -52,31 +53,47 @@ class R1 extends Controller {
       {
         z: 33333333333333,
         b: 'a',
+      }],
+      e: [{
+        z: 232323,
+        b: 'a',
       },
-      ],
+      {
+        z: 1111,
+        b: 'a',
+      }],
     };
     // <pComponent2/>
     // <p es-on:click="this.showAlert()">R1 点我然后打开控制台看看</p>
     //   <pComponent1/>
     //   <pComponent2/>
     //   <p>{{this.state.b}}</p>
+    // <p es-on:click="this.showAlert()">{{this.state.b}}</p>
+    // <p es-repeat="let a in this.state.d">{{a.z}}</p>
+    // <input es-repeat="let a in this.state.d" es-model="a.z" />
+    // <p es-repeat="let a in this.state.d">{{a.z}}</p>
     this.declareTemplate = (`
       <div>
+        <pComponent1/>
+        <p es-class="this.state.a" es-repeat="let a in this.state.d">{{this.state.b}}</p>
+        <div>
+          <p es-repeat="let a in this.state.e" es-on:click="this.showAlert(a)">{{a.z}}</p>
+        </div>
        <div es-class="this.state.a">
         <p es-on:click="this.showAlert()">{{this.state.b}}</p>
        </div>
       </div>
     `);
-    // this.declareComponents = {
-    // pComponent1: new PComponent('pComponent1', {
-    //   ax: 'a', // key in this.state
-    //   b: this.getProps.bind(this), // action in this
-    // }),
+    this.declareComponents = {
+      pComponent1: new PComponent('pComponent1', {
+        ax: 'a', // key in this.state
+        b: this.getProps.bind(this), // action in this
+      }),
     // pComponent2: new PComponent('pComponent2', {
     //   ax: 'a', // key in this.state
     //   b: this.getProps.bind(this), // action in this
     // }),
-    // };
+    };
   }
   $onInit() {
     // console.log('is $onInit');
@@ -94,8 +111,9 @@ class R1 extends Controller {
     console.log('oldData Controller:', oldData);
     console.log('newData Controller:', newData);
   }
-  showAlert() {
+  showAlert(a) {
     alert('我错了 点下控制台看看吧');
+    console.log('aa', a);
     this.setState({
       a: 'a',
       b: 100,

@@ -152,6 +152,9 @@ class CompileUtil {
     case 'model':
       !isRepeatNode && updaterFn && updaterFn.call(this, node, this._getVMVal(vm, exp), exp, vm);
       break;
+    case 'text':
+      updaterFn && updaterFn.call(this, node, this._getVMVal(vm, exp), exp, vm);
+      break;
     case 'repeat':
       isRepeatNode && updaterFn && updaterFn.call(this, node, this._getVMRepeatVal(vm, exp), exp, vm);
       break;
@@ -192,6 +195,11 @@ class CompileUtil {
     value.forEach((val, index) => {
       const newElement = node.cloneNode(true);
       const nodeAttrs = newElement.attributes;
+      const text = newElement.textContent;
+      const reg = /\{\{(.*)\}\}/g;
+      if (reg.test(text) && text.indexOf(`{{${key}`) >= 0) {
+        new CompileUtilForRepeat().text(newElement, val, key, vm);
+      }
       if (nodeAttrs) {
         Array.from(nodeAttrs).forEach(attr => {
           const attrName = attr.name;
@@ -266,11 +274,16 @@ class Compile {
       const text = node.textContent;
       const reg = /\{\{(.*)\}\}/g;
       if (this.isElementNode(node)) {
+        if (reg.test(text)) {
+          const regText = RegExp.$1;
+          if (/(.*\{\{(this.state.).*\}\}.*)|(.*\{\{(this.props.).*\}\}.*)/g.test(text)) this.compileText(node, regText);
+        }
         this.compile(node, fragment);
-        if (reg.test(text)) this.compileText(node, RegExp.$1);
       }
       if (!this.isRepeatNode(node)) {
         fragment.appendChild(node);
+      } else if (fragment.contains(node)) {
+        fragment.removeChild(node);
       }
     });
   }
@@ -356,9 +369,9 @@ class Compile {
     return result;
   }
 
-  // isTextNode(node) {
-  //   return node.nodeType == 3;
-  // }
+  isTextNode(node) {
+    return node.nodeType === 3;
+  }
 }
 
 module.exports = Compile;

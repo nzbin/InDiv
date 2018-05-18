@@ -51,6 +51,10 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 
 9. 2018-05-11 strengthen `es-repeat` and function in Template Syntax
 
+9. 2018-05-18 fix `es-repeat`
+  - declareTemplate must be parceled by a father Dom in class `Controller`
+  - fix es-repeat can't be compiled exactly
+
 ## Basic Usage
 
 1. Create a root DOM for route which id is root:
@@ -123,21 +127,25 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 4. Create a controller for path:
   - must extends`class Controller`
   - must declare template in `this.declareTemplate : String`
+  - **declareTemplate must be parceled by a father Dom in class `Controller`**
   - must declare components in `this.declareComponents : Object`
   - if u want to rerender Component, plz use `this.$replaceComponent();`
   - declare Component, `class Component` needs two parmars: `declareTemplateName, props`
   - `declareTemplateName: String` must be as same as the `html tag` which is used in `this.declareTemplate`
   -  `props: Object`'s key is used in `class Component as props's key`
   -  `props: Object`'s value is the data which is send to `class Component` and must belongs to `this.state` in `class Controller`
+
   ``` javascript
   class R1 extends Controller {
     constructor() {
       super();
       this.state = {a: 1};
       this.declareTemplate = `
-        <p es-on:click="this.showAlert()">R1 点我然后打开控制台看看</p>
-        <pComponent1/>
-        <pComponent2/>
+        <div>
+          <p es-on:click="this.showAlert()">R1 点我然后打开控制台看看</p>
+          <pComponent1/>
+          <pComponent2/>
+        </div>
       `;
       this.declareComponents = {
         pComponent1: new pComponent('pComponent1', {
@@ -197,7 +205,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
       2. String: `'xxx'`
       3. Number: `123`
       4. Variable: `this.state.xxx` `this.props.xxx` `this.xxx`
-      5. Boolean: `true` `false` 
+      5. Boolean: `true` `false`
 
 6. Data monitor: this.state && this.setState
   - use `this.state: Object` and `this.setState(parmars: Function || Object)`

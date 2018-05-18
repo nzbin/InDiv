@@ -6,6 +6,7 @@ class PComponent extends Component {
     this.declareTemplate = `
       <div>
         <p es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick($event, this.state.b, '111', 1, false, true, a, this.aaa)">{{a.z}}</p>
+        <input es-repeat="let a in this.state.d" es-model="a.z" />
       </div>
     `;
     this.state = {
@@ -78,6 +79,9 @@ class R1 extends Controller {
         <div>
           <p es-repeat="let a in this.state.e" es-on:click="this.showAlert(a)">{{a.z}}</p>
         </div>
+       <div es-class="this.state.a">
+        <p es-on:click="this.showAlert()">{{this.state.b}}</p>
+       </div>
       </div>
     `);
     this.declareComponents = {

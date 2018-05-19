@@ -5,7 +5,7 @@ class PComponent extends Component {
     super(name, props);
     this.declareTemplate = `
       <div>
-        <p es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick($event, this.state.b, '111', 1, false, true, a, this.aaa)">{{a.z}}</p>
+        <p es-if="this.state.e" es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick($event, this.state.b, '111', 1, false, true, a, this.aaa)">{{a.z}}</p>
         <input es-repeat="let a in this.state.d" es-model="a.z" />
       </div>
     `;
@@ -23,6 +23,7 @@ class PComponent extends Component {
           b: 'a',
         },
       ],
+      e: false,
     };
   }
   $onInit() {
@@ -49,10 +50,12 @@ class R1 extends Controller {
       d: [{
         z: 111111111111111,
         b: 'a',
+        show: true,
       },
       {
         z: 33333333333333,
         b: 'a',
+        show: true,
       }],
       e: [{
         z: 232323,
@@ -75,9 +78,11 @@ class R1 extends Controller {
     // <p es-repeat="let a in this.state.d">{{a.z}}</p>
     this.declareTemplate = (`
       <div>
-       <div es-class="this.state.a" es-if="this.state.f">
-        <p es-on:click="this.showAlert()" es-text="this.state.b"></p>
-       </div>
+        <pComponent1/>
+        <div es-if="this.state.f">
+          <input es-repeat="let a in this.state.e" es-model="a.b" />
+        </div>
+        <p es-class="this.state.a" es-if="a.show" es-repeat="let a in this.state.d" es-text="a.z"></p>
       </div>
     `);
     this.declareComponents = {
@@ -110,11 +115,13 @@ class R1 extends Controller {
   showAlert(a) {
     alert('我错了 点下控制台看看吧');
     console.log('aa', a);
+    console.log('!this.state.f', !this.state.f);
     this.setState({
       a: 'a',
       b: 100,
+      f: !this.state.f,
     });
-    console.log('state', this.state);
+    console.log('state', this.state.f);
   }
   getProps(a) {
     alert('里面传出来了');

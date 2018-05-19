@@ -1,4 +1,8 @@
 class CompileUtilForRepeat {
+  constructor(fragment) {
+    this.$fragment = fragment;
+  }
+
   _getVMVal(vm, exp) {
     const valueList = exp.replace('()', '').split('.');
     let value = vm;
@@ -62,6 +66,10 @@ class CompileUtilForRepeat {
 
   htmlUpdater(node, value) {
     node.innerHTML = typeof value === 'undefined' ? '' : value;
+  }
+
+  ifUpdater(node, value) {
+    if (value) this.$fragment.appendChild(node);
   }
 
   classUpdater(node, value, oldValue) {
@@ -142,14 +150,10 @@ class CompileUtil {
   }
 
   bind(node, vm, exp, dir) {
-    console.log('dir', dir);
     const updaterFn = this[`${dir}Updater`];
     const isRepeatNode = this.isRepeatNode(node);
     if (isRepeatNode) {
       switch (dir) {
-      case 'text':
-        updaterFn && updaterFn.call(this, node, this._getVMVal(vm, exp), exp, vm);
-        break;
       case 'repeat':
         updaterFn && updaterFn.call(this, node, this._getVMRepeatVal(vm, exp), exp, vm);
         break;
@@ -200,12 +204,10 @@ class CompileUtil {
   }
 
   ifUpdater(node, value) {
-    console.log('value', value);
-    console.log('node', node);
-    if (value && this.$fragment.contains(node)) {
-      console.log('1111', this.$fragment);
-      console.log('2222', this.$fragment.removeChild(node));
-      // this.$fragment.removeChild(node);
+    if (!value && this.$fragment.contains(node)) {
+      this.$fragment.removeChild(node);
+    } else {
+      this.$fragment.appendChild(node);
     }
   }
 
@@ -236,7 +238,7 @@ class CompileUtil {
       const text = newElement.textContent;
       const reg = /\{\{(.*)\}\}/g;
       if (reg.test(text) && text.indexOf(`{{${key}`) >= 0) {
-        new CompileUtilForRepeat().templateUpdater(newElement, val, key, vm);
+        new CompileUtilForRepeat(this.$fragment).templateUpdater(newElement, val, key, vm);
       }
       if (nodeAttrs) {
         Array.from(nodeAttrs).forEach(attr => {
@@ -245,15 +247,15 @@ class CompileUtil {
             const dir = attrName.substring(3);
             const exp = attr.value;
             if (this.isEventDirective(dir)) {
-              new CompileUtilForRepeat().eventHandler(newElement, vm, exp, dir, key, val);
+              new CompileUtilForRepeat(this.$fragment).eventHandler(newElement, vm, exp, dir, key, val);
             } else {
-              new CompileUtilForRepeat().bind(newElement, val, key, dir, exp, index, vm, watchData);
+              new CompileUtilForRepeat(this.$fragment).bind(newElement, val, key, dir, exp, index, vm, watchData);
             }
             // node.removeAttribute(attrName);
           }
         });
       }
-      this.$fragment.appendChild(newElement);
+      if (!this.isIfNode(node)) this.$fragment.appendChild(newElement);
     });
   }
 
@@ -276,6 +278,18 @@ class CompileUtil {
       Array.from(nodeAttrs).forEach(attr => {
         const attrName = attr.name;
         if (attrName === 'es-repeat') result = true;
+      });
+    }
+    return result;
+  }
+
+  isIfNode(node) {
+    const nodeAttrs = node.attributes;
+    let result = false;
+    if (nodeAttrs) {
+      Array.from(nodeAttrs).forEach(attr => {
+        const attrName = attr.name;
+        if (attrName === 'es-if') result = true;
       });
     }
     return result;
@@ -318,10 +332,10 @@ class Compile {
         }
         this.compile(node, fragment);
       }
-      if (!this.isRepeatNode(node)) {
-        fragment.appendChild(node);
-      } else if (fragment.contains(node)) {
+      if (this.isRepeatNode(node) && fragment.contains(node)) {
         fragment.removeChild(node);
+      } else {
+        if (!this.isIfNode(node)) fragment.appendChild(node);
       }
     });
   }
@@ -336,7 +350,7 @@ class Compile {
           const exp = attr.value;
           if (this.isEventDirective(dir)) {
             this.eventHandler(node, this.$vm, exp, dir);
-          } else {
+          } else { 
             new CompileUtil(fragment).bind(node, this.$vm, exp, dir);
           }
           // node.removeAttribute(attrName);
@@ -402,6 +416,18 @@ class Compile {
       Array.from(nodeAttrs).forEach(attr => {
         const attrName = attr.name;
         if (attrName === 'es-repeat') result = true;
+      });
+    }
+    return result;
+  }
+
+  isIfNode(node) {
+    const nodeAttrs = node.attributes;
+    let result = false;
+    if (nodeAttrs) {
+      Array.from(nodeAttrs).forEach(attr => {
+        const attrName = attr.name;
+        if (attrName === 'es-if') result = true;
       });
     }
     return result;

@@ -169,26 +169,10 @@ class CompileUtil {
       case 'if':
         updaterFn && updaterFn.call(this, node, this._getVMVal(vm, exp), exp, vm);
         break;
-      // case 'repeat':
-      //   isRepeatNode && updaterFn && updaterFn.call(this, node, this._getVMRepeatVal(vm, exp), exp, vm);
-      //   break;
       default:
         updaterFn && updaterFn.call(this, node, this._getVMVal(vm, exp));
       }
     }
-    // switch (dir) {
-    // case 'model':
-    //   !isRepeatNode && updaterFn && updaterFn.call(this, node, this._getVMVal(vm, exp), exp, vm);
-    //   break;
-    // case 'text':
-    //   updaterFn && updaterFn.call(this, node, this._getVMVal(vm, exp), exp, vm);
-    //   break;
-    // case 'repeat':
-    //   isRepeatNode && updaterFn && updaterFn.call(this, node, this._getVMRepeatVal(vm, exp), exp, vm);
-    //   break;
-    // default:
-    //   !isRepeatNode && updaterFn && updaterFn.call(this, node, this._getVMVal(vm, exp));
-    // }
   }
 
   templateUpdater(node, vm, exp) {

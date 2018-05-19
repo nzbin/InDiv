@@ -3,12 +3,12 @@ import { Component, Controller, Router } from '../src';
 class PComponent extends Component {
   constructor(name, props) {
     super(name, props);
-    this.declareTemplate = `
+    this.declareTemplate = (`
       <div>
         <p es-if="this.state.e" es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick($event, this.state.b, '111', 1, false, true, a, this.aaa)">{{a.z}}</p>
         <input es-repeat="let a in this.state.d" es-model="a.z" />
       </div>
-    `;
+    `);
     this.state = {
       a: 'a',
       b: 100,
@@ -78,11 +78,10 @@ class R1 extends Controller {
     // <p es-repeat="let a in this.state.d">{{a.z}}</p>
     this.declareTemplate = (`
       <div>
-        <pComponent1/>
         <div es-if="this.state.f">
           <input es-repeat="let a in this.state.e" es-model="a.b" />
         </div>
-        <p es-class="this.state.a" es-if="a.show" es-repeat="let a in this.state.d" es-text="a.z"></p>
+        <p es-class="this.state.a" es-if="a.show" es-repeat="let a in this.state.d" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
       </div>
     `);
     this.declareComponents = {
@@ -113,12 +112,12 @@ class R1 extends Controller {
     console.log('newData Controller:', newData);
   }
   showAlert(a) {
-    alert('我错了 点下控制台看看吧');
-    console.log('aa', a);
+    // alert('我错了 点下控制台看看吧');
+    // console.log('aa', a);
     console.log('!this.state.f', !this.state.f);
     this.setState({
-      a: 'a',
-      b: 100,
+      // a: 'a',
+      // b: 100,
       f: !this.state.f,
     });
     console.log('state', this.state.f);

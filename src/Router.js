@@ -9,6 +9,9 @@ class Router {
     this.utils = new Utils();
     window.addEventListener('load', this.refresh.bind(this), false);
     window.addEventListener('hashchange', this.refresh.bind(this), false);
+    window.addEventListener('popstate', (e) => {
+      console.log('ee', e.state);
+    }, false);
   }
 
   $routeChange(lastRoute, nextRoute) {}

@@ -57,6 +57,7 @@ class R1 extends Controller {
         b: 'a',
         show: true,
       }],
+      c: 'c',
       e: [{
         z: 232323,
         b: 'a',
@@ -81,7 +82,7 @@ class R1 extends Controller {
         <div es-if="this.state.f">
           <input es-repeat="let a in this.state.e" es-model="a.b" />
         </div>
-        <p es-class="this.state.a" es-if="a.show" es-repeat="let a in this.state.d" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
+        <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.d" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
       </div>
     `);
     this.declareComponents = {
@@ -112,15 +113,19 @@ class R1 extends Controller {
     console.log('newData Controller:', newData);
   }
   showAlert(a) {
+    console.log('location1', history.length);
+    history.pushState({ id: 'R1' }, 'fuck', '#R2');
+    console.log('location2', history.length);
+    history.go(1);
     // alert('我错了 点下控制台看看吧');
     // console.log('aa', a);
-    console.log('!this.state.f', !this.state.f);
-    this.setState({
-      // a: 'a',
-      // b: 100,
-      f: !this.state.f,
-    });
-    console.log('state', this.state.f);
+    // console.log('!this.state.f', !this.state.f);
+    // this.setState({
+    //   // a: 'a',
+    //   // b: 100,
+    //   f: !this.state.f,
+    // });
+    // console.log('state', this.state.f);
   }
   getProps(a) {
     alert('里面传出来了');

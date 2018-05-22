@@ -1,4 +1,5 @@
 const Utils = require('./Utils');
+const Watcher = require('./Watcher');
 
 class Router {
   constructor() {
@@ -12,6 +13,14 @@ class Router {
     window.addEventListener('popstate', (e) => {
       console.log('ee', e.state);
     }, false);
+    window.a = {
+      path: 1223232,
+      query: 111,
+    };
+    this.watcher = new Watcher(window.a, (o, n) => {
+      console.log('o', o);
+      console.log('n', n);
+    });
   }
 
   $routeChange(lastRoute, nextRoute) {}

@@ -113,10 +113,11 @@ class R1 extends Controller {
     console.log('newData Controller:', newData);
   }
   showAlert(a) {
-    console.log('location1', history.length);
-    history.pushState({ id: 'R1' }, 'fuck', '#R2');
-    console.log('location2', history.length);
-    history.go(1);
+    // console.log('location1', history.length);
+    history.pushState({ id: 'R1' }, 'fuck', '/#R2');
+    window.a.path = '2';
+    // console.log('location2', history.length);
+    // history.go(1);
     // alert('我错了 点下控制台看看吧');
     // console.log('aa', a);
     // console.log('!this.state.f', !this.state.f);

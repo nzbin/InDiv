@@ -8,19 +8,17 @@ class Router {
     this.lastRoute = null;
     this.rootDom = null;
     this.utils = new Utils();
+    const vm = this;
     window.addEventListener('load', this.refresh.bind(this), false);
     window.addEventListener('hashchange', this.refresh.bind(this), false);
     window.addEventListener('popstate', (e) => {
-      console.log('ee', e.state);
+      console.log('ee11', window.esRouteObject);
+      window.esRouteObject = {
+        path: location.pathname || '/',
+        query: {},
+      };
+      vm.refresh();
     }, false);
-    window.a = {
-      path: 1223232,
-      query: 111,
-    };
-    this.watcher = new Watcher(window.a, (o, n) => {
-      console.log('o', o);
-      console.log('n', n);
-    });
   }
 
   $routeChange(lastRoute, nextRoute) {}
@@ -47,7 +45,21 @@ class Router {
   }
 
   refresh() {
-    this.currentUrl = location.hash.slice(1) || '/';
+    if (!window.esRouteObject) {
+      window.esRouteObject = {
+        path: location.pathname || '/',
+        query: {},
+      };
+      const vm = this;
+      this.watcher = new Watcher(window.esRouteObject, (o, n) => {
+        console.log('o', o);
+        console.log('n', n);
+        vm.refresh();
+      });
+    }
+    this.currentUrl = location.pathname.slice(1) || '/';
+
+    // this.currentUrl = location.hash.slice(1) || '/';
     if (this.routes[this.currentUrl]) {
       if (window.routerController) {
         if (window.routerController.$onDestory) window.routerController.$onDestory();

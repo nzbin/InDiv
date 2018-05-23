@@ -1,5 +1,5 @@
 const Utils = require('./Utils');
-const Watcher = require('./Watcher');
+const KeyWatcher = require('./KeyWatcher');
 
 class Router {
   constructor() {
@@ -10,12 +10,16 @@ class Router {
     this.utils = new Utils();
     const vm = this;
     window.addEventListener('load', this.refresh.bind(this), false);
-    window.addEventListener('hashchange', this.refresh.bind(this), false);
+
+    // hash
+    // window.addEventListener('hashchange', this.refresh.bind(this), false);
+
+    // state
     window.addEventListener('popstate', (e) => {
-      console.log('ee11', window.esRouteObject);
-      window.esRouteObject = {
+      window._esRouteObject = {
         path: location.pathname || '/',
         query: {},
+        params: {},
       };
       vm.refresh();
     }, false);
@@ -45,13 +49,15 @@ class Router {
   }
 
   refresh() {
-    if (!window.esRouteObject) {
-      window.esRouteObject = {
+    // state
+    if (!window._esRouteObject || !this.watcher) {
+      window._esRouteObject = {
         path: location.pathname || '/',
         query: {},
+        params: {},
       };
       const vm = this;
-      this.watcher = new Watcher(window.esRouteObject, (o, n) => {
+      this.watcher = new KeyWatcher(window, '_esRouteObject', (o, n) => {
         console.log('o', o);
         console.log('n', n);
         vm.refresh();
@@ -59,6 +65,7 @@ class Router {
     }
     this.currentUrl = location.pathname.slice(1) || '/';
 
+    // hash
     // this.currentUrl = location.hash.slice(1) || '/';
     if (this.routes[this.currentUrl]) {
       if (window.routerController) {

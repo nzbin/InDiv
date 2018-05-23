@@ -114,8 +114,13 @@ class R1 extends Controller {
   }
   showAlert(a) {
     history.pushState({ path: 'R2' }, 'fuck', '/R2');
-    console.log('state', history.state);
-    window.esRouteObject.path = 'R2';
+    console.log('window._esRouteObject', window._esRouteObject);
+    window._esRouteObject = {
+      path: '/R2',
+      query: {},
+      params: {},
+    };
+
     // console.log('location2', history.length);
     // history.go(1);
     // alert('我错了 点下控制台看看吧');

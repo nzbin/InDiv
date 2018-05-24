@@ -113,13 +113,8 @@ class R1 extends Controller {
     console.log('newData Controller:', newData);
   }
   showAlert(a) {
-    history.pushState({ path: 'R2' }, 'fuck', '/R2');
-    console.log('window._esRouteObject', window._esRouteObject);
-    window._esRouteObject = {
-      path: '/R2',
-      query: {},
-      params: {},
-    };
+    this.$location.go('/R1/R4', { a: '1' });
+    console.log('this.$location', this.$location);
 
     // console.log('location2', history.length);
     // history.go(1);
@@ -175,19 +170,19 @@ class R2 extends Controller {
 const router = new Router();
 const routes = [
   {
-    path: 'R1',
+    path: '/R1',
     controller: R1,
   },
   {
-    path: 'R2',
+    path: '/R2',
     controller: R2,
   },
   {
-    path: 'R3',
+    path: '/R2/R3',
     controller: R1,
   },
   {
-    path: 'R4',
+    path: '/R1/R4',
     controller: R2,
   },
 ];

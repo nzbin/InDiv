@@ -1,4 +1,4 @@
-import { Component, Controller, Router } from '../src';
+import { Component, Controller, Router, RouterHash } from '../src';
 
 class PComponent extends Component {
   constructor(name, props) {
@@ -114,7 +114,7 @@ class R1 extends Controller {
   }
   showAlert(a) {
     this.$location.go('/R1/R4', { a: '1' });
-    console.log('this.$location', this.$location);
+    console.log('this.$location', this.$location.state());
 
     // console.log('location2', history.length);
     // history.go(1);

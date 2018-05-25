@@ -22,6 +22,7 @@ class Router {
   $routeChange(lastRoute, nextRoute) {}
 
   init(arr) {
+    window._esRouteMode = 'state';
     if (arr && arr instanceof Array) {
       arr.forEach(route => {
         if (route.path && route.controller && this.utils.isFunction(route.controller)) {
@@ -50,12 +51,10 @@ class Router {
         params: {},
       };
       this.watcher = new KeyWatcher(window, '_esRouteObject', (o, n) => {
-        console.log('o', o);
-        console.log('n', n);
         this.refresh();
       });
     }
-    this.currentUrl = location.pathname || '/';
+    this.currentUrl = window._esRouteObject.path || '/';
     if (this.routes[this.currentUrl]) {
       if (window.routerController) {
         if (window.routerController.$onDestory) window.routerController.$onDestory();
@@ -103,11 +102,20 @@ class RouterHash {
     this.utils = new Utils();
     window.addEventListener('load', this.refresh.bind(this), false);
     window.addEventListener('hashchange', this.refresh.bind(this), false);
+    window.addEventListener('popstate', (e) => {
+      window._esRouteObject = {
+        path: location.hash.split('?')[0].slice(1) || '/',
+        query: {},
+        params: {},
+      };
+      this.refresh();
+    }, false);
   }
 
   $routeChange(lastRoute, nextRoute) {}
 
   init(arr) {
+    window._esRouteMode = 'hash';
     if (arr && arr instanceof Array) {
       arr.forEach(route => {
         if (route.path && route.controller && this.utils.isFunction(route.controller)) {
@@ -129,7 +137,17 @@ class RouterHash {
   }
 
   refresh() {
-    this.currentUrl = location.hash.slice(1) || '/';
+    if (!window._esRouteObject || !this.watcher) {
+      window._esRouteObject = {
+        path: location.hash.split('?')[0].slice(1) || '/',
+        query: {},
+        params: {},
+      };
+      this.watcher = new KeyWatcher(window, '_esRouteObject', (o, n) => {
+        this.refresh();
+      });
+    }
+    this.currentUrl = window._esRouteObject.path || '/';
     if (this.routes[this.currentUrl]) {
       if (window.routerController) {
         if (window.routerController.$onDestory) window.routerController.$onDestory();

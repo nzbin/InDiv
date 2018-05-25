@@ -6,9 +6,7 @@ class Lifecycle {
     this.state = {};
     this.utils = new Utils();
     this.$location = {
-      path: window._esRouteObject.path,
-      query: window._esRouteObject.query,
-      params: window._esRouteObject.params,
+      state: this.$getLocationState.bind(this),
       go: this.$locationGo.bind(this),
     };
   }
@@ -25,18 +23,34 @@ class Lifecycle {
 
   $watchState(oldData, newData) {}
 
+  $getLocationState() {
+    return {
+      path: window._esRouteObject.path,
+      query: window._esRouteObject.query,
+      params: window._esRouteObject.params,
+    };
+  }
+
   $locationGo(path, query, params) {
     window._esRouteObject = {
       path,
       query,
       params,
     };
-    console.log('window._esRouteObject', window._esRouteObject);
-    history.pushState({
-      path,
-      query,
-      params,
-    }, null, `${path}${this.utils.buildQuery(query)}`);
+    if (window._esRouteMode === 'state') {
+      history.pushState({
+        path,
+        query,
+        params,
+      }, null, `${path}${this.utils.buildQuery(query)}`);
+    }
+    if (window._esRouteMode === 'hash') {
+      history.pushState({
+        path,
+        query,
+        params,
+      }, null, `#${path}${this.utils.buildQuery(query)}`);
+    }
   }
 
   setState(newState) {

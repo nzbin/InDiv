@@ -7,6 +7,7 @@ class PComponent extends Component {
       <div>
         <p es-if="this.state.e" es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick($event, this.state.b, '111', 1, false, true, a, this.aaa)">{{a.z}}</p>
         <input es-repeat="let a in this.state.d" es-model="a.z" />
+        <p>props: {{this.props.ax}}</p>
       </div>
     `);
     this.state = {
@@ -45,7 +46,7 @@ class R1 extends Controller {
   constructor() {
     super();
     this.state = {
-      a: 'a',
+      a: 'a11',
       b: 2,
       d: [{
         z: 111111111111111,
@@ -86,7 +87,7 @@ class R1 extends Controller {
         b: this.getProps.bind(this), // action in this
       }),
       pComponent2: new PComponent('pComponent2', {
-        ax: 'a', // key in this.state
+        ax: 'b', // key in this.state
         b: this.getProps.bind(this), // action in this
       }),
     };

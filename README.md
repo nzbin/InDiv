@@ -18,16 +18,26 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   - routes must an `Array` includes `Object`
   - `router.init(routes);` can init routes
   - if u want to watch routes changes, plz use `router.$routeChange=(old.new) => {}`
+  - now you can use two modes: `Router` or `RouterHash`
+
+      1. use `this.$location.go((path: String, query: Object, params: Object)` to go to Path or `location.href`
+      2. use `this.$location.state()` to get location states
+      3. `Router` : `http://localhost:1234/R1`
+      4. `RouterHash`: `http://localhost:1234/#/R1`
 
   ``` javascript
   const router = new Router();
   const routes = [
     {
-      path: 'R1',
+      path: '/R1',
       controller: R1,
     },
     {
-      path: 'R2',
+      path: '/R2',
+      controller: R2,
+    },
+    {
+      path: '/R1/C1',
       controller: R2,
     },
   ];
@@ -68,6 +78,8 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
       this.declareTemplate = '<p>我改变了component</>';
       this.setState({b: 2});
       this.setProps({ax: 5});
+      this.$location.go('/R1/R4', { a: '1' });
+      this.$location.state();
       // this.props.b(3);
     }
     $watchState(oldData, newData) {
@@ -92,17 +104,42 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   class R1 extends Controller {
     constructor() {
       super();
-      this.state = {a: 1};
-      this.declareTemplate = `
-        <div>
-          <pComponent1/>
-          <pComponent2/>
-          <div es-if="this.state.f">
-            <input es-repeat="let a in this.state.e" es-model="a.b" />
-          </div>
-          <p es-class="this.state.a" es-if="a.show" es-repeat="let a in this.state.d" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
+      this.state = {
+        a: 'a',
+        b: 2,
+        d: [{
+          z: 111111111111111,
+          b: 'a',
+          show: true,
+        },
+        {
+          z: 33333333333333,
+          b: 'a',
+          show: true,
+        }],
+        c: 'c',
+        e: [{
+          z: 232323,
+          b: 'a',
+          show: true,
+        },
+        {
+          z: 1111,
+          b: 'a',
+          show: false,
+        }],
+        f: true,
+      };
+      this.declareTemplate = (`
+      <div>
+        <pComponent1/>
+        <pComponent2/>
+        <div es-if="this.state.f">
+          <input es-repeat="let a in this.state.e" es-model="a.z" />
+          <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.e" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
         </div>
-      `;
+      </div>
+      `);
       this.declareComponents = {
         pComponent1: new pComponent('pComponent1', {
           ax: 'a', // key in this.state
@@ -147,7 +184,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 
 5. Template Syntax
   - 规定：指令以 es-xxx 命名
-  - now: es-text es-html es-model es-class es-repeat es-if
+  - now: es-text es-html es-model es-class es-repeat es-if es-on:Event
   - 事件指令, 如 es-on:click
     - Text1: `this.declareTemplate = '<p es-text="this.state.b"></p>';`
     - Text2: `this.declareTemplate = '<p>this.state.b是：{{this.state.b}}</p>';`
@@ -173,14 +210,25 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   - if u want to change State, plz use `this.setState`, parmars can be `Object` or `Function` which must return an `Object`
   - and u can recive this change in life cycle `$watchState(oldData, newData)`
 
-7. `Watcher`
-  - import {Watcher}
-  - Watcher expects two arguments: `data, watcher`
-  - data is an Object
-  - watcher is a function which has two arguments: `oldData, newData`
-    ```
-    new Watcher(this.object, (oldData, newData) => {})
-    ```
+7. `Watcher` and `KeyWatcher`
+  - import {Watcher, KeyWatcher}
+
+    1. `Watcher`
+      - Watcher expects two arguments: `data, watcher`
+      - data is an Object
+      - watcher is a function which has two arguments: `oldData, newData`
+        ```
+        new Watcher(this.object, (oldData, newData) => {})
+        ```
+
+    2. `KeyWatcher`
+      - Watcher expects there arguments: `data, key, watcher`
+      - data: `Object`
+      - key is a key in Object and type is `String`
+      - watcher is a function which has two arguments: `oldData, newData`
+        ```
+        new KeyWatcher(this.object, key,(oldData, newData) => {})
+        ```
 
 
 8. Life cycle is:
@@ -217,7 +265,7 @@ route => controller => component
 ## To do
 - [x] 公共类提取
 - [ ] 子路由
-- [ ] 改用 history的pushState
+- [x] 改用 history的pushState
 - [x] 监听路由变化动态渲染(2/2)
 - [x] 数据劫持
 - [x] 双向绑定模板

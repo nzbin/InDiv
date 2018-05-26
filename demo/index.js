@@ -1,4 +1,4 @@
-import { Component, Controller, Router } from '../src';
+import { Component, Controller, Router, RouterHash } from '../src';
 
 class PComponent extends Component {
   constructor(name, props) {
@@ -57,42 +57,38 @@ class R1 extends Controller {
         b: 'a',
         show: true,
       }],
+      c: 'c',
       e: [{
         z: 232323,
         b: 'a',
+        show: true,
       },
       {
         z: 1111,
         b: 'a',
+        show: false,
       }],
       f: true,
     };
-    // <pComponent2/>
-    // <p es-on:click="this.showAlert()">R1 点我然后打开控制台看看</p>
-    //   <pComponent1/>
-    //   <pComponent2/>
-    //   <p>{{this.state.b}}</p>
-    // <p es-on:click="this.showAlert()">{{this.state.b}}</p>
-    // <p es-repeat="let a in this.state.d">{{a.z}}</p>
-    // <input es-repeat="let a in this.state.d" es-model="a.z" />
-    // <p es-repeat="let a in this.state.d">{{a.z}}</p>
     this.declareTemplate = (`
-      <div>
-        <div es-if="this.state.f">
-          <input es-repeat="let a in this.state.e" es-model="a.b" />
-        </div>
-        <p es-class="this.state.a" es-if="a.show" es-repeat="let a in this.state.d" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
+    <div>
+      <pComponent1/>
+      <pComponent2/>
+      <div es-if="this.state.f">
+        <input es-repeat="let a in this.state.e" es-model="a.z" />
+      <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.e" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
       </div>
+    </div>
     `);
     this.declareComponents = {
       pComponent1: new PComponent('pComponent1', {
         ax: 'a', // key in this.state
         b: this.getProps.bind(this), // action in this
       }),
-    // pComponent2: new PComponent('pComponent2', {
-    //   ax: 'a', // key in this.state
-    //   b: this.getProps.bind(this), // action in this
-    // }),
+      pComponent2: new PComponent('pComponent2', {
+        ax: 'a', // key in this.state
+        b: this.getProps.bind(this), // action in this
+      }),
     };
   }
   $onInit() {
@@ -112,15 +108,20 @@ class R1 extends Controller {
     console.log('newData Controller:', newData);
   }
   showAlert(a) {
+    this.$location.go('/R1/R4', { a: '1' });
+    console.log('this.$location', this.$location.state());
+
+    // console.log('location2', history.length);
+    // history.go(1);
     // alert('我错了 点下控制台看看吧');
     // console.log('aa', a);
-    console.log('!this.state.f', !this.state.f);
-    this.setState({
-      // a: 'a',
-      // b: 100,
-      f: !this.state.f,
-    });
-    console.log('state', this.state.f);
+    // console.log('!this.state.f', !this.state.f);
+    // this.setState({
+    //   // a: 'a',
+    //   // b: 100,
+    //   f: !this.state.f,
+    // });
+    // console.log('state', this.state.f);
   }
   getProps(a) {
     alert('里面传出来了');
@@ -164,11 +165,19 @@ class R2 extends Controller {
 const router = new Router();
 const routes = [
   {
-    path: 'R1',
+    path: '/R1',
     controller: R1,
   },
   {
-    path: 'R2',
+    path: '/R2',
+    controller: R2,
+  },
+  {
+    path: '/R2/R3',
+    controller: R1,
+  },
+  {
+    path: '/R1/R4',
     controller: R2,
   },
 ];

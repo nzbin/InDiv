@@ -3,6 +3,19 @@ class Utils {
     this.toString = Object.prototype.toString;
   }
 
+  buildQuery(object) {
+    if (!object || !(object instanceof Object)) return '';
+    let query = '?';
+    for (let key in object) {
+      if (!(object[key] instanceof Object)) {
+        query += `${key}=${object[key].toString()}&`;
+      } else {
+        query += `${key}=${JSON.stringify(object[key])}&`;
+      }
+    }
+    return query.slice(0, query.length - 1);
+  }
+
   getQuery(name) {
     let parts = window.location.search.replace('?', '').split('&');
     let params = {};

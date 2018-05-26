@@ -5,6 +5,10 @@ class Lifecycle {
     this.declareTemplate = '';
     this.state = {};
     this.utils = new Utils();
+    this.$location = {
+      state: this.$getLocationState.bind(this),
+      go: this.$locationGo.bind(this),
+    };
   }
 
   $onInit() {}
@@ -18,6 +22,36 @@ class Lifecycle {
   $hasRender() {}
 
   $watchState(oldData, newData) {}
+
+  $getLocationState() {
+    return {
+      path: window._esRouteObject.path,
+      query: window._esRouteObject.query,
+      params: window._esRouteObject.params,
+    };
+  }
+
+  $locationGo(path, query, params) {
+    window._esRouteObject = {
+      path,
+      query,
+      params,
+    };
+    if (window._esRouteMode === 'state') {
+      history.pushState({
+        path,
+        query,
+        params,
+      }, null, `${path}${this.utils.buildQuery(query)}`);
+    }
+    if (window._esRouteMode === 'hash') {
+      history.pushState({
+        path,
+        query,
+        params,
+      }, null, `#${path}${this.utils.buildQuery(query)}`);
+    }
+  }
 
   setState(newState) {
     if (newState && this.utils.isFunction(newState)) {

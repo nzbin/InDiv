@@ -50,3 +50,7 @@
 11. 2018-05-19 add `es-if`
   - add `es-if`
   - fix `setProp` and `setState`, now u can set `false`, `0`
+
+12. 2018-05-26 add `Router` and `RouterHash` and `KeyWatcher`
+  - add `Router` and `RouterHash`
+  - add `this.$location.go` and `this.$location.state` in `Component` and `Controller`

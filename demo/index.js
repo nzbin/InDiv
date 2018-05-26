@@ -61,39 +61,34 @@ class R1 extends Controller {
       e: [{
         z: 232323,
         b: 'a',
+        show: true,
       },
       {
         z: 1111,
         b: 'a',
+        show: false,
       }],
       f: true,
     };
-    // <pComponent2/>
-    // <p es-on:click="this.showAlert()">R1 点我然后打开控制台看看</p>
-    //   <pComponent1/>
-    //   <pComponent2/>
-    //   <p>{{this.state.b}}</p>
-    // <p es-on:click="this.showAlert()">{{this.state.b}}</p>
-    // <p es-repeat="let a in this.state.d">{{a.z}}</p>
-    // <input es-repeat="let a in this.state.d" es-model="a.z" />
-    // <p es-repeat="let a in this.state.d">{{a.z}}</p>
     this.declareTemplate = (`
-      <div>
-        <div es-if="this.state.f">
-          <input es-repeat="let a in this.state.e" es-model="a.b" />
-        </div>
-        <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.d" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
+    <div>
+      <pComponent1/>
+      <pComponent2/>
+      <div es-if="this.state.f">
+        <input es-repeat="let a in this.state.e" es-model="a.z" />
+      <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.e" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
       </div>
+    </div>
     `);
     this.declareComponents = {
       pComponent1: new PComponent('pComponent1', {
         ax: 'a', // key in this.state
         b: this.getProps.bind(this), // action in this
       }),
-    // pComponent2: new PComponent('pComponent2', {
-    //   ax: 'a', // key in this.state
-    //   b: this.getProps.bind(this), // action in this
-    // }),
+      pComponent2: new PComponent('pComponent2', {
+        ax: 'a', // key in this.state
+        b: this.getProps.bind(this), // action in this
+      }),
     };
   }
   $onInit() {

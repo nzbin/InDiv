@@ -3,13 +3,6 @@ import { Component, Controller, Router, RouterHash } from '../src';
 class PComponent extends Component {
   constructor(name, props) {
     super(name, props);
-    this.declareTemplate = (`
-      <div>
-        <p es-if="this.state.e" es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick($event, this.state.b, '111', 1, false, true, a, this.aaa)">{{a.z}}</p>
-        <input es-repeat="let a in this.state.d" es-model="a.z" />
-        <p>props: {{this.props.ax}}</p>
-      </div>
-    `);
     this.state = {
       a: 'a',
       b: 100,
@@ -27,6 +20,17 @@ class PComponent extends Component {
       e: false,
     };
   }
+
+  $declare() {
+    this.$template = (`
+      <div>
+        <p es-if="this.state.e" es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick($event, this.state.b, '111', 1, false, true, a, this.aaa)">{{a.z}}</p>
+        <input es-repeat="let a in this.state.d" es-model="a.z" />
+        <p es-on:click="this.sendProps(5)">props from component.state.a: {{this.props.ax}}</p>
+      </div>
+    `);
+  }
+
   $onInit() {
     console.log('props', this.props);
   }
@@ -35,6 +39,10 @@ class PComponent extends Component {
     this.setState({ b: 2 });
     this.setProps({ ax: 5 });
     this.props.b(3);
+  }
+  sendProps(ax) {
+    this.setProps({ ax: ax });
+    this.props.b(ax);
   }
   $watchState(oldData, newData) {
     console.log('oldData Component:', oldData);
@@ -71,23 +79,28 @@ class R1 extends Controller {
       }],
       f: true,
     };
-    this.declareTemplate = (`
+  }
+
+  $declare() {
+    this.$template = (`
     <div>
       <pComponent1/>
       <pComponent2/>
       <div es-if="this.state.f">
         <input es-repeat="let a in this.state.e" es-model="a.z" />
-      <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.e" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
+        <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.e" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
+        this.state.a：<br/>
+        <input es-model="this.state.a" />
       </div>
     </div>
     `);
-    this.declareComponents = {
+    this.$components = {
       pComponent1: new PComponent('pComponent1', {
-        ax: 'a', // key in this.state
+        ax: this.state.a,
         b: this.getProps.bind(this), // action in this
       }),
       pComponent2: new PComponent('pComponent2', {
-        ax: 'b', // key in this.state
+        ax: this.state.a,
         b: this.getProps.bind(this), // action in this
       }),
     };
@@ -118,9 +131,9 @@ class R1 extends Controller {
     // console.log('aa', a);
     // console.log('!this.state.f', !this.state.f);
     // this.setState({
-    //   // a: 'a',
-    //   // b: 100,
-    //   f: !this.state.f,
+      // a: 'a2323',
+      // b: 100,
+      // f: !this.state.f,
     // });
     // console.log('state', this.state.f);
   }
@@ -134,8 +147,10 @@ class R2 extends Controller {
   constructor() {
     super();
     this.state = { a: 1 };
-    this.declareTemplate = '<p es-on:click="this.showAlert()">R2 点我然后打开控制台看看</p>';
-    this.declareComponents = {
+  }
+  $declare() {
+    this.$template = '<p es-on:click="this.showAlert()">R2 点我然后打开控制台看看</p>';
+    this.$components = {
       pComponent1: new PComponent('pComponent1', {
         a: this.state.a,
       }),

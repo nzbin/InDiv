@@ -2,13 +2,18 @@ const Utils = require('./Utils');
 
 class Lifecycle {
   constructor() {
-    this.declareTemplate = '';
+    // this.$template = '';
     this.state = {};
     this.utils = new Utils();
     this.$location = {
       state: this.$getLocationState.bind(this),
       go: this.$locationGo.bind(this),
     };
+  }
+
+  $declare() {
+    this.$template = '';
+    this.$components = {};
   }
 
   $onInit() {}

@@ -51,7 +51,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   - must extends`class Component`
   - must `super(name, props);`
   - **plz setState or setProps after lifecycle `constructor()`**
-  - u need to declare template in `constructor` and use `this.declareTemplate: String`
+  - u need to declare template in `constructor` and use `this.$template: String`
   - `name: String` is this component use in `class Controller`
   - `props: Object` is data which `class Controller` sends to `class Component`
   - **`props: Object` can only be changed or used after lifecycle `constructor()`**
@@ -61,7 +61,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   class pComponent extends Component {
     constructor(name, props) {
       super(name, props);
-      this.declareTemplate = (`
+      this.$template = (`
         <div>
           <p es-repeat="let a in this.state.d"  es-on:click="this.componentClick($event, this.state.b, '111', 1, false, true, a, this.aaa)" es-class="this.state.a">{{a.z}}</p>
           <p es-on:click="this.componentClick($event, '111', this.state.b, 111, false, true)">{{this.state.b}}</p>
@@ -75,7 +75,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
     }
     componentClick(e) {
       alert('点击了组件');
-      this.declareTemplate = '<p>我改变了component</>';
+      this.$template = '<p>我改变了component</>';
       this.setState({b: 2});
       this.setProps({ax: 5});
       this.$location.go('/R1/R4', { a: '1' });
@@ -91,12 +91,12 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 
 4. Create a controller for path:
   - must extends`class Controller`
-  - must declare template in `this.declareTemplate : String`
-  - **declareTemplate must be parceled by a father Dom in class `Controller`**
-  - must declare components in `this.declareComponents : Object`
+  - must declare template in `this.$template : String`
+  - **template must be parceled by a father Dom in class `Controller`**
+  - must declare components in `this.$components : Object`
   - if u want to rerender Component, plz use `this.$replaceComponent();`
-  - declare Component, `class Component` needs two parmars: `declareTemplateName, props`
-  - `declareTemplateName: String` must be as same as the `html tag` which is used in `this.declareTemplate`
+  - declare Component, `class Component` needs two parmars: `templateName, props`
+  - `templateName: String` must be as same as the `html tag` which is used in `this.$template`
   -  `props: Object`'s key is used in `class Component as props's key`
   -  `props: Object`'s value is the data which is send to `class Component` and must belongs to `this.state` in `class Controller`
 
@@ -130,7 +130,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
         }],
         f: true,
       };
-      this.declareTemplate = (`
+      this.$template = (`
       <div>
         <pComponent1/>
         <pComponent2/>
@@ -140,7 +140,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
         </div>
       </div>
       `);
-      this.declareComponents = {
+      this.$components = {
         pComponent1: new pComponent('pComponent1', {
           ax: 'a', // key in this.state
           b: this.getProps.bind(this), // action in this
@@ -186,14 +186,14 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   - 规定：指令以 es-xxx 命名
   - now: es-text es-html es-model es-class es-repeat es-if es-on:Event
   - 事件指令, 如 es-on:click
-    - Text1: `this.declareTemplate = '<p es-text="this.state.b"></p>';`
-    - Text2: `this.declareTemplate = '<p>this.state.b是：{{this.state.b}}</p>';`
-    - HTML: `this.declareTemplate = '<p es-html="this.state.c"></p>';`
-    - Model for input: `this.declareTemplate = '<input es-model="this.state.c"/>';`
-    - Class: `this.declareTemplate = '<p  class="b" es-class="this.state.a"></p>';`
+    - Text1: `this.$template = '<p es-text="this.state.b"></p>';`
+    - Text2: `this.$template = '<p>this.state.b是：{{this.state.b}}</p>';`
+    - HTML: `this.$template = '<p es-html="this.state.c"></p>';`
+    - Model for input: `this.$template = '<input es-model="this.state.c"/>';`
+    - Class: `this.$template = '<p  class="b" es-class="this.state.a"></p>';`
     - Directives: ues `es-on:event`
-      - `this.declareTemplate = '<p es-on:click="this.componentClick()"></p>';`
-    - Repeat: `this.declareTemplate = '<p  class="b" es-class="this.state.a" es-repeat="let a in this.state.b" es-if="a.f">{{a.z}}</p>';`
+      - `this.$template = '<p es-on:click="this.componentClick()"></p>';`
+    - Repeat: `this.$template = '<p  class="b" es-class="this.state.a" es-repeat="let a in this.state.b" es-if="a.f">{{a.z}}</p>';`
   - about function in Template Syntax
     - now you can send arguments in Function
     - arguments include:

@@ -44,7 +44,7 @@
 9. 2018-05-11 strengthen `es-repeat` and function in Template Syntax
 
 10. 2018-05-18 fix `es-repeat`
-  - declareTemplate must be parceled by a father Dom in class `Controller`
+  - template must be parceled by a father Dom in class `Controller`
   - fix es-repeat can't be compiled exactly
 
 11. 2018-05-19 add `es-if`

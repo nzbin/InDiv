@@ -74,7 +74,7 @@ class Router {
   }
 
   renderController(controller) {
-    const template = controller.declareTemplate;
+    const template = controller.$template;
     if (template && typeof template === 'string' && this.rootDom) {
       if (controller.$beforeMount) controller.$beforeMount();
       this.replaceDom(controller).then(() => {
@@ -167,7 +167,7 @@ class RouterHash {
   }
 
   renderController(controller) {
-    const template = controller.declareTemplate;
+    const template = controller.$template;
     if (template && typeof template === 'string' && this.rootDom) {
       if (controller.$beforeMount) controller.$beforeMount();
       this.replaceDom(controller).then(() => {

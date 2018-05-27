@@ -3,58 +3,38 @@ const Compile = require('./Compile');
 const Watcher = require('./Watcher');
 
 class Component extends Lifecycle {
-  constructor(declareTemplateName, props) {
+  constructor(templateName, props) {
     super();
-    this.declareTemplateName = declareTemplateName;
-    if (props) {
-      this.preProps = props;
-      this.props = {};
-    }
-    this.declareTemplate = '';
+    if (templateName) this.$templateName = templateName;
+    if (props) this.props = props;
     this.state = {};
-    this.fatherController = {};
-    // this.compile = new Compile(`#component_${this.declareTemplateName}`, this);
   }
 
-  $initProps(preProps) {
-    if (preProps) {
-      this.preProps = preProps;
-      this.props = {};
-      this.fatherController = window.routerController.declareComponents[this.declareTemplateName].preProps;
-      for (let key in this.fatherController) {
-        if (typeof this.preProps[key] === 'string') this.props[key] = window.routerController.state[this.fatherController[key]];
-        if (this.utils.isFunction(this.preProps[key])) this.props[key] = this.preProps[key];
-      }
-    }
-  }
+  // $declare() {
+  //   this.$template = '';
+  //   this.$components = {};
+  // }
 
   $beforeInit() {
-    if (this.preProps) {
-      this.$initProps(this.preProps);
-      this.propsWatcher = new Watcher(this.props, this.$watchState.bind(this), this.$updateProps.bind(this), this.$reRender.bind(this));
-    }
-    this.stateWatcher = new Watcher(this.state, this.$watchState.bind(this), null, this.$reRender.bind(this));
-  }
-
-  $updateProps(key, newVal) {
-    const controllerStateKey = this.preProps[key];
-    window.routerController.state[controllerStateKey] = newVal;
+    if (this.$declare) this.$declare();
+    if (this.props) this.propsWatcher = new Watcher(this.props, this.$watchState.bind(this), this.$reRender.bind(this));
+    this.stateWatcher = new Watcher(this.state, this.$watchState.bind(this), this.$reRender.bind(this));
   }
 
   $render() {
-    const dom = document.getElementById(`component_${this.declareTemplateName}`);
+    const dom = document.getElementById(`component_${this.$templateName}`);
     if (dom && dom.hasChildNodes()) {
       let childs = dom.childNodes;
       for (let i = childs.length - 1; i >= 0; i--) {
         dom.removeChild(childs.item(i));
       }
     }
-    this.compile = new Compile(`#component_${this.declareTemplateName}`, this);
+    this.compile = new Compile(`#component_${this.$templateName}`, this);
     if (this.$hasRender) this.$hasRender();
   }
 
   $reRender() {
-    const dom = document.getElementById(`component_${this.declareTemplateName}`);
+    const dom = document.getElementById(`component_${this.$templateName}`);
     if (dom && dom.hasChildNodes()) {
       let childs = dom.childNodes;
       for (let i = childs.length - 1; i >= 0; i--) {
@@ -62,12 +42,11 @@ class Component extends Lifecycle {
       }
     }
     if (this.$onDestory) this.$onDestory();
-    this.compile = new Compile(`#component_${this.declareTemplateName}`, this);
+    this.compile = new Compile(`#component_${this.$templateName}`, this);
     if (this.$hasRender) this.$hasRender();
   }
 
   setProps(newProps) {
-    if (!this.preProps) return;
     if (newProps && this.utils.isFunction(newProps)) {
       const _newProps = newProps();
       if (_newProps && _newProps instanceof Object) {

@@ -57,3 +57,5 @@
 
 13. 2018-05-27 reset `props`
   - now thie `props` is an **unidirectional data flow**,can only be changed in Component.If u want to change it in father Controller, plase use callback to change state in father Controller.
+
+14. 2018-05-28 add `this.$components` in class `Component`

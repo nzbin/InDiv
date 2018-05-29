@@ -10,39 +10,58 @@ class Component extends Lifecycle {
     this.state = {};
   }
 
-  // $declare() {
-  //   this.$template = '';
-  //   this.$components = {};
-  // }
-
   $beforeInit() {
     if (this.$declare) this.$declare();
     if (this.props) this.propsWatcher = new Watcher(this.props, this.$watchState.bind(this), this.$reRender.bind(this));
     this.stateWatcher = new Watcher(this.state, this.$watchState.bind(this), this.$reRender.bind(this));
   }
 
+  $mountComponent(dom) {
+    if (this.$declare) this.$declare();
+    for (let key in this.$components) {
+      this.$components[key].$fatherDom = dom;
+      if (this.$components[key].$beforeInit) this.$components[key].$beforeInit();
+      if (this.$components[key].$onInit) this.$components[key].$onInit();
+      if (this.$components[key].$beforeMount) this.$components[key].$beforeMount();
+    }
+  }
+
   $render() {
-    const dom = document.getElementById(`component_${this.$templateName}`);
+    const dom = this.$fatherDom.getElementsByTagName(this.$templateName)[0];
     if (dom && dom.hasChildNodes()) {
       let childs = dom.childNodes;
       for (let i = childs.length - 1; i >= 0; i--) {
         dom.removeChild(childs.item(i));
       }
     }
-    this.compile = new Compile(`#component_${this.$templateName}`, this);
+    this.$mountComponent(dom);
+    this.compile = new Compile(dom, this);
+    if (this.$components) {
+      for (let key in this.$components) {
+        if (this.$components[key].$render) this.$components[key].$render();
+        if (this.$components[key].$afterMount) this.$components[key].$afterMount();
+      }
+    }
     if (this.$hasRender) this.$hasRender();
   }
 
   $reRender() {
-    const dom = document.getElementById(`component_${this.$templateName}`);
+    const dom = this.$fatherDom.getElementsByTagName(this.$templateName)[0];
     if (dom && dom.hasChildNodes()) {
       let childs = dom.childNodes;
       for (let i = childs.length - 1; i >= 0; i--) {
         dom.removeChild(childs.item(i));
       }
     }
+    this.$mountComponent(dom);
     if (this.$onDestory) this.$onDestory();
-    this.compile = new Compile(`#component_${this.$templateName}`, this);
+    this.compile = new Compile(dom, this);
+    if (this.$components) {
+      for (let key in this.$components) {
+        if (this.$components[key].$render) this.$components[key].$reRender();
+        if (this.$components[key].$afterMount) this.$components[key].$afterMount();
+      }
+    }
     if (this.$hasRender) this.$hasRender();
   }
 

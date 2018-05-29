@@ -8,23 +8,17 @@ class Controller extends Lifecycle {
     this.state = {};
   }
 
-  // $declare() {
-  //   this.$template = '';
-  //   this.$components = {};
-  // }
-
   $beforeInit() {
     if (this.$declare) this.$declare();
     this.stateWatcher = new Watcher(this.state, this.$watchState.bind(this), this.$reRender.bind(this));
   }
 
-  $mountComponent() {
+  $mountComponent(dom) {
     if (this.$declare) this.$declare();
     for (let key in this.$components) {
+      this.$components[key].$fatherDom = dom;
       if (this.$components[key].$beforeInit) this.$components[key].$beforeInit();
       if (this.$components[key].$onInit) this.$components[key].$onInit();
-      const domReg = new RegExp(`(\<)(${key})(\/>)`, 'g');
-      this.$template = this.$template.replace(domReg, (...args) => `<div id="component_${key}"></div>`);
       if (this.$components[key].$beforeMount) this.$components[key].$beforeMount();
     }
   }
@@ -37,8 +31,8 @@ class Controller extends Lifecycle {
         dom.removeChild(childs.item(i));
       }
     }
-    this.$mountComponent();
-    this.compile = new Compile('#root', this);
+    this.$mountComponent(dom);
+    this.compile = new Compile(dom, this);
     if (this.$components) {
       for (let key in this.$components) {
         if (this.$components[key].$render) this.$components[key].$render();
@@ -57,8 +51,8 @@ class Controller extends Lifecycle {
       }
       if (this.$onDestory) this.$onDestory();
     }
-    this.$mountComponent();
-    this.compile = new Compile('#root', this);
+    this.$mountComponent(dom);
+    this.compile = new Compile(dom, this);
     if (this.$components) {
       for (let key in this.$components) {
         if (this.$components[key].$reRender) this.$components[key].$reRender();

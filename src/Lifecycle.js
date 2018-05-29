@@ -2,7 +2,6 @@ const Utils = require('./Utils');
 
 class Lifecycle {
   constructor() {
-    // this.$template = '';
     this.state = {};
     this.utils = new Utils();
     this.$location = {
@@ -12,6 +11,7 @@ class Lifecycle {
   }
 
   $declare() {
+    this.$fatherDom = null;
     this.$template = '';
     this.$components = {};
   }

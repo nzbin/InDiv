@@ -51,7 +51,28 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   - must extends`class Component`
   - must `super(name, props);`
   - **plz setState or setProps after lifecycle `constructor()`**
-  - u need to declare template in `constructor` and use `this.$template: String`
+  - u need to declare template or component in lifecycle `$declare()`
+
+    1. this.$template is used to set component html
+    2. this.$components is used to declared $components
+
+    ```javascript
+    $declare() {
+      this.$template = (`
+        <div>
+          <pComponent1></pComponent1>
+          <input es-repeat="let a in this.state.d" es-model="a.z" />
+        </div>
+      `);
+      this.$components = {
+        pComponent1: new PCChild('pComponent1', {
+          ax: this.state.a,
+          b: this.getProps.bind(this),
+        }),
+      };
+    }
+    ```
+
   - `name: String` is this component use in `class Controller`
   - `props: Object` is data which `class Controller` sends to `class Component`
   - **`props: Object` can only be changed or used after lifecycle `constructor()`**
@@ -61,15 +82,25 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   class pComponent extends Component {
     constructor(name, props) {
       super(name, props);
+      this.state = {
+        a: 'a子组件',
+      };
+    }
+
+    $declare() {
       this.$template = (`
         <div>
-          <p es-repeat="let a in this.state.d"  es-on:click="this.componentClick($event, this.state.b, '111', 1, false, true, a, this.aaa)" es-class="this.state.a">{{a.z}}</p>
-          <p es-on:click="this.componentClick($event, '111', this.state.b, 111, false, true)">{{this.state.b}}</p>
-          <input es-repeat="let a in this.state.d" es-model="a.z" />
+          <pComponent1></pComponent1>
         </div>
       `);
-      this.state = {b: 100};
+      this.$components = {
+        pComponent1: new PCChild('pComponent1', {
+          ax: this.state.a,
+          b: this.getProps.bind(this),
+        }),
+      };
     }
+
     $onInit() {
       console.log('props', this.props);
     }
@@ -273,8 +304,8 @@ route => controller => component
 
 ## To do
 - [x] 公共类提取
-- [ ] 子路由
-- [ ] 组件引用组件
+- [ ] 子路由(1/2)
+- [x] 组件中使用组件
 - [x] 改用 history的pushState
 - [x] 监听路由变化动态渲染(2/2)
 - [x] 数据劫持

@@ -75,7 +75,6 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
     }
     componentClick(e) {
       alert('点击了组件');
-      this.$template = '<p>我改变了component</>';
       this.setState({b: 2});
       this.setProps({ax: 5});
       this.$location.go('/R1/R4', { a: '1' });
@@ -93,12 +92,16 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   - must extends`class Controller`
   - must declare template in `this.$template : String`
   - **template must be parceled by a father Dom in class `Controller`**
-  - must declare components in `this.$components : Object`
+  - must declare components in  life-cycle `$declare(){}`
   - if u want to rerender Component, plz use `this.$replaceComponent();`
+
+    1. declare template: `this.$template: string`
+    2. declare components: `this.$components: Object{key: declare Class(templateName: string, props: object)}`
+
   - declare Component, `class Component` needs two parmars: `templateName, props`
   - `templateName: String` must be as same as the `html tag` which is used in `this.$template`
   -  `props: Object`'s key is used in `class Component as props's key`
-  -  `props: Object`'s value is the data which is send to `class Component` and must belongs to `this.state` in `class Controller`
+  - now thie `props` is an **unidirectional data flow**,can only be changed in Component.If u want to change it in father Controller, plase use callback to change state in father Controller.
 
   ``` javascript
   class R1 extends Controller {
@@ -130,6 +133,8 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
         }],
         f: true,
       };
+    }
+    $declare() {
       this.$template = (`
       <div>
         <pComponent1/>
@@ -137,16 +142,18 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
         <div es-if="this.state.f">
           <input es-repeat="let a in this.state.e" es-model="a.z" />
           <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.e" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
+          this.state.a：<br/>
+          <input es-model="this.state.a" />
         </div>
       </div>
       `);
       this.$components = {
-        pComponent1: new pComponent('pComponent1', {
-          ax: 'a', // key in this.state
-          b: this.getProps.bind(this), // action in this
+        pComponent1: new PComponent('pComponent1', {
+          ax: this.state.a,
+          b: this.getProps.bind(this),
         }),
-        pComponent2: new pComponent('pComponent2', {
-          ax: 'a',
+        pComponent2: new PComponent('pComponent2', {
+          ax: this.state.a,
           b: this.getProps.bind(this),
         }),
       };
@@ -235,6 +242,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   - Component
     ```javascript
       constructor()
+      $declare()
       $onInit()
       $beforeMount()
       $afterMount()
@@ -246,6 +254,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   - Controller
     ```javascript
       constructor()
+      $declare()
       $onInit()
       $beforeMount()
       $afterMount()
@@ -265,6 +274,7 @@ route => controller => component
 ## To do
 - [x] 公共类提取
 - [ ] 子路由
+- [ ] 组件引用组件
 - [x] 改用 history的pushState
 - [x] 监听路由变化动态渲染(2/2)
 - [x] 数据劫持

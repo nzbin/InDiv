@@ -54,3 +54,6 @@
 12. 2018-05-26 add `Router` and `RouterHash` and `KeyWatcher`
   - add `Router` and `RouterHash`
   - add `this.$location.go` and `this.$location.state` in `Component` and `Controller`
+
+13. 2018-05-27 reset `props`
+  - now thie `props` is an **unidirectional data flow**,can only be changed in Component.If u want to change it in father Controller, plase use callback to change state in father Controller.

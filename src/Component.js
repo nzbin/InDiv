@@ -3,71 +3,69 @@ const Compile = require('./Compile');
 const Watcher = require('./Watcher');
 
 class Component extends Lifecycle {
-  constructor(declareTemplateName, props) {
+  constructor(templateName, props) {
     super();
-    this.declareTemplateName = declareTemplateName;
-    if (props) {
-      this.preProps = props;
-      this.props = {};
-    }
-    this.declareTemplate = '';
+    if (templateName) this.$templateName = templateName;
+    if (props) this.props = props;
     this.state = {};
-    this.fatherController = {};
-    // this.compile = new Compile(`#component_${this.declareTemplateName}`, this);
-  }
-
-  $initProps(preProps) {
-    if (preProps) {
-      this.preProps = preProps;
-      this.props = {};
-      this.fatherController = window.routerController.declareComponents[this.declareTemplateName].preProps;
-      for (let key in this.fatherController) {
-        if (typeof this.preProps[key] === 'string') this.props[key] = window.routerController.state[this.fatherController[key]];
-        if (this.utils.isFunction(this.preProps[key])) this.props[key] = this.preProps[key];
-      }
-    }
   }
 
   $beforeInit() {
-    if (this.preProps) {
-      this.$initProps(this.preProps);
-      this.propsWatcher = new Watcher(this.props, this.$watchState.bind(this), this.$updateProps.bind(this), this.$reRender.bind(this));
-    }
-    this.stateWatcher = new Watcher(this.state, this.$watchState.bind(this), null, this.$reRender.bind(this));
+    if (this.$declare) this.$declare();
+    if (this.props) this.propsWatcher = new Watcher(this.props, this.$watchState.bind(this), this.$reRender.bind(this));
+    this.stateWatcher = new Watcher(this.state, this.$watchState.bind(this), this.$reRender.bind(this));
   }
 
-  $updateProps(key, newVal) {
-    const controllerStateKey = this.preProps[key];
-    window.routerController.state[controllerStateKey] = newVal;
+  $mountComponent(dom) {
+    if (this.$declare) this.$declare();
+    for (let key in this.$components) {
+      this.$components[key].$fatherDom = dom;
+      if (this.$components[key].$beforeInit) this.$components[key].$beforeInit();
+      if (this.$components[key].$onInit) this.$components[key].$onInit();
+      if (this.$components[key].$beforeMount) this.$components[key].$beforeMount();
+    }
   }
 
   $render() {
-    const dom = document.getElementById(`component_${this.declareTemplateName}`);
+    const dom = this.$fatherDom.getElementsByTagName(this.$templateName)[0];
     if (dom && dom.hasChildNodes()) {
       let childs = dom.childNodes;
       for (let i = childs.length - 1; i >= 0; i--) {
         dom.removeChild(childs.item(i));
       }
     }
-    this.compile = new Compile(`#component_${this.declareTemplateName}`, this);
+    this.$mountComponent(dom);
+    this.compile = new Compile(dom, this);
+    if (this.$components) {
+      for (let key in this.$components) {
+        if (this.$components[key].$render) this.$components[key].$render();
+        if (this.$components[key].$afterMount) this.$components[key].$afterMount();
+      }
+    }
     if (this.$hasRender) this.$hasRender();
   }
 
   $reRender() {
-    const dom = document.getElementById(`component_${this.declareTemplateName}`);
+    const dom = this.$fatherDom.getElementsByTagName(this.$templateName)[0];
     if (dom && dom.hasChildNodes()) {
       let childs = dom.childNodes;
       for (let i = childs.length - 1; i >= 0; i--) {
         dom.removeChild(childs.item(i));
       }
     }
+    this.$mountComponent(dom);
     if (this.$onDestory) this.$onDestory();
-    this.compile = new Compile(`#component_${this.declareTemplateName}`, this);
+    this.compile = new Compile(dom, this);
+    if (this.$components) {
+      for (let key in this.$components) {
+        if (this.$components[key].$render) this.$components[key].$reRender();
+        if (this.$components[key].$afterMount) this.$components[key].$afterMount();
+      }
+    }
     if (this.$hasRender) this.$hasRender();
   }
 
   setProps(newProps) {
-    if (!this.preProps) return;
     if (newProps && this.utils.isFunction(newProps)) {
       const _newProps = newProps();
       if (_newProps && _newProps instanceof Object) {

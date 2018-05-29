@@ -297,7 +297,7 @@ class Compile {
 
   compileElement(fragment) {
     const elementCreated = document.createElement('div');
-    elementCreated.innerHTML = this.$vm.declareTemplate;
+    elementCreated.innerHTML = this.$vm.$template;
     let childNodes = elementCreated.childNodes;
     this.domRecursion(childNodes, fragment);
   }
@@ -334,7 +334,7 @@ class Compile {
           const exp = attr.value;
           if (this.isEventDirective(dir)) {
             this.eventHandler(node, this.$vm, exp, dir);
-          } else { 
+          } else {
             new CompileUtil(fragment).bind(node, this.$vm, exp, dir);
           }
           // node.removeAttribute(attrName);

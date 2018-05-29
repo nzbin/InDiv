@@ -1,6 +1,6 @@
 {
   "name": "easiest",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。",
   "main": "build/index.js",
   "keywords": [
@@ -42,5 +42,8 @@
     "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-react": "^7.5.1",
     "parcel-bundler": "^1.8.1"
+  },
+  "dependencies": {
+    "easier-cookie": "^1.0.6"
   }
 }

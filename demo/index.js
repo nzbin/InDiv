@@ -61,7 +61,7 @@ class PComponent extends Component {
     `);
     this.$components = {
       pComponent1: new PCChild('pComponent1', {
-        ax: this.state.a,
+        ax: this.props.ax,
         b: this.getProps.bind(this),
       }),
     };
@@ -82,7 +82,9 @@ class PComponent extends Component {
   }
   getProps(a) {
     alert('子组件里 里面传出来了');
-    this.setState({ a: a });
+    // this.setState({ a: a });
+    this.setProps({ ax: a });
+    this.props.b(a);
   }
   $watchState(oldData, newData) {
     console.log('oldData Component:', oldData);
@@ -128,10 +130,10 @@ class R1 extends Controller {
       <pComponent2></pComponent2>
       下面跟组件没关系<br/>
       <div es-if="this.state.f">
-      <input es-repeat="let a in this.state.e" es-model="a.z" />
-      <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.e" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
-      this.state.a：<br/>
-      <input es-model="this.state.a" />
+        <input es-repeat="let a in this.state.e" es-model="a.z" />
+        <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.e" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
+        this.state.a：<br/>
+        <input es-model="this.state.a" />
       </div>
     </div>
     `);
@@ -197,11 +199,11 @@ class R2 extends Controller {
   }
   $declare() {
     this.$template = '<p es-on:click="this.showAlert()">R2 点我然后打开控制台看看</p>';
-    this.$components = {
-      pComponent1: new PComponent('pComponent1', {
-        a: this.state.a,
-      }),
-    };
+    // this.$components = {
+    //   pComponent1: new PComponent('pComponent1', {
+    //     a: this.state.a,
+    //   }),
+    // };
   }
   $onInit() {
     // console.log('is $onInit');

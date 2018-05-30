@@ -1,10 +1,9 @@
 const Utils = require('./Utils');
 
 class Watcher {
-  constructor(data, watcher, updater, render) {
+  constructor(data, watcher, render) {
     this.data = data;
     this.watcher = watcher;
-    this.updater = updater;
     this.render = render;
     this.watchData(this.data);
     this.utils = new Utils();
@@ -31,7 +30,6 @@ class Watcher {
           val = newVal;
           vm.watchData(val);
           if (vm.watcher) vm.watcher(oldData, newData);
-          if (vm.updater) vm.updater(key, newVal);
           if (vm.render) vm.render();
         },
       });

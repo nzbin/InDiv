@@ -1,6 +1,11 @@
+const Cookie = require('easier-cookie');
+
 class Utils {
   constructor() {
     this.toString = Object.prototype.toString;
+    this.setCookie = Cookie.set;
+    this.getCookie = Cookie.get;
+    this.removeCookie = Cookie.remove;
   }
 
   buildQuery(object) {
@@ -108,31 +113,6 @@ class Utils {
     aStack.pop();
     bStack.pop();
     return true;
-  }
-
-  setCookie(key, value, setdate) {
-    if (!key || !value) {
-      console.error('set cookie error: key or value is null');
-      return;
-    }
-    let mydate = new Date();
-    mydate.setDate(mydate.getDate() + setdate);
-    document.cookie = `${key}=${value};expirse=${mydate}`;
-  }
-
-  getCookie(name) {
-    const cookieArray = document.cookie.split(';');
-    for (let i = 0; i < cookieArray.length; i++) {
-      let cookieName = cookieArray[i].split('=');
-      if (cookieName[0] === name) {
-        return cookieName[1];
-      }
-    }
-    return '';
-  }
-
-  removeCookie(name) {
-    this.setCookie(name, -1, -1);
   }
 }
 

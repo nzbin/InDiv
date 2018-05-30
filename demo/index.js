@@ -1,17 +1,39 @@
-import { Component, Controller, Router, RouterHash } from '../src';
+import { Component, Controller, Router, RouterHash, Utils } from '../src';
+
+class PCChild extends Component {
+  constructor(name, props) {
+    super(name, props);
+    this.state = {
+      a: 'a',
+      d: [
+        {
+          z: 111111111111111,
+          b: 'a',
+        },
+        {
+          z: 33333333333333,
+          b: 'a',
+        },
+      ],
+    };
+  }
+
+  $declare() {
+    this.$template = (`
+      <div>
+        <p es-on:click="this.props.b(3)">props {{this.props.ax}}</p>
+        子组件的子组件<br/>
+        <p es-repeat="let a in this.state.d">1232{{a.z}}</p>
+      </div>
+    `);
+  }
+}
 
 class PComponent extends Component {
   constructor(name, props) {
     super(name, props);
-    this.declareTemplate = (`
-      <div>
-        <p es-if="this.state.e" es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick($event, this.state.b, '111', 1, false, true, a, this.aaa)">{{a.z}}</p>
-        <input es-repeat="let a in this.state.d" es-model="a.z" />
-        <p>props: {{this.props.ax}}</p>
-      </div>
-    `);
     this.state = {
-      a: 'a',
+      a: 'a子组件',
       b: 100,
       c: '<p>1111</p>',
       d: [
@@ -24,9 +46,27 @@ class PComponent extends Component {
           b: 'a',
         },
       ],
-      e: false,
+      e: true,
     };
   }
+
+  $declare() {
+    this.$template = (`
+      <div>
+        <pComponent1></pComponent1>
+        <p es-if="this.state.e" es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick($event, this.state.b, '111', 1, false, true, a, this.aaa)">你好： {{a.z}}</p>
+        <input es-repeat="let a in this.state.d" es-model="a.z" />
+        <p es-on:click="this.sendProps(5)">props from component.state.a: {{this.props.ax}}</p>
+      </div>
+    `);
+    this.$components = {
+      pComponent1: new PCChild('pComponent1', {
+        ax: this.props.ax,
+        b: this.getProps.bind(this),
+      }),
+    };
+  }
+
   $onInit() {
     console.log('props', this.props);
   }
@@ -35,6 +75,16 @@ class PComponent extends Component {
     this.setState({ b: 2 });
     this.setProps({ ax: 5 });
     this.props.b(3);
+  }
+  sendProps(ax) {
+    this.setProps({ ax: ax });
+    this.props.b(ax);
+  }
+  getProps(a) {
+    alert('子组件里 里面传出来了');
+    // this.setState({ a: a });
+    this.setProps({ ax: a });
+    this.props.b(a);
   }
   $watchState(oldData, newData) {
     console.log('oldData Component:', oldData);
@@ -45,6 +95,7 @@ class PComponent extends Component {
 class R1 extends Controller {
   constructor() {
     super();
+    this.utils = new Utils();
     this.state = {
       a: 'a11',
       b: 2,
@@ -71,32 +122,43 @@ class R1 extends Controller {
       }],
       f: true,
     };
-    this.declareTemplate = (`
+  }
+  $declare() {
+    this.$template = (`
     <div>
-      <pComponent1/>
-      <pComponent2/>
+      <pComponent1></pComponent1>
+      <pComponent2></pComponent2>
+      下面跟组件没关系<br/>
       <div es-if="this.state.f">
         <input es-repeat="let a in this.state.e" es-model="a.z" />
-      <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.e" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
+        <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.e" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
+        this.state.a：<br/>
+        <input es-model="this.state.a" />
       </div>
     </div>
     `);
-    this.declareComponents = {
+    this.$components = {
       pComponent1: new PComponent('pComponent1', {
-        ax: 'a', // key in this.state
+        ax: this.state.a,
         b: this.getProps.bind(this), // action in this
       }),
       pComponent2: new PComponent('pComponent2', {
-        ax: 'b', // key in this.state
+        ax: this.state.a,
         b: this.getProps.bind(this), // action in this
       }),
     };
   }
   $onInit() {
+    this.utils.setCookie('tutor', {
+      name: 'gerry',
+      github: 'https://github.com/DimaLiLongJi',
+    }, { expires: 7 });
     // console.log('is $onInit');
   }
   $beforeMount() {
-    // console.log('is $beforeMount');
+    const cookie = this.utils.getCookie('tutor');
+    console.log('cookie is', cookie);
+    console.log('is $beforeMount');
   }
   $afterMount() {
     // console.log('is $afterMount');
@@ -118,9 +180,9 @@ class R1 extends Controller {
     // console.log('aa', a);
     // console.log('!this.state.f', !this.state.f);
     // this.setState({
-    //   // a: 'a',
-    //   // b: 100,
-    //   f: !this.state.f,
+    // a: 'a2323',
+    // b: 100,
+    // f: !this.state.f,
     // });
     // console.log('state', this.state.f);
   }
@@ -134,12 +196,14 @@ class R2 extends Controller {
   constructor() {
     super();
     this.state = { a: 1 };
-    this.declareTemplate = '<p es-on:click="this.showAlert()">R2 点我然后打开控制台看看</p>';
-    this.declareComponents = {
-      pComponent1: new PComponent('pComponent1', {
-        a: this.state.a,
-      }),
-    };
+  }
+  $declare() {
+    this.$template = '<p es-on:click="this.showAlert()">R2 点我然后打开控制台看看</p>';
+    // this.$components = {
+    //   pComponent1: new PComponent('pComponent1', {
+    //     a: this.state.a,
+    //   }),
+    // };
   }
   $onInit() {
     // console.log('is $onInit');

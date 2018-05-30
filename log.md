@@ -44,7 +44,7 @@
 9. 2018-05-11 strengthen `es-repeat` and function in Template Syntax
 
 10. 2018-05-18 fix `es-repeat`
-  - declareTemplate must be parceled by a father Dom in class `Controller`
+  - template must be parceled by a father Dom in class `Controller`
   - fix es-repeat can't be compiled exactly
 
 11. 2018-05-19 add `es-if`
@@ -54,3 +54,8 @@
 12. 2018-05-26 add `Router` and `RouterHash` and `KeyWatcher`
   - add `Router` and `RouterHash`
   - add `this.$location.go` and `this.$location.state` in `Component` and `Controller`
+
+13. 2018-05-27 reset `props`
+  - now thie `props` is an **unidirectional data flow**,can only be changed in Component.If u want to change it in father Controller, plase use callback to change state in father Controller.
+
+14. 2018-05-28 add `this.$components` in class `Component`

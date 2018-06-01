@@ -135,6 +135,7 @@ class R1 extends Controller {
         this.state.a：<br/>
         <input es-model="this.state.a" />
       </div>
+      <router-render></router-render>
     </div>
     `);
     this.$components = {

@@ -1,4 +1,4 @@
-import { Component, Controller, Router, RouterHash, Utils } from '../src';
+import { Easiest, Component, Controller, Router, RouterHash, Utils } from '../src';
 
 class PCChild extends Component {
   constructor(name, props) {
@@ -124,10 +124,11 @@ class R1 extends Controller {
     };
   }
   $declare() {
+    // <pComponent1></pComponent1>
+    // <pComponent2></pComponent2>
     this.$template = (`
     <div>
-      <pComponent1></pComponent1>
-      <pComponent2></pComponent2>
+      
       下面跟组件没关系<br/>
       <div es-if="this.state.f">
         <input es-repeat="let a in this.state.e" es-model="a.z" />
@@ -138,16 +139,16 @@ class R1 extends Controller {
       <router-render></router-render>
     </div>
     `);
-    this.$components = {
-      pComponent1: new PComponent('pComponent1', {
-        ax: this.state.a,
-        b: this.getProps.bind(this), // action in this
-      }),
-      pComponent2: new PComponent('pComponent2', {
-        ax: this.state.a,
-        b: this.getProps.bind(this), // action in this
-      }),
-    };
+    // this.$components = {
+    //   pComponent1: new PComponent('pComponent1', {
+    //     ax: this.state.a,
+    //     b: this.getProps.bind(this), // action in this
+    //   }),
+    //   pComponent2: new PComponent('pComponent2', {
+    //     ax: this.state.a,
+    //     b: this.getProps.bind(this), // action in this
+    //   }),
+    // };
   }
   $onInit() {
     this.utils.setCookie('tutor', {
@@ -251,3 +252,8 @@ router.init(routes);
 router.$routeChange = function (old, next) {
   console.log('$routeChange', old, next);
 };
+
+const easiest = new Easiest();
+const routerIndex = easiest.use(router);
+console.log('routerIndex', routerIndex);
+

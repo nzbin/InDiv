@@ -8,6 +8,9 @@ class Router {
     this.lastRoute = null;
     this.rootDom = null;
     this.utils = new Utils();
+  }
+
+  $use() {
     window.addEventListener('load', this.refresh.bind(this), false);
     window.addEventListener('popstate', (e) => {
       window._esRouteObject = {
@@ -100,6 +103,9 @@ class RouterHash {
     this.lastRoute = null;
     this.rootDom = null;
     this.utils = new Utils();
+  }
+
+  $use() {
     window.addEventListener('load', this.refresh.bind(this), false);
     window.addEventListener('hashchange', this.refresh.bind(this), false);
     window.addEventListener('popstate', (e) => {

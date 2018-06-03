@@ -23,8 +23,11 @@ class Controller extends Lifecycle {
     }
   }
 
-  $render() {
-    const dom = document.getElementById('root');
+  // $render() {
+  //   const dom = document.getElementById('root');
+
+  $render(dom) {
+    this.dom = dom;
     if (dom.hasChildNodes()) {
       let childs = dom.childNodes;
       for (let i = childs.length - 1; i >= 0; i--) {
@@ -43,7 +46,8 @@ class Controller extends Lifecycle {
   }
 
   $reRender() {
-    const dom = document.getElementById('root');
+    // const dom = document.getElementById('root');
+    const dom = this.dom;
     if (dom.hasChildNodes()) {
       let childs = dom.childNodes;
       for (let i = childs.length - 1; i >= 0; i--) {

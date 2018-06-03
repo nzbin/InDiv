@@ -124,11 +124,10 @@ class R1 extends Controller {
     };
   }
   $declare() {
-    // <pComponent1></pComponent1>
-    // <pComponent2></pComponent2>
     this.$template = (`
     <div>
-      
+      <pComponent1></pComponent1>
+      <pComponent2></pComponent2>
       下面跟组件没关系<br/>
       <div es-if="this.state.f">
         <input es-repeat="let a in this.state.e" es-model="a.z" />
@@ -136,19 +135,20 @@ class R1 extends Controller {
         this.state.a：<br/>
         <input es-model="this.state.a" />
       </div>
+      下面是路由<br/>
       <router-render></router-render>
     </div>
     `);
-    // this.$components = {
-    //   pComponent1: new PComponent('pComponent1', {
-    //     ax: this.state.a,
-    //     b: this.getProps.bind(this), // action in this
-    //   }),
-    //   pComponent2: new PComponent('pComponent2', {
-    //     ax: this.state.a,
-    //     b: this.getProps.bind(this), // action in this
-    //   }),
-    // };
+    this.$components = {
+      pComponent1: new PComponent('pComponent1', {
+        ax: this.state.a,
+        b: this.getProps.bind(this), // action in this
+      }),
+      pComponent2: new PComponent('pComponent2', {
+        ax: this.state.a,
+        b: this.getProps.bind(this), // action in this
+      }),
+    };
   }
   $onInit() {
     this.utils.setCookie('tutor', {
@@ -200,7 +200,12 @@ class R2 extends Controller {
     this.state = { a: 1 };
   }
   $declare() {
-    this.$template = '<p es-on:click="this.showAlert()">R2 点我然后打开控制台看看</p>';
+    this.$template = (`
+      <div>
+        <p es-on:click="this.showAlert()">R2 点我然后打开控制台看看</p>
+        <router-render></router-render>    
+      </div>
+    `);
     // this.$components = {
     //   pComponent1: new PComponent('pComponent1', {
     //     a: this.state.a,
@@ -230,21 +235,43 @@ class R2 extends Controller {
 }
 
 const router = new Router();
+// const routes = [
+//   {
+//     path: '/R1',
+//     controller: R1,
+//   },
+//   {
+//     path: '/R2',
+//     controller: R2,
+//   },
+//   {
+//     path: '/R2/R3',
+//     controller: R1,
+//   },
+//   {
+//     path: '/R1/R4',
+//     controller: R2,
+//   },
+// ];
 const routes = [
   {
     path: '/R1',
     controller: R1,
+    children: [
+      {
+        path: '/R4',
+        controller: R2,
+        children: [
+          {
+            path: '/R4',
+            controller: R2,
+          },
+        ],
+      },
+    ],
   },
   {
     path: '/R2',
-    controller: R2,
-  },
-  {
-    path: '/R2/R3',
-    controller: R1,
-  },
-  {
-    path: '/R1/R4',
     controller: R2,
   },
 ];
@@ -256,4 +283,3 @@ router.$routeChange = function (old, next) {
 const easiest = new Easiest();
 const routerIndex = easiest.use(router);
 console.log('routerIndex', routerIndex);
-

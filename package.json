@@ -44,6 +44,8 @@
     "parcel-bundler": "^1.8.1"
   },
   "dependencies": {
-    "easier-cookie": "^1.0.6"
+    "babel-polyfill": "^6.26.0",
+    "easier-cookie": "^1.0.6",
+    "npm": "^6.1.0"
   }
 }

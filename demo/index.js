@@ -181,11 +181,11 @@ class R1 extends Controller {
     // alert('我错了 点下控制台看看吧');
     // console.log('aa', a);
     // console.log('!this.state.f', !this.state.f);
-    this.setState({
-      a: 'a2323',
+    // this.setState({
+    // a: 'a2323',
     // b: 100,
     // f: !this.state.f,
-    });
+    // });
     // console.log('state', this.state.f);
   }
   getProps(a) {

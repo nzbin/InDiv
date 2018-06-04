@@ -21,7 +21,7 @@ class PCChild extends Component {
   $declare() {
     this.$template = (`
       <div>
-        <p es-on:click="this.props.b(3)">props {{this.props.ax}}</p>
+        <p es-on:click="this.props.b(3)">props.ax {{this.props.ax}}</p>
         子组件的子组件<br/>
         <p es-repeat="let a in this.state.d">1232{{a.z}}</p>
       </div>
@@ -55,7 +55,7 @@ class PComponent extends Component {
       <div>
         <pComponent1></pComponent1>
         <p es-if="this.state.e" es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick($event, this.state.b, '111', 1, false, true, a, this.aaa)">你好： {{a.z}}</p>
-        <input es-repeat="let a in this.state.d" es-model="a.z" />
+        state.d: <input es-repeat="let a in this.state.d" es-model="a.z" />
         <p es-on:click="this.sendProps(5)">props from component.state.a: {{this.props.ax}}</p>
       </div>
     `);
@@ -124,10 +124,10 @@ class R1 extends Controller {
     };
   }
   $declare() {
+    // <pComponent2></pComponent2>
     this.$template = (`
     <div>
       <pComponent1></pComponent1>
-      <pComponent2></pComponent2>
       下面跟组件没关系<br/>
       <div es-if="this.state.f">
         <input es-repeat="let a in this.state.e" es-model="a.z" />
@@ -144,10 +144,10 @@ class R1 extends Controller {
         ax: this.state.a,
         b: this.getProps.bind(this), // action in this
       }),
-      pComponent2: new PComponent('pComponent2', {
-        ax: this.state.a,
-        b: this.getProps.bind(this), // action in this
-      }),
+      // pComponent2: new PComponent('pComponent2', {
+      //   ax: this.state.a,
+      //   b: this.getProps.bind(this), // action in this
+      // }),
     };
   }
   $onInit() {
@@ -181,11 +181,11 @@ class R1 extends Controller {
     // alert('我错了 点下控制台看看吧');
     // console.log('aa', a);
     // console.log('!this.state.f', !this.state.f);
-    // this.setState({
-    // a: 'a2323',
+    this.setState({
+      a: 'a2323',
     // b: 100,
     // f: !this.state.f,
-    // });
+    });
     // console.log('state', this.state.f);
   }
   getProps(a) {

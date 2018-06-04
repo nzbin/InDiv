@@ -14,17 +14,21 @@ class Controller extends Lifecycle {
   }
 
   $mountComponent(dom) {
+    const saveStates = {};
+    if (this.$components) {
+      for (let key in this.$components) {
+        if (this.$components[key].state) saveStates[key] = this.$components[key].state;
+      }
+    }
     if (this.$declare) this.$declare();
     for (let key in this.$components) {
       this.$components[key].$fatherDom = dom;
+      if (saveStates[key]) this.$components[key].state = saveStates[key];
       if (this.$components[key].$beforeInit) this.$components[key].$beforeInit();
       if (this.$components[key].$onInit) this.$components[key].$onInit();
       if (this.$components[key].$beforeMount) this.$components[key].$beforeMount();
     }
   }
-
-  // $render() {
-  //   const dom = document.getElementById('root');
 
   $render(dom) {
     this.dom = dom;
@@ -46,7 +50,6 @@ class Controller extends Lifecycle {
   }
 
   $reRender() {
-    // const dom = document.getElementById('root');
     const dom = this.dom;
     if (dom.hasChildNodes()) {
       let childs = dom.childNodes;

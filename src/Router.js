@@ -91,7 +91,8 @@ class Router {
   }
 
   distributeRoutes() {
-    if (this.lastRoute && new RegExp(`^${this.lastRoute}`).test(this.currentUrl)) {
+    // has render father route
+    if (this.lastRoute && new RegExp(`^${this.lastRoute}.*`).test(this.currentUrl)) {
       const lastRouteList = this.lastRoute.split('/');
       lastRouteList.shift();
       const needRenderIndex = lastRouteList.length;
@@ -101,7 +102,7 @@ class Router {
           if (rootRoute) {
             this.routesList.push(rootRoute);
           } else {
-            console.error('wrong route instantiation2:', this.currentUrl,);
+            console.error('wrong route instantiation2:', this.currentUrl);
           }
         } else {
           const lastRoute = this.routesList[index - 1].children;
@@ -115,10 +116,6 @@ class Router {
           }
         }
         if (index === needRenderIndex) {
-          console.log('this.routesList', this.routesList);
-          console.log('needRenderIndex', needRenderIndex);
-
-
           const lastRoute = this.routesList[index - 1].children;
           if (lastRoute && lastRoute instanceof Array) {
             const route = lastRoute.find(route => route.path === `/${path}`);
@@ -126,14 +123,12 @@ class Router {
               const Controller = route.controller;
               const rootController = new Controller();
               const renderDom = document.querySelectorAll('router-render')[index - 1];
-              this.routesList.push(route);
               this.instantiateController(rootController, renderDom);
-            } else {
-              console.error('wrong route instantiation1:', this.currentUrl);
             }
           }
         }
       });
+    // didn't render father route
     } else {
       this.renderRouteList.forEach((path, index) => {
         if (index === 0) {
@@ -145,7 +140,7 @@ class Router {
             this.routesList.push(rootRoute);
             this.instantiateController(rootController, rootDom);
           } else {
-            console.error('wrong route instantiation2:', this.currentUrl,);
+            console.error('wrong route instantiation2:', this.currentUrl, );
           }
         } else {
           const lastRoute = this.routesList[index - 1].children;

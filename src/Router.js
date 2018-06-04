@@ -93,74 +93,128 @@ class Router {
   distributeRoutes() {
     // has render father route
     if (this.lastRoute && new RegExp(`^${this.lastRoute}.*`).test(this.currentUrl)) {
-      const lastRouteList = this.lastRoute.split('/');
-      lastRouteList.shift();
-      const needRenderIndex = lastRouteList.length;
-      this.renderRouteList.forEach((path, index) => {
-        if (index === 0) {
-          const rootRoute = this.routes.find(route => route.path === `/${path}`);
-          if (rootRoute) {
-            this.routesList.push(rootRoute);
-          } else {
-            console.error('wrong route instantiation2:', this.currentUrl);
-          }
-        } else {
-          const lastRoute = this.routesList[index - 1].children;
-          if (lastRoute && lastRoute instanceof Array) {
-            const route = lastRoute.find(route => route.path === `/${path}`);
-            if (route) {
-              this.routesList.push(route);
-            } else {
-              console.error('wrong route instantiation1:', this.currentUrl);
-            }
-          }
-        }
-        if (index === needRenderIndex) {
-          const lastRoute = this.routesList[index - 1].children;
-          if (lastRoute && lastRoute instanceof Array) {
-            const route = lastRoute.find(route => route.path === `/${path}`);
-            if (route) {
-              const Controller = route.controller;
-              const rootController = new Controller();
-              const renderDom = document.querySelectorAll('router-render')[index - 1];
-              this.instantiateController(rootController, renderDom);
-            }
-          }
-        }
-      });
+      this.insertRenderRoutes();
     // didn't render father route
     } else {
-      this.renderRouteList.forEach((path, index) => {
-        if (index === 0) {
-          const rootRoute = this.routes.find(route => route.path === `/${path}`);
-          if (rootRoute) {
-            const Controller = rootRoute.controller;
-            const rootController = new Controller();
-            const rootDom = document.querySelector('#root');
-            this.routesList.push(rootRoute);
-            this.instantiateController(rootController, rootDom);
-          } else {
-            console.error('wrong route instantiation2:', this.currentUrl, );
-          }
-        } else {
-          const lastRoute = this.routesList[index - 1].children;
-          if (lastRoute && lastRoute instanceof Array) {
-            const route = lastRoute.find(route => route.path === `/${path}`);
-            if (route) {
-              const Controller = route.controller;
-              const rootController = new Controller();
-              const renderDom = document.querySelectorAll('router-render')[index - 1];
-              this.routesList.push(route);
-              this.instantiateController(rootController, renderDom);
-            } else {
-              console.error('wrong route instantiation1:', this.currentUrl);
-            }
-          }
-        }
-      });
+      this.generalDistributeRoutes();
     }
     this.$routeChange(this.lastRoute, this.currentUrl);
     this.lastRoute = this.currentUrl;
+  }
+
+  insertRenderRoutes() {
+    const lastRouteList = this.lastRoute.split('/');
+    lastRouteList.shift();
+    const needRenderIndex = lastRouteList.length;
+    this.renderRouteList.forEach((path, index) => {
+      if (index === 0) {
+        const rootRoute = this.routes.find(route => route.path === `/${path}`);
+        if (!rootRoute) {
+          console.error('wrong route instantiation2:', this.currentUrl);
+          return;
+        }
+        if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo)) {
+          location.replace(`${rootRoute.redirectTo}`);
+          return;
+        }
+        // if (rootRoute) {
+        this.routesList.push(rootRoute);
+        // } else {
+        //   console.error('wrong route instantiation2:', this.currentUrl);
+        // }
+      } else {
+        const lastRoute = this.routesList[index - 1].children;
+        if (!lastRoute || !(lastRoute instanceof Array)) {
+          console.error('routes not exit or routes must be an array!');
+          return;
+        }
+        // if (lastRoute && lastRoute instanceof Array) {
+        const route = lastRoute.find(route => route.path === `/${path}`);
+        if (!route) {
+          console.error('wrong route instantiation1:', this.currentUrl);
+          return;
+        }
+        // if (route) {
+        this.routesList.push(route);
+        // } else {
+        //   console.error('wrong route instantiation1:', this.currentUrl);
+        // }
+        // }
+      }
+      if (index === needRenderIndex) {
+        const lastRoute = this.routesList[index - 1].children;
+        if (!lastRoute || !(lastRoute instanceof Array)) {
+          console.error('routes not exit or routes must be an array!');
+        }
+        // if (lastRoute && lastRoute instanceof Array) {
+        const route = lastRoute.find(route => route.path === `/${path}`);
+        if (!route) return;
+        if (route.redirectTo && /^\/.*/.test(route.redirectTo)) {
+          location.replace(`${route.redirectTo}`);
+          return;
+        }
+        // if (route) {
+        const Controller = route.controller;
+        const rootController = new Controller();
+        const renderDom = document.querySelectorAll('router-render')[index - 1];
+        this.instantiateController(rootController, renderDom);
+        // }
+      }
+      // }
+    });
+  }
+
+  generalDistributeRoutes() {
+    this.renderRouteList.forEach((path, index) => {
+      // first init route
+      if (index === 0) {
+        const rootRoute = this.routes.find(route => route.path === `/${path}`);
+        if (!rootRoute) {
+          console.error('wrong route instantiation2:', this.currentUrl);
+          return;
+        }
+        if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo)) {
+          location.replace(`${rootRoute.redirectTo}`);
+          return;
+        }
+        // if (rootRoute) {
+        const Controller = rootRoute.controller;
+        const rootController = new Controller();
+        const rootDom = document.querySelector('#root');
+        this.routesList.push(rootRoute);
+        this.instantiateController(rootController, rootDom);
+        // } else {
+        //   console.error('wrong route instantiation2:', this.currentUrl, );
+        // }
+      // forward init route
+      } else {
+        const lastRoute = this.routesList[index - 1].children;
+        if (!lastRoute || !(lastRoute instanceof Array)) {
+          console.error('routes not exit or routes must be an array!');
+        }
+        // if (lastRoute && lastRoute instanceof Array) {
+        const route = lastRoute.find(route => route.path === `/${path}`);
+        if (!route) {
+          console.error('wrong route instantiation1:', this.currentUrl);
+          return;
+        }
+        if (route.redirectTo && /^\/.*/.test(route.redirectTo)) {
+          location.replace(`${route.redirectTo}`);
+          return;
+        }
+        // if (route) {
+        console.log('route', route);
+        const Controller = route.controller;
+        const rootController = new Controller();
+        const renderDom = document.querySelectorAll('router-render')[index - 1];
+        this.routesList.push(route);
+        this.instantiateController(rootController, renderDom);
+        // } else {
+        //   console.error('wrong route instantiation1:', this.currentUrl);
+        // }
+      }
+      // }
+    });
   }
 
   instantiateController(controller, renderDom) {

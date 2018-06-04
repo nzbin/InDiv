@@ -124,10 +124,10 @@ class R1 extends Controller {
     };
   }
   $declare() {
-    // <pComponent2></pComponent2>
     this.$template = (`
     <div>
       <pComponent1></pComponent1>
+      <pComponent2></pComponent2>
       下面跟组件没关系<br/>
       <div es-if="this.state.f">
         <input es-repeat="let a in this.state.e" es-model="a.z" />
@@ -135,7 +135,7 @@ class R1 extends Controller {
         this.state.a：<br/>
         <input es-model="this.state.a" />
       </div>
-      下面是路由<br/>
+      下面是路由1<br/>
       <router-render></router-render>
     </div>
     `);
@@ -173,7 +173,7 @@ class R1 extends Controller {
     console.log('newData Controller:', newData);
   }
   showAlert(a) {
-    this.$location.go('/R1/R4', { a: '1' });
+    this.$location.go('/R1/C1', { a: '1' });
     console.log('this.$location', this.$location.state());
 
     // console.log('location2', history.length);
@@ -255,16 +255,20 @@ const router = new Router();
 // ];
 const routes = [
   {
+    path: '/',
+    redirectTo: '/R1',
+  },
+  {
     path: '/R1',
     controller: R1,
     children: [
       {
-        path: '/R4',
+        path: '/C1',
         controller: R2,
         children: [
           {
-            path: '/R4',
-            controller: R2,
+            path: '/D1',
+            redirectTo: '/R2',
           },
         ],
       },

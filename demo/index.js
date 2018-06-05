@@ -188,8 +188,8 @@ class R1 extends Controller {
   $afterMount() {
     // console.log('is $afterMount');
   }
-  $onDestory() {
-    // console.log('is $onDestory');
+  $routeChange(lastRoute, newRoute) {
+    console.log('R1 is $routeChange', lastRoute, newRoute);
   }
   $watchState(oldData, newData) {
     console.log('oldData Controller:', oldData);
@@ -250,8 +250,8 @@ class R2 extends Controller {
   $afterMount() {
     // console.log('is $afterMount');
   }
-  $onDestory() {
-    // console.log('is $onDestory');
+  $routeChange(lastRoute, newRoute) {
+    console.log('R2 is $routeChange', lastRoute, newRoute);
   }
   $watchState(oldData, newData) {
     console.log('oldData Controller:', oldData);
@@ -271,26 +271,8 @@ class R2 extends Controller {
   }
 }
 
-// const router = new Router();
-const router = new RouterHash();
-// const routes = [
-//   {
-//     path: '/R1',
-//     controller: R1,
-//   },
-//   {
-//     path: '/R2',
-//     controller: R2,
-//   },
-//   {
-//     path: '/R2/R3',
-//     controller: R1,
-//   },
-//   {
-//     path: '/R1/R4',
-//     controller: R2,
-//   },
-// ];
+const router = new Router();
+// const router = new RouterHash();
 const routes = [
   {
     path: '/',
@@ -302,6 +284,16 @@ const routes = [
     children: [
       {
         path: '/C1',
+        controller: R2,
+        children: [
+          {
+            path: '/D1',
+            redirectTo: '/R2',
+          },
+        ],
+      },
+      {
+        path: '/C2',
         controller: R2,
         children: [
           {

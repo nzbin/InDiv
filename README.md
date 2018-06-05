@@ -302,7 +302,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
       $beforeMount()
       $afterMount()
       $hasRender()
-      $onDestory()
+      $routeChange(lastRoute, newRoute)
       $watchState(oldData, newData)
     ```
 
@@ -320,9 +320,9 @@ route => controller => component
 
 - [ ] Virtual DOM
 - [ ] ts（强类型赛高）
-- [ ] 类分离，通过use来绑定方法
-- [ ] 无需route渲染
-- [ ] 子路由(1/2)
+- [x] 类分离，通过use来绑定方法
+- [x] 无需route渲染
+- [x] 子路由(2/2)
 - [X] 组件化(3/3)
 - [x] 模块化
 - [X] 双向绑定

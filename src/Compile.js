@@ -281,12 +281,16 @@ class CompileUtil {
 }
 
 class Compile {
-  constructor(el, vm) {
+  constructor(el, vm, routerRenderDom) {
     this.$vm = vm;
     this.$el = this.isElementNode(el) ? el : document.querySelector(el);
     if (this.$el) {
       this.$fragment = this.node2Fragment(this.$el);
       this.init();
+      if (routerRenderDom) {
+        const newRouterRenderDom = this.$fragment.querySelectorAll('router-render')[0];
+        newRouterRenderDom.parentNode.replaceChild(routerRenderDom, newRouterRenderDom);
+      }
       this.$el.appendChild(this.$fragment);
     }
   }

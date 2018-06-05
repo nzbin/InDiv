@@ -51,6 +51,7 @@ class Controller extends Lifecycle {
 
   $reRender() {
     const dom = this.dom;
+    const routerRenderDom = dom.querySelectorAll('router-render')[0];
     if (dom.hasChildNodes()) {
       let childs = dom.childNodes;
       for (let i = childs.length - 1; i >= 0; i--) {
@@ -59,7 +60,7 @@ class Controller extends Lifecycle {
       if (this.$onDestory) this.$onDestory();
     }
     this.$mountComponent(dom);
-    this.compile = new Compile(dom, this);
+    this.compile = new Compile(dom, this, routerRenderDom);
     if (this.$components) {
       for (let key in this.$components) {
         if (this.$components[key].$reRender) this.$components[key].$reRender();

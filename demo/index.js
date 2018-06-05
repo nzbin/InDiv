@@ -1,5 +1,33 @@
 import { Easiest, Component, Controller, Router, RouterHash, Utils } from '../src';
 
+class RouteChild extends Component {
+  constructor(name, props) {
+    super(name, props);
+    this.state = {
+      a: 'a',
+      d: [
+        {
+          z: 111111111111111,
+          b: 'a',
+        },
+        {
+          z: 33333333333333,
+          b: 'a',
+        },
+      ],
+    };
+  }
+
+  $declare() {
+    this.$template = (`
+      <div>
+        子路由的子组件<br/>
+        <p es-on:click="this.props.b(3)">props.ax {{this.props.ax}}</p>
+        <p es-repeat="let a in this.state.d">1232{{a.z}}</p>
+      </div>
+    `);
+  }
+}
 class PCChild extends Component {
   constructor(name, props) {
     super(name, props);
@@ -127,7 +155,6 @@ class R1 extends Controller {
     this.$template = (`
     <div>
       <pComponent1></pComponent1>
-      <pComponent2></pComponent2>
       下面跟组件没关系<br/>
       <div es-if="this.state.f">
         <input es-repeat="let a in this.state.e" es-model="a.z" />
@@ -135,7 +162,7 @@ class R1 extends Controller {
         this.state.a：<br/>
         <input es-model="this.state.a" />
       </div>
-      下面是路由1<br/>
+      下面是子路由<br/>
       <router-render></router-render>
     </div>
     `);
@@ -144,10 +171,6 @@ class R1 extends Controller {
         ax: this.state.a,
         b: this.getProps.bind(this), // action in this
       }),
-      // pComponent2: new PComponent('pComponent2', {
-      //   ax: this.state.a,
-      //   b: this.getProps.bind(this), // action in this
-      // }),
     };
   }
   $onInit() {
@@ -202,15 +225,21 @@ class R2 extends Controller {
   $declare() {
     this.$template = (`
       <div>
-        <p es-on:click="this.showAlert()">R2 点我然后打开控制台看看</p>
+        修改子路由中的state.a:<br/>
+        <input es-model="this.state.a"/>
+        <br/>
+        <p es-on:click="this.showAlert()">点击显示this.state.a:</p>
+        子组件:<br/>
+        <pComponent1></pComponent1>
         <router-render></router-render>    
       </div>
     `);
-    // this.$components = {
-    //   pComponent1: new PComponent('pComponent1', {
-    //     a: this.state.a,
-    //   }),
-    // };
+    this.$components = {
+      pComponent1: new RouteChild('pComponent1', {
+        ax: this.state.a,
+        b: this.bindChange.bind(this),
+      }),
+    };
   }
   $onInit() {
     // console.log('is $onInit');
@@ -229,8 +258,12 @@ class R2 extends Controller {
     console.log('newData Controller:', newData);
   }
   showAlert() {
-    alert('我错了 点下控制台看看吧');
-    this.setState(() => ({ a: 2 }));
+    console.log('this.state.a', this.state.a);
+    // alert('我错了 点下控制台看看吧');
+    // this.setState(() => ({ a: 2 }));
+  }
+  bindChange(a) {
+    console.log('aaa', a);
   }
 }
 

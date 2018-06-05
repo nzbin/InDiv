@@ -225,7 +225,7 @@ class R2 extends Controller {
   $declare() {
     this.$template = (`
       <div>
-        修改子路由中的state.a:<br/>
+      <p es-on:click="this.showLocation()">点击显示子路由跳转</p>
         <input es-model="this.state.a"/>
         <br/>
         <p es-on:click="this.showAlert()">点击显示this.state.a:</p>
@@ -265,9 +265,14 @@ class R2 extends Controller {
   bindChange(a) {
     console.log('aaa', a);
   }
+  showLocation() {
+    this.$location.go('/R1/C1/D1', { b: '1' });
+    console.log('this.$location', this.$location.state());
+  }
 }
 
-const router = new Router();
+// const router = new Router();
+const router = new RouterHash();
 // const routes = [
 //   {
 //     path: '/R1',

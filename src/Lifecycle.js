@@ -37,11 +37,6 @@ class Lifecycle {
   }
 
   $locationGo(path, query, params) {
-    window._esRouteObject = {
-      path,
-      query,
-      params,
-    };
     if (window._esRouteMode === 'state') {
       history.pushState({
         path,
@@ -56,6 +51,11 @@ class Lifecycle {
         params,
       }, null, `#${path}${this.utils.buildQuery(query)}`);
     }
+    window._esRouteObject = {
+      path,
+      query,
+      params,
+    };
   }
 
   setState(newState) {

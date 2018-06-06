@@ -15,15 +15,27 @@ class Controller extends Lifecycle {
 
   $mountComponent(dom) {
     const saveStates = {};
+    // if (this.$components) {
+    //   for (let key in this.$components) {
+    //     if (this.$components[key].state) saveStates[key] = this.$components[key].state;
+    //   }
+    // }
     if (this.$components) {
       for (let key in this.$components) {
-        if (this.$components[key].state) saveStates[key] = this.$components[key].state;
+        if (this.$components[key]) saveStates[key] = this.$components[key];
       }
     }
+
     if (this.$declare) this.$declare();
     for (let key in this.$components) {
+      if (saveStates[key] && saveStates[key].$fatherDom && saveStates[key].$template) {
+        const props = this.$components[key].props;
+        this.$components[key] = saveStates[key];
+        this.$components[key].props = props;
+      }
+
       this.$components[key].$fatherDom = dom;
-      if (saveStates[key]) this.$components[key].state = saveStates[key];
+      // if (saveStates[key]) this.$components[key].state = saveStates[key];
       if (this.$components[key].$beforeInit) this.$components[key].$beforeInit();
       if (this.$components[key].$onInit) this.$components[key].$onInit();
       if (this.$components[key].$beforeMount) this.$components[key].$beforeMount();

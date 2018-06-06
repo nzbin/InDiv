@@ -103,6 +103,7 @@ class PComponent extends Component {
     this.setState({ b: 2 });
     this.setProps({ ax: 5 });
     this.props.b(3);
+    this.a = 1;
   }
   sendProps(ax) {
     this.setProps({ ax: ax });
@@ -157,6 +158,7 @@ class R1 extends Controller {
       <pComponent1></pComponent1>
       下面跟组件没关系<br/>
       <div es-if="this.state.f">
+        ef
         <input es-repeat="let a in this.state.e" es-model="a.z" />
         <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.e" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
         this.state.a：<br/>
@@ -204,11 +206,11 @@ class R1 extends Controller {
     // alert('我错了 点下控制台看看吧');
     // console.log('aa', a);
     // console.log('!this.state.f', !this.state.f);
-    // this.setState({
-    // a: 'a2323',
-    // b: 100,
-    // f: !this.state.f,
-    // });
+    this.setState({
+      a: 'a2323',
+      b: 100,
+      f: !this.state.f,
+    });
     // console.log('state', this.state.f);
   }
   getProps(a) {

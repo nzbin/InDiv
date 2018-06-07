@@ -3,6 +3,7 @@ const Utils = require('./Utils');
 class Lifecycle {
   constructor() {
     this.state = {};
+    this.globalContext = {};
     this.utils = new Utils();
     this.$location = {
       state: this.$getLocationState.bind(this),

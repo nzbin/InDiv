@@ -10,7 +10,9 @@ class Router {
     this.utils = new Utils();
   }
 
-  $use() {
+  $use(vm) {
+    this.vm = vm;
+    this.vm.$canRenderController = false;
     window.addEventListener('load', this.refresh.bind(this), false);
     window.addEventListener('popstate', (e) => {
       window._esRouteObject = {
@@ -61,7 +63,6 @@ class Router {
       });
     }
     this.currentUrl = window._esRouteObject.path || '/';
-
     this.renderRouteList = this.currentUrl.split('/');
     this.routesList = [];
     this.renderRouteList.shift();
@@ -176,28 +177,7 @@ class Router {
   }
 
   instantiateController(controller, renderDom) {
-    if (controller.$beforeInit) controller.$beforeInit();
-    if (controller.$onInit) controller.$onInit();
-    this.renderController(controller, renderDom);
-  }
-
-  renderController(controller, rootDom) {
-    const template = controller.$template;
-    if (template && typeof template === 'string' && rootDom) {
-      if (controller.$beforeMount) controller.$beforeMount();
-      this.replaceDom(controller, rootDom).then(() => {
-        if (controller.$afterMount) controller.$afterMount();
-      });
-      return Promise.resolve();
-    } else {
-      console.error('renderController failed: template or rootDom is not exit');
-      return Promise.reject();
-    }
-  }
-
-  replaceDom(controller, rootDom) {
-    if (controller.$render) controller.$render(rootDom);
-    return Promise.resolve();
+    this.vm.$renderController(controller, renderDom);
   }
 }
 
@@ -210,7 +190,9 @@ class RouterHash {
     this.utils = new Utils();
   }
 
-  $use() {
+  $use(vm) {
+    this.vm = vm;
+    this.vm.$canRenderController = false;
     window.addEventListener('load', this.refresh.bind(this), false);
     window.addEventListener('hashchange', this.refresh.bind(this), false);
     window.addEventListener('popstate', (e) => {
@@ -219,8 +201,6 @@ class RouterHash {
         query: {},
         params: {},
       };
-      console.log('111');
-
       this.refresh();
     }, false);
   }
@@ -264,8 +244,6 @@ class RouterHash {
       });
     }
     this.currentUrl = window._esRouteObject.path || '/';
-
-    console.log('33333');
     this.renderRouteList = this.currentUrl.split('/');
     this.routesList = [];
     this.renderRouteList.shift();
@@ -281,10 +259,6 @@ class RouterHash {
     } else {
       this.generalDistributeRoutes();
     }
-    console.log('this.lastRoute', this.lastRoute);
-    console.log('this.currentUrl', this.currentUrl);
-    console.log('window._esRouteObject', window._esRouteObject);
-    console.log('1111');
     this.$routeChange(this.lastRoute, this.currentUrl);
     this.lastRoute = this.currentUrl;
   }
@@ -385,28 +359,7 @@ class RouterHash {
   }
 
   instantiateController(controller, renderDom) {
-    if (controller.$beforeInit) controller.$beforeInit();
-    if (controller.$onInit) controller.$onInit();
-    this.renderController(controller, renderDom);
-  }
-
-  renderController(controller, rootDom) {
-    const template = controller.$template;
-    if (template && typeof template === 'string' && rootDom) {
-      if (controller.$beforeMount) controller.$beforeMount();
-      this.replaceDom(controller, rootDom).then(() => {
-        if (controller.$afterMount) controller.$afterMount();
-      });
-      return Promise.resolve();
-    } else {
-      console.error('renderController failed: template or rootDom is not exit');
-      return Promise.reject();
-    }
-  }
-
-  replaceDom(controller, rootDom) {
-    if (controller.$render) controller.$render(rootDom);
-    return Promise.resolve();
+    this.vm.$renderController(controller, renderDom);
   }
 }
 

@@ -317,5 +317,7 @@ router.$routeChange = function (old, next) {
 };
 
 const easiest = new Easiest();
-const routerIndex = easiest.use(router);
+const routerIndex = easiest.$use(router);
+// easiest.$init(R2);
+easiest.$init();
 console.log('routerIndex', routerIndex);

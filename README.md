@@ -13,10 +13,28 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   ```html
   <div id="root"></div>
   ```
+2. Create a Easiest:
 
-2. Create a router:
+  1. if u are using a router `easiest.$use(router); `;
+  1. if u are using controller, please send an Class: Controller `easiest.$init(R2);`;
+
+  ```javascript
+  const easiest = new Easiest();
+  easiest.$use(router); // if u are using a router
+  easiest.$init(R2); // if u are using controller, please send an Class: Controller
+  easiest.$init();
+  ```
+
+3. Create a router:
 
   - routes must an `Array` includes `Object`
+
+      1. routes must incloude rootPath `'/'`
+      2. routes can assign redirectTo and use `redirectTo: Path`
+      2. routes can assign children and use `children: Array`
+
+  - if u are using `Router`, u must need to `router.$setRootPath('/RootPath')` to set an root path. If using `RouterHash`, then dont't use to set an root path
+  - `router.$routeChange = (old, next)` can listen route change
   - `router.init(routes);` can init routes
   - if u want to watch routes changes, plz use `router.$routeChange=(old.new) => {}`
   - now you can use two modes: `Router` or `RouterHash`
@@ -48,7 +66,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   }
   ```
 
-3. Create a Component:
+4. Create a Component:
 
   - must extends`class Component`
   - must `super(name, props);`
@@ -122,7 +140,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   }
   ```
 
-4. Create a controller for path:
+5. Create a controller for path:
 
   - must extends`class Controller`
   - must declare template in `this.$template : String`
@@ -179,6 +197,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
           <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.e" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
           this.state.a：<br/>
           <input es-model="this.state.a" />
+          <router-render></router-render>
         </div>
       </div>
       `);
@@ -194,7 +213,10 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
       };
     }
     $onInit() {
-      console.log('is $onInit');
+      this.utils.setCookie('tutor', {
+      name: 'gerry',
+      github: 'https://github.com/DimaLiLongJi',
+    }, { expires: 7 });
     }
     $beforeMount() {
       console.log('is $beforeMount');
@@ -210,6 +232,10 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
       console.log('newData Controller:', newData);
     }
     showAlert() {
+      console.log('this.$globalContext R1', this.$globalContext);
+      this.$setGlobalContext({ a: 3 });
+      this.$location.go('/R1/C1', { a: '1' });
+      console.log('this.$location', this.$location.state());
       alert('我错了 点下控制台看看吧');
       this.$setState({
         a: 2,
@@ -224,7 +250,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   }
   ```
 
-5. Template Syntax
+6. Template Syntax
 
   - 规定：指令以 es-xxx 命名
   - now: es-text es-html es-model es-class es-repeat es-if es-on:Event
@@ -247,14 +273,14 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
       5. Boolean: `true` `false`
       6. For es-repeat: items like: `es-repeat="let a in this.state.b" es-if="a.f"`
 
-6. Data monitor: this.state && this.$setState
+7. Data monitor: this.state && this.$setState
 
   - use `this.state: Object` and `this.$setState(parmars: Function || Object)`
   - if u have some variable, u can set `this.state` in `constructor(){}`
   - if u want to change State, plz use `this.$setState`, parmars can be `Object` or `Function` which must return an `Object`
   - and u can recive this change in life cycle `$watchState(oldData, newData)`
 
-7. `Watcher` and `KeyWatcher`
+8. `Watcher` and `KeyWatcher`
 
   - import {Watcher, KeyWatcher}
 
@@ -276,7 +302,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
         ```
 
 
-8. Life cycle is:
+9. Life cycle is:
 
   - Component
 

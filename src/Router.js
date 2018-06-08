@@ -8,15 +8,23 @@ class Router {
     this.lastRoute = null;
     this.rootDom = null;
     this.utils = new Utils();
+    this.$rootPath = '/';
   }
 
   $use(vm) {
     this.vm = vm;
+    this.vm.$setRootPath(this.$rootPath);
     this.vm.$canRenderController = false;
     window.addEventListener('load', this.refresh.bind(this), false);
     window.addEventListener('popstate', (e) => {
+      let path;
+      if (this.$rootPath === '/') {
+        path = location.pathname || '/';
+      } else {
+        path = location.pathname.replace(this.$rootPath, '') === '' ? '/' : location.pathname.replace(this.$rootPath, '');
+      }
       window._esRouteObject = {
-        path: location.pathname || '/',
+        path,
         query: {},
         params: {},
       };
@@ -24,18 +32,7 @@ class Router {
     }, false);
   }
 
-  $routeChange(lastRoute, nextRoute) {}
-
-  redirectTo(redirectTo) {
-    history.replaceState(null, null, `${redirectTo}`);
-    window._esRouteObject = {
-      path: redirectTo || '/',
-      query: {},
-      params: {},
-    };
-  }
-
-  init(arr) {
+  $init(arr) {
     window._esRouteMode = 'state';
     if (arr && arr instanceof Array) {
       const rootDom = document.querySelector('#root');
@@ -47,14 +44,36 @@ class Router {
     }
   }
 
-  route(path, controller) {
-    this.routes[path] = controller || function () {};
+  $setRootPath(rootPath) {
+    if (rootPath && typeof rootPath === 'string') {
+      this.$rootPath = rootPath;
+    } else {
+      console.error('rootPath is not defined or rootPath must be a String');
+    }
+  }
+
+  $routeChange(lastRoute, nextRoute) {}
+
+  redirectTo(redirectTo) {
+    const rootPath = this.$rootPath === '/' ? '' : this.$rootPath;
+    history.replaceState(null, null, `${rootPath}${redirectTo}`);
+    window._esRouteObject = {
+      path: redirectTo || '/',
+      query: {},
+      params: {},
+    };
   }
 
   refresh() {
     if (!window._esRouteObject || !this.watcher) {
+      let path;
+      if (this.$rootPath === '/') {
+        path = location.pathname || '/';
+      } else {
+        path = location.pathname.replace(this.$rootPath, '') === '' ? '/' : location.pathname.replace(this.$rootPath, '');
+      }
       window._esRouteObject = {
-        path: location.pathname || '/',
+        path,
         query: {},
         params: {},
       };
@@ -89,7 +108,7 @@ class Router {
       if (index === 0) {
         const rootRoute = this.routes.find(route => route.path === `/${path}`);
         if (!rootRoute) {
-          console.error('wrong route instantiation2:', this.currentUrl);
+          console.error('wrong route instantiation in insertRenderRoutes:', this.currentUrl);
           return;
         }
         if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo)) {
@@ -137,7 +156,7 @@ class Router {
       if (index === 0) {
         const rootRoute = this.routes.find(route => route.path === `/${path}`);
         if (!rootRoute) {
-          console.error('wrong route instantiation2:', this.currentUrl);
+          console.error('wrong route instantiation in generalDistributeRoutes:', this.currentUrl);
           return;
         }
         if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo)) {
@@ -188,10 +207,12 @@ class RouterHash {
     this.lastRoute = null;
     this.rootDom = null;
     this.utils = new Utils();
+    this.$rootPath = '/';
   }
 
   $use(vm) {
     this.vm = vm;
+    this.vm.$setRootPath(this.$rootPath);
     this.vm.$canRenderController = false;
     window.addEventListener('load', this.refresh.bind(this), false);
     window.addEventListener('hashchange', this.refresh.bind(this), false);
@@ -205,18 +226,7 @@ class RouterHash {
     }, false);
   }
 
-  $routeChange(lastRoute, nextRoute) {}
-
-  redirectTo(redirectTo) {
-    history.replaceState(null, null, `#${redirectTo}`);
-    window._esRouteObject = {
-      path: redirectTo || '/',
-      query: {},
-      params: {},
-    };
-  }
-
-  init(arr) {
+  $init(arr) {
     window._esRouteMode = 'hash';
     if (arr && arr instanceof Array) {
       const rootDom = document.querySelector('#root');
@@ -228,8 +238,19 @@ class RouterHash {
     }
   }
 
-  route(path, controller) {
-    this.routes[path] = controller || function () {};
+  $setRootPath() {
+    console.error('rootPath is only used in Router');
+  }
+
+  $routeChange(lastRoute, nextRoute) {}
+
+  redirectTo(redirectTo) {
+    history.replaceState(null, null, `#${redirectTo}`);
+    window._esRouteObject = {
+      path: redirectTo || '/',
+      query: {},
+      params: {},
+    };
   }
 
   refresh() {

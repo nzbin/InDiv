@@ -22,7 +22,7 @@ class RouteChild extends Component {
     this.$template = (`
       <div>
         子路由的子组件<br/>
-        <p es-on:click="this.props.b(3)">props.ax {{this.props.ax}}</p>
+        <p es-on:click="this.props.b(3)">this.props.ax {{this.props.ax}}</p>
         <p es-repeat="let a in this.state.d">1232{{a.z}}</p>
       </div>
     `);
@@ -81,6 +81,7 @@ class PComponent extends Component {
   $declare() {
     this.$template = (`
       <div>
+        $globalContext in Component: <span>{{this.$globalContext.a}}</span>
         <pComponent1></pComponent1>
         <p es-if="this.state.e" es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick($event, this.state.b, '111', 1, false, true, a, this.aaa)">你好： {{a.z}}</p>
         state.d: <input es-repeat="let a in this.state.d" es-model="a.z" />
@@ -100,19 +101,19 @@ class PComponent extends Component {
   }
   componentClick(e) {
     alert('点击了组件');
-    this.setState({ b: 2 });
-    this.setProps({ ax: 5 });
+    this.$setState({ b: 2 });
+    this.$setProps({ ax: 5 });
     this.props.b(3);
     this.a = 1;
   }
   sendProps(ax) {
-    this.setProps({ ax: ax });
+    this.$setProps({ ax: ax });
     this.props.b(ax);
   }
   getProps(a) {
     alert('子组件里 里面传出来了');
-    // this.setState({ a: a });
-    this.setProps({ ax: a });
+    this.$setState({ a: a });
+    this.$setProps({ ax: a });
     this.props.b(a);
   }
   $watchState(oldData, newData) {
@@ -157,6 +158,7 @@ class R1 extends Controller {
     <div>
       <pComponent1></pComponent1>
       下面跟组件没关系<br/>
+      $globalContext in Component: <span>{{this.$globalContext.a}}</span>
       <div es-if="this.state.f">
         ef
         <input es-repeat="let a in this.state.e" es-model="a.z" />
@@ -198,6 +200,8 @@ class R1 extends Controller {
     console.log('newData Controller:', newData);
   }
   showAlert(a) {
+    console.log('this.$globalContext R1', this.$globalContext);
+    this.$setGlobalContext({ a: 3 });
     this.$location.go('/R1/C1', { a: '1' });
     console.log('this.$location', this.$location.state());
 
@@ -206,16 +210,16 @@ class R1 extends Controller {
     // alert('我错了 点下控制台看看吧');
     // console.log('aa', a);
     // console.log('!this.state.f', !this.state.f);
-    this.setState({
-      a: 'a2323',
-      b: 100,
-      f: !this.state.f,
-    });
+    // this.$setState({
+    //   a: 'a2323',
+    //   b: 100,
+    //   f: !this.state.f,
+    // });
     // console.log('state', this.state.f);
   }
   getProps(a) {
     alert('里面传出来了');
-    this.setState({ a: a });
+    this.$setState({ a: a });
   }
 }
 
@@ -244,6 +248,7 @@ class R2 extends Controller {
     };
   }
   $onInit() {
+    console.log('this.$globalContext R2', this.$globalContext);
     // console.log('is $onInit');
   }
   $beforeMount() {
@@ -262,7 +267,7 @@ class R2 extends Controller {
   showAlert() {
     console.log('this.state.a', this.state.a);
     // alert('我错了 点下控制台看看吧');
-    // this.setState(() => ({ a: 2 }));
+    // this.$setState(() => ({ a: 2 }));
   }
   bindChange(a) {
     console.log('aaa', a);
@@ -296,13 +301,7 @@ const routes = [
       },
       {
         path: '/C2',
-        controller: R2,
-        children: [
-          {
-            path: '/D1',
-            redirectTo: '/R2',
-          },
-        ],
+        redirectTo: '/R2',
       },
     ],
   },
@@ -311,7 +310,9 @@ const routes = [
     controller: R2,
   },
 ];
-router.init(routes);
+router.$setRootPath('/demo');
+// router.$setRootPath('/');
+router.$init(routes);
 router.$routeChange = function (old, next) {
   console.log('$routeChange', old, next);
 };

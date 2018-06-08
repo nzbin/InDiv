@@ -316,7 +316,7 @@ class Compile {
       if (this.isElementNode(node)) {
         if (reg.test(text)) {
           const regText = RegExp.$1;
-          if (/(.*\{\{(this.state.).*\}\}.*)|(.*\{\{(this.props.).*\}\}.*)/g.test(text)) this.compileText(node, regText);
+          if (/(.*\{\{(this.).*\}\}.*)/g.test(text)) this.compileText(node, regText);
         }
         this.compile(node, fragment);
       }

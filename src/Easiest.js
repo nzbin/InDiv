@@ -4,8 +4,9 @@ class Easiest {
   constructor() {
     this.modalList = [];
     this.utils = new Utils();
-    this.globalContext = {};
+    this.$globalContext = {};
     this.rootDom = document.querySelector('#root');
+    this.$rootPath = '/';
     this.$canRenderController = true;
   }
 
@@ -13,6 +14,14 @@ class Easiest {
     modal.$use(this);
     this.modalList.push(modal);
     return this.modalList.findIndex(md => this.utils.isEqual(md, modal));
+  }
+
+  $setRootPath(rootPath) {
+    if (rootPath && typeof rootPath === 'string') {
+      this.$rootPath = rootPath;
+    } else {
+      console.error('rootPath is not defined or rootPath must be a String');
+    }
   }
 
   $init(Controller) {
@@ -25,7 +34,8 @@ class Easiest {
 
   $renderController(controller, rootDom) {
     if (controller.$beforeInit) controller.$beforeInit();
-    controller.globalContext = this.globalContext;
+    controller.$vm = this;
+    controller.$globalContext = this.$globalContext;
     if (controller.$onInit) controller.$onInit();
     const template = controller.$template;
     if (template && typeof template === 'string' && rootDom) {

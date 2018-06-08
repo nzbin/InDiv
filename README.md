@@ -52,7 +52,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 
   - must extends`class Component`
   - must `super(name, props);`
-  - **plz setState or setProps after lifecycle `constructor()`**
+  - **plz $setState or $setProps after lifecycle `constructor()`**
   - u need to declare template or component in lifecycle `$declare()`
   - **`$template` must be parceled by a father Dom in lifecycle `$declare()`**
 
@@ -79,7 +79,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   - `name: String` is this component use in `class Controller`
   - `props: Object` is data which `class Controller` sends to `class Component`
   - ** `props: Object` can only be changed or used after lifecycle `constructor()` **
-  - `props: Object` can only be changed by action `this.setProps()` and `this.setProps()` is equal to `setState`
+  - `props: Object` can only be changed by action `this.$setProps()` and `this.$setProps()` is equal to `$setState`
 
   ```javascript
   class pComponent extends Component {
@@ -109,8 +109,8 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
     }
     componentClick(e) {
       alert('点击了组件');
-      this.setState({b: 2});
-      this.setProps({ax: 5});
+      this.$setState({b: 2});
+      this.$setProps({ax: 5});
       this.$location.go('/R1/R4', { a: '1' });
       this.$location.state();
       // this.props.b(3);
@@ -211,7 +211,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
     }
     showAlert() {
       alert('我错了 点下控制台看看吧');
-      this.setState({
+      this.$setState({
         a: 2,
         b: !this.state.a
       });
@@ -219,7 +219,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
     }
     getProps(a) {
       alert('里面传出来了');
-      this.setState({a: a});
+      this.$setState({a: a});
     }
   }
   ```
@@ -247,11 +247,11 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
       5. Boolean: `true` `false`
       6. For es-repeat: items like: `es-repeat="let a in this.state.b" es-if="a.f"`
 
-6. Data monitor: this.state && this.setState
+6. Data monitor: this.state && this.$setState
 
-  - use `this.state: Object` and `this.setState(parmars: Function || Object)`
+  - use `this.state: Object` and `this.$setState(parmars: Function || Object)`
   - if u have some variable, u can set `this.state` in `constructor(){}`
-  - if u want to change State, plz use `this.setState`, parmars can be `Object` or `Function` which must return an `Object`
+  - if u want to change State, plz use `this.$setState`, parmars can be `Object` or `Function` which must return an `Object`
   - and u can recive this change in life cycle `$watchState(oldData, newData)`
 
 7. `Watcher` and `KeyWatcher`

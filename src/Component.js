@@ -34,7 +34,8 @@ class Component extends Lifecycle {
 
       this.$components[key].$fatherDom = dom;
       if (this.$components[key].$beforeInit) this.$components[key].$beforeInit();
-      if (this.$components[key].globalContext) this.$components[key].globalContext = this.globalContext;
+      if (this.$components[key].$globalContext) this.$components[key].$globalContext = this.$globalContext;
+      if (this.$components[key].$vm) this.$components[key].$vm = this.$vm;
       if (this.$components[key].$onInit) this.$components[key].$onInit();
       if (this.$components[key].$beforeMount) this.$components[key].$beforeMount();
     }
@@ -79,7 +80,7 @@ class Component extends Lifecycle {
     if (this.$hasRender) this.$hasRender();
   }
 
-  setProps(newProps) {
+  $setProps(newProps) {
     if (newProps && this.utils.isFunction(newProps)) {
       const _newProps = newProps();
       if (_newProps && _newProps instanceof Object) {

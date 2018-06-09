@@ -16,13 +16,13 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 2. Create a Easiest:
 
   1. if u are using a router `easiest.$use(router); `;
-  1. if u are using controller, please send an Class: Controller `easiest.$init(R2);`;
+  1. if u are using controller, please send an `Controller` Class: `easiest.$init(R2);`
 
   ```javascript
   const easiest = new Easiest();
   easiest.$use(router); // if u are using a router
   easiest.$init(R2); // if u are using controller, please send an Class: Controller
-  easiest.$init();
+  easiest.$init(); // if u are using Route
   ```
 
 3. Create a router:
@@ -46,24 +46,47 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 
   ``` javascript
   const router = new Router();
+  // const router = new RouterHash();
   const routes = [
+    {
+      path: '/',
+      redirectTo: '/R1',
+    },
     {
       path: '/R1',
       controller: R1,
+      children: [
+        {
+          path: '/C1',
+          controller: R2,
+          children: [
+            {
+              path: '/D1',
+              redirectTo: '/R2',
+            },
+          ],
+        },
+        {
+          path: '/C2',
+          redirectTo: '/R2',
+        },
+      ],
     },
     {
       path: '/R2',
       controller: R2,
     },
-    {
-      path: '/R1/C1',
-      controller: R2,
-    },
   ];
-  router.init(routes);
-  router.$routeChange = function(old, next) {
+  router.$setRootPath('/demo');
+  // router.$setRootPath('/');
+  router.$init(routes);
+  router.$routeChange = function (old, next) {
     console.log('$routeChange', old, next);
-  }
+  };
+  const easiest = new Easiest();
+  const routerIndex = easiest.$use(router);
+  // easiest.$init(R2);
+  easiest.$init();
   ```
 
 4. Create a Component:
@@ -155,6 +178,8 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   - `templateName: String` must be as same as the `html tag` which is used in `this.$template`
   -  `props: Object`'s key is used in `class Component as props's key`
   - now thie `props` is an **unidirectional data flow**,can only be changed in Component.If u want to change it in father Controller, plase use callback to change state in father Controller.
+  - if u are using `Route`, please use `<router-render></router-render>` in `$template` of your controller
+  - if u are using `Route`, please use `$routeChange(lastRoute, newRoute)` to watch Route changes
 
   ``` javascript
   class R1 extends Controller {
@@ -230,6 +255,9 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
     $watchState(oldData, newData) {
       console.log('oldData Controller:', oldData);
       console.log('newData Controller:', newData);
+    }
+    $routeChange(lastRoute, newRoute) {
+      console.log('R2 is $routeChange', lastRoute, newRoute);
     }
     showAlert() {
       console.log('this.$globalContext R1', this.$globalContext);

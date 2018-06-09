@@ -88,6 +88,7 @@ class CompileUtilForRepeat {
       watchValue[index][val] = event.target.value;
     };
     node.addEventListener('change', fn, false);
+    // node.addEventListener('input', fn, false);
   }
 
   eventHandler(node, vm, exp, event, key, val) {
@@ -211,6 +212,7 @@ class CompileUtil {
       if (/(this.props.).*/.test(exp)) vm.props[val] = event.target.value;
     };
     node.addEventListener('change', fn, false);
+    // node.addEventListener('input', fn, false);
   }
 
   repeatUpdater(node, value, expFather, vm) {

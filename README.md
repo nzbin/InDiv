@@ -13,9 +13,28 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   ```html
   <div id="root"></div>
   ```
+2. Create a Easiest:
 
-2. Create a router:
+  1. if u are using a router `easiest.$use(router); `;
+  1. if u are using controller, please send an `Controller` Class: `easiest.$init(R2);`
+
+  ```javascript
+  const easiest = new Easiest();
+  easiest.$use(router); // if u are using a router
+  easiest.$init(R2); // if u are using controller, please send an Class: Controller
+  easiest.$init(); // if u are using Route
+  ```
+
+3. Create a router:
+
   - routes must an `Array` includes `Object`
+
+      1. routes must incloude rootPath `'/'`
+      2. routes can assign redirectTo and use `redirectTo: Path`
+      2. routes can assign children and use `children: Array`
+
+  - if u are using `Router`, u must need to `router.$setRootPath('/RootPath')` to set an root path. If using `RouterHash`, then dont't use to set an root path
+  - `router.$routeChange = (old, next)` can listen route change
   - `router.init(routes);` can init routes
   - if u want to watch routes changes, plz use `router.$routeChange=(old.new) => {}`
   - now you can use two modes: `Router` or `RouterHash`
@@ -27,31 +46,56 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 
   ``` javascript
   const router = new Router();
+  // const router = new RouterHash();
   const routes = [
+    {
+      path: '/',
+      redirectTo: '/R1',
+    },
     {
       path: '/R1',
       controller: R1,
+      children: [
+        {
+          path: '/C1',
+          controller: R2,
+          children: [
+            {
+              path: '/D1',
+              redirectTo: '/R2',
+            },
+          ],
+        },
+        {
+          path: '/C2',
+          redirectTo: '/R2',
+        },
+      ],
     },
     {
       path: '/R2',
       controller: R2,
     },
-    {
-      path: '/R1/C1',
-      controller: R2,
-    },
   ];
-  router.init(routes);
-  router.$routeChange = function(old, next) {
+  router.$setRootPath('/demo');
+  // router.$setRootPath('/');
+  router.$init(routes);
+  router.$routeChange = function (old, next) {
     console.log('$routeChange', old, next);
-  }
+  };
+  const easiest = new Easiest();
+  const routerIndex = easiest.$use(router);
+  // easiest.$init(R2);
+  easiest.$init();
   ```
 
-3. Create a Component:
+4. Create a Component:
+
   - must extends`class Component`
   - must `super(name, props);`
-  - **plz setState or setProps after lifecycle `constructor()`**
+  - **plz $setState or $setProps after lifecycle `constructor()`**
   - u need to declare template or component in lifecycle `$declare()`
+  - **`$template` must be parceled by a father Dom in lifecycle `$declare()`**
 
     1. this.$template is used to set component html
     2. this.$components is used to declared $components
@@ -75,8 +119,8 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 
   - `name: String` is this component use in `class Controller`
   - `props: Object` is data which `class Controller` sends to `class Component`
-  - **`props: Object` can only be changed or used after lifecycle `constructor()`**
-  - `props: Object` can only be changed by action `this.setProps()` and `this.setProps()` is equal to `setState`
+  - ** `props: Object` can only be changed or used after lifecycle `constructor()` **
+  - `props: Object` can only be changed by action `this.$setProps()` and `this.$setProps()` is equal to `$setState`
 
   ```javascript
   class pComponent extends Component {
@@ -106,8 +150,8 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
     }
     componentClick(e) {
       alert('点击了组件');
-      this.setState({b: 2});
-      this.setProps({ax: 5});
+      this.$setState({b: 2});
+      this.$setProps({ax: 5});
       this.$location.go('/R1/R4', { a: '1' });
       this.$location.state();
       // this.props.b(3);
@@ -119,10 +163,11 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   }
   ```
 
-4. Create a controller for path:
+5. Create a controller for path:
+
   - must extends`class Controller`
   - must declare template in `this.$template : String`
-  - **template must be parceled by a father Dom in class `Controller`**
+  - **`$template` must be parceled by a father Dom in lifecycle `$declare()`**
   - must declare components in  life-cycle `$declare(){}`
   - if u want to rerender Component, plz use `this.$replaceComponent();`
 
@@ -133,6 +178,8 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   - `templateName: String` must be as same as the `html tag` which is used in `this.$template`
   -  `props: Object`'s key is used in `class Component as props's key`
   - now thie `props` is an **unidirectional data flow**,can only be changed in Component.If u want to change it in father Controller, plase use callback to change state in father Controller.
+  - if u are using `Route`, please use `<router-render></router-render>` in `$template` of your controller
+  - if u are using `Route`, please use `$routeChange(lastRoute, newRoute)` to watch Route changes
 
   ``` javascript
   class R1 extends Controller {
@@ -175,6 +222,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
           <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.e" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
           this.state.a：<br/>
           <input es-model="this.state.a" />
+          <router-render></router-render>
         </div>
       </div>
       `);
@@ -190,7 +238,10 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
       };
     }
     $onInit() {
-      console.log('is $onInit');
+      this.utils.setCookie('tutor', {
+      name: 'gerry',
+      github: 'https://github.com/DimaLiLongJi',
+    }, { expires: 7 });
     }
     $beforeMount() {
       console.log('is $beforeMount');
@@ -205,9 +256,16 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
       console.log('oldData Controller:', oldData);
       console.log('newData Controller:', newData);
     }
+    $routeChange(lastRoute, newRoute) {
+      console.log('R2 is $routeChange', lastRoute, newRoute);
+    }
     showAlert() {
+      console.log('this.$globalContext R1', this.$globalContext);
+      this.$setGlobalContext({ a: 3 });
+      this.$location.go('/R1/C1', { a: '1' });
+      console.log('this.$location', this.$location.state());
       alert('我错了 点下控制台看看吧');
-      this.setState({
+      this.$setState({
         a: 2,
         b: !this.state.a
       });
@@ -215,12 +273,13 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
     }
     getProps(a) {
       alert('里面传出来了');
-      this.setState({a: a});
+      this.$setState({a: a});
     }
   }
   ```
 
-5. Template Syntax
+6. Template Syntax
+
   - 规定：指令以 es-xxx 命名
   - now: es-text es-html es-model es-class es-repeat es-if es-on:Event
   - 事件指令, 如 es-on:click
@@ -242,13 +301,15 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
       5. Boolean: `true` `false`
       6. For es-repeat: items like: `es-repeat="let a in this.state.b" es-if="a.f"`
 
-6. Data monitor: this.state && this.setState
-  - use `this.state: Object` and `this.setState(parmars: Function || Object)`
+7. Data monitor: this.state && this.$setState
+
+  - use `this.state: Object` and `this.$setState(parmars: Function || Object)`
   - if u have some variable, u can set `this.state` in `constructor(){}`
-  - if u want to change State, plz use `this.setState`, parmars can be `Object` or `Function` which must return an `Object`
+  - if u want to change State, plz use `this.$setState`, parmars can be `Object` or `Function` which must return an `Object`
   - and u can recive this change in life cycle `$watchState(oldData, newData)`
 
-7. `Watcher` and `KeyWatcher`
+8. `Watcher` and `KeyWatcher`
+
   - import {Watcher, KeyWatcher}
 
     1. `Watcher`
@@ -269,10 +330,13 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
         ```
 
 
-8. Life cycle is:
+9. Life cycle is:
+
   - Component
+
     ```javascript
       constructor()
+      $beforeInit()
       $declare()
       $onInit()
       $beforeMount()
@@ -283,38 +347,47 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
     ```
 
   - Controller
+
     ```javascript
       constructor()
+      $beforeInit()
       $declare()
       $onInit()
       $beforeMount()
       $afterMount()
       $hasRender()
-      $onDestory()
+      $routeChange(lastRoute, newRoute)
       $watchState(oldData, newData)
     ```
 
   - Router
+
     ```javascript
     $routeChange(oldPath, newPath)
     ```
 
 ## Architecture
+
 route => controller => component
 
 ## To do
+
+- [ ] Virtual DOM
+- [ ] ts（强类型赛高）
+- [x] 类分离，通过use来绑定方法
+- [x] 无需route渲染
+- [x] 子路由(2/2)
+- [X] 组件化(3/3)
+- [x] 模块化
+- [X] 双向绑定
 - [x] 公共类提取
-- [ ] 子路由(1/2)
-- [x] 组件中使用组件
-- [x] 改用 history的pushState
-- [x] 监听路由变化动态渲染(2/2)
 - [x] 数据劫持
 - [x] 双向绑定模板
 - [x] Template Syntax: es-text es-html es-model es-class es-repeat es-if(6/6)
 - [x] 组件props
 - [x] 组件渲染
-- [X] 组件化(3/3)
-- [x] 模块化
-- [X] 双向绑定
-- [ ] Virtual DOM
-- [ ] ts（强类型赛高）
+- [x] 组件中使用组件
+- [x] 改用 history的pushState
+- [x] 监听路由变化动态渲染(2/2)
+
+

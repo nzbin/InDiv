@@ -88,6 +88,7 @@ class CompileUtilForRepeat {
       watchValue[index][val] = event.target.value;
     };
     node.addEventListener('change', fn, false);
+    // node.addEventListener('input', fn, false);
   }
 
   eventHandler(node, vm, exp, event, key, val) {
@@ -211,6 +212,7 @@ class CompileUtil {
       if (/(this.props.).*/.test(exp)) vm.props[val] = event.target.value;
     };
     node.addEventListener('change', fn, false);
+    // node.addEventListener('input', fn, false);
   }
 
   repeatUpdater(node, value, expFather, vm) {
@@ -281,12 +283,16 @@ class CompileUtil {
 }
 
 class Compile {
-  constructor(el, vm) {
+  constructor(el, vm, routerRenderDom) {
     this.$vm = vm;
     this.$el = this.isElementNode(el) ? el : document.querySelector(el);
     if (this.$el) {
       this.$fragment = this.node2Fragment(this.$el);
       this.init();
+      if (routerRenderDom) {
+        const newRouterRenderDom = this.$fragment.querySelectorAll('router-render')[0];
+        newRouterRenderDom.parentNode.replaceChild(routerRenderDom, newRouterRenderDom);
+      }
       this.$el.appendChild(this.$fragment);
     }
   }
@@ -312,7 +318,7 @@ class Compile {
       if (this.isElementNode(node)) {
         if (reg.test(text)) {
           const regText = RegExp.$1;
-          if (/(.*\{\{(this.state.).*\}\}.*)|(.*\{\{(this.props.).*\}\}.*)/g.test(text)) this.compileText(node, regText);
+          if (/(.*\{\{(this.).*\}\}.*)/g.test(text)) this.compileText(node, regText);
         }
         this.compile(node, fragment);
       }

@@ -3,11 +3,13 @@ const Utils = require('./Utils');
 class Lifecycle {
   constructor() {
     this.state = {};
+    this.$globalContext = {};
     this.utils = new Utils();
     this.$location = {
       state: this.$getLocationState.bind(this),
       go: this.$locationGo.bind(this),
     };
+    this.$vm = null;
   }
 
   $declare() {
@@ -37,17 +39,13 @@ class Lifecycle {
   }
 
   $locationGo(path, query, params) {
-    window._esRouteObject = {
-      path,
-      query,
-      params,
-    };
     if (window._esRouteMode === 'state') {
+      const rootPath = this.$vm.$rootPath === '/' ? '' : this.$vm.$rootPath;
       history.pushState({
         path,
         query,
         params,
-      }, null, `${path}${this.utils.buildQuery(query)}`);
+      }, null, `${rootPath}${path}${this.utils.buildQuery(query)}`);
     }
     if (window._esRouteMode === 'hash') {
       history.pushState({
@@ -56,9 +54,14 @@ class Lifecycle {
         params,
       }, null, `#${path}${this.utils.buildQuery(query)}`);
     }
+    window._esRouteObject = {
+      path,
+      query,
+      params,
+    };
   }
 
-  setState(newState) {
+  $setState(newState) {
     if (newState && this.utils.isFunction(newState)) {
       const _newState = newState();
       if (_newState && _newState instanceof Object) {
@@ -70,6 +73,24 @@ class Lifecycle {
     if (newState && newState instanceof Object) {
       for (let key in newState) {
         if (this.state.hasOwnProperty(key) && this.state[key] !== newState[key]) this.state[key] = newState[key];
+      }
+    }
+  }
+
+  $setGlobalContext(newGlobalContext) {
+    if (newGlobalContext && this.utils.isFunction(newGlobalContext)) {
+      const _newGlobalContext = newGlobalContext();
+      if (_newGlobalContext && _newGlobalContext instanceof Object) {
+        for (let key in _newGlobalContext) {
+          if (this.$globalContext.hasOwnProperty(key) && this.$globalContext[key] !== _newGlobalContext[key]) this.$globalContext[key] = _newGlobalContext[key];
+        }
+      }
+    }
+    if (newGlobalContext && newGlobalContext instanceof Object) {
+      for (let key in newGlobalContext) {
+        if (this.$globalContext.hasOwnProperty(key) && this.$globalContext[key] !== newGlobalContext[key]) {
+          this.$globalContext[key] = newGlobalContext[key];
+        }
       }
     }
   }

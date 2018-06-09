@@ -8,10 +8,23 @@ class Router {
     this.lastRoute = null;
     this.rootDom = null;
     this.utils = new Utils();
+    this.$rootPath = '/';
+  }
+
+  $use(vm) {
+    this.vm = vm;
+    this.vm.$setRootPath(this.$rootPath);
+    this.vm.$canRenderController = false;
     window.addEventListener('load', this.refresh.bind(this), false);
     window.addEventListener('popstate', (e) => {
+      let path;
+      if (this.$rootPath === '/') {
+        path = location.pathname || '/';
+      } else {
+        path = location.pathname.replace(this.$rootPath, '') === '' ? '/' : location.pathname.replace(this.$rootPath, '');
+      }
       window._esRouteObject = {
-        path: location.pathname || '/',
+        path,
         query: {},
         params: {},
       };
@@ -19,34 +32,48 @@ class Router {
     }, false);
   }
 
-  $routeChange(lastRoute, nextRoute) {}
-
-  init(arr) {
+  $init(arr) {
     window._esRouteMode = 'state';
     if (arr && arr instanceof Array) {
-      arr.forEach(route => {
-        if (route.path && route.controller && this.utils.isFunction(route.controller)) {
-          this.route(route.path, route.controller);
-        } else {
-          console.error('need path or controller');
-          return false;
-        }
-      });
       const rootDom = document.querySelector('#root');
       this.rootDom = rootDom || null;
+      this.routes = arr;
+      this.routesList = [];
     } else {
       console.error('no routes exit');
     }
   }
 
-  route(path, controller) {
-    this.routes[path] = controller || function () {};
+  $setRootPath(rootPath) {
+    if (rootPath && typeof rootPath === 'string') {
+      this.$rootPath = rootPath;
+    } else {
+      console.error('rootPath is not defined or rootPath must be a String');
+    }
+  }
+
+  $routeChange(lastRoute, nextRoute) {}
+
+  redirectTo(redirectTo) {
+    const rootPath = this.$rootPath === '/' ? '' : this.$rootPath;
+    history.replaceState(null, null, `${rootPath}${redirectTo}`);
+    window._esRouteObject = {
+      path: redirectTo || '/',
+      query: {},
+      params: {},
+    };
   }
 
   refresh() {
     if (!window._esRouteObject || !this.watcher) {
+      let path;
+      if (this.$rootPath === '/') {
+        path = location.pathname || '/';
+      } else {
+        path = location.pathname.replace(this.$rootPath, '') === '' ? '/' : location.pathname.replace(this.$rootPath, '');
+      }
       window._esRouteObject = {
-        path: location.pathname || '/',
+        path,
         query: {},
         params: {},
       };
@@ -55,41 +82,121 @@ class Router {
       });
     }
     this.currentUrl = window._esRouteObject.path || '/';
-    if (this.routes[this.currentUrl]) {
-      if (window.routerController) {
-        if (window.routerController.$onDestory) window.routerController.$onDestory();
-        delete window.routerController;
-      }
-      const controller = new this.routes[this.currentUrl]();
-      window.routerController = controller;
-      if (controller.$beforeInit) controller.$beforeInit();
-      if (controller.$onInit) controller.$onInit();
-      this.renderController(controller).then(() => {
-        this.$routeChange(this.lastRoute, this.currentUrl);
-        this.lastRoute = this.currentUrl;
-      }).catch(() => {
-        console.error('route change failed');
-      });
-    }
+    this.renderRouteList = this.currentUrl.split('/');
+    this.routesList = [];
+    this.renderRouteList.shift();
+    this.distributeRoutes();
   }
 
-  renderController(controller) {
-    const template = controller.$template;
-    if (template && typeof template === 'string' && this.rootDom) {
-      if (controller.$beforeMount) controller.$beforeMount();
-      this.replaceDom(controller).then(() => {
-        if (controller.$afterMount) controller.$afterMount();
-      });
-      return Promise.resolve();
+  distributeRoutes() {
+    // has render father route
+    if (this.lastRoute && new RegExp(`^${this.lastRoute}.*`).test(this.currentUrl)) {
+      this.insertRenderRoutes();
+    // didn't render father route
     } else {
-      console.error('renderController failed: template or rootDom is not exit');
-      return Promise.reject();
+      this.generalDistributeRoutes();
     }
+    this.$routeChange(this.lastRoute, this.currentUrl);
+    this.lastRoute = this.currentUrl;
   }
 
-  replaceDom(controller) {
-    if (controller.$render) controller.$render();
-    return Promise.resolve();
+  insertRenderRoutes() {
+    const lastRouteList = this.lastRoute.split('/');
+    lastRouteList.shift();
+    const needRenderIndex = lastRouteList.length;
+    this.renderRouteList.forEach((path, index) => {
+      if (index === 0) {
+        const rootRoute = this.routes.find(route => route.path === `/${path}`);
+        if (!rootRoute) {
+          console.error('wrong route instantiation in insertRenderRoutes:', this.currentUrl);
+          return;
+        }
+        if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo)) {
+          this.redirectTo(rootRoute.redirectTo);
+          return;
+        }
+        this.routesList.push(rootRoute);
+      } else {
+        const lastRoute = this.routesList[index - 1].children;
+        if (!lastRoute || !(lastRoute instanceof Array)) {
+          console.error('routes not exit or routes must be an array!');
+          return;
+        }
+        const route = lastRoute.find(route => route.path === `/${path}`);
+        if (!route) {
+          console.error('wrong route instantiation1:', this.currentUrl);
+          return;
+        }
+        this.routesList.push(route);
+      }
+      if (index === needRenderIndex) {
+        const lastRoute = this.routesList[index - 1].children;
+        if (!lastRoute || !(lastRoute instanceof Array)) {
+          console.error('routes not exit or routes must be an array!');
+        }
+        const route = lastRoute.find(route => route.path === `/${path}`);
+        if (!route) return;
+        if (route.redirectTo && /^\/.*/.test(route.redirectTo)) {
+          this.redirectTo(route.redirectTo);
+          return;
+        }
+        if (this.oldController && this.oldController.$routeChange) this.oldController.$routeChange(this.lastRoute, this.currentUrl);
+        const Controller = route.controller;
+        const rootController = new Controller();
+        this.oldController = rootController;
+        const renderDom = document.querySelectorAll('router-render')[index - 1];
+        this.instantiateController(rootController, renderDom);
+      }
+    });
+  }
+
+  generalDistributeRoutes() {
+    this.renderRouteList.forEach((path, index) => {
+      // first init route
+      if (index === 0) {
+        const rootRoute = this.routes.find(route => route.path === `/${path}`);
+        if (!rootRoute) {
+          console.error('wrong route instantiation in generalDistributeRoutes:', this.currentUrl);
+          return;
+        }
+        if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo)) {
+          this.redirectTo(rootRoute.redirectTo);
+          return;
+        }
+        if (this.oldController && this.oldController.$routeChange) this.oldController.$routeChange(this.lastRoute, this.currentUrl);
+        const Controller = rootRoute.controller;
+        const rootController = new Controller();
+        this.oldController = rootController;
+        const rootDom = document.querySelector('#root');
+        this.routesList.push(rootRoute);
+        this.instantiateController(rootController, rootDom);
+      } else {
+        const lastRoute = this.routesList[index - 1].children;
+        if (!lastRoute || !(lastRoute instanceof Array)) {
+          console.error('routes not exit or routes must be an array!');
+        }
+        const route = lastRoute.find(route => route.path === `/${path}`);
+        if (!route) {
+          console.error('wrong route instantiation1:', this.currentUrl);
+          return;
+        }
+        if (route.redirectTo && /^\/.*/.test(route.redirectTo)) {
+          this.redirectTo(route.redirectTo);
+          return;
+        }
+        if (this.oldController && this.oldController.$routeChange) this.oldController.$routeChange(this.lastRoute, this.currentUrl);
+        const Controller = route.controller;
+        const rootController = new Controller();
+        this.oldController = rootController;
+        const renderDom = document.querySelectorAll('router-render')[index - 1];
+        this.routesList.push(route);
+        this.instantiateController(rootController, renderDom);
+      }
+    });
+  }
+
+  instantiateController(controller, renderDom) {
+    this.vm.$renderController(controller, renderDom);
   }
 }
 
@@ -100,6 +207,13 @@ class RouterHash {
     this.lastRoute = null;
     this.rootDom = null;
     this.utils = new Utils();
+    this.$rootPath = '/';
+  }
+
+  $use(vm) {
+    this.vm = vm;
+    this.vm.$setRootPath(this.$rootPath);
+    this.vm.$canRenderController = false;
     window.addEventListener('load', this.refresh.bind(this), false);
     window.addEventListener('hashchange', this.refresh.bind(this), false);
     window.addEventListener('popstate', (e) => {
@@ -112,28 +226,31 @@ class RouterHash {
     }, false);
   }
 
-  $routeChange(lastRoute, nextRoute) {}
-
-  init(arr) {
+  $init(arr) {
     window._esRouteMode = 'hash';
     if (arr && arr instanceof Array) {
-      arr.forEach(route => {
-        if (route.path && route.controller && this.utils.isFunction(route.controller)) {
-          this.route(route.path, route.controller);
-        } else {
-          console.error('need path or controller');
-          return false;
-        }
-      });
       const rootDom = document.querySelector('#root');
       this.rootDom = rootDom || null;
+      this.routes = arr;
+      this.routesList = [];
     } else {
       console.error('no routes exit');
     }
   }
 
-  route(path, controller) {
-    this.routes[path] = controller || function () {};
+  $setRootPath() {
+    console.error('rootPath is only used in Router');
+  }
+
+  $routeChange(lastRoute, nextRoute) {}
+
+  redirectTo(redirectTo) {
+    history.replaceState(null, null, `#${redirectTo}`);
+    window._esRouteObject = {
+      path: redirectTo || '/',
+      query: {},
+      params: {},
+    };
   }
 
   refresh() {
@@ -148,41 +265,122 @@ class RouterHash {
       });
     }
     this.currentUrl = window._esRouteObject.path || '/';
-    if (this.routes[this.currentUrl]) {
-      if (window.routerController) {
-        if (window.routerController.$onDestory) window.routerController.$onDestory();
-        delete window.routerController;
-      }
-      const controller = new this.routes[this.currentUrl]();
-      window.routerController = controller;
-      if (controller.$beforeInit) controller.$beforeInit();
-      if (controller.$onInit) controller.$onInit();
-      this.renderController(controller).then(() => {
-        this.$routeChange(this.lastRoute, this.currentUrl);
-        this.lastRoute = this.currentUrl;
-      }).catch(() => {
-        console.error('route change failed');
-      });
-    }
+    this.renderRouteList = this.currentUrl.split('/');
+    this.routesList = [];
+    this.renderRouteList.shift();
+    this.distributeRoutes();
   }
 
-  renderController(controller) {
-    const template = controller.$template;
-    if (template && typeof template === 'string' && this.rootDom) {
-      if (controller.$beforeMount) controller.$beforeMount();
-      this.replaceDom(controller).then(() => {
-        if (controller.$afterMount) controller.$afterMount();
-      });
-      return Promise.resolve();
+
+  distributeRoutes() {
+    // has render father route
+    if (this.lastRoute && new RegExp(`^${this.lastRoute}.*`).test(this.currentUrl)) {
+      this.insertRenderRoutes();
+    // didn't render father route
     } else {
-      console.error('renderController failed: template or rootDom is not exit');
-      return Promise.reject();
+      this.generalDistributeRoutes();
     }
+    this.$routeChange(this.lastRoute, this.currentUrl);
+    this.lastRoute = this.currentUrl;
   }
 
-  replaceDom(controller) {
-    if (controller.$render) controller.$render();
-    return Promise.resolve();
+  insertRenderRoutes() {
+    const lastRouteList = this.lastRoute.split('/');
+    lastRouteList.shift();
+    const needRenderIndex = lastRouteList.length;
+    this.renderRouteList.forEach((path, index) => {
+      if (index === 0) {
+        const rootRoute = this.routes.find(route => route.path === `/${path}`);
+        if (!rootRoute) {
+          console.error('wrong route instantiation2:', this.currentUrl);
+          return;
+        }
+        if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo)) {
+          this.redirectTo(rootRoute.redirectTo);
+          return;
+        }
+        this.routesList.push(rootRoute);
+      } else {
+        const lastRoute = this.routesList[index - 1].children;
+        if (!lastRoute || !(lastRoute instanceof Array)) {
+          console.error('routes not exit or routes must be an array!');
+          return;
+        }
+        const route = lastRoute.find(route => route.path === `/${path}`);
+        if (!route) {
+          console.error('wrong route instantiation1:', this.currentUrl);
+          return;
+        }
+        this.routesList.push(route);
+      }
+      if (index === needRenderIndex) {
+        const lastRoute = this.routesList[index - 1].children;
+        if (!lastRoute || !(lastRoute instanceof Array)) {
+          console.error('routes not exit or routes must be an array!');
+        }
+        const route = lastRoute.find(route => route.path === `/${path}`);
+        if (!route) return;
+        if (route.redirectTo && /^\/.*/.test(route.redirectTo)) {
+          this.redirectTo(route.redirectTo);
+          return;
+        }
+        if (this.oldController && this.oldController.$routeChange) this.oldController.$routeChange(this.lastRoute, this.currentUrl);
+        const Controller = route.controller;
+        const rootController = new Controller();
+        this.oldController = rootController;
+        const renderDom = document.querySelectorAll('router-render')[index - 1];
+        this.instantiateController(rootController, renderDom);
+      }
+    });
+  }
+
+  generalDistributeRoutes() {
+    this.renderRouteList.forEach((path, index) => {
+      // first init route
+      if (index === 0) {
+        const rootRoute = this.routes.find(route => route.path === `/${path}`);
+        if (!rootRoute) {
+          console.error('wrong route instantiation2:', this.currentUrl);
+          return;
+        }
+        if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo)) {
+          this.redirectTo(rootRoute.redirectTo);
+          return;
+        }
+        if (this.oldController && this.oldController.$routeChange) this.oldController.$routeChange(this.lastRoute, this.currentUrl);
+        const Controller = rootRoute.controller;
+        const rootController = new Controller();
+        this.oldController = rootController;
+        const rootDom = document.querySelector('#root');
+        this.routesList.push(rootRoute);
+        this.instantiateController(rootController, rootDom);
+      } else {
+        const lastRoute = this.routesList[index - 1].children;
+        if (!lastRoute || !(lastRoute instanceof Array)) {
+          console.error('routes not exit or routes must be an array!');
+        }
+        const route = lastRoute.find(route => route.path === `/${path}`);
+        if (!route) {
+          console.error('wrong route instantiation1:', this.currentUrl);
+          return;
+        }
+        if (route.redirectTo && /^\/.*/.test(route.redirectTo)) {
+          this.redirectTo(route.redirectTo);
+          return;
+        }
+        if (this.oldController && this.oldController.$routeChange) this.oldController.$routeChange();
+        const Controller = route.controller;
+        const rootController = new Controller();
+        this.oldController = rootController;
+        const renderDom = document.querySelectorAll('router-render')[index - 1];
+        this.routesList.push(route);
+        this.instantiateController(rootController, renderDom);
+      }
+    });
+  }
+
+  instantiateController(controller, renderDom) {
+    this.vm.$renderController(controller, renderDom);
   }
 }
 

@@ -1,0 +1,5 @@
+class VirtualDOM {
+  constructor(el) {
+
+  }
+}

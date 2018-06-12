@@ -235,17 +235,15 @@ class R2 extends Controller {
         <input es-model="this.state.a"/>
         <br/>
         <p es-on:click="this.showAlert()">点击显示this.state.a:</p>
-        子组件:<br/>
-        <pComponent1></pComponent1>
-        <router-render></router-render>    
+        子组件:<br/>   
       </div>
     `);
-    this.$components = {
-      pComponent1: new RouteChild('pComponent1', {
-        ax: this.state.a,
-        b: this.bindChange.bind(this),
-      }),
-    };
+    // this.$components = {
+    //   pComponent1: new RouteChild('pComponent1', {
+    //     ax: this.state.a,
+    //     b: this.bindChange.bind(this),
+    //   }),
+    // };
   }
   $onInit() {
     console.log('this.$globalContext R2', this.$globalContext);

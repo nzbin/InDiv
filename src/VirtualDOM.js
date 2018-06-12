@@ -54,7 +54,7 @@ function diffAttributes(oldVnode, newVnode, patchList) {
     const oldVnodeAttr = oldVnode.attributes.find(at => at.name === attr.name);
     if (!oldVnodeAttr || oldVnodeAttr.value !== attr.value) {
       patchList.push({
-        type: 2,
+        type: 3,
         node: oldVnode,
         newValue: attr,
         oldValue: oldVnodeAttr,
@@ -63,9 +63,9 @@ function diffAttributes(oldVnode, newVnode, patchList) {
   });
   oldVnode.attributes.forEach((attr) => {
     const newVnodeAttr = newVnode.attributes.find(at => at.name === attr.name);
-    if (!newVnodeAttr || newVnodeAttr.value !== attr.value) {
+    if (!newVnodeAttr) {
       patchList.push({
-        type: 3,
+        type: 4,
         node: oldVnode,
         oldValue: attr,
       });
@@ -77,7 +77,7 @@ function diffNodeValue(oldVnode, newVnode, patchList) {
   if (!oldVnode.nodeValue || !newVnode.nodeValue) return;
   if (oldVnode.nodeValue !== newVnode.nodeValue) {
     patchList.push({
-      type: 4,
+      type: 5,
       node: oldVnode,
       newValue: newVnode.nodeValue,
       oldValue: oldVnode.nodeValue,
@@ -96,11 +96,7 @@ function diffTagName(oldVnode, newVnode, patchList) {
   }
 }
 
-function diffVnode(oldVnode, newVnode, patchList) {
-  if (!patchList) {
-    console.error('patchList can not be null, diffVnode must need an Array');
-    return;
-  }
+function diffChildNodes(newVnode, oldVnode, patchList) {
   if (newVnode.childNodes.length > 0) {
     newVnode.childNodes.forEach((nChild, index) => {
       if (!oldVnode.childNodes[index]) {
@@ -114,7 +110,30 @@ function diffVnode(oldVnode, newVnode, patchList) {
       }
     });
   }
-  if (newVnode.type === 'document-fragment') return;
+  if (oldVnode.childNodes.length > 0) {
+    oldVnode.childNodes.forEach((oChild, index) => {
+      if (!newVnode.childNodes[index]) {
+        patchList.push({
+          type: 2,
+          node: oChild.node,
+          parentNode: oldVnode.node,
+        });
+      }
+    });
+  }
+}
+
+function diffVnode(oldVnode, newVnode, patchList) {
+  if (!patchList) {
+    console.error('patchList can not be null, diffVnode must need an Array');
+    return;
+  }
+
+  if (newVnode.type === 'document-fragment') {
+    diffChildNodes(newVnode, oldVnode, patchList);
+    return;
+  }
+
   if (newVnode.node.isEqualNode(oldVnode.node)) return;
   if (oldVnode.tagName !== newVnode.tagName) {
     diffTagName(oldVnode, newVnode, patchList);
@@ -122,32 +141,37 @@ function diffVnode(oldVnode, newVnode, patchList) {
   }
   diffAttributes(oldVnode, newVnode, patchList);
   diffNodeValue(oldVnode, newVnode, patchList);
+  diffChildNodes(newVnode, oldVnode, patchList);
 }
 
 /**
  * REMOVETAG: 0, 替换dom: 0
  * ADDTAG: 1, 增加dom: 1
- * ADDATTRIBUTES: 2, 增加属性: 2
- * REPLACEATTRIBUTES: 3, 更换属性: 3
- * TEXT: 4, 更改文字: 4
+ * REMOVETAG: 2, 增加dom: 2
+ * ADDATTRIBUTES: 3, 增加属性: 3
+ * REPLACEATTRIBUTES: 4, 移除属性: 4
+ * TEXT: 5, 更改文字: 5
  * @param [] patchList
  */
 function renderVnode(patchList) {
   patchList.forEach(patch => {
     switch (patch.type) {
     case 0:
-      patch.parentNode.replaceChild(patch.oldVnode, patch.newNode);
+      patch.parentNode.replaceChild(patch.newNode, patch.oldVnode);
       break;
     case 1:
       patch.parentNode.appendChild(patch.newNode);
       break;
     case 2:
-      patch.node.setAttribute(patch.newValue.name, patch.newValue.value);
+      patch.parentNode.removeChild(patch.node);
       break;
     case 3:
-      patch.node.setAttribute(patch.newValue.name, patch.newValue.value);
+      patch.node.node.setAttribute(patch.newValue.name, patch.newValue.value);
       break;
     case 4:
+      patch.node.node.removeAttribute(patch.newValue.name);
+      break;
+    case 5:
       patch.node.node.nodeValue = patch.newValue;
       break;
     }

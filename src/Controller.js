@@ -45,12 +45,12 @@ class Controller extends Lifecycle {
       return;
     }
     this.dom = dom;
-    if (dom.hasChildNodes()) {
-      let childs = dom.childNodes;
-      for (let i = childs.length - 1; i >= 0; i--) {
-        dom.removeChild(childs.item(i));
-      }
-    }
+    // if (dom.hasChildNodes()) {
+    //   let childs = dom.childNodes;
+    //   for (let i = childs.length - 1; i >= 0; i--) {
+    //     dom.removeChild(childs.item(i));
+    //   }
+    // }
     this.$mountComponent(dom);
     this.compile = new Compile(dom, this);
     if (this.$components) {
@@ -64,16 +64,17 @@ class Controller extends Lifecycle {
 
   $reRender() {
     const dom = this.dom;
-    const routerRenderDom = dom.querySelectorAll('router-render')[0];
-    if (dom.hasChildNodes()) {
-      let childs = dom.childNodes;
-      for (let i = childs.length - 1; i >= 0; i--) {
-        dom.removeChild(childs.item(i));
-      }
-      if (this.$onDestory) this.$onDestory();
-    }
+    // const routerRenderDom = dom.querySelectorAll('router-render')[0];
+    // if (dom.hasChildNodes()) {
+    //   let childs = dom.childNodes;
+    //   for (let i = childs.length - 1; i >= 0; i--) {
+    //     dom.removeChild(childs.item(i));
+    //   }
+    //   if (this.$onDestory) this.$onDestory();
+    // }
     this.$mountComponent(dom);
-    this.compile = new Compile(dom, this, routerRenderDom);
+    // this.compile = new Compile(dom, this, routerRenderDom);
+    this.compile = new Compile(dom, this);
     if (this.$components) {
       for (let key in this.$components) {
         if (this.$components[key].$reRender) this.$components[key].$reRender();

@@ -114,6 +114,12 @@ class Utils {
     bStack.pop();
     return true;
   }
+
+  formatInnerHTML(string) {
+    string = string.replace(/(\n\s*)/g, '');
+    string = string.replace(/^[^\S\n]+/gm, '');
+    return string;
+  }
 }
 
 module.exports = Utils;

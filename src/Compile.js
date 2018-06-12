@@ -1,3 +1,6 @@
+const VirtualDOM = require('./VirtualDOM');
+const Utils = require('./Utils');
+
 class CompileUtilForRepeat {
   constructor(fragment) {
     this.$fragment = fragment;
@@ -87,8 +90,8 @@ class CompileUtilForRepeat {
       if (event.target.value === watchValue[index][val]) return;
       watchValue[index][val] = event.target.value;
     };
-    node.addEventListener('change', fn, false);
-    // node.addEventListener('input', fn, false);
+    // node.addEventListener('change', fn, false);
+    node.addEventListener('input', fn, false);
   }
 
   eventHandler(node, vm, exp, event, key, val) {
@@ -211,8 +214,8 @@ class CompileUtil {
       if (/(this.state.).*/.test(exp)) vm.state[val] = event.target.value;
       if (/(this.props.).*/.test(exp)) vm.props[val] = event.target.value;
     };
-    node.addEventListener('change', fn, false);
-    // node.addEventListener('input', fn, false);
+    // node.addEventListener('change', fn, false);
+    node.addEventListener('input', fn, false);
   }
 
   repeatUpdater(node, value, expFather, vm) {
@@ -283,17 +286,33 @@ class CompileUtil {
 }
 
 class Compile {
-  constructor(el, vm, routerRenderDom) {
+  // removeDOM
+  // constructor(el, vm, routerRenderDom) {
+  //   this.$vm = vm;
+  //   this.$el = this.isElementNode(el) ? el : document.querySelector(el);
+  //   if (this.$el) {
+  //     this.$fragment = this.node2Fragment(this.$el);
+  //     this.init();
+  //     if (routerRenderDom) {
+  //       const newRouterRenderDom = this.$fragment.querySelectorAll('router-render')[0];
+  //       newRouterRenderDom.parentNode.replaceChild(routerRenderDom, newRouterRenderDom);
+  //     }
+  //     this.$el.appendChild(this.$fragment);
+  //   }
+  // }
+
+  constructor(el, vm) {
+    this.utils = new Utils();
     this.$vm = vm;
     this.$el = this.isElementNode(el) ? el : document.querySelector(el);
     if (this.$el) {
       this.$fragment = this.node2Fragment(this.$el);
       this.init();
-      if (routerRenderDom) {
-        const newRouterRenderDom = this.$fragment.querySelectorAll('router-render')[0];
-        newRouterRenderDom.parentNode.replaceChild(routerRenderDom, newRouterRenderDom);
-      }
-      this.$el.appendChild(this.$fragment);
+      const oldVnode = VirtualDOM.parseToVnode(this.$el);
+      const newVnode = VirtualDOM.parseToVnode(this.$fragment);
+      const patchList = [];
+      VirtualDOM.diffVnode(oldVnode, newVnode, patchList);
+      VirtualDOM.renderVnode(patchList);
     }
   }
 
@@ -303,15 +322,16 @@ class Compile {
 
   compileElement(fragment) {
     const elementCreated = document.createElement('div');
-    elementCreated.innerHTML = this.$vm.$template;
+    // elementCreated.innerHTML = this.$vm.$template;
+    elementCreated.innerHTML = this.utils.formatInnerHTML(this.$vm.$template);
     let childNodes = elementCreated.childNodes;
-    this.domRecursion(childNodes, fragment);
+    this.recursiveDOM(childNodes, fragment);
   }
 
-  domRecursion(childNodes, fragment) {
+  recursiveDOM(childNodes, fragment) {
     Array.from(childNodes).forEach(node => {
       if (node.hasChildNodes()) {
-        this.domRecursion(node.childNodes, node);
+        this.recursiveDOM(node.childNodes, node);
       }
       const text = node.textContent;
       const reg = /\{\{(.*)\}\}/g;

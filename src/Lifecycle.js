@@ -31,11 +31,6 @@ class Lifecycle {
   $watchState(oldData, newData) {}
 
   $getLocationState() {
-    // return {
-    //   path: window._esRouteObject.path,
-    //   query: window._esRouteObject.query,
-    //   params: window._esRouteObject.params,
-    // };
     return {
       path: this.$vm.$esRouteObject.path,
       query: this.$vm.$esRouteObject.query,
@@ -44,7 +39,6 @@ class Lifecycle {
   }
 
   $locationGo(path, query, params) {
-    // if (window._esRouteMode === 'state') {
     if (this.$vm.$esRouteMode === 'state') {
       const rootPath = this.$vm.$rootPath === '/' ? '' : this.$vm.$rootPath;
       history.pushState({
@@ -53,7 +47,6 @@ class Lifecycle {
         params,
       }, null, `${rootPath}${path}${this.utils.buildQuery(query)}`);
     }
-    // if (window._esRouteMode === 'hash') {
     if (this.$vm.$esRouteMode === 'hash') {
       history.pushState({
         path,
@@ -61,11 +54,6 @@ class Lifecycle {
         params,
       }, null, `#${path}${this.utils.buildQuery(query)}`);
     }
-    // window._esRouteObject = {
-    //   path,
-    //   query,
-    //   params,
-    // };
     this.$vm.$esRouteObject = {
       path,
       query,

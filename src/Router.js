@@ -16,6 +16,7 @@ class Router {
     this.$vm.$setRootPath(this.$rootPath);
     this.$vm.$canRenderController = false;
     this.$vm.$esRouteMode = 'state';
+    this.$vm.$routeDOMKey = 'router-render';
     window.addEventListener('load', this.refresh.bind(this), false);
     window.addEventListener('popstate', (e) => {
       let path;
@@ -217,6 +218,7 @@ class RouterHash {
     this.$vm.$setRootPath(this.$rootPath);
     this.$vm.$canRenderController = false;
     this.$vm.$esRouteMode = 'hash';
+    this.$vm.$routeDOMKey = 'router-render';
     window.addEventListener('load', this.refresh.bind(this), false);
     window.addEventListener('hashchange', this.refresh.bind(this), false);
     window.addEventListener('popstate', (e) => {

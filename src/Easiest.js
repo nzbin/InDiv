@@ -8,8 +8,8 @@ class Easiest {
     this.rootDom = document.querySelector('#root');
     this.$rootPath = '/';
     this.$canRenderController = true;
-
     this.$esRouteMode = null;
+    this.$routeDOMKey = 'router-render';
   }
 
   $use(modal) {

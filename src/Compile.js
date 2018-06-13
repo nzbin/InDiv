@@ -90,8 +90,11 @@ class CompileUtilForRepeat {
       if (event.target.value === watchValue[index][val]) return;
       watchValue[index][val] = event.target.value;
     };
-    // node.addEventListener('change', fn, false);
-    node.addEventListener('input', fn, false);
+    try {
+      node.addEventListener('input', fn, false);
+    } catch (err) {
+      node.attachEvent('oninput', fn);
+    }
   }
 
   eventHandler(node, vm, exp, event, key, val) {
@@ -214,8 +217,11 @@ class CompileUtil {
       if (/(this.state.).*/.test(exp)) vm.state[val] = event.target.value;
       if (/(this.props.).*/.test(exp)) vm.props[val] = event.target.value;
     };
-    // node.addEventListener('change', fn, false);
-    node.addEventListener('input', fn, false);
+    try {
+      node.addEventListener('input', fn, false);
+    } catch (err) {
+      node.attachEvent('oninput', fn);
+    }
   }
 
   repeatUpdater(node, value, expFather, vm) {
@@ -287,28 +293,17 @@ class CompileUtil {
 
 class Compile {
   // removeDOM
-  // constructor(el, vm, routerRenderDom) {
-  //   this.utils = new Utils();
-  //   this.$vm = vm;
-  //   this.$el = this.isElementNode(el) ? el : document.querySelector(el);
-  //   if (this.$el) {
-  //     this.$fragment = this.node2Fragment(this.$el);
-  //     this.init();
-  //     if (routerRenderDom) {
-  //       const newRouterRenderDom = this.$fragment.querySelectorAll('router-render')[0];
-  //       newRouterRenderDom.parentNode.replaceChild(routerRenderDom, newRouterRenderDom);
-  //     }
-  //     this.$el.appendChild(this.$fragment);
-  //   }
-  // }
-
-  constructor(el, vm) {
+  constructor(el, vm, routerRenderDom) {
     this.utils = new Utils();
     this.$vm = vm;
     this.$el = this.isElementNode(el) ? el : document.querySelector(el);
     if (this.$el) {
       this.$fragment = this.node2Fragment(this.$el);
       this.init();
+      if (routerRenderDom) { // replace routeDom
+        const newRouterRenderDom = this.$fragment.querySelectorAll(this.$vm.$vm.$routeDOMKey)[0];
+        newRouterRenderDom.parentNode.replaceChild(routerRenderDom, newRouterRenderDom);
+      }
       const oldVnode = VirtualDOM.parseToVnode(this.$el);
       const newVnode = VirtualDOM.parseToVnode(this.$fragment);
       const patchList = [];
@@ -323,7 +318,6 @@ class Compile {
 
   compileElement(fragment) {
     const elementCreated = document.createElement('div');
-    // elementCreated.innerHTML = this.$vm.$template;
     elementCreated.innerHTML = this.utils.formatInnerHTML(this.$vm.$template);
     let childNodes = elementCreated.childNodes;
     this.recursiveDOM(childNodes, fragment);

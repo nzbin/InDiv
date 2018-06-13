@@ -43,12 +43,6 @@ class Component extends Lifecycle {
 
   $render() {
     const dom = this.$fatherDom.getElementsByTagName(this.$templateName)[0];
-    // if (dom && dom.hasChildNodes()) {
-    //   let childs = dom.childNodes;
-    //   for (let i = childs.length - 1; i >= 0; i--) {
-    //     dom.removeChild(childs.item(i));
-    //   }
-    // }
     this.$mountComponent(dom);
     this.compile = new Compile(dom, this);
     if (this.$components) {
@@ -62,12 +56,6 @@ class Component extends Lifecycle {
 
   $reRender() {
     const dom = this.$fatherDom.getElementsByTagName(this.$templateName)[0];
-    // if (dom && dom.hasChildNodes()) {
-    //   let childs = dom.childNodes;
-    //   for (let i = childs.length - 1; i >= 0; i--) {
-    //     dom.removeChild(childs.item(i));
-    //   }
-    // }
     this.$mountComponent(dom);
     if (this.$onDestory) this.$onDestory();
     this.compile = new Compile(dom, this);

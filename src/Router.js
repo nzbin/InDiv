@@ -90,7 +90,7 @@ class Router {
 
   distributeRoutes() {
     // has render father route
-    if (this.lastRoute && new RegExp(`^${this.lastRoute}.*`).test(this.currentUrl)) {
+    if (this.lastRoute && this.lastRoute !== this.currentUrl && new RegExp(`^${this.lastRoute}.*`).test(this.currentUrl)) {
       this.insertRenderRoutes();
     // didn't render father route
     } else {
@@ -274,7 +274,7 @@ class RouterHash {
 
   distributeRoutes() {
     // has render father route
-    if (this.lastRoute && new RegExp(`^${this.lastRoute}.*`).test(this.currentUrl)) {
+    if (this.lastRoute && this.lastRoute !== this.currentUrl && new RegExp(`^${this.lastRoute}.*`).test(this.currentUrl)) {
       this.insertRenderRoutes();
     // didn't render father route
     } else {

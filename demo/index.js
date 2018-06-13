@@ -246,6 +246,7 @@ class R2 extends Controller {
     // };
   }
   $onInit() {
+    console.log('this.$vm', this.$vm);
     console.log('this.$globalContext R2', this.$globalContext);
     // console.log('is $onInit');
   }

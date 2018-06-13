@@ -12,9 +12,10 @@ class Router {
   }
 
   $use(vm) {
-    this.vm = vm;
-    this.vm.$setRootPath(this.$rootPath);
-    this.vm.$canRenderController = false;
+    this.$vm = vm;
+    this.$vm.$setRootPath(this.$rootPath);
+    this.$vm.$canRenderController = false;
+    this.$vm.$esRouteMode = 'state';
     window.addEventListener('load', this.refresh.bind(this), false);
     window.addEventListener('popstate', (e) => {
       let path;
@@ -23,7 +24,8 @@ class Router {
       } else {
         path = location.pathname.replace(this.$rootPath, '') === '' ? '/' : location.pathname.replace(this.$rootPath, '');
       }
-      window._esRouteObject = {
+
+      this.$vm.$esRouteObject = {
         path,
         query: {},
         params: {},
@@ -33,7 +35,6 @@ class Router {
   }
 
   $init(arr) {
-    window._esRouteMode = 'state';
     if (arr && arr instanceof Array) {
       const rootDom = document.querySelector('#root');
       this.rootDom = rootDom || null;
@@ -57,7 +58,7 @@ class Router {
   redirectTo(redirectTo) {
     const rootPath = this.$rootPath === '/' ? '' : this.$rootPath;
     history.replaceState(null, null, `${rootPath}${redirectTo}`);
-    window._esRouteObject = {
+    this.$vm.$esRouteObject = {
       path: redirectTo || '/',
       query: {},
       params: {},
@@ -65,23 +66,24 @@ class Router {
   }
 
   refresh() {
-    if (!window._esRouteObject || !this.watcher) {
+    if (!this.$vm.$esRouteObject || !this.watcher) {
       let path;
       if (this.$rootPath === '/') {
         path = location.pathname || '/';
       } else {
         path = location.pathname.replace(this.$rootPath, '') === '' ? '/' : location.pathname.replace(this.$rootPath, '');
       }
-      window._esRouteObject = {
+      this.$vm.$esRouteObject = {
         path,
         query: {},
         params: {},
       };
-      this.watcher = new KeyWatcher(window, '_esRouteObject', (o, n) => {
+      this.watcher = new KeyWatcher(this.$vm, '$esRouteObject', (o, n) => {
         this.refresh();
       });
     }
-    this.currentUrl = window._esRouteObject.path || '/';
+    this.currentUrl = this.$vm.$esRouteObject.path || '/';
+
     this.renderRouteList = this.currentUrl.split('/');
     this.routesList = [];
     this.renderRouteList.shift();
@@ -196,7 +198,7 @@ class Router {
   }
 
   instantiateController(controller, renderDom) {
-    this.vm.$renderController(controller, renderDom);
+    this.$vm.$renderController(controller, renderDom);
   }
 }
 
@@ -211,13 +213,14 @@ class RouterHash {
   }
 
   $use(vm) {
-    this.vm = vm;
-    this.vm.$setRootPath(this.$rootPath);
-    this.vm.$canRenderController = false;
+    this.$vm = vm;
+    this.$vm.$setRootPath(this.$rootPath);
+    this.$vm.$canRenderController = false;
+    this.$vm.$esRouteMode = 'hash';
     window.addEventListener('load', this.refresh.bind(this), false);
     window.addEventListener('hashchange', this.refresh.bind(this), false);
     window.addEventListener('popstate', (e) => {
-      window._esRouteObject = {
+      this.$vm.$esRouteObject = {
         path: location.hash.split('?')[0].slice(1) || '/',
         query: {},
         params: {},
@@ -227,7 +230,6 @@ class RouterHash {
   }
 
   $init(arr) {
-    window._esRouteMode = 'hash';
     if (arr && arr instanceof Array) {
       const rootDom = document.querySelector('#root');
       this.rootDom = rootDom || null;
@@ -246,7 +248,7 @@ class RouterHash {
 
   redirectTo(redirectTo) {
     history.replaceState(null, null, `#${redirectTo}`);
-    window._esRouteObject = {
+    this.$vm.$esRouteObject = {
       path: redirectTo || '/',
       query: {},
       params: {},
@@ -254,17 +256,17 @@ class RouterHash {
   }
 
   refresh() {
-    if (!window._esRouteObject || !this.watcher) {
-      window._esRouteObject = {
+    if (!this.$vm.$esRouteObject || !this.watcher) {
+      this.$vm.$esRouteObject = {
         path: location.hash.split('?')[0].slice(1) || '/',
         query: {},
         params: {},
       };
-      this.watcher = new KeyWatcher(window, '_esRouteObject', (o, n) => {
+      this.watcher = new KeyWatcher(this.$vm, '$esRouteObject', (o, n) => {
         this.refresh();
       });
     }
-    this.currentUrl = window._esRouteObject.path || '/';
+    this.currentUrl = this.$vm.$esRouteObject.path || '/';
     this.renderRouteList = this.currentUrl.split('/');
     this.routesList = [];
     this.renderRouteList.shift();
@@ -380,7 +382,7 @@ class RouterHash {
   }
 
   instantiateController(controller, renderDom) {
-    this.vm.$renderController(controller, renderDom);
+    this.$vm.$renderController(controller, renderDom);
   }
 }
 

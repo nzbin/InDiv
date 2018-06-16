@@ -35,9 +35,9 @@ class Easiest {
   }
 
   $renderController(controller, rootDom) {
-    if (controller.$beforeInit) controller.$beforeInit();
     controller.$vm = this;
     controller.$globalContext = this.$globalContext;
+    if (controller.$beforeInit) controller.$beforeInit();
     if (controller.$onInit) controller.$onInit();
     const template = controller.$template;
     if (template && typeof template === 'string' && rootDom) {

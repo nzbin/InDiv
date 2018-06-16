@@ -1,4 +1,5 @@
 const Utils = require('./Utils');
+const { CompileUtil } = require('./CompileUtils');
 
 class Lifecycle {
   constructor() {
@@ -10,12 +11,34 @@ class Lifecycle {
       go: this.$locationGo.bind(this),
     };
     this.$vm = null;
+    this.compileUtil = new CompileUtil();
   }
 
   $declare() {
     this.$fatherDom = null;
     this.$template = '';
     this.$components = {};
+
+    this.$componentList = {};
+  }
+
+  $componentsConstructor() {
+    this.$componentss = {};
+    const tagList = this.$template.match(/\<([^\/][^><]*[^\/])\>/g);
+    tagList.forEach(li => {
+      const tag = /^\<([^\s]+)\s*.*\>/g.exec(li)[1];
+      if (this.$componentList[tag]) {
+        const tagPropsList = li.replace(`<${tag}`, '').replace('>', '').split(' ');
+        const props = {};
+        tagPropsList.forEach(li => {
+          const _prop = /^(.+)\=\"\{(.+)\}\"/.exec(li);
+          if (li !== '') {
+            props[_prop[1]] = this.compileUtil._getVMVal(this, _prop[2]);
+          }
+        });
+        this.$componentss[tag] = new this.$componentList[tag](tag, props);
+      }
+    });
   }
 
   $onInit() {}

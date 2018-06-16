@@ -156,7 +156,7 @@ class R1 extends Controller {
   $declare() {
     this.$template = (`
     <div>
-      <pComponent1></pComponent1>
+      <PComponent ax="{this.state.a}" b="{this.getProps}"></PComponent>
       下面跟组件没关系<br/>
       $globalContext in Component: <span>{{this.$globalContext.a}}</span>
       <div es-if="this.state.f">
@@ -171,10 +171,14 @@ class R1 extends Controller {
     </div>
     `);
     this.$components = {
-      pComponent1: new PComponent('pComponent1', {
+      PComponent: new PComponent('PComponent', {
         ax: this.state.a,
         b: this.getProps.bind(this), // action in this
       }),
+    };
+
+    this.$componentList = {
+      PComponent,
     };
   }
   $onInit() {

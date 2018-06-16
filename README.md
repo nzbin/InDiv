@@ -372,7 +372,7 @@ route => controller => component
 
 ## To do
 
-- [ ] Virtual DOM
+- [x] Virtual DOM
 - [ ] ts（强类型赛高）
 - [x] 类分离，通过use来绑定方法
 - [x] 无需route渲染

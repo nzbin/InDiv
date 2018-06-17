@@ -156,13 +156,13 @@ class CompileUtil {
   bind(node, vm, exp, dir) {
     const updaterFn = this[`${dir}Updater`];
     const isRepeatNode = this.isRepeatNode(node);
-    if (isRepeatNode) {
+    if (isRepeatNode) { // compile repeatNode's attributes
       switch (dir) {
       case 'repeat':
         updaterFn && updaterFn.call(this, node, this._getVMRepeatVal(vm, exp), exp, vm);
         break;
       }
-    } else {
+    } else { // compile unrepeatNode's attributes
       switch (dir) {
       case 'model':
         updaterFn && updaterFn.call(this, node, this._getVMVal(vm, exp), exp, vm);
@@ -243,11 +243,57 @@ class CompileUtil {
             } else {
               new CompileUtilForRepeat(this.$fragment).bind(newElement, val, key, dir, exp, index, vm, watchData);
             }
-            // node.removeAttribute(attrName);
+            node.removeAttribute(attrName);
           }
         });
       }
       if (!this.isIfNode(node)) this.$fragment.appendChild(newElement);
+      // if (newElement.hasChildNodes()) {
+      //   this.repeatChildrenUpdater(newElement, val, expFather, index, vm);
+      // }
+    });
+  }
+
+  repeatChildrenUpdater(node, value, expFather, index, vm) {
+    const key = expFather.split(' ')[1];
+    const watchData = expFather.split(' ')[3];
+    Array.from(node.childNodes).forEach(child => {
+      const nodeAttrs = child.attributes;
+      const text = child.textContent;
+      const reg = /\{\{(.*)\}\}/g;
+      if (reg.test(text) && text.indexOf(`{{${key}`) >= 0) {
+        new CompileUtilForRepeat(node).templateUpdater(child, value, key, vm);
+      }
+      console.log('child', child);
+      if (nodeAttrs) {
+        Array.from(nodeAttrs).forEach(attr => {
+          const attrName = attr.name;
+          const exp = attr.value;
+          const dir = attrName.substring(3);
+          if (this.isDirective(attrName) && attrName !== 'es-repeat' && new RegExp(`(^${key})|(^this)`).test(exp)) {
+            // const dir = attrName.substring(3);
+            // const exp = attr.value;
+            if (this.isEventDirective(dir)) {
+              new CompileUtilForRepeat(this.$fragment).eventHandler(child, vm, exp, dir, key, value);
+            } else {
+              new CompileUtilForRepeat(this.$fragment).bind(child, value, key, dir, exp, index, vm, watchData);
+            }
+            child.removeAttribute(attrName);
+          } else {
+            // console.log('node', node);
+            // console.log('childchild', child);
+            // if (this.isRepeatNode(child) && node.contains(child)) {
+            // console.log('attrName', attrName);
+            // console.log('exp', exp);
+            // console.log('dir', dir);
+            // new CompileUtil(node).repeatUpdater(child, this._getVMRepeatVal(vm, exp), exp, vm);
+            // new CompileUtil(node).bind(child, vm, exp, dir);
+            // new CompileUtil(fragment).bind(node, this.$vm, exp, dir);
+            // node.removeChild(child);
+            // }
+          }
+        });
+      }
     });
   }
 

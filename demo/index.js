@@ -154,32 +154,25 @@ class R1 extends Controller {
     };
   }
   $declare() {
+    // <PComponent ax="{this.state.a}" b="{this.getProps}"></PComponent>
+    // es-repeat="let b in this.state.d" es-class="b.b"
     this.$template = (`
     <div>
-      <PComponent ax="{this.state.a}" b="{this.getProps}"></PComponent>
-      下面跟组件没关系<br/>
-      $globalContext in Component: <span>{{this.$globalContext.a}}</span>
-      <div es-if="this.state.f">
-        ef
-        <input es-repeat="let a in this.state.e" es-model="a.z" />
-        <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.e" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
-        this.state.a：<br/>
-        <input es-model="this.state.a" />
+      <div es-repeat="let a in this.state.e">
+        <p>111</p>
       </div>
-      下面是子路由<br/>
-      <router-render></router-render>
     </div>
     `);
-    this.$components = {
-      PComponent: new PComponent('PComponent', {
-        ax: this.state.a,
-        b: this.getProps.bind(this), // action in this
-      }),
-    };
+    // this.$components = {
+    //   PComponent: new PComponent('PComponent', {
+    //     ax: this.state.a,
+    //     b: this.getProps.bind(this), // action in this
+    //   }),
+    // };
 
-    this.$componentList = {
-      PComponent,
-    };
+    // this.$componentList = {
+    //   PComponent,
+    // };
   }
   $onInit() {
     this.utils.setCookie('tutor', {

@@ -10,8 +10,8 @@ class Controller extends Lifecycle {
 
   $beforeInit() {
     if (this.$declare) this.$declare();
-    this.$componentsConstructor();
-    console.log('this.$componentss', this.$componentss);
+    // this.$componentsConstructor();
+    // console.log('this.$componentss', this.$componentss);
     this.stateWatcher = new Watcher(this.state, this.$watchState.bind(this), this.$reRender.bind(this));
   }
 

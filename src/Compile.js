@@ -321,21 +321,20 @@ class Compile {
     const elementCreated = document.createElement('div');
     elementCreated.innerHTML = this.utils.formatInnerHTML(this.$vm.$template);
     let childNodes = elementCreated.childNodes;
-    console.log('childNodeschildNodes', Array.from(childNodes));
     this.recursiveDOM(childNodes, fragment);
   }
 
   recursiveDOM(childNodes, fragment) {
     Array.from(childNodes).forEach(node => {
-      if (node.hasChildNodes()) {
+      // if (node.hasChildNodes()) {
+      //   this.recursiveDOM(node.childNodes, node);
+      // }
+      console.log('nodenode2', node);
+
+      if (node.hasChildNodes() && !this.isRepeatNode(node)) {
+        console.log('nodenode3', node);
         this.recursiveDOM(node.childNodes, node);
       }
-
-      // if (node.hasChildNodes() && !this.isRepeatNode(node)) {
-      //   this.recursiveDOM(node.childNodes, node);
-      // } else {
-      //   // return;
-      // }
 
       const text = node.textContent;
       const reg = /\{\{(.*)\}\}/g;
@@ -347,7 +346,6 @@ class Compile {
         this.compile(node, fragment);
       }
       if (this.isRepeatNode(node) && fragment.contains(node)) {
-        console.log('111', node);
         fragment.removeChild(node);
       } else {
         if (!this.isIfNode(node)) fragment.appendChild(node);
@@ -368,7 +366,6 @@ class Compile {
           } else {
             new CompileUtil(fragment).bind(node, this.$vm, exp, dir);
           }
-          node.removeAttribute(attrName);
         }
       });
     }

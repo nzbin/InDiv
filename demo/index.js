@@ -148,18 +148,20 @@ class R1 extends Controller {
       {
         z: 1111,
         b: 'a',
-        show: false,
+        show: true,
       }],
-      f: true,
+      f: false,
     };
   }
   $declare() {
     // <PComponent ax="{this.state.a}" b="{this.getProps}"></PComponent>
     // es-repeat="let b in this.state.d" es-class="b.b"
+    // <p es-if="a.show" es-class="a.b" es-text="b.z" es-repeat="let b in this.state.d"></p>
     this.$template = (`
     <div>
       <div es-repeat="let a in this.state.e">
-        <p>111</p>
+        <p es-if="a.show" es-class="a.b" es-text="b.z" es-repeat="let b in this.state.d"></p>
+        <p>a.z:{{a.z}}</p>
       </div>
     </div>
     `);

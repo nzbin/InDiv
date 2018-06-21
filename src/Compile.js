@@ -326,13 +326,7 @@ class Compile {
 
   recursiveDOM(childNodes, fragment) {
     Array.from(childNodes).forEach(node => {
-      // if (node.hasChildNodes()) {
-      //   this.recursiveDOM(node.childNodes, node);
-      // }
-      console.log('nodenode2', node);
-
       if (node.hasChildNodes() && !this.isRepeatNode(node)) {
-        console.log('nodenode3', node);
         this.recursiveDOM(node.childNodes, node);
       }
 

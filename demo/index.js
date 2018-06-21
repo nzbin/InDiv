@@ -148,7 +148,7 @@ class R1 extends Controller {
       {
         z: 1111,
         b: 'a',
-        show: true,
+        show: false,
       }],
       f: false,
     };
@@ -160,8 +160,11 @@ class R1 extends Controller {
     this.$template = (`
     <div>
       <div es-repeat="let a in this.state.e">
-        <p es-if="a.show" es-class="a.b" es-text="b.z" es-repeat="let b in this.state.d"></p>
         <p>a.z:{{a.z}}</p>
+        <div es-if="a.show" es-repeat="let b in this.state.d">
+          <input es-model="b.z" es-class="a.b"/>
+          <p>b.z:{{b.z}}</p>
+        </div>
       </div>
     </div>
     `);

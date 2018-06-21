@@ -16,8 +16,8 @@ class CompileUtilForRepeat {
   _getVMRepeatVal(val, exp, key) {
     let value;
     const valueList = exp.replace('()', '').split('.');
-    valueList.forEach(v => {
-      if (v === key) {
+    valueList.forEach((v, index) => {
+      if (v === key && index === 0) {
         value = val;
         return;
       }
@@ -27,6 +27,7 @@ class CompileUtilForRepeat {
   }
 
   bind(node, val, key, dir, exp, index, vm, watchData) {
+    console.log('dirdirdirdirdir', dir);
     let value;
     if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
       value = this._getVMRepeatVal(val, exp, key);
@@ -34,7 +35,8 @@ class CompileUtilForRepeat {
       value = this._getVMVal(vm, exp);
     }
     const watchValue = this._getVMVal(vm, watchData);
-    this.templateUpdater(node, val, key, vm);
+    if (!node.hasChildNodes()) this.templateUpdater(node, val, key, vm);
+    // this.templateUpdater(node, val, key, vm);
     const updaterFn = this[`${dir}Updater`];
     switch (dir) {
     case 'model':
@@ -128,8 +130,8 @@ class CompileUtil {
   _getVMVal(vm, exp) {
     const valueList = exp.replace('()', '').split('.');
     let value = vm;
-    valueList.forEach(v => {
-      if (v === 'this') return;
+    valueList.forEach((v, index) => {
+      if (v === 'this' && index === 0) return;
       value = value[v];
     });
     return value;
@@ -229,7 +231,7 @@ class CompileUtil {
       const nodeAttrs = newElement.attributes;
       const text = newElement.textContent;
       const reg = /\{\{(.*)\}\}/g;
-      if (reg.test(text) && text.indexOf(`{{${key}`) >= 0) {
+      if (reg.test(text) && text.indexOf(`{{${key}`) >= 0 && !newElement.hasChildNodes()) {
         new CompileUtilForRepeat(this.$fragment).templateUpdater(newElement, val, key, vm);
       }
       if (nodeAttrs) {
@@ -246,10 +248,11 @@ class CompileUtil {
           }
         });
       }
-      if (!this.isIfNode(node)) this.$fragment.appendChild(newElement);
-      // if (!this.isIfNode(node)) {
-      //   this.$fragment.insertBefore(newElement, node);
-      // }
+      // if (!this.isIfNode(node)) this.$fragment.appendChild(newElement);
+      if (!this.isIfNode(node)) {
+        this.$fragment.insertBefore(newElement, node);
+      // if (this.$fragment.contains(node)) this.$fragment.removeChild(node);
+      }
       if (newElement.hasChildNodes()) this.repeatChildrenUpdater(newElement, val, expFather, index, vm);
     });
   }
@@ -258,12 +261,11 @@ class CompileUtil {
     const key = expFather.split(' ')[1];
     const watchData = expFather.split(' ')[3];
     Array.from(node.childNodes).forEach(child => {
-      console.log('childchild', child);
       const nodeAttrs = child.attributes;
       const text = child.textContent;
       const reg = /\{\{(.*)\}\}/g;
       let canShowByIf = true;
-      if (reg.test(text) && text.indexOf(`{{${key}`) >= 0) {
+      if (reg.test(text) && text.indexOf(`{{${key}`) >= 0 && !child.hasChildNodes()) {
         new CompileUtilForRepeat(node).templateUpdater(child, value, key, vm);
       }
       if (nodeAttrs) {
@@ -281,11 +283,23 @@ class CompileUtil {
             if (dir === 'if' && new RegExp(`(^${key})`).test(exp)) canShowByIf = repeatUtils._getVMRepeatVal(value, exp, key);
             if (dir === 'if' && /^(this\.)/.test(exp)) canShowByIf = repeatUtils._getVMVal(vm, exp);
             child.removeAttribute(attrName);
-          } else {
-            if (canShowByIf) new CompileUtil(node).bind(child, vm, exp, dir);
-            if (node.contains(child)) node.removeChild(child);
           }
         });
+      }
+
+      if (child.hasChildNodes()) this.repeatChildrenUpdater(child, value, expFather, index, vm);
+
+      if (!canShowByIf) {
+        if (node.contains(child)) node.removeChild(child);
+      }
+
+      const newAttrs = child.attributes;
+      if (newAttrs && canShowByIf) {
+        const restRepeat = Array.from(newAttrs).find(attr => this.isDirective(attr.name) && attr.name === 'es-repeat');
+        if (restRepeat) {
+          new CompileUtil(node).bind(child, vm, restRepeat.value, restRepeat.name.substring(3));
+          if (node.contains(child)) node.removeChild(child);
+        }
       }
     });
   }

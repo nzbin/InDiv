@@ -39,18 +39,15 @@ class Controller extends Lifecycle {
   // }
 
   $mountComponent(dom) {
-    console.log('this.$componentssthis.$componentss111', this.$componentss);
     const saveStates = [];
-    this.$componentss.forEach(component => {
+    this.$components.forEach(component => {
       saveStates.push(component);
     });
     if (this.$declare) this.$declare();
     this.$componentsConstructor(dom);
-    this.$componentss.forEach((component, index) => {
+    this.$components.forEach((component, index) => {
       const saveComponent = saveStates.find(save => save.dom === component.dom);
       if (saveComponent) {
-        console.log('saveComponent', saveComponent);
-        console.log('component', component);
         component.scope = saveComponent.scope;
         component.scope.props = component.props;
       }
@@ -60,7 +57,6 @@ class Controller extends Lifecycle {
       if (component.scope.$onInit) component.scope.$onInit();
       if (component.scope.$beforeMount) component.scope.$beforeMount();
     });
-    console.log('this.$componentssthis.$componentss222', this.$componentss);
   }
 
   // must assign a DOM for render controller
@@ -75,8 +71,7 @@ class Controller extends Lifecycle {
 
     // rewrite
     this.$mountComponent(dom);
-    console.log('this.$componentss', this.$componentss);
-    this.$componentss.forEach(component => {
+    this.$components.forEach(component => {
       if (component.scope.$render) component.scope.$render();
       if (component.scope.$afterMount) component.scope.$afterMount();
     });
@@ -98,8 +93,7 @@ class Controller extends Lifecycle {
 
     // rewrite
     this.$mountComponent(dom);
-    console.log('this.$componentss re', this.$componentss);
-    this.$componentss.forEach(component => {
+    this.$components.forEach(component => {
       if (component.scope.$render) component.scope.$reRender();
       if (component.scope.$afterMount) component.scope.$afterMount();
     });

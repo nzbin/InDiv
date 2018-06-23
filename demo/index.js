@@ -1,8 +1,10 @@
 import { Easiest, Component, Controller, Router, RouterHash, Utils } from '../src';
 
 class RouteChild extends Component {
-  constructor(name, props) {
-    super(name, props);
+  // constructor(name, props) {
+  constructor(props) {
+    // super(name, props);
+    super(props);
     this.state = {
       a: 'a',
       d: [
@@ -21,16 +23,16 @@ class RouteChild extends Component {
   $declare() {
     this.$template = (`
       <div>
-        子路由的子组件<br/>
-        <p es-on:click="this.props.b(3)">this.props.ax {{this.props.ax}}</p>
-        <p es-repeat="let a in this.state.d">1232{{a.z}}</p>
+        子路由的子组件{{this.props.a}}<br/>
       </div>
     `);
   }
 }
 class PCChild extends Component {
-  constructor(name, props) {
-    super(name, props);
+  constructor(props) {
+    super(props);
+    // constructor(name, props) {
+    //   super(name, props);
     this.state = {
       a: 'a',
       d: [
@@ -58,8 +60,10 @@ class PCChild extends Component {
 }
 
 class PComponent extends Component {
-  constructor(name, props) {
-    super(name, props);
+  constructor(props) {
+    super(props);
+    // constructor(name, props) {
+    // super(name, props);
     this.state = {
       a: 'a子组件',
       b: 100,
@@ -82,17 +86,12 @@ class PComponent extends Component {
     this.$template = (`
       <div>
         $globalContext in Component: <span>{{this.$globalContext.a}}</span>
+        <RouteChild a="{this.state.a}"></RouteChild>
         <p es-if="this.state.e" es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick($event, this.state.b, '111', 1, false, true, a, this.aaa)">你好： {{a.z}}</p>
         state.d: <input es-repeat="let a in this.state.d" es-model="a.z" />
         <p es-on:click="this.sendProps(5)">props from component.state.a: {{this.props.ax}}</p>
       </div>
     `);
-    // this.$components = {
-    //   pComponent1: new PCChild('pComponent1', {
-    //     ax: this.props.ax,
-    //     b: this.getProps.bind(this),
-    //   }),
-    // };
   }
 
   $onInit() {
@@ -149,36 +148,30 @@ class R1 extends Controller {
         b: 'a',
         show: false,
       }],
-      f: false,
+      f: true,
     };
   }
   $declare() {
-    //
-    // es-repeat="let b in this.state.d" es-class="b.b"
-    // <p es-if="a.show" es-class="a.b" es-text="b.z" es-repeat="let b in this.state.d"></p>
     this.$template = (`
     <div>
-      <div es-repeat="let a in this.state.e">
-        <PComponent ax="{this.state.a}" b="{this.getProps}"></PComponent>
-        <p>a.z:{{a.z}}</p>
-        <div es-if="a.show" es-repeat="let b in this.state.d">
-          <input es-model="b.z" es-class="a.b"/>
-          <p>b.z:{{b.z}}</p>
-        </div>
-        <p  es-class="a.b" es-text="a.z"></p>
+      <pComponent ax="{this.state.a}" b="this.getProps"></pComponent>
+      下面跟组件没关系<br/>
+      $globalContext in Component: <span>{{this.$globalContext.a}}</span>
+      <div es-if="this.state.f">
+        ef
+        <input es-repeat="let a in this.state.e" es-model="a.z" />
+        <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.e" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
+        this.state.a：<br/>
+        <input es-model="this.state.a" />
       </div>
+      下面是子路由<br/>
+      <router-render></router-render>
     </div>
     `);
-    // this.$components = {
-    //   PComponent: new PComponent('PComponent', {
-    //     ax: this.state.a,
-    //     b: this.getProps.bind(this), // action in this
-    //   }),
-    // };
-
     this.$componentList = {
       PComponent,
       RouteChild,
+      PCChild,
     };
   }
   $onInit() {
@@ -242,12 +235,6 @@ class R2 extends Controller {
         子组件:<br/>   
       </div>
     `);
-    // this.$components = {
-    //   pComponent1: new RouteChild('pComponent1', {
-    //     ax: this.state.a,
-    //     b: this.bindChange.bind(this),
-    //   }),
-    // };
   }
   $onInit() {
     console.log('this.$vm', this.$vm);

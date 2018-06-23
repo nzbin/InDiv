@@ -3,9 +3,10 @@ const Compile = require('./Compile');
 const Watcher = require('./Watcher');
 
 class Component extends Lifecycle {
-  constructor(templateName, props) {
+  constructor(props) {
+  // constructor(templateName, props) {
     super();
-    if (templateName) this.$templateName = templateName;
+    // if (templateName) this.$templateName = templateName;
     if (props) this.props = props;
     this.state = {};
 
@@ -45,12 +46,12 @@ class Component extends Lifecycle {
 
   $mountComponent(dom) {
     const saveStates = [];
-    this.$componentss.forEach(component => {
+    this.$components.forEach(component => {
       saveStates.push(component);
     });
     if (this.$declare) this.$declare();
     this.$componentsConstructor(dom);
-    this.$componentss.forEach((component, index) => {
+    this.$components.forEach((component, index) => {
       const saveComponent = saveStates.find(save => save.dom === component.dom);
       if (saveComponent) {
         component.scope = saveComponent.scope;
@@ -81,7 +82,7 @@ class Component extends Lifecycle {
     const dom = this.$renderDom;
     this.compile = new Compile(dom, this);
     this.$mountComponent(dom);
-    this.$componentss.forEach(component => {
+    this.$components.forEach(component => {
       if (component.scope.$render) component.scope.$render();
       if (component.scope.$afterMount) component.scope.$afterMount();
     });
@@ -107,7 +108,7 @@ class Component extends Lifecycle {
     if (this.$onDestory) this.$onDestory();
     this.compile = new Compile(dom, this);
     this.$mountComponent(dom);
-    this.$componentss.forEach(component => {
+    this.$components.forEach(component => {
       if (component.scope.$render) component.scope.$reRender();
       if (component.scope.$afterMount) component.scope.$afterMount();
     });

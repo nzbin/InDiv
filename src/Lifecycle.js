@@ -3,33 +3,28 @@ const { CompileUtil } = require('./CompileUtils');
 
 class Lifecycle {
   constructor() {
+    this.compileUtil = new CompileUtil();
+    this.utils = new Utils();
     this.state = {};
     this.$globalContext = {};
-    this.utils = new Utils();
     this.$location = {
       state: this.$getLocationState.bind(this),
       go: this.$locationGo.bind(this),
     };
     this.$vm = null;
-    this.compileUtil = new CompileUtil();
-
     this.$componentList = {};
-
-    this.$componentss = [];
+    this.$components = [];
   }
 
   $declare() {
     this.$fatherDom = null;
     this.$template = '';
-    this.$components = {};
-
     this.$componentList = {};
-
-    this.$componentss = [];
+    this.$components = [];
   }
 
   $componentsConstructor(dom) {
-    this.$componentss = [];
+    this.$components = [];
     for (const name in this.$componentList) {
       const tags = dom.getElementsByTagName(name);
       Array.from(tags).forEach(node => {
@@ -39,29 +34,23 @@ class Lifecycle {
           const attrList = Array.from(nodeAttrs);
           const _propsKeys = {};
           attrList.forEach(attr => {
-            if (/^\_prop\-(.+)/.test(attr.name)) {
-              _propsKeys[attr.name.replace('_prop-', '')] = JSON.parse(attr.value);
-            }
+            if (/^\_prop\-(.+)/.test(attr.name)) _propsKeys[attr.name.replace('_prop-', '')] = JSON.parse(attr.value);
           });
           attrList.forEach(attr => {
             const attrName = attr.name;
             const prop = /^\{(.+)\}$/.exec(attr.value);
-            const valueList = prop[1].split('.');
-            const key = valueList[0];
-            // this
-            if (prop && /^(this.).*/g.test(prop[1])) {
-              const _prop = this.compileUtil._getVMVal(this, prop[1]);
-              props[attrName] = this.buildProps(_prop);
-            }
-            // repeat
-            if (prop && _propsKeys.hasOwnProperty(key)) {
-              const _prop = this.getPropsValue(valueList, _propsKeys[key]);
+            if (prop) {
+              const valueList = prop[1].split('.');
+              const key = valueList[0];
+              let _prop = null;
+              if (/^(this.).*/g.test(prop[1])) _prop = this.compileUtil._getVMVal(this, prop[1]);
+              if (_propsKeys.hasOwnProperty(key)) _prop = this.getPropsValue(valueList, _propsKeys[key]);
               props[attrName] = this.buildProps(_prop);
             }
             node.removeAttribute(attrName);
           });
         }
-        this.$componentss.push({
+        this.$components.push({
           dom: node,
           props,
           scope: this.buildScope(this.$componentList[name], props, node),
@@ -69,18 +58,6 @@ class Lifecycle {
       });
     }
   }
-
-  $onInit() {}
-
-  $beforeMount() {}
-
-  $afterMount() {}
-
-  $onDestory() {}
-
-  $hasRender() {}
-
-  $watchState(oldData, newData) {}
 
   $getLocationState() {
     return {
@@ -147,6 +124,18 @@ class Lifecycle {
     }
   }
 
+  $onInit() {}
+
+  $beforeMount() {}
+
+  $afterMount() {}
+
+  $onDestory() {}
+
+  $hasRender() {}
+
+  $watchState(oldData, newData) {}
+
   getPropsValue(valueList, value) {
     let val = value;
     valueList.forEach((v, index) => {
@@ -164,8 +153,8 @@ class Lifecycle {
     }
   }
 
-  buildScope(Cop, props, dom) {
-    const _component = new Cop(null, props);
+  buildScope(ComponentClass, props, dom) {
+    const _component = new ComponentClass(props);
     _component.$renderDom = dom;
     _component.$componentList = this.$componentList;
     return _component;

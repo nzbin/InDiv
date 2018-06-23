@@ -12,6 +12,10 @@ class Lifecycle {
     };
     this.$vm = null;
     this.compileUtil = new CompileUtil();
+
+    this.$componentList = {};
+
+    this.$componentss = [];
   }
 
   $declare() {
@@ -20,25 +24,50 @@ class Lifecycle {
     this.$components = {};
 
     this.$componentList = {};
+
+    this.$componentss = [];
   }
 
-  $componentsConstructor() {
-    this.$componentss = {};
-    const tagList = this.$template.match(/\<([^\/][^><]*[^\/])\>/g);
-    tagList.forEach(li => {
-      const tag = /^\<([^\s]+)\s*.*\>/g.exec(li)[1];
-      if (this.$componentList[tag]) {
-        const tagPropsList = li.replace(`<${tag}`, '').replace('>', '').split(' ');
+  $componentsConstructor(dom) {
+    this.$componentss = [];
+    for (const name in this.$componentList) {
+      const tags = dom.getElementsByTagName(name);
+      Array.from(tags).forEach(node => {
+        const nodeAttrs = node.attributes;
         const props = {};
-        tagPropsList.forEach(li => {
-          const _prop = /^(.+)\=\"\{(.+)\}\"/.exec(li);
-          if (li !== '') {
-            props[_prop[1]] = this.compileUtil._getVMVal(this, _prop[2]);
-          }
+        if (nodeAttrs) {
+          const attrList = Array.from(nodeAttrs);
+          const _propsKeys = {};
+          attrList.forEach(attr => {
+            if (/^\_prop\-(.+)/.test(attr.name)) {
+              _propsKeys[attr.name.replace('_prop-', '')] = JSON.parse(attr.value);
+            }
+          });
+          attrList.forEach(attr => {
+            const attrName = attr.name;
+            const prop = /^\{(.+)\}$/.exec(attr.value);
+            const valueList = prop[1].split('.');
+            const key = valueList[0];
+            // this
+            if (prop && /^(this.).*/g.test(prop[1])) {
+              const _prop = this.compileUtil._getVMVal(this, prop[1]);
+              props[attrName] = this.buildProps(_prop);
+            }
+            // repeat
+            if (prop && _propsKeys.hasOwnProperty(key)) {
+              const _prop = this.getPropsValue(valueList, _propsKeys[key]);
+              props[attrName] = this.buildProps(_prop);
+            }
+            node.removeAttribute(attrName);
+          });
+        }
+        this.$componentss.push({
+          dom: node,
+          props,
+          scope: this.buildScope(this.$componentList[name], props, node),
         });
-        this.$componentss[tag] = new this.$componentList[tag](tag, props);
-      }
-    });
+      });
+    }
   }
 
   $onInit() {}
@@ -116,6 +145,30 @@ class Lifecycle {
         }
       }
     }
+  }
+
+  getPropsValue(valueList, value) {
+    let val = value;
+    valueList.forEach((v, index) => {
+      if (index === 0) return;
+      val = val[v];
+    });
+    return val;
+  }
+
+  buildProps(prop) {
+    if (this.utils.isFunction(prop)) {
+      return prop.bind(this);
+    } else {
+      return prop;
+    }
+  }
+
+  buildScope(Cop, props, dom) {
+    const _component = new Cop(null, props);
+    _component.$renderDom = dom;
+    _component.$componentList = this.$componentList;
+    return _component;
   }
 }
 

@@ -15,7 +15,7 @@ class KeyWatcher {
     let val = data[key];
     Object.defineProperty(data, key, {
       configurable: true,
-      enumerable: false,
+      enumerable: true,
       get() {
         return val;
       },

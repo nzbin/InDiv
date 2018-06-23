@@ -82,18 +82,17 @@ class PComponent extends Component {
     this.$template = (`
       <div>
         $globalContext in Component: <span>{{this.$globalContext.a}}</span>
-        <pComponent1></pComponent1>
         <p es-if="this.state.e" es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick($event, this.state.b, '111', 1, false, true, a, this.aaa)">你好： {{a.z}}</p>
         state.d: <input es-repeat="let a in this.state.d" es-model="a.z" />
         <p es-on:click="this.sendProps(5)">props from component.state.a: {{this.props.ax}}</p>
       </div>
     `);
-    this.$components = {
-      pComponent1: new PCChild('pComponent1', {
-        ax: this.props.ax,
-        b: this.getProps.bind(this),
-      }),
-    };
+    // this.$components = {
+    //   pComponent1: new PCChild('pComponent1', {
+    //     ax: this.props.ax,
+    //     b: this.getProps.bind(this),
+    //   }),
+    // };
   }
 
   $onInit() {
@@ -154,17 +153,19 @@ class R1 extends Controller {
     };
   }
   $declare() {
-    // <PComponent ax="{this.state.a}" b="{this.getProps}"></PComponent>
+    //
     // es-repeat="let b in this.state.d" es-class="b.b"
     // <p es-if="a.show" es-class="a.b" es-text="b.z" es-repeat="let b in this.state.d"></p>
     this.$template = (`
     <div>
       <div es-repeat="let a in this.state.e">
+        <PComponent ax="{this.state.a}" b="{this.getProps}"></PComponent>
         <p>a.z:{{a.z}}</p>
         <div es-if="a.show" es-repeat="let b in this.state.d">
           <input es-model="b.z" es-class="a.b"/>
           <p>b.z:{{b.z}}</p>
         </div>
+        <p  es-class="a.b" es-text="a.z"></p>
       </div>
     </div>
     `);
@@ -175,9 +176,10 @@ class R1 extends Controller {
     //   }),
     // };
 
-    // this.$componentList = {
-    //   PComponent,
-    // };
+    this.$componentList = {
+      PComponent,
+      RouteChild,
+    };
   }
   $onInit() {
     this.utils.setCookie('tutor', {

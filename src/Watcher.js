@@ -17,7 +17,7 @@ class Watcher {
       vm.watchData(val);
       Object.defineProperty(data, key, {
         configurable: true,
-        enumerable: false,
+        enumerable: true,
         get() {
           return val;
         },

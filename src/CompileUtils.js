@@ -27,7 +27,6 @@ class CompileUtilForRepeat {
   }
 
   bind(node, val, key, dir, exp, index, vm, watchData) {
-    console.log('dirdirdirdirdir', dir);
     let value;
     if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
       value = this._getVMRepeatVal(val, exp, key);
@@ -175,6 +174,9 @@ class CompileUtil {
       case 'if':
         updaterFn && updaterFn.call(this, node, this._getVMVal(vm, exp), exp, vm);
         break;
+      // case 'prop':
+      //   updaterFn && updaterFn.call(this, node, this._getVMVal(vm, /^\{(.+)\}$/.exec(exp)[1]), exp, vm);
+      //   break;
       default:
         updaterFn && updaterFn.call(this, node, this._getVMVal(vm, exp));
       }
@@ -200,6 +202,26 @@ class CompileUtil {
       this.$fragment.appendChild(node);
     }
   }
+
+  // propUpdater(node, value, exp) {
+  //   const attributesList = Array.from(node.attributes);
+  //   // let _props;
+  //   if (!attributesList.find(attr => attr.name === '_props')) {
+  //     const _props = {};
+  //     const propsName = attributesList.find(attr => attr.value === exp).name;
+  //     _props[propsName] = value;
+  //     node.setAttribute('_props', JSON.stringify(_props));
+  //   }
+  //   if (attributesList.find(attr => attr.name === '_props')) {
+  //     const _props = JSON.parse(node.getAttribute('_props'));
+  //     const propsName = attributesList.find(attr => attr.value === exp).name;
+  //     _props[propsName] = value;
+  //     console.log('_props', _props);
+  //     node.setAttribute('_props', JSON.stringify(_props));
+  //     console.log('JSON.stringify(_props)', JSON.parse(node.getAttribute('_props')));
+  //   }
+  //   // console.log('JSON.stringify(_props)', JSON.parse(node.getAttribute('_props')));
+  // }
 
   classUpdater(node, value, oldValue) {
     let className = node.className;
@@ -261,6 +283,8 @@ class CompileUtil {
     const key = expFather.split(' ')[1];
     const watchData = expFather.split(' ')[3];
     Array.from(node.childNodes).forEach(child => {
+      if (this.isRepeatProp(child)) child.setAttribute(`_prop-${key}`, JSON.stringify(value));
+
       const nodeAttrs = child.attributes;
       const text = child.textContent;
       const reg = /\{\{(.*)\}\}/g;
@@ -337,6 +361,13 @@ class CompileUtil {
         if (attrName === 'es-if') result = true;
       });
     }
+    return result;
+  }
+
+  isRepeatProp(node) {
+    const nodeAttrs = node.attributes;
+    let result = false;
+    if (nodeAttrs) return Array.from(nodeAttrs).find(attr => /^\{(.+)\}$/.test(attr.value));
     return result;
   }
 }

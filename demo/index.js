@@ -145,8 +145,11 @@ class R1 extends Controller {
       }],
       f: true,
     };
+    console.log('222');
   }
+
   $declare() {
+    console.log('111');
     this.$template = (`
     <div>
       <pComponent ax="{this.state.a}" b="{this.getProps}"></pComponent>
@@ -163,12 +166,13 @@ class R1 extends Controller {
       <router-render></router-render>
     </div>
     `);
-    this.$componentList = {
+    this.$injectedComponents = {
       PComponent,
       RouteChild,
       PCChild,
     };
   }
+
   $onInit() {
     this.utils.setCookie('tutor', {
       name: 'gerry',

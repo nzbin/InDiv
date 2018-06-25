@@ -39,6 +39,10 @@ class Easiest {
     controller.$globalContext = this.$globalContext;
     if (controller.$beforeInit) controller.$beforeInit();
     if (controller.$onInit) controller.$onInit();
+    if (!controller.$template) {
+      console.error('must decaler this.$template in $declare()');
+      return;
+    }
     const template = controller.$template;
     if (template && typeof template === 'string' && rootDom) {
       if (controller.$beforeMount) controller.$beforeMount();

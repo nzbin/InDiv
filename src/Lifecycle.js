@@ -5,6 +5,7 @@ class Lifecycle {
   constructor() {
     this.compileUtil = new CompileUtil();
     this.utils = new Utils();
+
     this.state = {};
     this.$globalContext = {};
     this.$location = {
@@ -12,14 +13,16 @@ class Lifecycle {
       go: this.$locationGo.bind(this),
     };
     this.$vm = null;
-    this.$componentList = {};
+    this.$injectedComponents = {};
     this.$components = [];
+    this.$injectedComponents = {};
+
+    if (this.$declare) this.$declare();
   }
 
   $declare() {
-    this.$template = '';
-    this.$componentList = {};
-    this.$components = [];
+    this.$template = null;
+    this.$injectedComponents = {};
   }
 
   $mountComponent(dom, isFirstRender) {
@@ -27,8 +30,7 @@ class Lifecycle {
     this.$components.forEach(component => {
       saveStates.push(component);
     });
-    if (this.$declare) this.$declare();
-    // if (this.$inject) this.$inject();
+    // if (this.$declare) this.$declare();
     this.$componentsConstructor(dom);
     this.$components.forEach(component => {
       const saveComponent = saveStates.find(save => save.dom === component.dom);
@@ -46,7 +48,7 @@ class Lifecycle {
 
   $componentsConstructor(dom) {
     this.$components = [];
-    for (const name in this.$componentList) {
+    for (const name in this.$injectedComponents) {
       const tags = dom.getElementsByTagName(name);
       Array.from(tags).forEach(node => {
         const nodeAttrs = node.attributes;
@@ -74,7 +76,7 @@ class Lifecycle {
         this.$components.push({
           dom: node,
           props,
-          scope: this.buildScope(this.$componentList[name], props, node),
+          scope: this.buildScope(this.$injectedComponents[name], props, node),
         });
       });
     }
@@ -177,7 +179,7 @@ class Lifecycle {
   buildScope(ComponentClass, props, dom) {
     const _component = new ComponentClass(props);
     _component.$renderDom = dom;
-    _component.$componentList = this.$componentList;
+    _component.$injectedComponents = this.$injectedComponents;
     return _component;
   }
 }

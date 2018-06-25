@@ -336,6 +336,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 
     ```javascript
       constructor()
+      $inject()
       $declare()
       $beforeInit()
       $onInit()
@@ -349,6 +350,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 
     ```javascript
       constructor()
+      $inject()
       $declare()
       $beforeInit()
       $onInit()

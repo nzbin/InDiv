@@ -11,7 +11,6 @@ class Component extends Lifecycle {
   }
 
   $beforeInit() {
-    if (this.$declare) this.$declare();
     if (this.props) this.propsWatcher = new Watcher(this.props, this.$watchState.bind(this), this.$reRender.bind(this));
     this.stateWatcher = new Watcher(this.state, this.$watchState.bind(this), this.$reRender.bind(this));
   }

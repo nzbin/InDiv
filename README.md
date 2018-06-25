@@ -336,13 +336,12 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 
     ```javascript
       constructor()
-      $beforeInit()
       $declare()
+      $beforeInit()
       $onInit()
       $beforeMount()
       $afterMount()
       $hasRender()
-      $onDestory()
       $watchState(oldData, newData)
     ```
 
@@ -350,12 +349,13 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 
     ```javascript
       constructor()
-      $beforeInit()
       $declare()
+      $beforeInit()
       $onInit()
       $beforeMount()
       $afterMount()
       $hasRender()
+      $onDestory()
       $routeChange(lastRoute, newRoute)
       $watchState(oldData, newData)
     ```
@@ -372,8 +372,6 @@ route => controller => component
 
 ## To do
 
-- [x] Virtual DOM
-- [ ] ts（强类型赛高）
 - [x] 类分离，通过use来绑定方法
 - [x] 无需route渲染
 - [x] 子路由(2/2)
@@ -389,5 +387,7 @@ route => controller => component
 - [x] 组件中使用组件
 - [x] 改用 history的pushState
 - [x] 监听路由变化动态渲染(2/2)
+- [x] Virtual DOM
+- [ ] ts（强类型赛高）
 
 

@@ -22,6 +22,28 @@ class Lifecycle {
     this.$components = [];
   }
 
+  $mountComponent(dom, isFirstRender) {
+    const saveStates = [];
+    this.$components.forEach(component => {
+      saveStates.push(component);
+    });
+    if (this.$declare) this.$declare();
+    // if (this.$inject) this.$inject();
+    this.$componentsConstructor(dom);
+    this.$components.forEach(component => {
+      const saveComponent = saveStates.find(save => save.dom === component.dom);
+      if (saveComponent) {
+        component.scope = saveComponent.scope;
+        component.scope.props = component.props;
+      }
+      if (component.scope.$beforeInit) component.scope.$beforeInit();
+      if (component.scope.$globalContext) component.scope.$globalContext = this.$globalContext;
+      if (component.scope.$vm) component.scope.$vm = this.$vm;
+      if (component.scope.$onInit && isFirstRender) component.scope.$onInit();
+      if (component.scope.$beforeMount) component.scope.$beforeMount();
+    });
+  }
+
   $componentsConstructor(dom) {
     this.$components = [];
     for (const name in this.$componentList) {

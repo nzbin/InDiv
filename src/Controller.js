@@ -13,37 +13,13 @@ class Controller extends Lifecycle {
     this.stateWatcher = new Watcher(this.state, this.$watchState.bind(this), this.$reRender.bind(this));
   }
 
-  // $mountComponent(dom) {
-  //   const saveStates = {};
-  //   if (this.$components) {
-  //     for (let key in this.$components) {
-  //       if (this.$components[key]) saveStates[key] = this.$components[key];
-  //     }
-  //   }
-
-  //   if (this.$declare) this.$declare();
-  //   for (let key in this.$components) {
-  //     if (saveStates[key] && saveStates[key].$fatherDom && saveStates[key].$template) {
-  //       const props = this.$components[key].props;
-  //       this.$components[key] = saveStates[key];
-  //       this.$components[key].props = props;
-  //     }
-
-  //     this.$components[key].$fatherDom = dom;
-  //     if (this.$components[key].$beforeInit) this.$components[key].$beforeInit();
-  //     if (this.$components[key].$globalContext) this.$components[key].$globalContext = this.$globalContext;
-  //     if (this.$components[key].$vm) this.$components[key].$vm = this.$vm;
-  //     if (this.$components[key].$onInit) this.$components[key].$onInit();
-  //     if (this.$components[key].$beforeMount) this.$components[key].$beforeMount();
-  //   }
-  // }
-
   $mountComponent(dom) {
     const saveStates = [];
     this.$components.forEach(component => {
       saveStates.push(component);
     });
     if (this.$declare) this.$declare();
+    // if (this.$inject) this.$inject();
     this.$componentsConstructor(dom);
     this.$components.forEach((component, index) => {
       const saveComponent = saveStates.find(save => save.dom === component.dom);
@@ -66,46 +42,27 @@ class Controller extends Lifecycle {
       return;
     }
     this.dom = dom;
-    // this.$mountComponent(dom);
     this.compile = new Compile(dom, this);
-
-    // rewrite
     this.$mountComponent(dom);
     this.$components.forEach(component => {
       if (component.scope.$render) component.scope.$render();
       if (component.scope.$afterMount) component.scope.$afterMount();
     });
-
-    // if (this.$components) {
-    //   for (let key in this.$components) {
-    //     if (this.$components[key].$render) this.$components[key].$render();
-    //     if (this.$components[key].$afterMount) this.$components[key].$afterMount();
-    //   }
-    // }
     if (this.$hasRender) this.$hasRender();
+    this.compile = null;
   }
 
   $reRender() {
     const dom = this.dom;
     const routerRenderDom = dom.querySelectorAll(this.$vm.$routeDOMKey)[0];
-    // this.$mountComponent(dom);
     this.compile = new Compile(dom, this, routerRenderDom);
-
-    // rewrite
     this.$mountComponent(dom);
     this.$components.forEach(component => {
       if (component.scope.$render) component.scope.$reRender();
       if (component.scope.$afterMount) component.scope.$afterMount();
     });
-
-    // if (this.$components) {
-    //   for (let key in this.$components) {
-    //     // rewrite
-    //     // if (this.$components[key].$reRender) this.$components[key].$reRender();
-    //     if (this.$components[key].$afterMount) this.$components[key].$afterMount();
-    //   }
-    // }
     if (this.$hasRender) this.$hasRender();
+    this.compile = null;
   }
 }
 

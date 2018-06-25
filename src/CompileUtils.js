@@ -174,9 +174,6 @@ class CompileUtil {
       case 'if':
         updaterFn && updaterFn.call(this, node, this._getVMVal(vm, exp), exp, vm);
         break;
-      // case 'prop':
-      //   updaterFn && updaterFn.call(this, node, this._getVMVal(vm, /^\{(.+)\}$/.exec(exp)[1]), exp, vm);
-      //   break;
       default:
         updaterFn && updaterFn.call(this, node, this._getVMVal(vm, exp));
       }
@@ -202,26 +199,6 @@ class CompileUtil {
       this.$fragment.appendChild(node);
     }
   }
-
-  // propUpdater(node, value, exp) {
-  //   const attributesList = Array.from(node.attributes);
-  //   // let _props;
-  //   if (!attributesList.find(attr => attr.name === '_props')) {
-  //     const _props = {};
-  //     const propsName = attributesList.find(attr => attr.value === exp).name;
-  //     _props[propsName] = value;
-  //     node.setAttribute('_props', JSON.stringify(_props));
-  //   }
-  //   if (attributesList.find(attr => attr.name === '_props')) {
-  //     const _props = JSON.parse(node.getAttribute('_props'));
-  //     const propsName = attributesList.find(attr => attr.value === exp).name;
-  //     _props[propsName] = value;
-  //     console.log('_props', _props);
-  //     node.setAttribute('_props', JSON.stringify(_props));
-  //     console.log('JSON.stringify(_props)', JSON.parse(node.getAttribute('_props')));
-  //   }
-  //   // console.log('JSON.stringify(_props)', JSON.parse(node.getAttribute('_props')));
-  // }
 
   classUpdater(node, value, oldValue) {
     let className = node.className;
@@ -271,10 +248,8 @@ class CompileUtil {
         });
       }
       // if (!this.isIfNode(node)) this.$fragment.appendChild(newElement);
-      if (!this.isIfNode(node)) {
-        this.$fragment.insertBefore(newElement, node);
+      if (!this.isIfNode(node)) this.$fragment.insertBefore(newElement, node);
       // if (this.$fragment.contains(node)) this.$fragment.removeChild(node);
-      }
       if (newElement.hasChildNodes()) this.repeatChildrenUpdater(newElement, val, expFather, index, vm);
     });
   }

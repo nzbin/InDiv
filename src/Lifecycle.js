@@ -17,7 +17,6 @@ class Lifecycle {
   }
 
   $declare() {
-    this.$fatherDom = null;
     this.$template = '';
     this.$componentList = {};
     this.$components = [];

@@ -11,15 +11,22 @@ class Compile {
     if (this.$el) {
       this.$fragment = this.node2Fragment(this.$el);
       this.init();
-      if (routerRenderDom) { // replace routeDom
+      if (routerRenderDom) {
+        // replace routeDom
         const newRouterRenderDom = this.$fragment.querySelectorAll(this.$vm.$vm.$routeDOMKey)[0];
         newRouterRenderDom.parentNode.replaceChild(routerRenderDom, newRouterRenderDom);
       }
-      const oldVnode = VirtualDOM.parseToVnode(this.$el);
-      const newVnode = VirtualDOM.parseToVnode(this.$fragment);
-      const patchList = [];
+      let oldVnode = VirtualDOM.parseToVnode(this.$el);
+      let newVnode = VirtualDOM.parseToVnode(this.$fragment);
+      let patchList = [];
       VirtualDOM.diffVnode(oldVnode, newVnode, patchList);
       VirtualDOM.renderVnode(patchList);
+
+      this.utils = null;
+      this.$fragment = null;
+      oldVnode = null;
+      newVnode = null;
+      patchList = null;
     }
   }
 
@@ -89,7 +96,7 @@ class Compile {
   }
 
   eventHandler(node, vm, exp, event) {
-    const compileUtil = new CompileUtil();
+    let compileUtil = new CompileUtil();
     const eventType = event.split(':')[1];
     const fnList = exp.replace(/\(.*\)/, '').split('.');
     const args = exp.match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
@@ -111,6 +118,7 @@ class Compile {
       fn.apply(vm, argsList);
     };
     if (eventType && fn) node.addEventListener(eventType, func, false);
+    compileUtil = null;
   }
 
   isDirective(attr) {

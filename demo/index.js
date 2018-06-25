@@ -1,9 +1,7 @@
 import { Easiest, Component, Controller, Router, RouterHash, Utils } from '../src';
 
 class RouteChild extends Component {
-  // constructor(name, props) {
   constructor(props) {
-    // super(name, props);
     super(props);
     this.state = {
       a: 'a',
@@ -31,8 +29,6 @@ class RouteChild extends Component {
 class PCChild extends Component {
   constructor(props) {
     super(props);
-    // constructor(name, props) {
-    //   super(name, props);
     this.state = {
       a: 'a',
       d: [
@@ -62,8 +58,6 @@ class PCChild extends Component {
 class PComponent extends Component {
   constructor(props) {
     super(props);
-    // constructor(name, props) {
-    // super(name, props);
     this.state = {
       a: 'a子组件',
       b: 100,
@@ -86,7 +80,7 @@ class PComponent extends Component {
     this.$template = (`
       <div>
         $globalContext in Component: <span>{{this.$globalContext.a}}</span>
-        <RouteChild a="{this.state.a}"></RouteChild>
+        <RouteChild a="{this.props.ax}"></RouteChild>
         <p es-if="this.state.e" es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick($event, this.state.b, '111', 1, false, true, a, this.aaa)">你好： {{a.z}}</p>
         state.d: <input es-repeat="let a in this.state.d" es-model="a.z" />
         <p es-on:click="this.sendProps(5)">props from component.state.a: {{this.props.ax}}</p>
@@ -107,6 +101,7 @@ class PComponent extends Component {
   sendProps(ax) {
     this.$setProps({ ax: ax });
     this.props.b(ax);
+    console.log('this', this);
   }
   getProps(a) {
     alert('子组件里 里面传出来了');
@@ -154,7 +149,7 @@ class R1 extends Controller {
   $declare() {
     this.$template = (`
     <div>
-      <pComponent ax="{this.state.a}" b="this.getProps"></pComponent>
+      <pComponent ax="{this.state.a}" b="{this.getProps}"></pComponent>
       下面跟组件没关系<br/>
       $globalContext in Component: <span>{{this.$globalContext.a}}</span>
       <div es-if="this.state.f">

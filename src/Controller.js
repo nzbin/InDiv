@@ -10,7 +10,7 @@ class Controller extends Lifecycle {
   }
 
   $declarations() {
-    this.$injectedComponents = {};
+    this.$components = {};
   }
 
   $beforeInit() {
@@ -26,7 +26,7 @@ class Controller extends Lifecycle {
     this.dom = dom;
     this.compile = new Compile(dom, this);
     this.$mountComponent(dom, true);
-    this.$components.forEach(component => {
+    this.$componentList.forEach(component => {
       if (component.scope.$render) component.scope.$render();
       if (component.scope.$afterMount) component.scope.$afterMount();
     });
@@ -39,7 +39,7 @@ class Controller extends Lifecycle {
     const routerRenderDom = dom.querySelectorAll(this.$vm.$routeDOMKey)[0];
     this.compile = new Compile(dom, this, routerRenderDom);
     this.$mountComponent(dom, false);
-    this.$components.forEach(component => {
+    this.$componentList.forEach(component => {
       if (component.scope.$render) component.scope.$reRender();
       if (component.scope.$afterMount) component.scope.$afterMount();
     });

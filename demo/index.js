@@ -1,5 +1,13 @@
 import { Easiest, Component, Controller, Router, RouterHash, Utils } from '../src';
 
+class HeroSearchService {
+  constructor() {}
+
+  test() {
+    console.log('HeroSearchService !!!');
+  }
+}
+
 class RouteChild extends Component {
   constructor(props) {
     super(props);
@@ -89,7 +97,7 @@ class PComponent extends Component {
   }
 
   $onInit() {
-    console.log('props', this.props);
+    console.log('props11', this.props);
   }
   componentClick(e) {
     alert('点击了组件');
@@ -169,10 +177,13 @@ class R1 extends Controller {
 
   $declarations() {
     console.log('22222');
-    this.$injectedComponents = {
+    this.$components = {
       PComponent,
       RouteChild,
       PCChild,
+    };
+    this.$providers = {
+      HeroSearchService,
     };
   }
 
@@ -181,7 +192,7 @@ class R1 extends Controller {
       name: 'gerry',
       github: 'https://github.com/DimaLiLongJi',
     }, { expires: 7 });
-    // console.log('is $onInit');
+    console.log('is $this.$globalContext', this.$globalContext);
   }
   $beforeMount() {
     const cookie = this.utils.getCookie('tutor');

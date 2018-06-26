@@ -13,8 +13,8 @@ class Lifecycle {
       go: this.$locationGo.bind(this),
     };
     this.$vm = null;
-    this.$injectedComponents = {};
-    this.$components = [];
+    this.$components = {};
+    this.$componentList = [];
 
     if (this.$bootstrap) this.$bootstrap();
   }
@@ -25,27 +25,27 @@ class Lifecycle {
 
   $mountComponent(dom, isFirstRender) {
     const saveStates = [];
-    this.$components.forEach(component => {
+    this.$componentList.forEach(component => {
       saveStates.push(component);
     });
     this.$componentsConstructor(dom);
-    this.$components.forEach(component => {
+    this.$componentList.forEach(component => {
       const saveComponent = saveStates.find(save => save.dom === component.dom);
       if (saveComponent) {
         component.scope = saveComponent.scope;
         component.scope.props = component.props;
       }
+      if (component.scope.$vm) component.scope.$vm = this.$vm;
       if (component.scope.$beforeInit) component.scope.$beforeInit();
       if (component.scope.$globalContext) component.scope.$globalContext = this.$globalContext;
-      if (component.scope.$vm) component.scope.$vm = this.$vm;
       if (component.scope.$onInit && isFirstRender) component.scope.$onInit();
       if (component.scope.$beforeMount) component.scope.$beforeMount();
     });
   }
 
   $componentsConstructor(dom) {
-    this.$components = [];
-    for (const name in this.$injectedComponents) {
+    this.$componentList = [];
+    for (const name in this.$components) {
       const tags = dom.getElementsByTagName(name);
       Array.from(tags).forEach(node => {
         const nodeAttrs = node.attributes;
@@ -70,10 +70,10 @@ class Lifecycle {
             node.removeAttribute(attrName);
           });
         }
-        this.$components.push({
+        this.$componentList.push({
           dom: node,
           props,
-          scope: this.buildComponentScope(this.$injectedComponents[name], props, node),
+          scope: this.buildComponentScope(this.$components[name], props, node),
         });
       });
     }
@@ -176,7 +176,7 @@ class Lifecycle {
   buildComponentScope(ComponentClass, props, dom) {
     const _component = new ComponentClass(props);
     _component.$renderDom = dom;
-    _component.$injectedComponents = this.$injectedComponents;
+    _component.$declaredComponents = this.$components;
     return _component;
   }
 }

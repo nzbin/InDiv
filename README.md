@@ -98,7 +98,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   - **`$template` must be parceled by a father Dom in lifecycle `$bootstrap()`**
 
     1. this.$template is used to set component html
-    2. this.$components is used to declared $components
+    2. this.$componentList is used to declared $components
 
     ```javascript
     $bootstrap() {
@@ -157,7 +157,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   - must declare template in `this.$template : String`
   - **`this.$template` must be parceled by a father Dom in lifecycle `$bootstrap()`**
   - must declare components in `this.$template: string` which in life-cycle `$bootstrap(){}`
-  - declare Component in `this.$injectedComponents: object` which in life-cycle `$declarations(){}`  .You can use component in `Class Component` which declared in `$declarations(){}` and not to use declare components in `Class Component`
+  - declare Component in `this.$components: object` which in life-cycle `$declarations(){}`  .You can use component in `Class Component` which declared in `$declarations(){}` and not to use declare components in `Class Component`
   - now thie `props` is an **unidirectional data flow**,can only be changed in Component.If u want to change it in father Controller, plase use callback to change state in father Controller.
   - if u are using `Route`, please use `<router-render></router-render>` in `$template` of your controller
   - if u are using `Route`, please use `$routeChange(lastRoute, newRoute)` to watch Route changes
@@ -210,7 +210,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
     }
 
     $declarations() { // all Component which used in Controller or inside of Component
-      this.$injectedComponents = {
+      this.$components = {
         PComponent,
         RouteChild,
         PCChild,

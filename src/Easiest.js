@@ -38,7 +38,7 @@ class Easiest {
     controller.$vm = this;
     controller.$globalContext = this.$globalContext;
 
-    controller.rootDom = this.rootDom;
+    controller.rootDom = rootDom;
     controller.$renderBootstrap();
 
 

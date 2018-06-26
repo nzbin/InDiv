@@ -233,7 +233,7 @@ class R1 extends Component {
   }
 }
 
-class R2 extends Controller {
+class R2 extends Component {
   constructor() {
     super();
     this.state = { a: 1 };
@@ -298,6 +298,23 @@ class M1 extends EsModule {
   }
 }
 
+class M2 extends EsModule {
+  constructor() {
+    super();
+  }
+
+  $declarations() {
+    this.$components = {
+      'pc-component': PComponent,
+      'route-child': RouteChild,
+    };
+    this.$providers = {
+      HeroSearchService,
+    };
+    this.$bootstrap = R2;
+  }
+}
+
 const router = new Router();
 // const router = new RouterHash();
 const routes = [
@@ -307,11 +324,13 @@ const routes = [
   },
   {
     path: '/R1',
-    controller: R1,
+    // controller: R1,
+    controller: M1,
     children: [
       {
         path: '/C1',
-        controller: R2,
+        // controller: R2,
+        controller: M2,
         children: [
           {
             path: '/D1',
@@ -327,18 +346,18 @@ const routes = [
   },
   {
     path: '/R2',
-    controller: R2,
+    controller: M2,
   },
 ];
-// router.$setRootPath('/demo');
+router.$setRootPath('/demo');
 // router.$setRootPath('/');
-// router.$init(routes);
-// router.$routeChange = function (old, next) {
-  // console.log('$routeChange', old, next);
-// };
+router.$init(routes);
+router.$routeChange = function (old, next) {
+  console.log('$routeChange', old, next);
+};
 
 const easiest = new Easiest();
-// const routerIndex = easiest.$use(router);
-easiest.$init(M1);
-// easiest.$init();
-// console.log('routerIndex', routerIndex);
+const routerIndex = easiest.$use(router);
+// easiest.$init(M1);
+easiest.$init();
+console.log('routerIndex', routerIndex);

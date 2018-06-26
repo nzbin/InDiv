@@ -13,6 +13,7 @@ class EsModule {
 
   $renderBootstrap() {
     const controller = new this.$bootstrap();
+    controller.$vm = this.$vm;
     controller.$components = this.$components;
     if (controller.$beforeInit) controller.$beforeInit();
     if (controller.$onInit) controller.$onInit();

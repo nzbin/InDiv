@@ -19,6 +19,7 @@ class Component extends Lifecycle {
     const dom = this.$renderDom;
     this.compile = new Compile(dom, this);
     this.$mountComponent(dom, true);
+    console.log('this.$componentList11', dom);
     this.$componentList.forEach(component => {
       if (component.scope.$render) component.scope.$render();
       if (component.scope.$afterMount) component.scope.$afterMount();
@@ -29,6 +30,8 @@ class Component extends Lifecycle {
 
   $reRender() {
     const dom = this.$renderDom;
+    // const routerRenderDom = dom.querySelectorAll(this.$vm.$routeDOMKey)[0];
+    // this.compile = new Compile(dom, this, routerRenderDom);
     this.compile = new Compile(dom, this);
     this.$mountComponent(dom, false);
     this.$componentList.forEach(component => {

@@ -9,6 +9,7 @@ const Controller = require('./Controller');
 const Router = require('./Router').Router;
 const RouterHash = require('./Router').RouterHash;
 const Easiest = require('./Easiest');
+const EsModule = require('./EsModule');
 
 module.exports = {
   Utils,
@@ -21,4 +22,5 @@ module.exports = {
   Router,
   RouterHash,
   Easiest,
+  EsModule,
 };

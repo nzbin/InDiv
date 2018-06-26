@@ -1,4 +1,4 @@
-import { Easiest, Component, Controller, Router, RouterHash, Utils } from '../src';
+import { Easiest, Component, Controller, Router, RouterHash, Utils, EsModule } from '../src';
 
 class HeroSearchService {
   constructor() {}
@@ -88,7 +88,7 @@ class PComponent extends Component {
     this.$template = (`
       <div>
         $globalContext in Component: <span>{{this.$globalContext.a}}</span>
-        <RouteChild a="{this.props.ax}"></RouteChild>
+        <route-child a="{this.props.ax}"></route-child>
         <p es-if="this.state.e" es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick($event, this.state.b, '111', 1, false, true, a, this.aaa)">你好： {{a.z}}</p>
         state.d: <input es-repeat="let a in this.state.d" es-model="a.z" />
         <p es-on:click="this.sendProps(5)">props from component.state.a: {{this.props.ax}}</p>
@@ -123,7 +123,7 @@ class PComponent extends Component {
   }
 }
 
-class R1 extends Controller {
+class R1 extends Component {
   constructor() {
     super();
     this.utils = new Utils();
@@ -159,7 +159,7 @@ class R1 extends Controller {
     console.log('111');
     this.$template = (`
     <div>
-      <pComponent ax="{this.state.a}" b="{this.getProps}"></pComponent>
+      <pc-component ax="{this.state.a}" b="{this.getProps}"></pc-component>
       下面跟组件没关系<br/>
       $globalContext in Component: <span>{{this.$globalContext.a}}</span>
       <div es-if="this.state.f">
@@ -175,17 +175,17 @@ class R1 extends Controller {
     `);
   }
 
-  $declarations() {
-    console.log('22222');
-    this.$components = {
-      PComponent,
-      RouteChild,
-      PCChild,
-    };
-    this.$providers = {
-      HeroSearchService,
-    };
-  }
+  // $declarations() {
+  //   console.log('22222');
+  //   this.$components = {
+  //     PComponent,
+  //     RouteChild,
+  //     PCChild,
+  //   };
+  //   this.$providers = {
+  //     HeroSearchService,
+  //   };
+  // }
 
   $onInit() {
     this.utils.setCookie('tutor', {
@@ -281,6 +281,23 @@ class R2 extends Controller {
   }
 }
 
+class M1 extends EsModule {
+  constructor() {
+    super();
+  }
+
+  $declarations() {
+    this.$components = {
+      'pc-component': PComponent,
+      'route-child': RouteChild,
+    };
+    this.$providers = {
+      HeroSearchService,
+    };
+    this.$bootstrap = R1;
+  }
+}
+
 const router = new Router();
 // const router = new RouterHash();
 const routes = [
@@ -313,15 +330,15 @@ const routes = [
     controller: R2,
   },
 ];
-router.$setRootPath('/demo');
+// router.$setRootPath('/demo');
 // router.$setRootPath('/');
-router.$init(routes);
-router.$routeChange = function (old, next) {
-  console.log('$routeChange', old, next);
-};
+// router.$init(routes);
+// router.$routeChange = function (old, next) {
+  // console.log('$routeChange', old, next);
+// };
 
 const easiest = new Easiest();
-const routerIndex = easiest.$use(router);
-// easiest.$init(R2);
-easiest.$init();
-console.log('routerIndex', routerIndex);
+// const routerIndex = easiest.$use(router);
+easiest.$init(M1);
+// easiest.$init();
+// console.log('routerIndex', routerIndex);

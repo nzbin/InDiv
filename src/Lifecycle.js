@@ -46,8 +46,12 @@ class Lifecycle {
   $componentsConstructor(dom) {
     this.$componentList = [];
     for (const name in this.$components) {
+      console.log('domdom', name);
       const tags = dom.getElementsByTagName(name);
+      console.log('tagstagstags111', tags);
+      console.log('tagstagstags22', Array.from(tags));
       Array.from(tags).forEach(node => {
+        console.log('nodenode', node);
         const nodeAttrs = node.attributes;
         const props = {};
         if (nodeAttrs) {
@@ -76,6 +80,7 @@ class Lifecycle {
           scope: this.buildComponentScope(this.$components[name], props, node),
         });
       });
+      console.log('this.$componentList22', this.$componentList);
     }
   }
 

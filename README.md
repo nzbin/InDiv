@@ -94,26 +94,20 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   - must extends`class Component`
   - must `super(name, props);`
   - **plz $setState or $setProps after lifecycle `constructor()`**
-  - u need to declare template or component in lifecycle `$declare()`
-  - **`$template` must be parceled by a father Dom in lifecycle `$declare()`**
+  - u need to declare template or component in lifecycle `$bootstrap()`
+  - **`$template` must be parceled by a father Dom in lifecycle `$bootstrap()`**
 
     1. this.$template is used to set component html
     2. this.$components is used to declared $components
 
     ```javascript
-    $declare() {
+    $bootstrap() {
       this.$template = (`
         <div>
-          <pComponent1></pComponent1>
+          <pComponent1 ax="{this.state.a}" b="{this.getProps}"></pComponent1>
           <input es-repeat="let a in this.state.d" es-model="a.z" />
         </div>
       `);
-      this.$components = {
-        pComponent1: new PCChild('pComponent1', {
-          ax: this.state.a,
-          b: this.getProps.bind(this),
-        }),
-      };
     }
     ```
 
@@ -131,18 +125,12 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
       };
     }
 
-    $declare() {
+    $bootstrap() {
       this.$template = (`
         <div>
-          <pComponent1></pComponent1>
+          <pComponent1 ax="{this.state.a}" b="{this.getProps}"></pComponent1>
         </div>
       `);
-      this.$components = {
-        pComponent1: new PCChild('pComponent1', {
-          ax: this.state.a,
-          b: this.getProps.bind(this),
-        }),
-      };
     }
 
     $onInit() {
@@ -167,16 +155,9 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 
   - must extends`class Controller`
   - must declare template in `this.$template : String`
-  - **`$template` must be parceled by a father Dom in lifecycle `$declare()`**
-  - must declare components in  life-cycle `$declare(){}`
-  - if u want to rerender Component, plz use `this.$replaceComponent();`
-
-    1. declare template: `this.$template: string`
-    2. declare components: `this.$components: Object{key: declare Class(templateName: string, props: object)}`
-
-  - declare Component, `class Component` needs two parmars: `templateName, props`
-  - `templateName: String` must be as same as the `html tag` which is used in `this.$template`
-  -  `props: Object`'s key is used in `class Component as props's key`
+  - **`this.$template` must be parceled by a father Dom in lifecycle `$bootstrap()`**
+  - must declare components in `this.$template: string` which in life-cycle `$bootstrap(){}`
+  - declare Component in `this.$injectedComponents: object` which in life-cycle `$declarations(){}`  .You can use component in `Class Component` which declared in `$declarations(){}` and not to use declare components in `Class Component`
   - now thie `props` is an **unidirectional data flow**,can only be changed in Component.If u want to change it in father Controller, plase use callback to change state in father Controller.
   - if u are using `Route`, please use `<router-render></router-render>` in `$template` of your controller
   - if u are using `Route`, please use `$routeChange(lastRoute, newRoute)` to watch Route changes
@@ -212,36 +193,36 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
         f: true,
       };
     }
-    $declare() {
+
+    $bootstrap() {
       this.$template = (`
       <div>
-        <pComponent1/>
-        <pComponent2/>
+        <pComponent ax="{this.state.a}" b="{this.getProps}"></pComponent>
         <div es-if="this.state.f">
           <input es-repeat="let a in this.state.e" es-model="a.z" />
           <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.e" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
-          this.state.a：<br/>
+          this.state.a：
           <input es-model="this.state.a" />
           <router-render></router-render>
         </div>
       </div>
       `);
-      this.$components = {
-        pComponent1: new PComponent('pComponent1', {
-          ax: this.state.a,
-          b: this.getProps.bind(this),
-        }),
-        pComponent2: new PComponent('pComponent2', {
-          ax: this.state.a,
-          b: this.getProps.bind(this),
-        }),
+    }
+
+    $declarations() { // all Component which used in Controller or inside of Component
+      this.$injectedComponents = {
+        PComponent,
+        RouteChild,
+        PCChild,
+        pComponent1: pComponent1,
       };
     }
+
     $onInit() {
       this.utils.setCookie('tutor', {
-      name: 'gerry',
-      github: 'https://github.com/DimaLiLongJi',
-    }, { expires: 7 });
+        name: 'gerry',
+        github: 'https://github.com/DimaLiLongJi',
+      }, { expires: 7 });
     }
     $beforeMount() {
       console.log('is $beforeMount');
@@ -330,14 +311,14 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
         ```
 
 
-9. Life cycle is:
+9. Life cycle which from the beginning to the end:
 
   - Component
 
     ```javascript
       constructor()
-      $inject()
-      $declare()
+      $declarations()
+      $bootstrap()
       $beforeInit()
       $onInit()
       $beforeMount()
@@ -350,8 +331,8 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 
     ```javascript
       constructor()
-      $inject()
-      $declare()
+      $injector()
+      $bootstrap()
       $beforeInit()
       $onInit()
       $beforeMount()

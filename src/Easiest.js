@@ -40,7 +40,7 @@ class Easiest {
     if (controller.$beforeInit) controller.$beforeInit();
     if (controller.$onInit) controller.$onInit();
     if (!controller.$template) {
-      console.error('must decaler this.$template in $declare()');
+      console.error('must decaler this.$template in $bootstrap()');
       return;
     }
     const template = controller.$template;

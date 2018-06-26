@@ -15,14 +15,12 @@ class Lifecycle {
     this.$vm = null;
     this.$injectedComponents = {};
     this.$components = [];
-    this.$injectedComponents = {};
 
-    if (this.$declare) this.$declare();
+    if (this.$bootstrap) this.$bootstrap();
   }
 
-  $declare() {
+  $bootstrap() {
     this.$template = null;
-    this.$injectedComponents = {};
   }
 
   $mountComponent(dom, isFirstRender) {
@@ -30,7 +28,6 @@ class Lifecycle {
     this.$components.forEach(component => {
       saveStates.push(component);
     });
-    // if (this.$declare) this.$declare();
     this.$componentsConstructor(dom);
     this.$components.forEach(component => {
       const saveComponent = saveStates.find(save => save.dom === component.dom);
@@ -76,7 +73,7 @@ class Lifecycle {
         this.$components.push({
           dom: node,
           props,
-          scope: this.buildScope(this.$injectedComponents[name], props, node),
+          scope: this.buildComponentScope(this.$injectedComponents[name], props, node),
         });
       });
     }
@@ -176,7 +173,7 @@ class Lifecycle {
     }
   }
 
-  buildScope(ComponentClass, props, dom) {
+  buildComponentScope(ComponentClass, props, dom) {
     const _component = new ComponentClass(props);
     _component.$renderDom = dom;
     _component.$injectedComponents = this.$injectedComponents;

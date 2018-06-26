@@ -18,7 +18,7 @@ class RouteChild extends Component {
     };
   }
 
-  $declare() {
+  $bootstrap() {
     this.$template = (`
       <div>
         子路由的子组件{{this.props.a}}<br/>
@@ -44,7 +44,7 @@ class PCChild extends Component {
     };
   }
 
-  $declare() {
+  $bootstrap() {
     this.$template = (`
       <div>
         <p es-on:click="this.props.b(3)">props.ax {{this.props.ax}}</p>
@@ -76,7 +76,7 @@ class PComponent extends Component {
     };
   }
 
-  $declare() {
+  $bootstrap() {
     this.$template = (`
       <div>
         $globalContext in Component: <span>{{this.$globalContext.a}}</span>
@@ -145,10 +145,9 @@ class R1 extends Controller {
       }],
       f: true,
     };
-    console.log('222');
   }
 
-  $declare() {
+  $bootstrap() {
     console.log('111');
     this.$template = (`
     <div>
@@ -166,6 +165,10 @@ class R1 extends Controller {
       <router-render></router-render>
     </div>
     `);
+  }
+
+  $declarations() {
+    console.log('22222');
     this.$injectedComponents = {
       PComponent,
       RouteChild,
@@ -224,7 +227,7 @@ class R2 extends Controller {
     super();
     this.state = { a: 1 };
   }
-  $declare() {
+  $bootstrap() {
     this.$template = (`
       <div>
       <p es-on:click="this.showLocation()">点击显示子路由跳转</p>

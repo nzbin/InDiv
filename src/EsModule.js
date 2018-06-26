@@ -12,8 +12,13 @@ class EsModule {
   }
 
   $renderBootstrap() {
+    if (!this.$bootstrap) {
+      console.error('need $bootstrap for renderBootstrap');
+      return;
+    }
     const controller = new this.$bootstrap();
     controller.$vm = this.$vm;
+    console.log('controllercontroller', controller);
     controller.$components = this.$components;
     if (controller.$beforeInit) controller.$beforeInit();
     if (controller.$onInit) controller.$onInit();

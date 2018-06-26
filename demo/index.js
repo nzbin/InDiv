@@ -175,18 +175,6 @@ class R1 extends Component {
     `);
   }
 
-  // $declarations() {
-  //   console.log('22222');
-  //   this.$components = {
-  //     PComponent,
-  //     RouteChild,
-  //     PCChild,
-  //   };
-  //   this.$providers = {
-  //     HeroSearchService,
-  //   };
-  // }
-
   $onInit() {
     this.utils.setCookie('tutor', {
       name: 'gerry',
@@ -212,6 +200,7 @@ class R1 extends Component {
   showAlert(a) {
     console.log('this.$globalContext R1', this.$globalContext);
     this.$setGlobalContext({ a: 3 });
+    console.log('this.$globalContext R12', this.$globalContext);
     this.$location.go('/R1/C1', { a: '1' });
     console.log('this.$location', this.$location.state());
 

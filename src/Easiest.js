@@ -40,31 +40,7 @@ class Easiest {
 
     controller.rootDom = rootDom;
     controller.$renderBootstrap();
-
-
-    // if (controller.$beforeInit) controller.$beforeInit();
-    // if (controller.$onInit) controller.$onInit();
-    // if (!controller.$template) {
-    //   console.error('must decaler this.$template in $bootstrap()');
-    //   return;
-    // }
-    // const template = controller.$template;
-    // if (template && typeof template === 'string' && rootDom) {
-    //   if (controller.$beforeMount) controller.$beforeMount();
-    //   this.replaceDom(controller, rootDom).then(() => {
-    //     if (controller.$afterMount) controller.$afterMount();
-    //   });
-    //   return Promise.resolve();
-    // } else {
-    //   console.error('renderController failed: template or rootDom is not exit');
-    //   return Promise.reject();
-    // }
   }
-
-  // replaceDom(controller, rootDom) {
-  //   if (controller.$render) controller.$render(rootDom);
-  //   return Promise.resolve();
-  // }
 }
 
 module.exports = Easiest;

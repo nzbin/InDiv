@@ -6,11 +6,13 @@ class Controller extends Lifecycle {
   constructor() {
     super();
     this.state = {};
+    this.$providers = {};
     if (this.$declarations) this.$declarations();
   }
 
   $declarations() {
     this.$components = {};
+    this.$providers = {};
   }
 
   $beforeInit() {

@@ -101,8 +101,9 @@ class PComponent extends Component {
   }
   componentClick(e) {
     alert('点击了组件');
+    console.log('this.props.ax', this.props.ax);
     this.$setState({ b: 2 });
-    this.$setProps({ ax: 5 });
+    // this.$setProps({ ax: 5 });
     this.props.b(3);
     this.a = 1;
   }
@@ -166,7 +167,7 @@ class R1 extends Component {
         ef
         <input es-repeat="let a in this.state.e" es-model="a.z" />
         <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.e" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
-        this.state.a：<br/>
+        <p>111this.state.a：{{this.state.a}}</p>
         <input es-model="this.state.a" />
       </div>
       下面是子路由<br/>
@@ -217,7 +218,8 @@ class R1 extends Component {
     // console.log('state', this.state.f);
   }
   getProps(a) {
-    alert('里面传出来了');
+    // alert('里面传出来了');
+    console.log('被触发了！', a);
     this.$setState({ a: a });
   }
 }

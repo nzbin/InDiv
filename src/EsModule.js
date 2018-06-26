@@ -16,33 +16,33 @@ class EsModule {
       console.error('need $bootstrap for renderBootstrap');
       return;
     }
-    const controller = new this.$bootstrap();
-    controller.$vm = this.$vm;
-    console.log('controllercontroller', controller);
-    controller.$components = this.$components;
-    if (controller.$beforeInit) controller.$beforeInit();
-    if (controller.$onInit) controller.$onInit();
-    if (!controller.$template) {
+    const component = new this.$bootstrap();
+    component.$vm = this.$vm;
+    console.log('componentcomponentcomponent', component);
+    component.$components = this.$components;
+    if (component.$beforeInit) component.$beforeInit();
+    if (component.$onInit) component.$onInit();
+    if (!component.$template) {
       console.error('must decaler this.$template in $bootstrap()');
       return;
     }
-    const template = controller.$template;
+    const template = component.$template;
     if (template && typeof template === 'string' && this.rootDom) {
-      if (controller.$beforeMount) controller.$beforeMount();
-      this.replaceDom(controller).then(() => {
-        if (controller.$afterMount) controller.$afterMount();
+      if (component.$beforeMount) component.$beforeMount();
+      this.replaceDom(component).then(() => {
+        if (component.$afterMount) component.$afterMount();
       });
       return Promise.resolve();
     } else {
-      console.error('renderController failed: template or rootDom is not exit');
+      console.error('renderBootstrap failed: template or rootDom is not exit');
       return Promise.reject();
     }
   }
 
-  replaceDom(controller) {
-    controller.$renderDom = this.rootDom;
-    if (controller.$render) {
-      controller.$render();
+  replaceDom(component) {
+    component.$renderDom = this.rootDom;
+    if (component.$render) {
+      component.$render();
       return Promise.resolve();
     } else {
       return Promise.reject();

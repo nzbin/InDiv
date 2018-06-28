@@ -282,9 +282,9 @@ class M1 extends EsModule {
       'pc-component': PComponent,
       'route-child': RouteChild,
     };
-    this.$providers = {
+    this.$providers = [
       HeroSearchService,
-    };
+    ];
     this.$bootstrap = R1;
   }
 }
@@ -299,9 +299,9 @@ class M2 extends EsModule {
       'pc-component': PComponent,
       'route-child': RouteChild,
     };
-    this.$providers = {
+    this.$providers = [
       HeroSearchService,
-    };
+    ];
     this.$bootstrap = R2;
   }
 }
@@ -315,13 +315,11 @@ const routes = [
   },
   {
     path: '/R1',
-    // controller: R1,
-    controller: M1,
+    esmodule: M1,
     children: [
       {
         path: '/C1',
-        // controller: R2,
-        controller: M2,
+        esmodule: M2,
         children: [
           {
             path: '/D1',
@@ -337,7 +335,7 @@ const routes = [
   },
   {
     path: '/R2',
-    controller: M2,
+    esmodule: M2,
   },
 ];
 router.$setRootPath('/demo');

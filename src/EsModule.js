@@ -7,7 +7,7 @@ class EsModule {
 
   $declarations() {
     this.$components = {};
-    this.$providers = {};
+    this.$providers = [];
     this.$bootstrap = function () {};
   }
 

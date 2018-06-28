@@ -14,7 +14,7 @@ class Router {
   $use(vm) {
     this.$vm = vm;
     this.$vm.$setRootPath(this.$rootPath);
-    this.$vm.$canRenderController = false;
+    this.$vm.$canRenderModule = false;
     this.$vm.$esRouteMode = 'state';
     this.$vm.$routeDOMKey = 'router-render';
     window.addEventListener('load', this.refresh.bind(this), false);
@@ -143,12 +143,12 @@ class Router {
           this.redirectTo(route.redirectTo);
           return;
         }
-        if (this.oldController && this.oldController.$routeChange) this.oldController.$routeChange(this.lastRoute, this.currentUrl);
-        const Controller = route.controller;
-        const rootController = new Controller();
-        this.oldController = rootController;
+        if (this.oldModule && this.oldModule.$routeChange) this.oldModule.$routeChange(this.lastRoute, this.currentUrl);
+        const Esmodule = route.esmodule;
+        const rootModule = new Esmodule();
+        this.oldModule = rootModule;
         const renderDom = document.querySelectorAll('router-render')[index - 1];
-        this.instantiateController(rootController, renderDom);
+        this.instantiateModule(rootModule, renderDom);
       }
     });
   }
@@ -166,13 +166,13 @@ class Router {
           this.redirectTo(rootRoute.redirectTo);
           return;
         }
-        if (this.oldController && this.oldController.$routeChange) this.oldController.$routeChange(this.lastRoute, this.currentUrl);
-        const Controller = rootRoute.controller;
-        const rootController = new Controller();
-        this.oldController = rootController;
+        if (this.oldModule && this.oldModule.$routeChange) this.oldModule.$routeChange(this.lastRoute, this.currentUrl);
+        const Esmodule = rootRoute.esmodule;
+        const rootModule = new Esmodule();
+        this.oldModule = rootModule;
         const rootDom = document.querySelector('#root');
         this.routesList.push(rootRoute);
-        this.instantiateController(rootController, rootDom);
+        this.instantiateModule(rootModule, rootDom);
       } else {
         const lastRoute = this.routesList[index - 1].children;
         if (!lastRoute || !(lastRoute instanceof Array)) {
@@ -187,19 +187,19 @@ class Router {
           this.redirectTo(route.redirectTo);
           return;
         }
-        if (this.oldController && this.oldController.$routeChange) this.oldController.$routeChange(this.lastRoute, this.currentUrl);
-        const Controller = route.controller;
-        const rootController = new Controller();
-        this.oldController = rootController;
+        if (this.oldModule && this.oldModule.$routeChange) this.oldModule.$routeChange(this.lastRoute, this.currentUrl);
+        const Esmodule = route.esmodule;
+        const rootModule = new Esmodule();
+        this.oldModule = rootModule;
         const renderDom = document.querySelectorAll('router-render')[index - 1];
         this.routesList.push(route);
-        this.instantiateController(rootController, renderDom);
+        this.instantiateModule(rootModule, renderDom);
       }
     });
   }
 
-  instantiateController(controller, renderDom) {
-    this.$vm.$renderController(controller, renderDom);
+  instantiateModule(esmodule, renderDom) {
+    this.$vm.$renderModule(esmodule, renderDom);
   }
 }
 
@@ -216,7 +216,7 @@ class RouterHash {
   $use(vm) {
     this.$vm = vm;
     this.$vm.$setRootPath(this.$rootPath);
-    this.$vm.$canRenderController = false;
+    this.$vm.$canRenderModule = false;
     this.$vm.$esRouteMode = 'hash';
     this.$vm.$routeDOMKey = 'router-render';
     window.addEventListener('load', this.refresh.bind(this), false);
@@ -328,12 +328,12 @@ class RouterHash {
           this.redirectTo(route.redirectTo);
           return;
         }
-        if (this.oldController && this.oldController.$routeChange) this.oldController.$routeChange(this.lastRoute, this.currentUrl);
-        const Controller = route.controller;
-        const rootController = new Controller();
-        this.oldController = rootController;
+        if (this.oldModule && this.oldModule.$routeChange) this.oldModule.$routeChange(this.lastRoute, this.currentUrl);
+        const Esmodule = route.esmodule;
+        const rootModule = new Esmodule();
+        this.oldModule = rootModule;
         const renderDom = document.querySelectorAll('router-render')[index - 1];
-        this.instantiateController(rootController, renderDom);
+        this.instantiateModule(rootModule, renderDom);
       }
     });
   }
@@ -351,13 +351,13 @@ class RouterHash {
           this.redirectTo(rootRoute.redirectTo);
           return;
         }
-        if (this.oldController && this.oldController.$routeChange) this.oldController.$routeChange(this.lastRoute, this.currentUrl);
-        const Controller = rootRoute.controller;
-        const rootController = new Controller();
-        this.oldController = rootController;
+        if (this.oldModule && this.oldModule.$routeChange) this.oldModule.$routeChange(this.lastRoute, this.currentUrl);
+        const Esmodule = rootRoute.esmodule;
+        const rootModule = new Esmodule();
+        this.oldModule = rootModule;
         const rootDom = document.querySelector('#root');
         this.routesList.push(rootRoute);
-        this.instantiateController(rootController, rootDom);
+        this.instantiateModule(rootModule, rootDom);
       } else {
         const lastRoute = this.routesList[index - 1].children;
         if (!lastRoute || !(lastRoute instanceof Array)) {
@@ -372,19 +372,19 @@ class RouterHash {
           this.redirectTo(route.redirectTo);
           return;
         }
-        if (this.oldController && this.oldController.$routeChange) this.oldController.$routeChange();
-        const Controller = route.controller;
-        const rootController = new Controller();
-        this.oldController = rootController;
+        if (this.oldModule && this.oldModule.$routeChange) this.oldModule.$routeChange();
+        const Esmodule = route.esmodule;
+        const rootModule = new Esmodule();
+        this.oldModule = rootModule;
         const renderDom = document.querySelectorAll('router-render')[index - 1];
         this.routesList.push(route);
-        this.instantiateController(rootController, renderDom);
+        this.instantiateModule(rootModule, renderDom);
       }
     });
   }
 
-  instantiateController(controller, renderDom) {
-    this.$vm.$renderController(controller, renderDom);
+  instantiateModule(esmodule, renderDom) {
+    this.$vm.$renderModule(esmodule, renderDom);
   }
 }
 

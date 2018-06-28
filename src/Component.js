@@ -31,6 +31,7 @@ class Component extends Lifecycle {
     const dom = this.$renderDom;
     this.compile = new Compile(dom, this);
     this.$mountComponent(dom, true);
+    console.log('this.$componentList.this.$componentList.', this.$componentList);
     this.$componentList.forEach(component => {
       if (component.scope.$render) component.scope.$render();
       if (component.scope.$afterMount) component.scope.$afterMount();
@@ -75,7 +76,9 @@ class Component extends Lifecycle {
   $componentsConstructor(dom) {
     this.$componentList = [];
     for (const name in this.$components) {
+      console.log('name', name);
       const tags = dom.getElementsByTagName(name);
+      console.log('tagstags', tags);
       Array.from(tags).forEach(node => {
         const nodeAttrs = node.attributes;
         const props = {};

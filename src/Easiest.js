@@ -7,7 +7,7 @@ class Easiest {
     this.$globalContext = {};
     this.rootDom = document.querySelector('#root');
     this.$rootPath = '/';
-    this.$canRenderController = true;
+    this.$canRenderModule = true;
     this.$esRouteMode = null;
     this.$routeDOMKey = 'router-render';
   }
@@ -26,20 +26,20 @@ class Easiest {
     }
   }
 
-  $init(Controller) {
-    if (this.$canRenderController && Controller) {
-      const controller = new Controller();
-      this.$renderController(controller, this.rootDom);
+  $init(Esmodule) {
+    if (this.$canRenderModule && Esmodule) {
+      const esmodule = new Esmodule();
+      this.$renderModule(esmodule, this.rootDom);
     }
-    if (this.$canRenderController && !Controller) console.error('controller render has been trusteeshiped to Router');
+    if (this.$canRenderModule && !Esmodule) console.error('esmodule render has been trusteeshiped to Router');
   }
 
-  $renderController(controller, rootDom) {
-    controller.$vm = this;
-    controller.$globalContext = this.$globalContext;
+  $renderModule(esmodule, rootDom) {
+    esmodule.$vm = this;
+    esmodule.$globalContext = this.$globalContext;
 
-    controller.rootDom = rootDom;
-    controller.$renderBootstrap();
+    esmodule.rootDom = rootDom;
+    esmodule.$renderBootstrap();
   }
 }
 

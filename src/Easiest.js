@@ -13,7 +13,7 @@ class Easiest {
   }
 
   $use(modal) {
-    modal.$use(this);
+    modal.$init(this);
     this.modalList.push(modal);
     return this.modalList.findIndex(md => this.utils.isEqual(md, modal));
   }

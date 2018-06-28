@@ -11,7 +11,7 @@ class Router {
     this.$rootPath = '/';
   }
 
-  $use(vm) {
+  $init(vm) {
     this.$vm = vm;
     this.$vm.$setRootPath(this.$rootPath);
     this.$vm.$canRenderModule = false;
@@ -35,7 +35,7 @@ class Router {
     }, false);
   }
 
-  $init(arr) {
+  $bootstrap(arr) {
     if (arr && arr instanceof Array) {
       const rootDom = document.querySelector('#root');
       this.rootDom = rootDom || null;
@@ -155,7 +155,7 @@ class Router {
 
   generalDistributeRoutes() {
     this.renderRouteList.forEach((path, index) => {
-      // first init route
+      // first bootstrap route
       if (index === 0) {
         const rootRoute = this.routes.find(route => route.path === `/${path}`);
         if (!rootRoute) {
@@ -213,7 +213,7 @@ class RouterHash {
     this.$rootPath = '/';
   }
 
-  $use(vm) {
+  $init(vm) {
     this.$vm = vm;
     this.$vm.$setRootPath(this.$rootPath);
     this.$vm.$canRenderModule = false;
@@ -231,7 +231,7 @@ class RouterHash {
     }, false);
   }
 
-  $init(arr) {
+  $bootstrap(arr) {
     if (arr && arr instanceof Array) {
       const rootDom = document.querySelector('#root');
       this.rootDom = rootDom || null;
@@ -340,7 +340,7 @@ class RouterHash {
 
   generalDistributeRoutes() {
     this.renderRouteList.forEach((path, index) => {
-      // first init route
+      // first bootstrap route
       if (index === 0) {
         const rootRoute = this.routes.find(route => route.path === `/${path}`);
         if (!rootRoute) {

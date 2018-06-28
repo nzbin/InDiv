@@ -340,7 +340,7 @@ const routes = [
 ];
 router.$setRootPath('/demo');
 // router.$setRootPath('/');
-router.$init(routes);
+router.$bootstrap(routes);
 router.$routeChange = function (old, next) {
   console.log('$routeChange', old, next);
 };

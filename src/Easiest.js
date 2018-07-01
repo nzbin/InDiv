@@ -10,6 +10,8 @@ class Easiest {
     this.$canRenderModule = true;
     this.$esRouteMode = null;
     this.$routeDOMKey = 'router-render';
+
+    this.$rootModule = null;
   }
 
   $use(modal) {
@@ -26,20 +28,32 @@ class Easiest {
     }
   }
 
-  $init(Esmodule) {
-    if (this.$canRenderModule && Esmodule) {
-      const esmodule = new Esmodule();
-      this.$renderModule(esmodule, this.rootDom);
+  $bootstrapModule(Esmodule) {
+    if (!Esmodule) {
+      console.error('must send a root module');
+      return;
     }
-    if (this.$canRenderModule && !Esmodule) console.error('esmodule render has been trusteeshiped to Router');
+    this.$rootModule = new Esmodule();
+    this.$rootModule.$vm = this;
+    this.$rootModule.$globalContext = this.$globalContext;
+
+    this.$rootModule.rootDom = this.rootDom;
   }
 
-  $renderModule(esmodule, rootDom) {
-    esmodule.$vm = this;
-    esmodule.$globalContext = this.$globalContext;
+  $init() {
+    if (!this.$rootModule) {
+      console.error('must use $bootstrapModule to declare a root EsModule');
+      return;
+    }
+    if (this.$canRenderModule) this.$renderModule();
+  }
 
-    esmodule.rootDom = rootDom;
-    esmodule.$renderBootstrap();
+  $renderModule() {
+    this.$canRenderModule.$renderBootstrap();
+  }
+
+  $renderModuleComponent(component, renderDOM) {
+    this.$rootModule.$renderComponent(component, renderDOM);
   }
 }
 

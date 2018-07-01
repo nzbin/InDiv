@@ -143,12 +143,19 @@ class Router {
           this.redirectTo(route.redirectTo);
           return;
         }
-        if (this.oldModule && this.oldModule.$routeChange) this.oldModule.$routeChange(this.lastRoute, this.currentUrl);
-        const Esmodule = route.esmodule;
-        const rootModule = new Esmodule();
-        this.oldModule = rootModule;
+        if (this.oldComponent && this.oldComponent.$routeChange) this.oldComponent.$routeChange(this.lastRoute, this.currentUrl);
+
+        let Component = null;
+        if (this.$vm.$rootModule.$components[route.component]) {
+          Component = this.$vm.$rootModule.$components[route.component];
+        } else {
+          console.error(`route error: ${route.component} is undefined`);
+          return;
+        }
+        const component = new Component();
+        this.oldComponent = component;
         const renderDom = document.querySelectorAll('router-render')[index - 1];
-        this.instantiateModule(rootModule, renderDom);
+        this.instantiateComponent(component, renderDom);
       }
     });
   }
@@ -166,13 +173,20 @@ class Router {
           this.redirectTo(rootRoute.redirectTo);
           return;
         }
-        if (this.oldModule && this.oldModule.$routeChange) this.oldModule.$routeChange(this.lastRoute, this.currentUrl);
-        const Esmodule = rootRoute.esmodule;
-        const rootModule = new Esmodule();
-        this.oldModule = rootModule;
+        if (this.oldComponent && this.oldComponent.$routeChange) this.oldComponent.$routeChange(this.lastRoute, this.currentUrl);
+
+        let Component = null;
+        if (this.$vm.$rootModule.$components[rootRoute.component]) {
+          Component = this.$vm.$rootModule.$components[rootRoute.component];
+        } else {
+          console.error(`route error: ${rootRoute.component} is undefined`);
+          return;
+        }
+        const component = new Component();
+        this.oldComponent = component;
         const rootDom = document.querySelector('#root');
         this.routesList.push(rootRoute);
-        this.instantiateModule(rootModule, rootDom);
+        this.instantiateComponent(component, rootDom);
       } else {
         const lastRoute = this.routesList[index - 1].children;
         if (!lastRoute || !(lastRoute instanceof Array)) {
@@ -187,19 +201,25 @@ class Router {
           this.redirectTo(route.redirectTo);
           return;
         }
-        if (this.oldModule && this.oldModule.$routeChange) this.oldModule.$routeChange(this.lastRoute, this.currentUrl);
-        const Esmodule = route.esmodule;
-        const rootModule = new Esmodule();
-        this.oldModule = rootModule;
+        if (this.oldComponent && this.oldComponent.$routeChange) this.oldComponent.$routeChange(this.lastRoute, this.currentUrl);
+        let Component = null;
+        if (this.$vm.$rootModule.$components[route.component]) {
+          Component = this.$vm.$rootModule.$components[route.component];
+        } else {
+          console.error(`route error: ${route.component} is undefined`);
+          return;
+        }
+        const component = new Component();
+        this.oldComponent = component;
         const renderDom = document.querySelectorAll('router-render')[index - 1];
         this.routesList.push(route);
-        this.instantiateModule(rootModule, renderDom);
+        this.instantiateComponent(component, renderDom);
       }
     });
   }
 
-  instantiateModule(esmodule, renderDom) {
-    this.$vm.$renderModule(esmodule, renderDom);
+  instantiateComponent(component, renderDom) {
+    this.$vm.$renderModuleComponent(component, renderDom);
   }
 }
 
@@ -328,12 +348,18 @@ class RouterHash {
           this.redirectTo(route.redirectTo);
           return;
         }
-        if (this.oldModule && this.oldModule.$routeChange) this.oldModule.$routeChange(this.lastRoute, this.currentUrl);
-        const Esmodule = route.esmodule;
-        const rootModule = new Esmodule();
-        this.oldModule = rootModule;
+        if (this.oldComponent && this.oldComponent.$routeChange) this.oldComponent.$routeChange(this.lastRoute, this.currentUrl);
+        let Component = null;
+        if (this.$vm.$rootModule.$components[route.component]) {
+          Component = this.$vm.$rootModule.$components[route.component];
+        } else {
+          console.error(`route error: ${route.component} is undefined`);
+          return;
+        }
+        const component = new Component();
+        this.oldComponent = component;
         const renderDom = document.querySelectorAll('router-render')[index - 1];
-        this.instantiateModule(rootModule, renderDom);
+        this.instantiateComponent(component, renderDom);
       }
     });
   }
@@ -351,13 +377,20 @@ class RouterHash {
           this.redirectTo(rootRoute.redirectTo);
           return;
         }
-        if (this.oldModule && this.oldModule.$routeChange) this.oldModule.$routeChange(this.lastRoute, this.currentUrl);
-        const Esmodule = rootRoute.esmodule;
-        const rootModule = new Esmodule();
-        this.oldModule = rootModule;
+        if (this.oldComponent && this.oldComponent.$routeChange) this.oldComponent.$routeChange(this.lastRoute, this.currentUrl);
+
+        let Component = null;
+        if (this.$vm.$rootModule.$components[rootRoute.component]) {
+          Component = this.$vm.$rootModule.$components[rootRoute.component];
+        } else {
+          console.error(`route error: ${rootRoute.component} is undefined`);
+          return;
+        }
+        const component = new Component();
+        this.oldComponent = component;
         const rootDom = document.querySelector('#root');
         this.routesList.push(rootRoute);
-        this.instantiateModule(rootModule, rootDom);
+        this.instantiateComponent(component, rootDom);
       } else {
         const lastRoute = this.routesList[index - 1].children;
         if (!lastRoute || !(lastRoute instanceof Array)) {
@@ -372,19 +405,25 @@ class RouterHash {
           this.redirectTo(route.redirectTo);
           return;
         }
-        if (this.oldModule && this.oldModule.$routeChange) this.oldModule.$routeChange();
-        const Esmodule = route.esmodule;
-        const rootModule = new Esmodule();
-        this.oldModule = rootModule;
+        if (this.oldComponent && this.oldComponent.$routeChange) this.oldComponent.$routeChange();
+        let Component = null;
+        if (this.$vm.$rootModule.$components[route.component]) {
+          Component = this.$vm.$rootModule.$components[route.component];
+        } else {
+          console.error(`route error: ${route.component} is undefined`);
+          return;
+        }
+        const component = new Component();
+        this.oldComponent = component;
         const renderDom = document.querySelectorAll('router-render')[index - 1];
         this.routesList.push(route);
-        this.instantiateModule(rootModule, renderDom);
+        this.instantiateComponent(component, renderDom);
       }
     });
   }
 
-  instantiateModule(esmodule, renderDom) {
-    this.$vm.$renderModule(esmodule, renderDom);
+  instantiateComponent(component, renderDom) {
+    this.$vm.$renderModuleComponent(component, renderDom);
   }
 }
 

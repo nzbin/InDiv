@@ -2,6 +2,7 @@ class EsModule {
   constructor() {
     this.rootDom = null;
     this.$vm = null;
+    this.$globalContext = null;
     if (this.$declarations) this.$declarations();
   }
 
@@ -17,8 +18,11 @@ class EsModule {
       return;
     }
     const component = new this.$bootstrap();
+    this.$renderComponent(component, this.rootDom);
+  }
+
+  $renderComponent(component, renderDOM) {
     component.$vm = this.$vm;
-    console.log('componentcomponentcomponent', component);
     component.$components = this.$components;
     if (component.$beforeInit) component.$beforeInit();
     if (component.$onInit) component.$onInit();
@@ -27,9 +31,9 @@ class EsModule {
       return;
     }
     const template = component.$template;
-    if (template && typeof template === 'string' && this.rootDom) {
+    if (template && typeof template === 'string' && renderDOM) {
       if (component.$beforeMount) component.$beforeMount();
-      this.replaceDom(component).then(() => {
+      this.replaceDom(component, renderDOM).then(() => {
         if (component.$afterMount) component.$afterMount();
       });
       return Promise.resolve();
@@ -39,8 +43,8 @@ class EsModule {
     }
   }
 
-  replaceDom(component) {
-    component.$renderDom = this.rootDom;
+  replaceDom(component, renderDOM) {
+    component.$renderDom = renderDOM;
     if (component.$render) {
       component.$render();
       return Promise.resolve();

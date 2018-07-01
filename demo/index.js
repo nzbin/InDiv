@@ -351,4 +351,3 @@ const easiest = new Easiest();
 easiest.$bootstrapModule(M1);
 easiest.$use(router);
 easiest.$init();
-// console.log('routerIndex', routerIndex);

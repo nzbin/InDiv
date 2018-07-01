@@ -36,24 +36,56 @@ class Easiest {
     this.$rootModule = new Esmodule();
     this.$rootModule.$vm = this;
     this.$rootModule.$globalContext = this.$globalContext;
-
-    this.$rootModule.rootDom = this.rootDom;
   }
 
   $init() {
     if (!this.$rootModule) {
-      console.error('must use $bootstrapModule to declare a root EsModule');
+      console.error('must use $bootstrapModule to declare a root EsModule before $init');
       return;
     }
-    if (this.$canRenderModule) this.$renderModule();
+    if (this.$canRenderModule) this.$renderModuleBootstrap();
   }
 
-  $renderModule() {
-    this.$canRenderModule.$renderBootstrap();
+  $renderModuleBootstrap() {
+    if (!this.$rootModule.$bootstrap) {
+      console.error('need $bootstrap for render Module Bootstrap');
+      return;
+    }
+    const Component = this.$rootModule.$bootstrap;
+    const component = new Component();
+    this.$renderComponent(component, this.rootDom);
   }
 
-  $renderModuleComponent(component, renderDOM) {
-    this.$rootModule.$renderComponent(component, renderDOM);
+  $renderComponent(component, renderDOM) {
+    component.$vm = this;
+    component.$components = this.$rootModule.$components;
+    if (component.$beforeInit) component.$beforeInit();
+    if (component.$onInit) component.$onInit();
+    if (!component.$template) {
+      console.error('must decaler this.$template in $bootstrap()');
+      return;
+    }
+    const template = component.$template;
+    if (template && typeof template === 'string' && renderDOM) {
+      if (component.$beforeMount) component.$beforeMount();
+      this.replaceDom(component, renderDOM).then(() => {
+        if (component.$afterMount) component.$afterMount();
+      });
+      return Promise.resolve();
+    } else {
+      console.error('renderBootstrap failed: template or rootDom is not exit');
+      return Promise.reject();
+    }
+  }
+
+  replaceDom(component, renderDOM) {
+    component.$renderDom = renderDOM;
+    if (component.$render) {
+      component.$render();
+      return Promise.resolve();
+    } else {
+      return Promise.reject();
+    }
   }
 }
 

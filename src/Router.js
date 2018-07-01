@@ -219,7 +219,7 @@ class Router {
   }
 
   instantiateComponent(component, renderDom) {
-    this.$vm.$renderModuleComponent(component, renderDom);
+    this.$vm.$renderComponent(component, renderDom);
   }
 }
 
@@ -423,7 +423,7 @@ class RouterHash {
   }
 
   instantiateComponent(component, renderDom) {
-    this.$vm.$renderModuleComponent(component, renderDom);
+    this.$vm.$renderComponent(component, renderDom);
   }
 }
 

@@ -237,12 +237,14 @@ class R2 extends Component {
         <br/>
         <p es-on:click="this.showAlert()">点击显示this.state.a:</p>
         子组件:<br/>   
+        <router-render></router-render>
       </div>
     `);
   }
   $onInit() {
     console.log('this.$vm', this.$vm);
     console.log('this.$globalContext R2', this.$globalContext);
+    console.log('this.$location222', this.$location.state());
     // console.log('is $onInit');
   }
   $beforeMount() {
@@ -338,6 +340,18 @@ const routes = [
   {
     path: '/R2',
     component: 'R2',
+    children: [
+      {
+        path: '/:id',
+        component: 'R1',
+        children: [
+          {
+            path: '/D1',
+            redirectTo: '/R1/C1',
+          },
+        ],
+      },
+    ],
   },
 ];
 router.$setRootPath('/demo');

@@ -109,7 +109,7 @@ class Router {
     const needRenderIndex = lastRouteList.length;
     this.renderRouteList.forEach((path, index) => {
       if (index === 0) {
-        const rootRoute = this.routes.find(route => route.path === `/${path}`);
+        const rootRoute = this.routes.find(route => route.path === `/${path}` || /^\/\:.+/.test(route.path));
         if (!rootRoute) {
           console.error('wrong route instantiation in insertRenderRoutes:', this.currentUrl);
           return;
@@ -125,7 +125,7 @@ class Router {
           console.error('routes not exit or routes must be an array!');
           return;
         }
-        const route = lastRoute.find(route => route.path === `/${path}`);
+        const route = lastRoute.find(route => route.path === `/${path}` || /^\/\:.+/.test(route.path));
         if (!route) {
           console.error('wrong route instantiation1:', this.currentUrl);
           return;
@@ -137,7 +137,7 @@ class Router {
         if (!lastRoute || !(lastRoute instanceof Array)) {
           console.error('routes not exit or routes must be an array!');
         }
-        const route = lastRoute.find(route => route.path === `/${path}`);
+        const route = lastRoute.find(route => route.path === `/${path}` || /^\/\:.+/.test(route.path));
         if (!route) return;
         if (route.redirectTo && /^\/.*/.test(route.redirectTo)) {
           this.redirectTo(route.redirectTo);
@@ -164,7 +164,7 @@ class Router {
     this.renderRouteList.forEach((path, index) => {
       // first bootstrap route
       if (index === 0) {
-        const rootRoute = this.routes.find(route => route.path === `/${path}`);
+        const rootRoute = this.routes.find(route => route.path === `/${path}` || /^\/\:.+/.test(route.path));
         if (!rootRoute) {
           console.error('wrong route instantiation in generalDistributeRoutes:', this.currentUrl);
           return;
@@ -192,7 +192,7 @@ class Router {
         if (!lastRoute || !(lastRoute instanceof Array)) {
           console.error('routes not exit or routes must be an array!');
         }
-        const route = lastRoute.find(route => route.path === `/${path}`);
+        const route = lastRoute.find(route => route.path === `/${path}` || /^\/\:.+/.test(route.path));
         if (!route) {
           console.error('wrong route instantiation1:', this.currentUrl);
           return;
@@ -314,7 +314,7 @@ class RouterHash {
     const needRenderIndex = lastRouteList.length;
     this.renderRouteList.forEach((path, index) => {
       if (index === 0) {
-        const rootRoute = this.routes.find(route => route.path === `/${path}`);
+        const rootRoute = this.routes.find(route => route.path === `/${path}` || /^\/\:.+/.test(route.path));
         if (!rootRoute) {
           console.error('wrong route instantiation2:', this.currentUrl);
           return;
@@ -330,7 +330,7 @@ class RouterHash {
           console.error('routes not exit or routes must be an array!');
           return;
         }
-        const route = lastRoute.find(route => route.path === `/${path}`);
+        const route = lastRoute.find(route => route.path === `/${path}` || /^\/\:.+/.test(route.path));
         if (!route) {
           console.error('wrong route instantiation1:', this.currentUrl);
           return;
@@ -342,7 +342,7 @@ class RouterHash {
         if (!lastRoute || !(lastRoute instanceof Array)) {
           console.error('routes not exit or routes must be an array!');
         }
-        const route = lastRoute.find(route => route.path === `/${path}`);
+        const route = lastRoute.find(route => route.path === `/${path}` || /^\/\:.+/.test(route.path));
         if (!route) return;
         if (route.redirectTo && /^\/.*/.test(route.redirectTo)) {
           this.redirectTo(route.redirectTo);
@@ -368,7 +368,7 @@ class RouterHash {
     this.renderRouteList.forEach((path, index) => {
       // first bootstrap route
       if (index === 0) {
-        const rootRoute = this.routes.find(route => route.path === `/${path}`);
+        const rootRoute = this.routes.find(route => route.path === `/${path}` || /^\/\:.+/.test(route.path));
         if (!rootRoute) {
           console.error('wrong route instantiation2:', this.currentUrl);
           return;
@@ -396,7 +396,7 @@ class RouterHash {
         if (!lastRoute || !(lastRoute instanceof Array)) {
           console.error('routes not exit or routes must be an array!');
         }
-        const route = lastRoute.find(route => route.path === `/${path}`);
+        const route = lastRoute.find(route => route.path === `/${path}` || /^\/\:.+/.test(route.path));
         if (!route) {
           console.error('wrong route instantiation1:', this.currentUrl);
           return;

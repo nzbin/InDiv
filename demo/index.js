@@ -9,8 +9,8 @@ class HeroSearchService {
 }
 
 class RouteChild extends Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
       a: 'a',
       d: [
@@ -35,8 +35,8 @@ class RouteChild extends Component {
   }
 }
 class PCChild extends Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
       a: 'a',
       d: [
@@ -64,8 +64,8 @@ class PCChild extends Component {
 }
 
 class PComponent extends Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
       a: 'a子组件',
       b: 100,
@@ -274,25 +274,6 @@ class R2 extends Component {
   }
 }
 
-class M1 extends EsModule {
-  constructor() {
-    super();
-  }
-
-  $declarations() {
-    this.$components = {
-      'pc-component': PComponent,
-      'route-child': RouteChild,
-      'R1': R1,
-      'R2': R2,
-    };
-    this.$providers = [
-      HeroSearchService,
-    ];
-    this.$bootstrap = R1;
-  }
-}
-
 class M2 extends EsModule {
   constructor() {
     super();
@@ -302,11 +283,41 @@ class M2 extends EsModule {
     this.$components = {
       'pc-component': PComponent,
       'route-child': RouteChild,
+      'pc-child': PCChild,
     };
     this.$providers = [
       HeroSearchService,
     ];
+    this.$exports = [
+      'pc-child',
+    ];
     // this.$bootstrap = R2;
+  }
+}
+
+class M1 extends EsModule {
+  constructor() {
+    super();
+  }
+
+  $declarations() {
+    this.$imports = [
+      M2,
+    ];
+    this.$components = {
+      'pc-component': PComponent,
+      'route-child': RouteChild,
+      'R1': R1,
+      'R2': R2,
+    };
+    this.$providers = [
+      HeroSearchService,
+    ];
+    this.$exports = [
+      'R1',
+      'R2',
+    ];
+    // this.$bootstrap = R1;
   }
 }
 

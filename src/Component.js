@@ -3,9 +3,8 @@ const Compile = require('./Compile');
 const Watcher = require('./Watcher');
 
 class Component extends Lifecycle {
-  constructor(props) {
+  constructor() {
     super();
-    if (props) this.props = props;
     this.state = {};
     this.$renderDom = null;
     this.$globalContext = {};
@@ -179,7 +178,9 @@ class Component extends Lifecycle {
   }
 
   buildComponentScope(ComponentClass, props, dom) {
-    const _component = new ComponentClass(props);
+    // const _component = new ComponentClass(props);
+    const _component = new ComponentClass();
+    _component.props = props;
     _component.$renderDom = dom;
     _component.$declaredComponents = this.$components;
     return _component;

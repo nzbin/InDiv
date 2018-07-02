@@ -3,13 +3,40 @@ class EsModule {
     // this.rootDom = null;
     // this.$vm = null;
     // this.$globalContext = null;
+    this.$exportList = {};
+
     if (this.$declarations) this.$declarations();
+    if (this.$buildExports) this.$buildExports();
+    if (this.$buildImports) this.$buildImports();
   }
 
   $declarations() {
+    this.$imports = [];
     this.$components = {};
     this.$providers = [];
+    this.$exports = [];
     this.$bootstrap = function () {};
+  }
+
+  $buildExports() {
+    if (!this.$exports) return;
+    this.$exports.forEach(ex => {
+      if (this.$components[ex]) {
+        const result = {};
+        this.$exportList[ex] = this.$components[ex];
+        return result;
+      }
+    });
+  }
+
+  $buildImports() {
+    if (!this.$imports) return;
+    this.$imports.forEach(ModuleImport => {
+      const moduleImport = new ModuleImport();
+      for (let name in moduleImport.$exportList) {
+        this.$components[name] = moduleImport.$exportList[name];
+      }
+    });
   }
 
   // $renderBootstrap() {

@@ -147,15 +147,17 @@ class Router {
 
         let Component = null;
         if (this.$vm.$rootModule.$components[route.component]) {
-          Component = this.$vm.$rootModule.$components[route.component];
+          Component = this.$vm.$components[route.component];
         } else {
           console.error(`route error: ${route.component} is undefined`);
           return;
         }
-        const component = new Component();
-        this.oldComponent = component;
         const renderDom = document.querySelectorAll('router-render')[index - 1];
-        this.instantiateComponent(component, renderDom);
+        this.instantiateComponent(Component, renderDom)
+          .then(component => {
+            this.oldComponent = component;
+          })
+          .catch(() => console.error('renderComponent failed'));
       }
     });
   }
@@ -177,16 +179,18 @@ class Router {
 
         let Component = null;
         if (this.$vm.$rootModule.$components[rootRoute.component]) {
-          Component = this.$vm.$rootModule.$components[rootRoute.component];
+          Component = this.$vm.$components[rootRoute.component];
         } else {
           console.error(`route error: ${rootRoute.component} is undefined`);
           return;
         }
-        const component = new Component();
-        this.oldComponent = component;
         const rootDom = document.querySelector('#root');
         this.routesList.push(rootRoute);
-        this.instantiateComponent(component, rootDom);
+        this.instantiateComponent(Component, rootDom)
+          .then(component => {
+            this.oldComponent = component;
+          })
+          .catch(() => console.error('renderComponent failed'));
       } else {
         const lastRoute = this.routesList[index - 1].children;
         if (!lastRoute || !(lastRoute instanceof Array)) {
@@ -204,22 +208,24 @@ class Router {
         if (this.oldComponent && this.oldComponent.$routeChange) this.oldComponent.$routeChange(this.lastRoute, this.currentUrl);
         let Component = null;
         if (this.$vm.$rootModule.$components[route.component]) {
-          Component = this.$vm.$rootModule.$components[route.component];
+          Component = this.$vm.$components[route.component];
         } else {
           console.error(`route error: ${route.component} is undefined`);
           return;
         }
-        const component = new Component();
-        this.oldComponent = component;
         const renderDom = document.querySelectorAll('router-render')[index - 1];
         this.routesList.push(route);
-        this.instantiateComponent(component, renderDom);
+        this.instantiateComponent(Component, renderDom)
+          .then(component => {
+            this.oldComponent = component;
+          })
+          .catch(() => console.error('renderComponent failed'));
       }
     });
   }
 
-  instantiateComponent(component, renderDom) {
-    this.$vm.$renderComponent(component, renderDom);
+  instantiateComponent(Component, renderDom) {
+    return this.$vm.$renderComponent(Component, renderDom);
   }
 }
 
@@ -351,15 +357,15 @@ class RouterHash {
         if (this.oldComponent && this.oldComponent.$routeChange) this.oldComponent.$routeChange(this.lastRoute, this.currentUrl);
         let Component = null;
         if (this.$vm.$rootModule.$components[route.component]) {
-          Component = this.$vm.$rootModule.$components[route.component];
+          Component = this.$vm.$components[route.component];
         } else {
           console.error(`route error: ${route.component} is undefined`);
           return;
         }
-        const component = new Component();
-        this.oldComponent = component;
         const renderDom = document.querySelectorAll('router-render')[index - 1];
-        this.instantiateComponent(component, renderDom);
+        this.instantiateComponent(Component, renderDom).then(component => {
+          this.oldComponent = component;
+        });
       }
     });
   }
@@ -381,16 +387,16 @@ class RouterHash {
 
         let Component = null;
         if (this.$vm.$rootModule.$components[rootRoute.component]) {
-          Component = this.$vm.$rootModule.$components[rootRoute.component];
+          Component = this.$vm.$components[rootRoute.component];
         } else {
           console.error(`route error: ${rootRoute.component} is undefined`);
           return;
         }
-        const component = new Component();
-        this.oldComponent = component;
         const rootDom = document.querySelector('#root');
         this.routesList.push(rootRoute);
-        this.instantiateComponent(component, rootDom);
+        this.instantiateComponent(Component, rootDom).then(component => {
+          this.oldComponent = component;
+        });
       } else {
         const lastRoute = this.routesList[index - 1].children;
         if (!lastRoute || !(lastRoute instanceof Array)) {
@@ -408,22 +414,22 @@ class RouterHash {
         if (this.oldComponent && this.oldComponent.$routeChange) this.oldComponent.$routeChange();
         let Component = null;
         if (this.$vm.$rootModule.$components[route.component]) {
-          Component = this.$vm.$rootModule.$components[route.component];
+          Component = this.$vm.$components[route.component];
         } else {
           console.error(`route error: ${route.component} is undefined`);
           return;
         }
-        const component = new Component();
-        this.oldComponent = component;
         const renderDom = document.querySelectorAll('router-render')[index - 1];
         this.routesList.push(route);
-        this.instantiateComponent(component, renderDom);
+        this.instantiateComponent(Component, renderDom).then(component => {
+          this.oldComponent = component;
+        });
       }
     });
   }
 
-  instantiateComponent(component, renderDom) {
-    this.$vm.$renderComponent(component, renderDom);
+  instantiateComponent(Component, renderDom) {
+    return this.$vm.$renderComponent(Component, renderDom);
   }
 }
 

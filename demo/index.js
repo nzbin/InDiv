@@ -1,6 +1,20 @@
-import { Easiest, Component, Controller, Router, RouterHash, Utils, EsModule } from '../src';
+import { Easiest, Component, Router, RouterHash, Utils, EsModule } from '../src';
 
 class HeroSearchService {
+  constructor() {}
+
+  test() {
+    console.log('HeroSearchService !!!');
+  }
+}
+class HeroSearchService2 {
+  constructor() {}
+
+  test() {
+    console.log('HeroSearchService !!!');
+  }
+}
+class HeroSearchService1 {
   constructor() {}
 
   test() {
@@ -125,8 +139,9 @@ class PComponent extends Component {
 }
 
 class R1 extends Component {
-  constructor() {
+  constructor(HeroSearchService) {
     super();
+    this.heroSearchService = HeroSearchService;
     this.utils = new Utils();
     this.state = {
       a: 'a11',
@@ -157,7 +172,6 @@ class R1 extends Component {
   }
 
   $bootstrap() {
-    console.log('111');
     this.$template = (`
     <div>
       <pc-component ax="{this.state.a}" b="{this.getProps}"></pc-component>
@@ -287,6 +301,7 @@ class M2 extends EsModule {
     };
     this.$providers = [
       HeroSearchService,
+      HeroSearchService2,
     ];
     this.$exports = [
       'pc-child',
@@ -312,6 +327,7 @@ class M1 extends EsModule {
     };
     this.$providers = [
       HeroSearchService,
+      HeroSearchService1,
     ];
     this.$exports = [
       'R1',

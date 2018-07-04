@@ -178,11 +178,10 @@ class Component extends Lifecycle {
   }
 
   buildComponentScope(ComponentClass, props, dom) {
-    // const _component = new ComponentClass(props);
     const _component = new ComponentClass();
     _component.props = props;
     _component.$renderDom = dom;
-    _component.$declaredComponents = this.$components;
+    _component.$components = this.$components;
     return _component;
   }
 }

@@ -34,8 +34,7 @@ class Easiest {
       return;
     }
     this.$rootModule = new Esmodule();
-    this.$rootModule.$vm = this;
-    this.$rootModule.$globalContext = this.$globalContext;
+    this.$components = Object.assign({}, this.$rootModule.$components);
   }
 
   $init() {
@@ -52,11 +51,11 @@ class Easiest {
       return;
     }
     const Component = this.$rootModule.$bootstrap;
-    const component = new Component();
-    this.$renderComponent(component, this.rootDom);
+    this.$renderComponent(Component, this.rootDom);
   }
 
-  $renderComponent(component, renderDOM) {
+  $renderComponent(Component, renderDOM) {
+    const component = this.$injector(Component);
     component.$vm = this;
     component.$components = this.$rootModule.$components;
     if (component.$beforeInit) component.$beforeInit();
@@ -71,11 +70,25 @@ class Easiest {
       this.replaceDom(component, renderDOM).then(() => {
         if (component.$afterMount) component.$afterMount();
       });
-      return Promise.resolve();
+      return Promise.resolve(component);
     } else {
       console.error('renderBootstrap failed: template or rootDom is not exit');
       return Promise.reject();
     }
+  }
+
+  $injector(Component) {
+    // const DELEGATE_CTOR = /^function\s+\S+\(\)\s*{[\s\S]+\.apply\(this,\s*arguments\)/;
+    // const INHERITED_CLASS = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{/;
+    // const INHERITED_CLASS_WITH_CTOR = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{[\s\S]*constructor\s*\(/;
+    const CLASS_ARGUS = /^function\s*[^\(]*\(\s*([^\)]*)\)/m;
+    const argList = Component.toString().match(CLASS_ARGUS)[1].replace(/ /g, '').split(',');
+    let args = [];
+    argList.forEach(arg => {
+      const Service = this.$rootModule.$providers.find(services => services.name === arg);
+      if (Service) args.push(new Service());
+    });
+    return Reflect.construct(Component, args);
   }
 
   replaceDom(component, renderDOM) {

@@ -26,6 +26,8 @@ class Component extends Lifecycle {
     this.stateWatcher = new Watcher(this.state, this.$watchState.bind(this), this.$reRender.bind(this));
   }
 
+  $routeChange(lastRoute, newRoute) {}
+
   $render() {
     const dom = this.$renderDom;
     this.compile = new Compile(dom, this);

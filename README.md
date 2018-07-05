@@ -15,14 +15,13 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   ```
 2. Create a Easiest:
 
-  1. if u are using a router `easiest.$use(router); `;
-  1. if u are using controller, please send an `Controller` Class: `easiest.$init(R2);`
+  1. use `$bootstrapModule` to bootstrap a root module `EsModule`
 
   ```javascript
   const easiest = new Easiest();
+  easiest.$bootstrapModule(M1);
   easiest.$use(router); // if u are using a router
-  easiest.$init(R2); // if u are using controller, please send an Class: Controller
-  easiest.$init(); // if u are using Route
+  easiest.$init();
   ```
 
 3. Create a router:
@@ -30,12 +29,14 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   - routes must an `Array` includes `Object`
 
       1. routes must incloude rootPath `'/'`
-      2. routes can assign redirectTo and use `redirectTo: Path`
-      2. routes can assign children and use `children: Array`
+      2. routes must set an component name like `component: 'R1'`， `R1` is declared in `EsModule` in `$declarations => this.$components`
+      3. routes can assign redirectTo and use `redirectTo: Path`
+      4. routes can assign children and use `children: Array`
+      5. routes can set a path like `path: '/:id'`
 
   - if u are using `Router`, u must need to `router.$setRootPath('/RootPath')` to set an root path. If using `RouterHash`, then dont't use to set an root path
   - `router.$routeChange = (old, next)` can listen route change
-  - `router.init(routes);` can init routes
+  - `router.bootstrap(routes);` can bootstrap routes
   - if u want to watch routes changes, plz use `router.$routeChange=(old.new) => {}`
   - now you can use two modes: `Router` or `RouterHash`
 
@@ -54,11 +55,11 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
     },
     {
       path: '/R1',
-      controller: R1,
+      component: 'R1',
       children: [
         {
           path: '/C1',
-          controller: R2,
+          component: 'R2',
           children: [
             {
               path: '/D1',
@@ -74,18 +75,30 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
     },
     {
       path: '/R2',
-      controller: R2,
+      component: 'R2',
+      children: [
+        {
+          path: '/:id',
+          component: 'R1',
+          children: [
+            {
+              path: '/D1',
+              redirectTo: '/R1/C1',
+            },
+          ],
+        },
+      ],
     },
   ];
   router.$setRootPath('/demo');
   // router.$setRootPath('/');
-  router.$init(routes);
+  router.$bootstrap(routes);
   router.$routeChange = function (old, next) {
     console.log('$routeChange', old, next);
   };
   const easiest = new Easiest();
+  easiest.$bootstrapModule(M1);
   const routerIndex = easiest.$use(router);
-  // easiest.$init(R2);
   easiest.$init();
   ```
 
@@ -94,11 +107,10 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
   - must extends`class Component`
   - must `super(name, props);`
   - **plz $setState or $setProps after lifecycle `constructor()`**
-  - u need to declare template or component in lifecycle `$bootstrap()`
+  - u need to declare template or component in lifecycle of `EsModule`  in `$declarations => this.$components`
   - **`$template` must be parceled by a father Dom in lifecycle `$bootstrap()`**
 
     1. this.$template is used to set component html
-    2. this.$componentList is used to declared $components
 
     ```javascript
     $bootstrap() {
@@ -110,16 +122,14 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
       `);
     }
     ```
-
-  - `name: String` is this component use in `class Controller`
   - `props: Object` is data which `class Controller` sends to `class Component`
   - ** `props: Object` can only be changed or used after lifecycle `constructor()` **
   - `props: Object` can only be changed by action `this.$setProps()` and `this.$setProps()` is equal to `$setState`
 
   ```javascript
   class pComponent extends Component {
-    constructor(name, props) {
-      super(name, props);
+    constructor() {
+      super();
       this.state = {
         a: 'a子组件',
       };
@@ -148,113 +158,47 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
       console.log('oldData Component:', oldData);
       console.log('newData Component:', newData);
     }
+
+    $routeChange(lastRoute, newRoute) {}
   }
   ```
 
-5. Create a controller for path:
+5. EsModule
 
-  - must extends`class Controller`
-  - must declare template in `this.$template : String`
-  - **`this.$template` must be parceled by a father Dom in lifecycle `$bootstrap()`**
-  - must declare components in `this.$template: string` which in life-cycle `$bootstrap(){}`
-  - declare Component in `this.$components: object` which in life-cycle `$declarations(){}`  .You can use component in `Class Component` which declared in `$declarations(){}` and not to use declare components in `Class Component`
-  - now thie `props` is an **unidirectional data flow**,can only be changed in Component.If u want to change it in father Controller, plase use callback to change state in father Controller.
-  - if u are using `Route`, please use `<router-render></router-render>` in `$template` of your controller
-  - if u are using `Route`, please use `$routeChange(lastRoute, newRoute)` to watch Route changes
+  - Easiest apps are modular and Easiest has its own modularity system called `EsModule`. An `EsModule` is a container for a cohesive block of code dedicated to an application domain, a workflow, or a closely related set of capabilities. It can contain components, service providers, and other code files whose scope is defined by the containing `EsModule`. It can import functionality that is exported from other `EsModule`, and export selected functionality for use by other `EsModule`.
 
-  ``` javascript
-  class R1 extends Controller {
+  - u need to declare `$imports: Array` `$components: Object` `$providers: Array` `$exports: Array` `$bootstrap: Component` in `$declarations(){}`
+  - `$imports: Array` imports other `EsModule` and respect it's `$exports`
+  - `$components: Array` declare `Components`. Key: name, Value: Components
+  - `$providers: Array` declare `Service`
+  - `$exports: Array` exports `Components` for other `EsModules`
+  - `$bootstrap: Component` declare `Component` for Module bootstrap only if u don't `Router`
+
+  ```javascript
+  class M1 extends EsModule {
     constructor() {
-      super();
-      this.state = {
-        a: 'a',
-        b: 2,
-        d: [{
-          z: 111111111111111,
-          b: 'a',
-          show: true,
-        },
-        {
-          z: 33333333333333,
-          b: 'a',
-          show: true,
-        }],
-        c: 'c',
-        e: [{
-          z: 232323,
-          b: 'a',
-          show: true,
-        },
-        {
-          z: 1111,
-          b: 'a',
-          show: false,
-        }],
-        f: true,
-      };
-    }
+    super();
+   }
 
-    $bootstrap() {
-      this.$template = (`
-      <div>
-        <pComponent ax="{this.state.a}" b="{this.getProps}"></pComponent>
-        <div es-if="this.state.f">
-          <input es-repeat="let a in this.state.e" es-model="a.z" />
-          <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.e" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
-          this.state.a：
-          <input es-model="this.state.a" />
-          <router-render></router-render>
-        </div>
-      </div>
-      `);
-    }
-
-    $declarations() { // all Component which used in Controller or inside of Component
+    $declarations() {
+      this.$imports = [
+        M2,
+      ];
       this.$components = {
-        PComponent,
-        RouteChild,
-        PCChild,
-        pComponent1: pComponent1,
+        'pc-component': PComponent,
+        'route-child': RouteChild,
+        'R1': R1,
+        'R2': R2,
       };
-    }
-
-    $onInit() {
-      this.utils.setCookie('tutor', {
-        name: 'gerry',
-        github: 'https://github.com/DimaLiLongJi',
-      }, { expires: 7 });
-    }
-    $beforeMount() {
-      console.log('is $beforeMount');
-    }
-    $afterMount() {
-      console.log('is $afterMount');
-    }
-    $onDestory() {
-      console.log('is $onDestory');
-    }
-    $watchState(oldData, newData) {
-      console.log('oldData Controller:', oldData);
-      console.log('newData Controller:', newData);
-    }
-    $routeChange(lastRoute, newRoute) {
-      console.log('R2 is $routeChange', lastRoute, newRoute);
-    }
-    showAlert() {
-      console.log('this.$globalContext R1', this.$globalContext);
-      this.$setGlobalContext({ a: 3 });
-      this.$location.go('/R1/C1', { a: '1' });
-      console.log('this.$location', this.$location.state());
-      alert('我错了 点下控制台看看吧');
-      this.$setState({
-        a: 2,
-        b: !this.state.a
-      });
-      console.log('state', this.state);
-    }
-    getProps(a) {
-      alert('里面传出来了');
-      this.$setState({a: a});
+      this.$providers = [
+        HeroSearchService,
+        HeroSearchService1,
+      ];
+      this.$exports = [
+        'R1',
+        'R2',
+      ];
+      // this.$bootstrap = R1; only don't use Route
     }
   }
   ```
@@ -313,25 +257,17 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 
 9. Life cycle which from the beginning to the end:
 
-  - Component
+  - EsModule
 
     ```javascript
       constructor()
       $declarations()
-      $bootstrap()
-      $beforeInit()
-      $onInit()
-      $beforeMount()
-      $afterMount()
-      $hasRender()
-      $watchState(oldData, newData)
     ```
 
-  - Controller
+  - Components
 
     ```javascript
       constructor()
-      $injector()
       $bootstrap()
       $beforeInit()
       $onInit()
@@ -351,7 +287,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 
 ## Architecture
 
-route => controller => component
+route => EsModule => component
 
 ## To do
 
@@ -359,7 +295,7 @@ route => controller => component
 - [x] 无需route渲染
 - [x] 子路由(2/2)
 - [X] 组件化(3/3)
-- [x] 模块化
+- [x] 模块化 EsModule
 - [X] 双向绑定
 - [x] 公共类提取
 - [x] 数据劫持
@@ -371,6 +307,7 @@ route => controller => component
 - [x] 改用 history的pushState
 - [x] 监听路由变化动态渲染(2/2)
 - [x] Virtual DOM
+- [ ] Service => $http
 - [ ] ts（强类型赛高）
 
 

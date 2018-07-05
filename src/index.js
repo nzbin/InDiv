@@ -1,4 +1,4 @@
-// require('babel-polyfill');
+require('babel-polyfill');
 const Utils = require('./Utils');
 const Lifecycle = require('./Lifecycle');
 const Watcher = require('./Watcher');

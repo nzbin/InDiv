@@ -76,6 +76,9 @@ class Component extends Lifecycle {
 
   $componentsConstructor(dom) {
     this.$componentList = [];
+    for (const name in this.constructor._injectedComponents) {
+      this.$components[name] = this.constructor._injectedComponents[name];
+    }
     for (const name in this.$components) {
       const tags = dom.getElementsByTagName(name);
       Array.from(tags).forEach(node => {

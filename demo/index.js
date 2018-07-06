@@ -99,10 +99,10 @@ class PComponent extends Component {
   }
 
   $bootstrap() {
+    // <route-child a="{this.props.ax}"></route-child>
     this.$template = (`
       <div>
         $globalContext in Component: <span>{{this.$globalContext.a}}</span>
-        <route-child a="{this.props.ax}"></route-child>
         <p es-if="this.state.e" es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick($event, this.state.b, '111', 1, false, true, a, this.aaa)">你好： {{a.z}}</p>
         state.d: <input es-repeat="let a in this.state.d" es-model="a.z" />
         <p es-on:click="this.sendProps(5)">props from component.state.a: {{this.props.ax}}</p>
@@ -142,6 +142,7 @@ class R1 extends Component {
   constructor(HeroSearchService) {
     super();
     this.heroSearchService = HeroSearchService;
+    this.heroSearchService.test();
     this.utils = new Utils();
     this.state = {
       a: 'a11',
@@ -250,8 +251,8 @@ class R2 extends Component {
         <input es-model="this.state.a"/>
         <br/>
         <p es-on:click="this.showAlert()">点击显示this.state.a:</p>
-        子组件:<br/>   
-        <router-render></router-render>
+        子组件:<br/>
+        <route-child a="{this.state.a}"></route-child>
       </div>
     `);
   }
@@ -295,16 +296,15 @@ class M2 extends EsModule {
 
   $declarations() {
     this.$components = {
-      'pc-component': PComponent,
+      'R2': R2,
       'route-child': RouteChild,
-      'pc-child': PCChild,
     };
     this.$providers = [
       HeroSearchService,
       HeroSearchService2,
     ];
     this.$exports = [
-      'pc-child',
+      'R2',
     ];
     // this.$bootstrap = R2;
   }
@@ -321,17 +321,11 @@ class M1 extends EsModule {
     ];
     this.$components = {
       'pc-component': PComponent,
-      'route-child': RouteChild,
       'R1': R1,
-      'R2': R2,
     };
     this.$providers = [
       HeroSearchService,
       HeroSearchService1,
-    ];
-    this.$exports = [
-      'R1',
-      'R2',
     ];
     // this.$bootstrap = R1;
   }

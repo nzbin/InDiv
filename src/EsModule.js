@@ -6,8 +6,10 @@ class EsModule {
     this.$exportList = {};
 
     this.$declarations();
+    this.$buildComponents4Components();
     this.$buildExports();
     this.$buildImports();
+    console.log('this.$c!!', this.$components);
   }
 
   $declarations() {
@@ -42,6 +44,14 @@ class EsModule {
         }
       });
     });
+  }
+
+  $buildComponents4Components() {
+    if (!this.$components) return;
+    for (const name in this.$components) {
+      const component = this.$components[name];
+      component._injectedComponents = this.$components;
+    }
   }
 }
 

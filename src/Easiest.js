@@ -15,7 +15,7 @@ class Easiest {
   }
 
   $use(modal) {
-    modal.$init(this);
+    modal.$bootstrap(this);
     this.modalList.push(modal);
     return this.modalList.findIndex(md => this.utils.isEqual(md, modal));
   }

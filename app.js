@@ -13,9 +13,11 @@ app.use(express.static('./dist'));
 
 
 app.use('/', (req, res, next) => {
-  res.render('index.html');
+  console.log('////');
+  res.send({ a: 1 });
 });
 app.use('/demo', (req, res, next) => {
+  console.log('demodemodemo');
   res.render('index.html');
 });
 app.use('/dess', (req, res, next) => {

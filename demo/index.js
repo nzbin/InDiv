@@ -1,4 +1,5 @@
-import { Easiest, Component, Router, RouterHash, Utils, EsModule, Service } from '../src';
+import { Easiest, Component, Router, RouterHash, Utils, EsModule, Service, Http } from '../src';
+// import { Easiest, Component, Router, RouterHash, Utils, EsModule, Service } from '../build';
 
 class HeroSearchService extends Service {
   constructor() {
@@ -393,7 +394,7 @@ const routes = [
 ];
 router.$setRootPath('/demo');
 // router.$setRootPath('/');
-router.$bootstrap(routes);
+router.$init(routes);
 router.$routeChange = function (old, next) {
   console.log('$routeChange', old, next);
 };

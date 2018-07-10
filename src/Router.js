@@ -11,7 +11,7 @@ class Router {
     this.$rootPath = '/';
   }
 
-  $init(vm) {
+  $bootstrap(vm) {
     this.$vm = vm;
     this.$vm.$setRootPath(this.$rootPath);
     this.$vm.$canRenderModule = false;
@@ -35,7 +35,7 @@ class Router {
     }, false);
   }
 
-  $bootstrap(arr) {
+  $init(arr) {
     if (arr && arr instanceof Array) {
       const rootDom = document.querySelector('#root');
       this.rootDom = rootDom || null;
@@ -239,7 +239,7 @@ class RouterHash {
     this.$rootPath = '/';
   }
 
-  $init(vm) {
+  $bootstrap(vm) {
     this.$vm = vm;
     this.$vm.$setRootPath(this.$rootPath);
     this.$vm.$canRenderModule = false;
@@ -257,7 +257,7 @@ class RouterHash {
     }, false);
   }
 
-  $bootstrap(arr) {
+  $init(arr) {
     if (arr && arr instanceof Array) {
       const rootDom = document.querySelector('#root');
       this.rootDom = rootDom || null;

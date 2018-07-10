@@ -36,7 +36,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 
   - if u are using `Router`, u must need to `router.$setRootPath('/RootPath')` to set an root path. If using `RouterHash`, then dont't use to set an root path
   - `router.$routeChange = (old, next)` can listen route change
-  - `router.bootstrap(routes);` can bootstrap routes
+  - `router.$init(routes);` can init Array routes
   - if u want to watch routes changes, plz use `router.$routeChange=(old.new) => {}`
   - now you can use two modes: `Router` or `RouterHash`
 
@@ -90,9 +90,8 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
       ],
     },
   ];
-  router.$setRootPath('/demo');
-  // router.$setRootPath('/');
-  router.$bootstrap(routes);
+  router.$setRootPath('/demo'); // so routes:Array => `/` is `/demo`
+  router.$init(routes);
   router.$routeChange = function (old, next) {
     console.log('$routeChange', old, next);
   };
@@ -241,7 +240,7 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
       - Watcher expects two arguments: `data, watcher`
       - data is an Object
       - watcher is a function which has two arguments: `oldData, newData`
-        ```
+        ```javascript
         new Watcher(this.object, (oldData, newData) => {})
         ```
 
@@ -250,12 +249,43 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
       - data: `Object`
       - key is a key in Object and type is `String`
       - watcher is a function which has two arguments: `oldData, newData`
-        ```
+        ```javascript
         new KeyWatcher(this.object, key,(oldData, newData) => {})
         ```
+9. Service
+
+  - Components shouldn't fetch or save data directly and they certainly shouldn't knowingly present fake data. They should focus on presenting data and delegate data access to a service.
+  - u can use `this.$https` or import `class Http` to use AJAX
+
+  ```javascript
+  class HeroSearchService extends Service {
+    constructor() {
+      super();
+      console.log(this.$http); // same as Http
+      this.$http.$get(url, params);
+      this.$http.$delete(url, params);
+      this.$http.$post(url, params);
+      this.$http.$put(url, params);
+      this.$http.$patch(url, params);
+    }
+
+    test() {
+      console.log('i am a services !!!');
+    }
+  }
+  ```
+
+  ```javascript
+  const http = new Http();
+  http.$get(url, params);
+  http.$delete(url, params);
+  http.$post(url, params);
+  http.$put(url, params);
+  http.$patch(url, params);
+  ```
 
 
-9. Life cycle which from the beginning to the end:
+10. LifeCycle hooks which from the beginning to the end:
 
   - EsModule
 
@@ -269,14 +299,14 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
     ```javascript
       constructor()
       $bootstrap()
-      $beforeInit()
       $onInit()
       $beforeMount()
-      $afterMount()
       $hasRender()
+      $afterMount()
       $onDestory()
       $routeChange(lastRoute, newRoute)
       $watchState(oldData, newData)
+      // $routeChange only for route Component
     ```
 
   - Router
@@ -307,7 +337,7 @@ route => EsModule => component
 - [x] 改用 history的pushState
 - [x] 监听路由变化动态渲染(2/2)
 - [x] Virtual DOM
-- [ ] Service => $http
+- [x] Service => $http
 - [ ] ts（强类型赛高）
 
 

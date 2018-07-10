@@ -55,7 +55,7 @@ class Easiest {
   }
 
   $renderComponent(Component, renderDOM) {
-    const args = this.$createInject(Component);
+    const args = this.createInjector(Component);
     const component = Reflect.construct(Component, args);
     component.$vm = this;
     component.$components = this.$rootModule.$components;
@@ -78,7 +78,7 @@ class Easiest {
     }
   }
 
-  $createInject(Component) {
+  createInjector(Component) {
     // const DELEGATE_CTOR = /^function\s+\S+\(\)\s*{[\s\S]+\.apply\(this,\s*arguments\)/;
     // const INHERITED_CLASS = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{/;
     // const INHERITED_CLASS_WITH_CTOR = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{[\s\S]*constructor\s*\(/;
@@ -86,7 +86,7 @@ class Easiest {
     const argList = Component.toString().match(CLASS_ARGUS)[1].replace(/ /g, '').split(',');
     let args = [];
     argList.forEach(arg => {
-      const Service = this.$rootModule.$providers.find(services => services.name === arg);
+      const Service = Component._injectedProviders.find(services => services.name === arg) ? Component._injectedProviders.find(services => services.name === arg) : this.$rootModule.$providers.find(services => services.name === arg);
       if (Service) args.push(new Service());
     });
     return args;

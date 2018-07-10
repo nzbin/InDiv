@@ -1,30 +1,39 @@
-import { Easiest, Component, Router, RouterHash, Utils, EsModule } from '../src';
+import { Easiest, Component, Router, RouterHash, Utils, EsModule, Service } from '../src';
 
-class HeroSearchService {
-  constructor() {}
+class HeroSearchService extends Service {
+  constructor() {
+    super();
+    console.log('111', this.$http);
+  }
 
   test() {
-    console.log('HeroSearchService !!!');
+    console.log('HeroSearchService !!!0000');
   }
 }
-class HeroSearchService2 {
-  constructor() {}
+class HeroSearchService2 extends Service {
+  constructor() {
+    super();
+  }
 
   test() {
-    console.log('HeroSearchService !!!');
+    console.log('HeroSearchService !!!2222');
   }
 }
-class HeroSearchService1 {
-  constructor() {}
+class HeroSearchService1 extends Service {
+  constructor() {
+    super();
+  }
 
   test() {
-    console.log('HeroSearchService !!!');
+    console.log('HeroSearchService !!!1111');
   }
 }
 
 class RouteChild extends Component {
-  constructor() {
+  constructor(HeroSearchService2) {
     super();
+    this.heroSearchService = HeroSearchService2;
+    this.heroSearchService.test();
     this.state = {
       a: 'a',
       d: [
@@ -41,9 +50,14 @@ class RouteChild extends Component {
   }
 
   $bootstrap() {
+    // <div>
+    //     <p>子路由的子组件{{this.props.a}}</p>
+    //     <pp-childs ax={this.props.a}></pp-childs>
+    //   </div>
     this.$template = (`
       <div>
         子路由的子组件{{this.props.a}}<br/>
+        <pp-childs ax={this.props.a}></pp-childs>
       </div>
     `);
   }
@@ -69,7 +83,7 @@ class PCChild extends Component {
   $bootstrap() {
     this.$template = (`
       <div>
-        <p es-on:click="this.props.b(3)">props.ax {{this.props.ax}}</p>
+        <p es-on:click="this.props.b(3)">PCChild props.ax:: {{this.props.ax}}</p>
         子组件的子组件<br/>
         <p es-repeat="let a in this.state.d">1232{{a.z}}</p>
       </div>
@@ -99,7 +113,6 @@ class PComponent extends Component {
   }
 
   $bootstrap() {
-    // <route-child a="{this.props.ax}"></route-child>
     this.$template = (`
       <div>
         $globalContext in Component: <span>{{this.$globalContext.a}}</span>
@@ -142,7 +155,7 @@ class R1 extends Component {
   constructor(HeroSearchService) {
     super();
     this.heroSearchService = HeroSearchService;
-    this.heroSearchService.test();
+    // this.heroSearchService.test();
     this.utils = new Utils();
     this.state = {
       a: 'a11',
@@ -240,7 +253,10 @@ class R1 extends Component {
 }
 
 class R2 extends Component {
-  constructor() {
+  constructor(
+    HeroSearchService1,
+    HeroSearchService,
+  ) {
     super();
     this.state = { a: 1 };
   }
@@ -298,9 +314,9 @@ class M2 extends EsModule {
     this.$components = {
       'R2': R2,
       'route-child': RouteChild,
+      'pp-childs': PCChild,
     };
     this.$providers = [
-      HeroSearchService,
       HeroSearchService2,
     ];
     this.$exports = [

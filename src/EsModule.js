@@ -6,10 +6,13 @@ class EsModule {
     this.$exportList = {};
 
     this.$declarations();
-    this.$buildComponents4Components();
-    this.$buildExports();
     this.$buildImports();
-    console.log('this.$c!!', this.$components);
+    this.$buildComponents4Components();
+    this.$buildProviders4Components();
+    // this.$buildExports();
+    // this.$buildImports();
+    this.$buildExports();
+    console.log('this.$c!!11', this.$components);
   }
 
   $declarations() {
@@ -38,11 +41,6 @@ class EsModule {
       for (let name in moduleImport.$exportList) {
         this.$components[name] = moduleImport.$exportList[name];
       }
-      moduleImport.$providers.forEach(service => {
-        if (!this.$providers.find(se => this.utils.isEqual(service, se))) {
-          this.$providers.push(service);
-        }
-      });
     });
   }
 
@@ -50,7 +48,23 @@ class EsModule {
     if (!this.$components) return;
     for (const name in this.$components) {
       const component = this.$components[name];
-      component._injectedComponents = this.$components;
+      if (component._injectedComponents) {
+        component._injectedComponents = Object.assign(component._injectedComponents, this.$components);
+      } else {
+        component._injectedComponents = this.$components;
+      }
+    }
+  }
+
+  $buildProviders4Components() {
+    if (!this.$providers) return;
+    for (const name in this.$components) {
+      const component = this.$components[name];
+      if (component._injectedProviders) {
+        component._injectedProviders = component._injectedProviders.concat(this.$providers);
+      } else {
+        component._injectedProviders = this.$providers;
+      }
     }
   }
 }

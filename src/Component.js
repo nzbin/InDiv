@@ -183,11 +183,26 @@ class Component extends Lifecycle {
   }
 
   buildComponentScope(ComponentClass, props, dom) {
-    const _component = new ComponentClass();
+    const args = this.createInjector(ComponentClass);
+    const _component = Reflect.construct(ComponentClass, args);
     _component.props = props;
     _component.$renderDom = dom;
     _component.$components = this.$components;
     return _component;
+  }
+
+  createInjector(Component) {
+    // const DELEGATE_CTOR = /^function\s+\S+\(\)\s*{[\s\S]+\.apply\(this,\s*arguments\)/;
+    // const INHERITED_CLASS = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{/;
+    // const INHERITED_CLASS_WITH_CTOR = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{[\s\S]*constructor\s*\(/;
+    const CLASS_ARGUS = /^function\s+[^\(]*\(\s*([^\)]*)\)/m;
+    const argList = Component.toString().match(CLASS_ARGUS)[1].replace(/ /g, '').split(',');
+    let args = [];
+    argList.forEach(arg => {
+      const Service = Component._injectedProviders.find(services => services.name === arg) ? Component._injectedProviders.find(services => services.name === arg) : this.$vm.$rootModule.$providers.find(services => services.name === arg);
+      if (Service) args.push(new Service());
+    });
+    return args;
   }
 }
 

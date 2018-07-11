@@ -41,6 +41,7 @@ class Component extends Lifecycle {
   }
 
   $reRender() {
+    console.log('rerender！！', this.constructor.name);
     const dom = this.$renderDom;
     const routerRenderDom = dom.querySelectorAll(this.$vm.$routeDOMKey)[0];
     this.compile = new Compile(dom, this, routerRenderDom);
@@ -76,12 +77,15 @@ class Component extends Lifecycle {
 
   $componentsConstructor(dom) {
     this.$componentList = [];
+    const routerRenderDom = dom.querySelectorAll(this.$vm.$routeDOMKey)[0];
     for (const name in this.constructor._injectedComponents) {
       this.$components[name] = this.constructor._injectedComponents[name];
     }
     for (const name in this.$components) {
       const tags = dom.getElementsByTagName(name);
       Array.from(tags).forEach(node => {
+        //  protect component in <router-render>
+        if (routerRenderDom && routerRenderDom.contains(node)) return;
         const nodeAttrs = node.attributes;
         const props = {};
         if (nodeAttrs) {

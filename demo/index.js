@@ -51,16 +51,16 @@ class RouteChild extends Component {
   }
 
   $bootstrap() {
-    // <div>
-    //     <p>子路由的子组件{{this.props.a}}</p>
-    //     <pp-childs ax={this.props.a}></pp-childs>
-    //   </div>
     this.$template = (`
       <div>
-        子路由的子组件{{this.props.a}}<br/>
+        <p>子路由的子组件::{{this.props.a}}</p>
         <pp-childs ax={this.props.a}></pp-childs>
       </div>
     `);
+  }
+
+  $hasRender() {
+    console.log('RouteChild: this.props.a', this.props.a);
   }
 }
 class PCChild extends Component {
@@ -84,11 +84,15 @@ class PCChild extends Component {
   $bootstrap() {
     this.$template = (`
       <div>
+      子组件的子组件<br/>
         <p es-on:click="this.props.b(3)">PCChild props.ax:: {{this.props.ax}}</p>
-        子组件的子组件<br/>
         <p es-repeat="let a in this.state.d">1232{{a.z}}</p>
       </div>
     `);
+  }
+
+  $hasRender() {
+    console.log('PCChild: this.props.ax', this.props.ax);
   }
 }
 
@@ -260,6 +264,7 @@ class R2 extends Component {
   ) {
     super();
     this.state = { a: 1 };
+    console.log('1father: this.state.a', this.state.a);
   }
   $bootstrap() {
     this.$template = (`
@@ -267,7 +272,7 @@ class R2 extends Component {
       <p es-on:click="this.showLocation()">点击显示子路由跳转</p>
         <input es-model="this.state.a"/>
         <br/>
-        <p es-on:click="this.showAlert()">点击显示this.state.a:</p>
+        <p es-on:click="this.showAlert()">点击显示this.state.a:{{this.state.a}}</p>
         子组件:<br/>
         <route-child a="{this.state.a}"></route-child>
       </div>
@@ -284,6 +289,9 @@ class R2 extends Component {
   }
   $afterMount() {
     // console.log('is $afterMount');
+  }
+  $hasRender() {
+    console.log('！！father: this.state.a', this.state.a);
   }
   $routeChange(lastRoute, newRoute) {
     console.log('R2 is $routeChange', lastRoute, newRoute);
@@ -322,6 +330,7 @@ class M2 extends EsModule {
     ];
     this.$exports = [
       'R2',
+      'route-child',
     ];
     // this.$bootstrap = R2;
   }

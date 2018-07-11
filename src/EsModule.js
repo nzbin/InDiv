@@ -9,10 +9,7 @@ class EsModule {
     this.$buildImports();
     this.$buildComponents4Components();
     this.$buildProviders4Components();
-    // this.$buildExports();
-    // this.$buildImports();
     this.$buildExports();
-    console.log('this.$c!!11', this.$components);
   }
 
   $declarations() {

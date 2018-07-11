@@ -338,6 +338,7 @@ route => EsModule => component
 - [x] 监听路由变化动态渲染(2/2)
 - [x] Virtual DOM
 - [x] Service => $http
+- [ ] 路由bug
 - [ ] ts（强类型赛高）
 
 

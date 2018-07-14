@@ -1,4 +1,4 @@
-const Utils = require('./Utils');
+import Utils from './Utils';
 
 class KeyWatcher {
   constructor(data, key, watcher) {
@@ -33,4 +33,4 @@ class KeyWatcher {
   }
 }
 
-module.exports = KeyWatcher;
+export default KeyWatcher;

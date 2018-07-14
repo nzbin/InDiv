@@ -1,5 +1,5 @@
-const Utils = require('./Utils');
-const { CompileUtil } = require('./CompileUtils');
+import Utils from './Utils';
+import { CompileUtil } from './CompileUtils';
 
 class Lifecycle {
   constructor() {
@@ -55,4 +55,4 @@ class Lifecycle {
   $watchState(oldData, newData) {}
 }
 
-module.exports = Lifecycle;
+export default Lifecycle;

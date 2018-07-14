@@ -1,6 +1,6 @@
-const Lifecycle = require('./Lifecycle');
-const Compile = require('./Compile');
-const Watcher = require('./Watcher');
+import Lifecycle from './Lifecycle';
+import Compile from './Compile';
+import Watcher from './Watcher';
 
 class Component extends Lifecycle {
   constructor() {
@@ -210,4 +210,4 @@ class Component extends Lifecycle {
   }
 }
 
-module.exports = Component;
+export default Component;

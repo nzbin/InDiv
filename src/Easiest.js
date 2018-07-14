@@ -1,4 +1,4 @@
-const Utils = require('./Utils');
+import Utils from './Utils';
 
 class Easiest {
   constructor() {
@@ -103,4 +103,4 @@ class Easiest {
   }
 }
 
-module.exports = Easiest;
+export default Easiest;

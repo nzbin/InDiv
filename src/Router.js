@@ -1,7 +1,7 @@
-const Utils = require('./Utils');
-const KeyWatcher = require('./KeyWatcher');
+import Utils from './Utils';
+import KeyWatcher from './KeyWatcher';
 
-class Router {
+export class Router {
   constructor() {
     this.routes = {};
     this.currentUrl = '';
@@ -229,7 +229,7 @@ class Router {
   }
 }
 
-class RouterHash {
+export class RouterHash {
   constructor() {
     this.routes = {};
     this.currentUrl = '';
@@ -432,8 +432,3 @@ class RouterHash {
     return this.$vm.$renderComponent(Component, renderDom);
   }
 }
-
-module.exports = {
-  Router,
-  RouterHash,
-};

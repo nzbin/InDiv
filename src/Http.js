@@ -1,8 +1,6 @@
-const axios = require('axios');
+import axios from 'axios';
 
 class Http {
-  constructor() {}
-
   $get(url, params) {
     return new Promise((resolve, reject) => {
       const pms = params ? { params } : null;
@@ -66,4 +64,4 @@ class Http {
   }
 }
 
-module.exports = Http;
+export default Http;

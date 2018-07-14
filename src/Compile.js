@@ -1,6 +1,6 @@
-const VirtualDOM = require('./VirtualDOM');
-const Utils = require('./Utils');
-const { CompileUtil } = require('./CompileUtils');
+import VirtualDOM from './VirtualDOM';
+import Utils from './Utils';
+import { CompileUtil } from './CompileUtils';
 
 class Compile {
   // removeDOM
@@ -162,4 +162,4 @@ class Compile {
   }
 }
 
-module.exports = Compile;
+export default Compile;

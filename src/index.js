@@ -1,28 +1,14 @@
-require('babel-polyfill');
-const Utils = require('./Utils');
-const Lifecycle = require('./Lifecycle');
-const Watcher = require('./Watcher');
-const KeyWatcher = require('./KeyWatcher');
-const Compile = require('./Compile');
-const Component = require('./Component');
-const Router = require('./Router').Router;
-const RouterHash = require('./Router').RouterHash;
-const Easiest = require('./Easiest');
-const EsModule = require('./EsModule');
-const Service = require('./Service');
-const Http = require('./Http');
+import 'babel-polyfill';
 
-module.exports = {
-  Utils,
-  Lifecycle,
-  Watcher,
-  KeyWatcher,
-  Compile,
-  Component,
-  Router,
-  RouterHash,
-  Easiest,
-  EsModule,
-  Service,
-  Http,
-};
+export { default as Utils } from './Utils';
+export { default as Lifecycle } from './Lifecycle';
+export { default as Watcher } from './Watcher';
+export { default as KeyWatcher } from './KeyWatcher';
+export { default as Compile } from './Compile';
+export { default as Component } from './Component';
+export * from './Router';
+export { default as Easiest } from './Easiest';
+export { default as EsModule } from './EsModule';
+export { default as Service } from './Service';
+export { default as Http } from './Http';
+

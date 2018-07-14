@@ -178,8 +178,10 @@ function renderVnode(patchList) {
   });
 }
 
-module.exports = {
+const VirtualDOM = {
   parseToVnode,
   diffVnode,
   renderVnode,
 };
+
+export default VirtualDOM;

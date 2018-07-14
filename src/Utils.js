@@ -1,4 +1,4 @@
-const Cookie = require('easier-cookie');
+import Cookie from 'easier-cookie';
 
 class Utils {
   constructor() {
@@ -122,4 +122,4 @@ class Utils {
   }
 }
 
-module.exports = Utils;
+export default Utils;

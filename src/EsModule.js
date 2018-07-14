@@ -1,4 +1,4 @@
-const Utils = require('./Utils');
+import Utils from './Utils';
 
 class EsModule {
   constructor() {
@@ -66,4 +66,4 @@ class EsModule {
   }
 }
 
-module.exports = EsModule;
+export default EsModule;

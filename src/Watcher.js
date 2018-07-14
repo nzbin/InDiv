@@ -1,4 +1,4 @@
-const Utils = require('./Utils');
+import Utils from './Utils';
 
 class Watcher {
   constructor(data, watcher, render) {
@@ -37,4 +37,4 @@ class Watcher {
   }
 }
 
-module.exports = Watcher;
+export default Watcher;

@@ -1,4 +1,4 @@
-const Http = require('./Http');
+import Http from './Http';
 
 class Service {
   constructor() {
@@ -13,4 +13,4 @@ class Service {
   }
 }
 
-module.exports = Service;
+export default Service;

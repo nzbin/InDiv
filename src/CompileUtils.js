@@ -1,4 +1,4 @@
-class CompileUtilForRepeat {
+export class CompileUtilForRepeat {
   constructor(fragment) {
     this.$fragment = fragment;
   }
@@ -121,7 +121,7 @@ class CompileUtilForRepeat {
   }
 }
 
-class CompileUtil {
+export class CompileUtil {
   constructor(fragment) {
     this.$fragment = fragment;
   }
@@ -346,8 +346,3 @@ class CompileUtil {
     return result;
   }
 }
-
-module.exports = {
-  CompileUtilForRepeat,
-  CompileUtil,
-};

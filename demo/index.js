@@ -7,7 +7,7 @@ class HeroSearchService extends Service {
   }
 
   test() {
-    console.log('HeroSearchService !!!0000');
+    console.log('HeroSearchService !!!000000000');
   }
 }
 class HeroSearchService2 extends Service {

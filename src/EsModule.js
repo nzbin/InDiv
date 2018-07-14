@@ -55,12 +55,15 @@ class EsModule {
 
   $buildProviders4Components() {
     if (!this.$providers) return;
+    this.singletonList = this.$providers.map(Service => Service.getInstance());
     for (const name in this.$components) {
       const component = this.$components[name];
-      if (component._injectedProviders) {
-        component._injectedProviders = component._injectedProviders.concat(this.$providers);
+      if (component._injectedProviders && component._injectedProviders.length > 0) {
+        this.singletonList.forEach(singleton => {
+          if (!component._injectedProviders.find(provider => provider.constructor.name === singleton.constructor.name)) component._injectedProviders.push(singleton);
+        });
       } else {
-        component._injectedProviders = this.$providers;
+        component._injectedProviders = this.singletonList;
       }
     }
   }

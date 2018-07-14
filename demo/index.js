@@ -1,10 +1,9 @@
-import { Easiest, Component, Router, RouterHash, Utils, EsModule, Service, Http } from '../src';
-// import { Easiest, Component, Router, RouterHash, Utils, EsModule, Service } from '../build';
+// import { Easiest, Component, Router, RouterHash, Utils, EsModule, Service, Http } from '../src';
+import { Easiest, Component, Router, RouterHash, Utils, EsModule, Service } from '../build';
 
 class HeroSearchService extends Service {
   constructor() {
     super();
-    console.log('111', this.$http);
   }
 
   test() {
@@ -160,7 +159,7 @@ class R1 extends Component {
   constructor(HeroSearchService) {
     super();
     this.heroSearchService = HeroSearchService;
-    // this.heroSearchService.test();
+    this.heroSearchService.test();
     this.utils = new Utils();
     this.state = {
       a: 'a11',
@@ -264,7 +263,8 @@ class R2 extends Component {
   ) {
     super();
     this.state = { a: 1 };
-    console.log('1father: this.state.a', this.state.a);
+    this.heroSearchService1 = HeroSearchService1;
+    this.heroSearchService1.test();
   }
   $bootstrap() {
     this.$template = (`

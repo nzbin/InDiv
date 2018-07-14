@@ -1,6 +1,14 @@
 import Http from './Http';
 
 class Service {
+  static getInstance() {
+    if (!this.instance) {
+      const Instance = this;
+      this.instance = new Instance();
+    }
+    return this.instance;
+  }
+
   constructor() {
     const _http = new Http();
     this.$http = {

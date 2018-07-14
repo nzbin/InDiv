@@ -41,7 +41,6 @@ class Component extends Lifecycle {
   }
 
   $reRender() {
-    console.log('rerender！！', this.constructor.name);
     const dom = this.$renderDom;
     const routerRenderDom = dom.querySelectorAll(this.$vm.$routeDOMKey)[0];
     this.compile = new Compile(dom, this, routerRenderDom);

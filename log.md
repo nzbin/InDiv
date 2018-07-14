@@ -61,3 +61,5 @@
 14. 2018-05-28 add `this.$componentList` in class `Component`
 
 15. 2018-07-10 add rewrite `Component`, discard `Controllor`, and add `EsModule`
+
+16. 2018-07-14 finish singleton in `Service`

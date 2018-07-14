@@ -1,5 +1,5 @@
-// import { Easiest, Component, Router, RouterHash, Utils, EsModule, Service, Http } from '../src';
-import { Easiest, Component, Router, RouterHash, Utils, EsModule, Service } from '../build';
+import { Easiest, Component, Router, RouterHash, Utils, EsModule, Service, Http } from '../src';
+// import { Easiest, Component, Router, RouterHash, Utils, EsModule, Service } from '../build';
 
 class HeroSearchService extends Service {
   constructor() {

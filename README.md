@@ -256,10 +256,13 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 
   - Components shouldn't fetch or save data directly and they certainly shouldn't knowingly present fake data. They should focus on presenting data and delegate data access to a service.
   - And u can use `Service` to send communication between `Components` , because we have realized **singleton**. 
+  - Use `static isSingletonMode = true;` or `Service.isSingletonMode = true`,
   - U can use `this.$https` or import `class Http` to use AJAX.
 
   ```javascript
   class HeroSearchService extends Service {
+    static isSingletonMode = true; // singleton service
+
     constructor() {
       super();
       console.log(this.$http); // same as Http
@@ -274,6 +277,8 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
       console.log('i am a services !!!');
     }
   }
+  // or this method to use singleton service
+  HeroSearchService.isSingletonMode = true;
 
   class ComponentXX extends Component {
     constructor(HeroSearchService) {

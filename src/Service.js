@@ -2,11 +2,16 @@ import Http from './Http';
 
 class Service {
   static getInstance() {
-    if (!this.instance) {
-      const Instance = this;
-      this.instance = new Instance();
+    const Instance = this;
+    if (!this.isSingletonMode) {
+      return new Instance();
     }
-    return this.instance;
+    if (this.isSingletonMode) {
+      if (!this.instance) {
+        this.instance = new Instance();
+      }
+      return this.instance;
+    }
   }
 
   constructor() {

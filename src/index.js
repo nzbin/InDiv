@@ -11,4 +11,3 @@ export { default as Easiest } from './Easiest';
 export { default as EsModule } from './EsModule';
 export { default as Service } from './Service';
 export { default as Http } from './Http';
-

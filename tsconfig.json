@@ -1,0 +1,35 @@
+{
+  "compileOnSave": false,
+  "buildOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "Actions": ["web/store/actions"],
+      "Components": ["web/components"],
+      "Pages": ["web/pages"],
+      "Constants": ["web/constants"],
+      "Containers": ["web/containers"],
+      "Utils": ["web/utils"],
+      "Axios": ["web/utils/axios"],
+      "Service": ["web/utils/service"],
+    },
+    "outDir": "build",
+    "module": "commonjs",
+    "target": "es5",
+    "jsx": "react",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "removeComments": false,
+    "sourceMap": false,
+    "inlineSourceMap": true,
+    "noEmitHelpers": false,
+    "lib": ["dom", "es2015.promise", "es5", "es2017"],
+    "allowJs": true,
+  },
+  "exclude": [
+    "node_modules",
+    "build"
+  ]
+}

@@ -1,5 +1,15 @@
-class Vnode {
-  constructor(info) {
+import { IVnode, IAttributes, IPatchList, IVirtualDOM } from './types';
+
+class Vnode implements IVnode {
+  tagName?: string;
+  node?: Element;
+  parentNode?: Node;
+  attributes?: IAttributes[];
+  nodeValue?: string | null;
+  childNodes?: IVnode[] | any[];
+  type?: string;
+
+  constructor(info: IVnode) {
     this.tagName = info.tagName;
     this.node = info.node;
     this.parentNode = info.parentNode;
@@ -10,16 +20,16 @@ class Vnode {
   }
 }
 
-function bindNodeType(node) {
+function bindNodeType(node: Node): string {
   if (node.nodeType === 1) return 'element';
   if (node.nodeType === 3) return 'text';
   if (node.nodeType === 11) return 'document-fragment';
   return '';
 }
 
-function bindAttributes(node) {
-  const nodeAttrs = node.attributes;
-  const attributes = [];
+function bindAttributes(node: Element): IAttributes[] {
+  const nodeAttrs: NamedNodeMap = node.attributes;
+  const attributes: IAttributes[] = [];
   if (nodeAttrs) {
     Array.from(nodeAttrs).forEach(attr => {
       attributes.push({
@@ -31,10 +41,10 @@ function bindAttributes(node) {
   return attributes;
 }
 
-function parseToVnode(node) {
-  const childNodes = [];
+function parseToVnode(node: Element): IVnode {
+  const childNodes: IVnode[] = [];
   if (node.childNodes) {
-    Array.from(node.childNodes).forEach(child => {
+    Array.from(node.childNodes).forEach((child: Element) => {
       childNodes.push(parseToVnode(child));
     });
   }
@@ -49,7 +59,7 @@ function parseToVnode(node) {
   });
 }
 
-function diffAttributes(oldVnode, newVnode, patchList) {
+function diffAttributes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
   newVnode.attributes.forEach((attr) => {
     const oldVnodeAttr = oldVnode.attributes.find(at => at.name === attr.name);
     if (!oldVnodeAttr || oldVnodeAttr.value !== attr.value) {
@@ -73,7 +83,7 @@ function diffAttributes(oldVnode, newVnode, patchList) {
   });
 }
 
-function diffNodeValue(oldVnode, newVnode, patchList) {
+function diffNodeValue(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
   if (!oldVnode.nodeValue || !newVnode.nodeValue) return;
   if (oldVnode.nodeValue !== newVnode.nodeValue) {
     patchList.push({
@@ -85,7 +95,7 @@ function diffNodeValue(oldVnode, newVnode, patchList) {
   }
 }
 
-function diffTagName(oldVnode, newVnode, patchList) {
+function diffTagName(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
   if (oldVnode.tagName !== newVnode.tagName) {
     patchList.push({
       type: 0,
@@ -96,9 +106,9 @@ function diffTagName(oldVnode, newVnode, patchList) {
   }
 }
 
-function diffChildNodes(newVnode, oldVnode, patchList) {
+function diffChildNodes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
   if (newVnode.childNodes.length > 0) {
-    newVnode.childNodes.forEach((nChild, index) => {
+    (newVnode.childNodes as IVnode[]).forEach((nChild, index) => {
       if (!oldVnode.childNodes[index]) {
         patchList.push({
           type: 1,
@@ -111,7 +121,7 @@ function diffChildNodes(newVnode, oldVnode, patchList) {
     });
   }
   if (oldVnode.childNodes.length > 0) {
-    oldVnode.childNodes.forEach((oChild, index) => {
+    (oldVnode.childNodes as IVnode[]).forEach((oChild, index) => {
       if (!newVnode.childNodes[index]) {
         patchList.push({
           type: 2,
@@ -123,7 +133,7 @@ function diffChildNodes(newVnode, oldVnode, patchList) {
   }
 }
 
-function diffVnode(oldVnode, newVnode, patchList) {
+function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
   if (!patchList) {
     console.error('patchList can not be null, diffVnode must need an Array');
     return;
@@ -153,32 +163,32 @@ function diffVnode(oldVnode, newVnode, patchList) {
  * TEXT: 5, 更改文字: 5
  * @param [] patchList
  */
-function renderVnode(patchList) {
+function renderVnode(patchList: IPatchList[]) {
   patchList.forEach(patch => {
     switch (patch.type) {
-    case 0:
-      patch.parentNode.replaceChild(patch.newNode, patch.oldVnode);
-      break;
-    case 1:
-      patch.parentNode.appendChild(patch.newNode);
-      break;
-    case 2:
-      patch.parentNode.removeChild(patch.node);
-      break;
-    case 3:
-      patch.node.setAttribute(patch.newValue.name, patch.newValue.value);
-      break;
-    case 4:
-      patch.node.removeAttribute(patch.newValue.name);
-      break;
-    case 5:
-      patch.node.nodeValue = patch.newValue;
-      break;
+      case 0:
+        patch.parentNode.replaceChild(patch.newNode, patch.oldVnode);
+        break;
+      case 1:
+        patch.parentNode.appendChild(patch.newNode);
+        break;
+      case 2:
+        patch.parentNode.removeChild(patch.node);
+        break;
+      case 3:
+        patch.node.setAttribute((patch.newValue as IAttributes).name, (patch.newValue as IAttributes).value);
+        break;
+      case 4:
+        patch.node.removeAttribute((patch.newValue as IAttributes).name);
+        break;
+      case 5:
+        patch.node.nodeValue = (patch.newValue as string);
+        break;
     }
   });
 }
 
-const VirtualDOM = {
+const VirtualDOM: IVirtualDOM = {
   parseToVnode,
   diffVnode,
   renderVnode,

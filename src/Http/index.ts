@@ -1,16 +1,16 @@
 import { IHttp } from './types';
 
-import axios from 'axios';
+import axios from 'Axios';
 
 class Http implements IHttp {
   $get(url: string, params?: any): Promise<any> {
     return new Promise((resolve, reject) => {
       const pms = params ? { params } : null;
       axios.get(url, pms)
-        .then(res => {
+        .then((res: any) => {
           resolve(res.data);
         })
-        .catch(e => {
+        .catch((e: any) => {
           reject(e.response.data);
         });
     });
@@ -20,10 +20,10 @@ class Http implements IHttp {
     return new Promise((resolve, reject) => {
       const pms = params ? { params } : null;
       axios.delete(url, pms)
-        .then(res => {
+        .then((res: any) => {
           resolve(res.data);
         })
-        .catch(e => {
+        .catch((e: any) => {
           reject(e.response.data);
         });
     });
@@ -32,10 +32,10 @@ class Http implements IHttp {
   $post(url: string, params?: any): Promise<any> {
     return new Promise((resolve, reject) => {
       axios.post(url, params)
-        .then(res => {
+        .then((res: any) => {
           resolve(res.data);
         })
-        .catch(e => {
+        .catch((e: any) => {
           reject(e.response.data);
         });
     });
@@ -44,10 +44,10 @@ class Http implements IHttp {
   $put(url: string, params?: any): Promise<any> {
     return new Promise((resolve, reject) => {
       axios.put(url, params)
-        .then(res => {
+        .then((res: any) => {
           resolve(res.data);
         })
-        .catch(e => {
+        .catch((e: any) => {
           reject(e.response.data);
         });
     });
@@ -56,10 +56,10 @@ class Http implements IHttp {
   $patch(url: string, params?: any): Promise<any> {
     return new Promise((resolve, reject) => {
       axios.patch(url, params)
-        .then(res => {
+        .then((res: any) => {
           resolve(res.data);
         })
-        .catch(e => {
+        .catch((e: any) => {
           reject(e.response.data);
         });
     });

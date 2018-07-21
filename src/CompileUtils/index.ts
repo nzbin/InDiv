@@ -8,9 +8,9 @@ declare global {
 
 export class CompileUtilForRepeat implements ICompileUtilForRepeat {
   [index: string]: any;
-  $fragment?: Element;
+  $fragment?: Element | DocumentFragment;
 
-  constructor(fragment?: Element) {
+  constructor(fragment?: Element | DocumentFragment) {
     this.$fragment = fragment;
   }
 
@@ -130,9 +130,9 @@ export class CompileUtilForRepeat implements ICompileUtilForRepeat {
 
 export class CompileUtil implements ICompileUtil {
   [index: string]: any;
-  $fragment?: Element;
+  $fragment?: Element | DocumentFragment;
 
-  constructor(fragment?: Element) {
+  constructor(fragment?: Element | DocumentFragment) {
     this.$fragment = fragment;
   }
 

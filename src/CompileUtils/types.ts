@@ -1,6 +1,6 @@
 export interface ICompileUtilForRepeat {
     [index: string]: any;
-    $fragment?: Element;
+    $fragment?: Element | DocumentFragment;
     _getVMVal(vm: any, exp: string): any;
     _getVMRepeatVal(val: any, exp: string, key: string): any;
     bind(node: Element, val?: any, key?: string, dir?: string, exp?: string, index?: number, vm?: any, watchData?: any): void;
@@ -15,7 +15,7 @@ export interface ICompileUtilForRepeat {
 
 export interface ICompileUtil {
     [index: string]: any;
-    $fragment?: Element;
+    $fragment?: Element | DocumentFragment;
     _getVMVal(vm: any, exp: string): any;
     _getVMRepeatVal(vm: any, exp: string): void;
     _setVMVal(vm: any, exp: string, value: any): void;

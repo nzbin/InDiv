@@ -24,7 +24,7 @@
     "start": "parcel ./demo/index.html -d dist --open",
     "start-ts": "parcel ./demo/index-ts.html -d dist --open",
     "start-test": "parcel watch ./demo/index.html -d dist & nodemon app.js",
-    "build": "parcel build ./src/index.js -d build",
+    "build": "parcel build ./es/index.js -d build",
     "pub-prod": "npm run build && npm publish"
   },
   "repository": {

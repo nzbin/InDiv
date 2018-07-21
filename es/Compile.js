@@ -83,12 +83,7 @@ class Compile {
   }
 
   node2Fragment(el) {
-    const fragment = document.createDocumentFragment();
-    let child;
-    while (child === el.firstChild) {
-      fragment.appendChild(child);
-    }
-    return fragment;
+    return document.createDocumentFragment();
   }
 
   compileText(node, exp) {

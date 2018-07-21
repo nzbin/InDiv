@@ -1,8 +1,8 @@
-import { InterfaceUtils } from './types';
+import { IUtils } from './types';
 
 import Cookie from 'easier-cookie';
 
-class Utils implements InterfaceUtils {
+class Utils implements IUtils {
   constructor() {
     this.toString = Object.prototype.toString;
   }

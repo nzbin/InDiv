@@ -2,7 +2,7 @@ import { IVnode, IAttributes, IPatchList, IVirtualDOM } from './types';
 
 class Vnode implements IVnode {
   tagName?: string;
-  node?: Element;
+  node?: DocumentFragment | Element;
   parentNode?: Node;
   attributes?: IAttributes[];
   nodeValue?: string | null;
@@ -27,8 +27,8 @@ function bindNodeType(node: Node): string {
   return '';
 }
 
-function bindAttributes(node: Element): IAttributes[] {
-  const nodeAttrs: NamedNodeMap = node.attributes;
+function bindAttributes(node: DocumentFragment | Element): IAttributes[] {
+  const nodeAttrs: NamedNodeMap = (node as Element).attributes;
   const attributes: IAttributes[] = [];
   if (nodeAttrs) {
     Array.from(nodeAttrs).forEach(attr => {
@@ -41,7 +41,7 @@ function bindAttributes(node: Element): IAttributes[] {
   return attributes;
 }
 
-function parseToVnode(node: Element): IVnode {
+function parseToVnode(node: DocumentFragment | Element): IVnode {
   const childNodes: IVnode[] = [];
   if (node.childNodes) {
     Array.from(node.childNodes).forEach((child: Element) => {
@@ -49,7 +49,7 @@ function parseToVnode(node: Element): IVnode {
     });
   }
   return new Vnode({
-    tagName: node.tagName,
+    tagName: (node as Element).tagName,
     node: node,
     parentNode: node.parentNode,
     attributes: bindAttributes(node),
@@ -176,10 +176,10 @@ function renderVnode(patchList: IPatchList[]) {
         patch.parentNode.removeChild(patch.node);
         break;
       case 3:
-        patch.node.setAttribute((patch.newValue as IAttributes).name, (patch.newValue as IAttributes).value);
+        (patch.node as Element).setAttribute((patch.newValue as IAttributes).name, (patch.newValue as IAttributes).value);
         break;
       case 4:
-        patch.node.removeAttribute((patch.newValue as IAttributes).name);
+        (patch.node as Element).removeAttribute((patch.newValue as IAttributes).name);
         break;
       case 5:
         patch.node.nodeValue = (patch.newValue as string);

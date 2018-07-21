@@ -1,8 +1,25 @@
-import Lifecycle from './Lifecycle';
-import Compile from './Compile';
-import Watcher from './Watcher';
+import { IWatcher, ComponentList, IComponent, IService } from './types';
 
-class Component extends Lifecycle {
+import Lifecycle from '../Lifecycle';
+import Compile from '../Compile';
+import Watcher from '../Watcher';
+
+abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<Vm> implements IComponent<State, Props, Vm> {
+  static scope: Component<any, any, any>;
+  static _injectedComponents: Component<any, any, any>[];
+  static _injectedProviders: IService[];
+
+  state: State | any;
+  props: Props | any;
+  $renderDom: Element;
+  $globalContext: any;
+  $vm: Vm | any;
+  $template: string;
+  $components: any;
+  $componentList: ComponentList[];
+  stateWatcher: IWatcher;
+  propsWatcher?: IWatcher;
+
   constructor() {
     super();
     this.state = {};
@@ -17,44 +34,46 @@ class Component extends Lifecycle {
     if (this.$bootstrap) this.$bootstrap();
   }
 
-  $bootstrap() {
+  $bootstrap(): void {
     this.$template = null;
   }
 
-  $beforeInit() {
+  $beforeInit(): void {
     if (this.props) this.propsWatcher = new Watcher(this.props, this.$watchState.bind(this), this.$reRender.bind(this));
     this.stateWatcher = new Watcher(this.state, this.$watchState.bind(this), this.$reRender.bind(this));
   }
 
-  $routeChange(lastRoute, newRoute) {}
+  $routeChange(lastRoute: string, newRoute: string) {}
 
   $render() {
     const dom = this.$renderDom;
-    this.compile = new Compile(dom, this);
+    // this.compile = new Compile(dom, this);
+    const compile = new Compile(dom, this);
     this.$mountComponent(dom, true);
     this.$componentList.forEach(component => {
       if (component.scope.$render) component.scope.$render();
       if (component.scope.$afterMount) component.scope.$afterMount();
     });
     if (this.$hasRender) this.$hasRender();
-    this.compile = null;
+    // this.compile = null;
   }
 
-  $reRender() {
+  $reRender(): void {
     const dom = this.$renderDom;
     const routerRenderDom = dom.querySelectorAll(this.$vm.$routeDOMKey)[0];
-    this.compile = new Compile(dom, this, routerRenderDom);
+    // this.compile = new Compile(dom, this, routerRenderDom);
+    const compile = new Compile(dom, this, routerRenderDom);
     this.$mountComponent(dom, false);
     this.$componentList.forEach(component => {
       if (component.scope.$render) component.scope.$reRender();
       if (component.scope.$afterMount) component.scope.$afterMount();
     });
     if (this.$hasRender) this.$hasRender();
-    this.compile = null;
+    // this.compile = null;
   }
 
-  $mountComponent(dom, isFirstRender) {
-    const saveStates = [];
+  $mountComponent(dom: Element, isFirstRender?: boolean): void {
+    const saveStates: ComponentList[] = [];
     this.$componentList.forEach(component => {
       saveStates.push(component);
     });
@@ -74,11 +93,11 @@ class Component extends Lifecycle {
     });
   }
 
-  $componentsConstructor(dom) {
+  $componentsConstructor(dom: Element): void {
     this.$componentList = [];
     const routerRenderDom = dom.querySelectorAll(this.$vm.$routeDOMKey)[0];
-    for (const name in this.constructor._injectedComponents) {
-      this.$components[name] = this.constructor._injectedComponents[name];
+    for (const name in (this.constructor as any)._injectedComponents) {
+      this.$components[name] = (this.constructor as any)._injectedComponents[name];
     }
     for (const name in this.$components) {
       const tags = dom.getElementsByTagName(name);
@@ -86,10 +105,10 @@ class Component extends Lifecycle {
         //  protect component in <router-render>
         if (routerRenderDom && routerRenderDom.contains(node)) return;
         const nodeAttrs = node.attributes;
-        const props = {};
+        const props: any = {};
         if (nodeAttrs) {
           const attrList = Array.from(nodeAttrs);
-          const _propsKeys = {};
+          const _propsKeys: any = {};
           attrList.forEach(attr => {
             if (/^\_prop\-(.+)/.test(attr.name)) _propsKeys[attr.name.replace('_prop-', '')] = JSON.parse(attr.value);
           });
@@ -116,33 +135,33 @@ class Component extends Lifecycle {
     }
   }
 
-  $setState(newState) {
+  $setState(newState: any): void {
     if (newState && this.utils.isFunction(newState)) {
       const _newState = newState();
       if (_newState && _newState instanceof Object) {
-        for (let key in _newState) {
+        for (const key in _newState) {
           if (this.state.hasOwnProperty(key) && this.state[key] !== _newState[key]) this.state[key] = _newState[key];
         }
       }
     }
     if (newState && newState instanceof Object) {
-      for (let key in newState) {
+      for (const key in newState) {
         if (this.state.hasOwnProperty(key) && this.state[key] !== newState[key]) this.state[key] = newState[key];
       }
     }
   }
 
-  $setProps(newProps) {
+  $setProps(newProps: any): void {
     if (newProps && this.utils.isFunction(newProps)) {
       const _newProps = newProps();
       if (_newProps && _newProps instanceof Object) {
-        for (let key in _newProps) {
+        for (const key in _newProps) {
           if (this.props.hasOwnProperty(key) && this.props[key] !== _newProps[key]) this.props[key] = _newProps[key];
         }
       }
     }
     if (newProps && newProps instanceof Object) {
-      for (let key in newProps) {
+      for (const key in newProps) {
         if (this.props.hasOwnProperty(key) && this.props[key] !== newProps[key]) {
           this.props[key] = newProps[key];
         }
@@ -150,17 +169,17 @@ class Component extends Lifecycle {
     }
   }
 
-  $setGlobalContext(newGlobalContext) {
+  $setGlobalContext(newGlobalContext: any): void {
     if (newGlobalContext && this.utils.isFunction(newGlobalContext)) {
       const _newGlobalContext = newGlobalContext();
       if (_newGlobalContext && _newGlobalContext instanceof Object) {
-        for (let key in _newGlobalContext) {
+        for (const key in _newGlobalContext) {
           if (this.$globalContext.hasOwnProperty(key) && this.$globalContext[key] !== _newGlobalContext[key]) this.$globalContext[key] = _newGlobalContext[key];
         }
       }
     }
     if (newGlobalContext && newGlobalContext instanceof Object) {
-      for (let key in newGlobalContext) {
+      for (const key in newGlobalContext) {
         if (this.$globalContext.hasOwnProperty(key) && this.$globalContext[key] !== newGlobalContext[key]) {
           this.$globalContext[key] = newGlobalContext[key];
         }
@@ -168,16 +187,16 @@ class Component extends Lifecycle {
     }
   }
 
-  getPropsValue(valueList, value) {
+  getPropsValue(valueList: any[], value: any): void {
     let val = value;
-    valueList.forEach((v, index) => {
+    valueList.forEach((v, index: number) => {
       if (index === 0) return;
       val = val[v];
     });
     return val;
   }
 
-  buildProps(prop) {
+  buildProps(prop: any): any {
     if (this.utils.isFunction(prop)) {
       return prop.bind(this);
     } else {
@@ -185,7 +204,7 @@ class Component extends Lifecycle {
     }
   }
 
-  buildComponentScope(ComponentClass, props, dom) {
+  buildComponentScope(ComponentClass: any, props: any, dom: Element): Component<any, any, any> {
     const args = this.createInjector(ComponentClass);
     const _component = Reflect.construct(ComponentClass, args);
     _component.props = props;
@@ -194,15 +213,15 @@ class Component extends Lifecycle {
     return _component;
   }
 
-  createInjector(Component) {
+  createInjector(ComponentClass: any): any[] {
     // const DELEGATE_CTOR = /^function\s+\S+\(\)\s*{[\s\S]+\.apply\(this,\s*arguments\)/;
     // const INHERITED_CLASS = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{/;
     // const INHERITED_CLASS_WITH_CTOR = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{[\s\S]*constructor\s*\(/;
     const CLASS_ARGUS = /^function\s+[^\(]*\(\s*([^\)]*)\)/m;
-    const argList = Component.toString().match(CLASS_ARGUS)[1].replace(/ /g, '').split(',');
-    let args = [];
-    argList.forEach(arg => {
-      const Service = Component._injectedProviders.find(service => service.constructor.name === arg) ? Component._injectedProviders.find(service => service.constructor.name === arg) : this.$vm.$rootModule.$providers.find(service => service.constructor.name === arg);
+    const argList = ComponentClass.toString().match(CLASS_ARGUS)[1].replace(/ /g, '').split(',');
+    const args: any[] = [];
+    argList.forEach((arg: string) => {
+      const Service = ComponentClass._injectedProviders.find((service: IService) => service.constructor.name === arg) ? Component._injectedProviders.find(service => service.constructor.name === arg) : this.$vm.$rootModule.$providers.find((service: IService) => service.constructor.name === arg);
       if (Service) args.push(Service);
     });
     return args;

@@ -1,4 +1,4 @@
-export interface InterfaceUtils {
+export interface IUtils {
     toString: () => string;
     setCookie(name: string, value: any, options?: any): any;
     getCookie(name: string): any;

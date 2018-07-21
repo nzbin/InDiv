@@ -1,4 +1,4 @@
-import { IWatcher, IFnWatcher, IFnRender } from './types';
+import { IWatcher, IFnWatcher, IFnRender, IUtils } from './types';
 
 import Utils from '../Utils';
 
@@ -6,7 +6,7 @@ class Watcher implements IWatcher {
   data: any;
   watcher: IFnWatcher;
   render: IFnRender;
-  utils: Utils;
+  utils: IUtils;
 
   constructor(
     data: any,

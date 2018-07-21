@@ -1,6 +1,6 @@
 export interface IVnode {
     tagName?: string;
-    node?: Element;
+    node?: DocumentFragment | Element;
     parentNode?: Node;
     attributes?: IAttributes[];
     nodeValue?: string | null;
@@ -15,16 +15,16 @@ export interface IAttributes {
 
 export interface IPatchList {
     type?: number;
-    node?: Element;
+    node?: DocumentFragment | Element;
     parentNode?: Node;
-    newNode?: Element;
-    oldVnode?: Element;
+    newNode?: DocumentFragment | Element;
+    oldVnode?: DocumentFragment | Element;
     newValue?: IAttributes | string;
     oldValue?: IAttributes | string;
 }
 
 export interface IParseToVnode {
-    (node: Element): IVnode;
+    (node: DocumentFragment | Element): IVnode;
 }
 
 export interface IDiffVnode {

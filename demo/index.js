@@ -384,81 +384,43 @@ const routes = [
     path: '/',
     component: 'container-wrap',
     // redirectTo: '/R1',
+  },
+  {
+    path: '/R1',
+    component: 'R1',
     children: [
       {
-        path: '/R1',
-        component: 'R1',
+        path: '/C1',
+        component: 'R2',
         children: [
           {
-            path: '/C1',
-            component: 'R2',
-            children: [
-              {
-                path: '/D1',
-                redirectTo: '/R2',
-              },
-            ],
-          },
-          {
-            path: '/C2',
+            path: '/D1',
             redirectTo: '/R2',
           },
         ],
       },
       {
-        path: '/R2',
-        component: 'R2',
+        path: '/C2',
+        redirectTo: '/R2',
+      },
+    ],
+  },
+  {
+    path: '/R2',
+    component: 'R2',
+    children: [
+      {
+        path: '/:id',
+        component: 'R1',
         children: [
           {
-            path: '/:id',
-            component: 'R1',
-            children: [
-              {
-                path: '/D1',
-                redirectTo: '/R1/C1',
-              },
-            ],
+            path: '/D1',
+            redirectTo: '/R1/C1',
           },
         ],
       },
     ],
   },
-  // {
-  //   path: '/R1',
-  //   component: 'R1',
-  //   children: [
-  //     {
-  //       path: '/C1',
-  //       component: 'R2',
-  //       children: [
-  //         {
-  //           path: '/D1',
-  //           redirectTo: '/R2',
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       path: '/C2',
-  //       redirectTo: '/R2',
-  //     },
-  //   ],
-  // },
-  // {
-  //   path: '/R2',
-  //   component: 'R2',
-  //   children: [
-  //     {
-  //       path: '/:id',
-  //       component: 'R1',
-  //       children: [
-  //         {
-  //           path: '/D1',
-  //           redirectTo: '/R1/C1',
-  //         },
-  //       ],
-  //     },
-  //   ],
-  // },
 ];
 router.$setRootPath('/demo');
 // router.$setRootPath('/');

@@ -17,8 +17,13 @@ export class Router {
     this.$vm.$canRenderModule = false;
     this.$vm.$esRouteMode = 'state';
     this.$vm.$routeDOMKey = 'router-render';
-    window.addEventListener('load', this.refresh.bind(this), false);
+    window.addEventListener('load', () => {
+      console.log(4444444444);
+      this.refresh();
+    }, false);
     window.addEventListener('popstate', (e) => {
+      console.log(333333, 'popstate', this.lastRoute);
+      console.log(333333111, 'popstate', this.$vm.$esRouteObject);
       let path;
       if (this.$rootPath === '/') {
         path = location.pathname || '/';
@@ -31,7 +36,7 @@ export class Router {
         query: {},
         params: {},
       };
-      this.refresh();
+      // this.refresh();
     }, false);
   }
 
@@ -79,12 +84,10 @@ export class Router {
         query: {},
         params: {},
       };
-      this.watcher = new KeyWatcher(this.$vm, '$esRouteObject', (o, n) => {
-        this.refresh();
-      });
+      this.watcher = new KeyWatcher(this.$vm, '$esRouteObject', this.refresh.bind(this));
     }
     this.currentUrl = this.$vm.$esRouteObject.path || '/';
-
+    console.log('this.currentUrl', this.currentUrl);
     this.renderRouteList = this.currentUrl.split('/');
     this.routesList = [];
     this.renderRouteList.shift();
@@ -93,9 +96,15 @@ export class Router {
 
   distributeRoutes() {
     // has render father route
+    console.log('this.lastRoute', this.lastRoute);
+    console.log('this.currentUrl', this.currentUrl);
     if (this.lastRoute && this.lastRoute !== this.currentUrl && new RegExp(`^${this.lastRoute}.*`).test(this.currentUrl)) {
+      console.log(1111);
       this.insertRenderRoutes();
     // didn't render father route
+    } else if (this.lastRoute && this.lastRoute !== this.currentUrl && new RegExp(`^${this.currentUrl}.*`).test(this.lastRoute)) {
+      console.log(3333333);
+      this.insertRenderRoutes();
     } else {
       this.generalDistributeRoutes();
     }
@@ -106,9 +115,15 @@ export class Router {
   insertRenderRoutes() {
     const lastRouteList = this.lastRoute.split('/');
     lastRouteList.shift();
+    console.log('lastRouteList', lastRouteList);
+    // const needRenderIndex = this.lastRoute === '/' ? 0 : lastRouteList.length;
     const needRenderIndex = lastRouteList.length;
+    console.log('needRenderIndex', needRenderIndex);
+    console.log('this.renderRouteList', this.renderRouteList);
     this.renderRouteList.forEach((path, index) => {
+      console.log('this.routesList', this.routesList);
       if (index === 0) {
+        // ???
         const rootRoute = this.routes.find(route => route.path === `/${path}` || /^\/\:.+/.test(route.path));
         if (!rootRoute) {
           console.error('wrong route instantiation in insertRenderRoutes:', this.currentUrl);
@@ -120,6 +135,7 @@ export class Router {
         }
         this.routesList.push(rootRoute);
       } else {
+        console.log('index', index);
         const lastRoute = this.routesList[index - 1].children;
         if (!lastRoute || !(lastRoute instanceof Array)) {
           console.error('routes not exit or routes must be an array!');
@@ -133,7 +149,9 @@ export class Router {
         this.routesList.push(route);
       }
       if (index === needRenderIndex) {
-        const lastRoute = this.routesList[index - 1].children;
+        // const lastRoute = index === 0 ? this.routesList[index] : this.routesList[index - 1].children;
+        const lastRoute = index === 0 ? this.routesList[index].children : this.routesList[index - 1].children;
+        console.log('lastRoutelastRoute', lastRoute);
         if (!lastRoute || !(lastRoute instanceof Array)) {
           console.error('routes not exit or routes must be an array!');
         }
@@ -152,7 +170,8 @@ export class Router {
           console.error(`route error: ${route.component} is undefined`);
           return;
         }
-        const renderDom = document.querySelectorAll('router-render')[index - 1];
+        const renderDom = index === 0 ? document.querySelectorAll('router-render') : document.querySelectorAll('router-render')[index - 1];
+        console.log('renderDomrenderDom', renderDom);
         this.instantiateComponent(Component, renderDom)
           .then(component => {
             this.oldComponent = component;
@@ -225,6 +244,7 @@ export class Router {
   }
 
   instantiateComponent(Component, renderDom) {
+    console.log('Component, renderDom', Component, renderDom);
     return this.$vm.$renderComponent(Component, renderDom);
   }
 }

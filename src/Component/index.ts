@@ -34,9 +34,7 @@ abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<V
     if (this.$bootstrap) this.$bootstrap();
   }
 
-  $bootstrap(): void {
-    this.$template = null;
-  }
+  abstract $bootstrap(): void;
 
   $beforeInit(): void {
     if (this.props) this.propsWatcher = new Watcher(this.props, this.$watchState.bind(this), this.$reRender.bind(this));

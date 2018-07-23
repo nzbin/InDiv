@@ -317,15 +317,23 @@ class R2 extends Component {
 class Container extends Component {
   constructor() {
     super();
+    this.state = {
+      a: 1,
+    };
   }
 
   $bootstrap() {
     this.$template = (`
       <div>
-        <p es-on:click="this.go()">111 container</p>
+        <p es-on:click="this.go()">container: {{this.state.a}}</p>
+        <input es-model="this.state.a" />
         <router-render></router-render>
       </div>
     `);
+  }
+
+  $afterMount() {
+    // this.$location.go('/R1', { b: '1' });
   }
 
   go() {
@@ -383,44 +391,82 @@ const routes = [
   {
     path: '/',
     component: 'container-wrap',
-    // redirectTo: '/R1',
-  },
-  {
-    path: '/R1',
-    component: 'R1',
     children: [
       {
-        path: '/C1',
-        component: 'R2',
+        path: '/R1',
+        component: 'R1',
         children: [
           {
-            path: '/D1',
+            path: '/C1',
+            component: 'R2',
+            children: [
+              {
+                path: '/D1',
+                redirectTo: '/R2',
+              },
+            ],
+          },
+          {
+            path: '/C2',
             redirectTo: '/R2',
           },
         ],
       },
       {
-        path: '/C2',
-        redirectTo: '/R2',
-      },
-    ],
-  },
-  {
-    path: '/R2',
-    component: 'R2',
-    children: [
-      {
-        path: '/:id',
-        component: 'R1',
+        path: '/R2',
+        component: 'R2',
         children: [
           {
-            path: '/D1',
-            redirectTo: '/R1/C1',
+            path: '/:id',
+            component: 'R1',
+            children: [
+              {
+                path: '/D1',
+                redirectTo: '/R1/C1',
+              },
+            ],
           },
         ],
       },
     ],
+    // redirectTo: '/R1',
   },
+  // {
+  //   path: '/R1',
+  //   component: 'R1',
+  //   children: [
+  //     {
+  //       path: '/C1',
+  //       component: 'R2',
+  //       children: [
+  //         {
+  //           path: '/D1',
+  //           redirectTo: '/R2',
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       path: '/C2',
+  //       redirectTo: '/R2',
+  //     },
+  //   ],
+  // },
+  // {
+  //   path: '/R2',
+  //   component: 'R2',
+  //   children: [
+  //     {
+  //       path: '/:id',
+  //       component: 'R1',
+  //       children: [
+  //         {
+  //           path: '/D1',
+  //           redirectTo: '/R1/C1',
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // },
 ];
 router.$setRootPath('/demo');
 // router.$setRootPath('/');

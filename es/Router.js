@@ -9,6 +9,7 @@ export class Router {
     this.rootDom = null;
     this.utils = new Utils();
     this.$rootPath = '/';
+    this.hasRenderComponentList = [];
   }
 
   $bootstrap(vm) {
@@ -84,10 +85,15 @@ export class Router {
       });
     }
     this.currentUrl = this.$vm.$esRouteObject.path || '/';
-
-    this.renderRouteList = this.currentUrl.split('/');
     this.routesList = [];
-    this.renderRouteList.shift();
+    this.renderRouteList = this.currentUrl === '/' ? ['/'] : this.currentUrl.split('/');
+    this.renderRouteList[0] = '/';
+    // if (this.currentUrl === '/') {
+    //   this.renderRouteList[0] = '/';
+    // } else {
+    //   this.renderRouteList = this.currentUrl.split('/');
+    //   this.renderRouteList[0] = '/';
+    // }
     this.distributeRoutes();
   }
 
@@ -97,9 +103,10 @@ export class Router {
       this.insertRenderRoutes();
     // didn't render father route
     } else if (this.lastRoute && this.lastRoute !== this.currentUrl && new RegExp(`^${this.currentUrl}.*`).test(this.lastRoute)) {
-      // this.insertRenderRoutes();
+      this.removeRenderRoutes();
       console.log('退后了');
     } else { // didn't render father route
+      console.log('没有历史');
       this.generalDistributeRoutes();
     }
     this.$routeChange(this.lastRoute, this.currentUrl);
@@ -107,18 +114,29 @@ export class Router {
   }
 
   insertRenderRoutes() {
-    const lastRouteList = this.lastRoute.split('/');
-    lastRouteList.shift();
-    const needRenderIndex = lastRouteList.length;
-    this.renderRouteList.forEach((path, index) => {
+    // let lastRouteList = null;
+    // if (this.lastRoute === '/') {
+    //   lastRouteList = ['/'];
+    // } else {
+    //   lastRouteList = this.lastRoute.split('/');
+    //   lastRouteList[0] = '/';
+    // }
+    const lastRouteList = this.lastRoute === '/' ? ['/'] : this.lastRoute.split('/');
+    lastRouteList[0] = '/';
+    console.log('11 renderRouteList', this.renderRouteList);
+    console.log('22 lastRouteListlastRouteList', lastRouteList);
+    // const needRenderIndex = lastRouteList.length;
+
+    for (let index = 0; index < this.renderRouteList.length; index++) {
+      const path = this.renderRouteList[index];
       if (index === 0) {
-        const rootRoute = this.routes.find(route => route.path === `/${path}` || /^\/\:.+/.test(route.path));
+        const rootRoute = this.routes.find(route => route.path === `${path}` || /^\/\:.+/.test(route.path));
         if (!rootRoute) {
           console.error('wrong route instantiation in insertRenderRoutes:', this.currentUrl);
           return;
         }
-        if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo)) {
-          this.redirectTo(rootRoute.redirectTo);
+        if (rootRoute.redirectTo) {
+          console.error("root path can't use redirectTo");
           return;
         }
         this.routesList.push(rootRoute);
@@ -135,52 +153,156 @@ export class Router {
         }
         this.routesList.push(route);
       }
-      if (index === needRenderIndex) {
-        const lastRoute = this.routesList[index - 1].children;
-        if (!lastRoute || !(lastRoute instanceof Array)) {
-          console.error('routes not exit or routes must be an array!');
-        }
-        const route = lastRoute.find(route => route.path === `/${path}` || /^\/\:.+/.test(route.path));
-        if (!route) return;
-        if (route.redirectTo && /^\/.*/.test(route.redirectTo)) {
-          this.redirectTo(route.redirectTo);
+      if (path !== lastRouteList[index]) {
+        const willRemoveComponent = this.hasRenderComponentList[index];
+        if (willRemoveComponent && willRemoveComponent.$onDestory) willRemoveComponent.$onDestory();
+        console.log(path, index);
+        const needRenderRoute = this.routesList[index];
+        if (!needRenderRoute) {
+          console.error('wrong route instantiation in insertRenderRoutes:', this.currentUrl);
           return;
         }
-        if (this.oldComponent && this.oldComponent.$routeChange) this.oldComponent.$routeChange(this.lastRoute, this.currentUrl);
-
-        let Component = null;
-        if (this.$vm.$rootModule.$components[route.component]) {
-          Component = this.$vm.$components[route.component];
-        } else {
-          console.error(`route error: ${route.component} is undefined`);
+        if (needRenderRoute.redirectTo && /^\/.*/.test(needRenderRoute.redirectTo)) {
+          console.log('needRenderRoute.redirectTo', needRenderRoute.redirectTo);
+          this.redirectTo(needRenderRoute.redirectTo);
           return;
         }
+        const needRenderComponent = this.$vm.$components[needRenderRoute.component];
         const renderDom = document.querySelectorAll('router-render')[index - 1];
-        this.instantiateComponent(Component, renderDom)
-          .then(component => {
-            this.oldComponent = component;
-          })
-          .catch(() => console.error('renderComponent failed'));
+        this.instantiateComponent(needRenderComponent, renderDom).then(component => {
+          this.hasRenderComponentList[index] = component;
+        });
       }
-    });
+    }
+
+    // this.renderRouteList.forEach((path, index) => {
+    // if (index === 0) {
+    //   const rootRoute = this.routes.find(route => route.path === `${path}` || /^\/\:.+/.test(route.path));
+    //   if (!rootRoute) {
+    //     console.error('wrong route instantiation in insertRenderRoutes:', this.currentUrl);
+    //     return;
+    //   }
+    //   if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo)) {
+    //     this.redirectTo(rootRoute.redirectTo);
+    //     return;
+    //   }
+    //   this.routesList.push(rootRoute);
+    // } else {
+    //   const lastRoute = this.routesList[index - 1].children;
+    //   if (!lastRoute || !(lastRoute instanceof Array)) {
+    //     console.error('routes not exit or routes must be an array!');
+    //     return;
+    //   }
+    //   const route = lastRoute.find(route => route.path === `/${path}` || /^\/\:.+/.test(route.path));
+    //   if (!route) {
+    //     console.error('wrong route instantiation1:', this.currentUrl);
+    //     return;
+    //   }
+    //   this.routesList.push(route);
+    // }
+    // if (path !== lastRouteList[index]) {
+    //   const willRemoveComponent = this.hasRenderComponentList[index];
+    //   if (willRemoveComponent && willRemoveComponent.$onDestory) willRemoveComponent.$onDestory();
+    //   console.log(path, index);
+    //   const needRenderRoute = this.routesList[index];
+    //   if (!needRenderRoute) return;
+    //   if (needRenderRoute.redirectTo && /^\/.*/.test(needRenderRoute.redirectTo)) {
+    //     this.redirectTo(needRenderRoute.redirectTo);
+    //   }
+    //   const needRenderComponent = this.$vm.$components[needRenderRoute.component];
+    //   const renderDom = document.querySelectorAll('router-render')[index - 1];
+    //   this.instantiateComponent(needRenderComponent, renderDom).then(component => {
+    //     this.hasRenderComponentList[index] = component;
+    //   });
+    // }
+    // });
+
+    // this.renderRouteList.forEach((path, index) => {
+    //   if (index === 0) {
+    //     const rootRoute = this.routes.find(route => route.path === `${path}` || /^\/\:.+/.test(route.path));
+    //     if (!rootRoute) {
+    //       console.error('wrong route instantiation in insertRenderRoutes:', this.currentUrl);
+    //       return;
+    //     }
+    //     if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo)) {
+    //       this.redirectTo(rootRoute.redirectTo);
+    //       return;
+    //     }
+    //     this.routesList.push(rootRoute);
+    //   } else {
+    //     const lastRoute = this.routesList[index - 1].children;
+    //     if (!lastRoute || !(lastRoute instanceof Array)) {
+    //       console.error('routes not exit or routes must be an array!');
+    //       return;
+    //     }
+    //     const route = lastRoute.find(route => route.path === `/${path}` || /^\/\:.+/.test(route.path));
+    //     if (!route) {
+    //       console.error('wrong route instantiation1:', this.currentUrl);
+    //       return;
+    //     }
+    //     this.routesList.push(route);
+    //   }
+    //   if (index === needRenderIndex) {
+    //     const lastRoute = this.routesList[index - 1].children;
+    //     if (!lastRoute || !(lastRoute instanceof Array)) {
+    //       console.error('routes not exit or routes must be an array!');
+    //     }
+    //     const route = lastRoute.find(route => route.path === `/${path}` || /^\/\:.+/.test(route.path));
+    //     if (!route) return;
+    //     if (route.redirectTo && /^\/.*/.test(route.redirectTo)) {
+    //       this.redirectTo(route.redirectTo);
+    //       return;
+    //     }
+    //     if (this.oldComponent && this.oldComponent.$routeChange) this.oldComponent.$routeChange(this.lastRoute, this.currentUrl);
+
+    //     let Component = null;
+    //     if (this.$vm.$rootModule.$components[route.component]) {
+    //       Component = this.$vm.$components[route.component];
+    //     } else {
+    //       console.error(`route error: ${route.component} is undefined`);
+    //       return;
+    //     }
+    //     const renderDom = document.querySelectorAll('router-render')[index - 1];
+    //     this.instantiateComponent(Component, renderDom)
+    //       .then(component => {
+    //         this.oldComponent = component;
+    //       })
+    //       .catch(() => console.error('renderComponent failed'));
+    //   }
+    // });
+  }
+
+  removeRenderRoutes() {
+    const lastRouteList = this.lastRoute === '/' ? ['/'] : this.lastRoute.split('/');
+    lastRouteList[0] = '/';
+    for (let index = 0; index < lastRouteList.length; index++) {
+      if (lastRouteList[index] !== this.renderRouteList[index]) {
+        const renderDom = document.querySelectorAll('router-render')[index - 1];
+        const willRemoveComponent = this.hasRenderComponentList[index];
+        if (willRemoveComponent && willRemoveComponent.$onDestory) willRemoveComponent.$onDestory();
+        renderDom.removeChild(renderDom.childNodes[0]);
+        this.hasRenderComponentList.length = index;
+        return;
+      }
+    }
   }
 
   generalDistributeRoutes() {
     console.log('this.renderRouteList', this.renderRouteList);
-    this.renderRouteList.forEach((path, index) => {
-      // first bootstrap route
+
+    for (let index = 0; index < this.renderRouteList.length; index++) {
+      const path = this.renderRouteList[index];
       if (index === 0) {
-        const rootRoute = this.routes.find(route => route.path === `/${path}` || /^\/\:.+/.test(route.path));
+        const rootRoute = this.routes.find(route => route.path === `${path}` || /^\/\:.+/.test(route.path));
         if (!rootRoute) {
           console.error('wrong route instantiation in generalDistributeRoutes:', this.currentUrl);
           return;
         }
-        if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo)) {
-          this.redirectTo(rootRoute.redirectTo);
+        if (rootRoute.redirectTo) {
+          console.error("root path can't use redirectTo");
           return;
         }
         if (this.oldComponent && this.oldComponent.$routeChange) this.oldComponent.$routeChange(this.lastRoute, this.currentUrl);
-
         let Component = null;
         if (this.$vm.$rootModule.$components[rootRoute.component]) {
           Component = this.$vm.$components[rootRoute.component];
@@ -193,6 +315,7 @@ export class Router {
         this.instantiateComponent(Component, rootDom)
           .then(component => {
             this.oldComponent = component;
+            this.hasRenderComponentList.push(component);
           })
           .catch(() => console.error('renderComponent failed'));
       } else {
@@ -222,10 +345,74 @@ export class Router {
         this.instantiateComponent(Component, renderDom)
           .then(component => {
             this.oldComponent = component;
+            this.hasRenderComponentList.push(component);
           })
           .catch(() => console.error('renderComponent failed'));
       }
-    });
+    }
+    // this.renderRouteList.forEach((path, index) => {
+    //   // first bootstrap route
+    //   if (index === 0) {
+    //     const rootRoute = this.routes.find(route => route.path === `${path}` || /^\/\:.+/.test(route.path));
+    //     if (!rootRoute) {
+    //       console.error('wrong route instantiation in generalDistributeRoutes:', this.currentUrl);
+    //       return;
+    //     }
+    //     if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo)) {
+    //       this.redirectTo(rootRoute.redirectTo);
+    //       console.log(111);
+    //       return;
+    //     }
+    //     if (this.oldComponent && this.oldComponent.$routeChange) this.oldComponent.$routeChange(this.lastRoute, this.currentUrl);
+
+    //     let Component = null;
+    //     if (this.$vm.$rootModule.$components[rootRoute.component]) {
+    //       Component = this.$vm.$components[rootRoute.component];
+    //     } else {
+    //       console.error(`route error: ${rootRoute.component} is undefined`);
+    //       return;
+    //     }
+    //     const rootDom = document.querySelector('#root');
+    //     this.routesList.push(rootRoute);
+    //     this.instantiateComponent(Component, rootDom)
+    //       .then(component => {
+    //         this.oldComponent = component;
+    //         this.hasRenderComponentList.push(component);
+    //       })
+    //       .catch(() => console.error('renderComponent failed'));
+    //   } else {
+    //     console.log('this.routesList', this.routesList, index);
+    //     const lastRoute = this.routesList[index - 1].children;
+    //     if (!lastRoute || !(lastRoute instanceof Array)) {
+    //       console.error('routes not exit or routes must be an array!');
+    //     }
+    //     const route = lastRoute.find(route => route.path === `/${path}` || /^\/\:.+/.test(route.path));
+    //     if (!route) {
+    //       console.error('wrong route instantiation1:', this.currentUrl);
+    //       return;
+    //     }
+    //     if (route.redirectTo && /^\/.*/.test(route.redirectTo)) {
+    //       this.redirectTo(route.redirectTo);
+    //       return;
+    //     }
+    //     if (this.oldComponent && this.oldComponent.$routeChange) this.oldComponent.$routeChange(this.lastRoute, this.currentUrl);
+    //     let Component = null;
+    //     if (this.$vm.$rootModule.$components[route.component]) {
+    //       Component = this.$vm.$components[route.component];
+    //     } else {
+    //       console.error(`route error: ${route.component} is undefined`);
+    //       return;
+    //     }
+    //     const renderDom = document.querySelectorAll('router-render')[index - 1];
+    //     this.routesList.push(route);
+    //     this.instantiateComponent(Component, renderDom)
+    //       .then(component => {
+    //         this.oldComponent = component;
+    //         this.hasRenderComponentList.push(component);
+    //       })
+    //       .catch(() => console.error('renderComponent failed'));
+    //   }
+    // });
   }
 
   instantiateComponent(Component, renderDom) {

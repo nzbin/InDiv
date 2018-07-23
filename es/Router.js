@@ -301,6 +301,11 @@ export class Router {
           return;
         }
         if (route.redirectTo && /^\/.*/.test(route.redirectTo)) {
+          this.hasRenderComponentList.forEach((c, i) => {
+            if (i >= index) {
+              if (c.$onDestory) c.$onDestory();
+            }
+          });
           this.redirectTo(route.redirectTo);
           return;
         }

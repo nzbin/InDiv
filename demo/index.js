@@ -269,7 +269,7 @@ class R2 extends Component {
   $bootstrap() {
     this.$template = (`
       <div>
-      <p es-on:click="this.showLocation()">点击显示子路由跳转</p>
+      <p es-on:click="this.showLocation()">R2 点击显示子路由跳转</p>
         <input es-model="this.state.a"/>
         <br/>
         <p es-on:click="this.showAlert()">点击显示this.state.a:{{this.state.a}}</p>
@@ -390,11 +390,13 @@ const router = new Router();
 const routes = [
   {
     path: '/',
+    // redirectTo: '/R1',
     component: 'container-wrap',
     children: [
       {
         path: '/R1',
-        component: 'R1',
+        // component: 'R1',
+        redirectTo: '/R1/C1',
         children: [
           {
             path: '/C1',

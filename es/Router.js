@@ -10,6 +10,7 @@ export class Router {
     this.utils = new Utils();
     this.$rootPath = '/';
     this.hasRenderComponentList = [];
+    this.needRedirectPath = null;
   }
 
   $bootstrap(vm) {
@@ -99,22 +100,29 @@ export class Router {
 
   distributeRoutes() {
     // has render father route
-    console.log('!! this.lastRoute', this.lastRoute);
     if (this.lastRoute && this.lastRoute !== this.currentUrl && new RegExp(`^${this.lastRoute}.*`).test(this.currentUrl)) {
       this.insertRenderRoutes();
-      // this.lastRoute = this.currentUrl;
-    // didn't render father route
+      // didn't render father route
     } else if (this.lastRoute && this.lastRoute !== this.currentUrl && new RegExp(`^${this.currentUrl}.*`).test(this.lastRoute)) {
       this.removeRenderRoutes();
       // this.lastRoute = this.currentUrl;
       console.log('退后了');
     } else { // didn't render father route
       console.log('没有历史');
+      console.log('!! this.lastRoute', this.lastRoute);
+      console.log('!! this.lastRoute', this.currentUrl);
       this.generalDistributeRoutes();
-      // this.lastRoute = this.currentUrl;
     }
     this.$routeChange(this.lastRoute, this.currentUrl);
     this.lastRoute = this.currentUrl;
+    if (this.needRedirectPath) {
+      this.redirectTo(this.needRedirectPath);
+      this.needRedirectPath = null;
+    }
+    // else {
+    //   this.$routeChange(this.lastRoute, this.currentUrl);
+    //   this.lastRoute = this.currentUrl;
+    // }
   }
 
   insertRenderRoutes() {
@@ -127,21 +135,24 @@ export class Router {
     // }
     const lastRouteList = this.lastRoute === '/' ? ['/'] : this.lastRoute.split('/');
     lastRouteList[0] = '/';
-    // console.log('11 renderRouteList', this.renderRouteList);
-    // console.log('22 lastRouteListlastRouteList', lastRouteList);
-    // const needRenderIndex = lastRouteList.length;
 
     for (let index = 0; index < this.renderRouteList.length; index++) {
       const path = this.renderRouteList[index];
       if (index === 0) {
         const rootRoute = this.routes.find(route => route.path === `${path}` || /^\/\:.+/.test(route.path));
         if (!rootRoute) {
-          console.error('wrong route instantiation in insertRenderRoutes:', this.currentUrl, 'and root path can not redirectTo');
+          console.error('wrong route instantiation in insertRenderRoutes:', this.currentUrl);
           return;
         }
-        // if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo)) {
-        // this.redirectTo(rootRoute.redirectTo);
-        // return;
+        // if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo) && (index + 1) === this.renderRouteList.length) {
+        //   this.hasRenderComponentList.forEach((c, i) => {
+        //     if (i >= index) {
+        //       if (c.$onDestory) c.$onDestory();
+        //     }
+        //   });
+        //   this.hasRenderComponentList.length = index;
+        //   this.redirectTo(rootRoute.redirectTo);
+        //   return;
         // }
         this.routesList.push(rootRoute);
       } else {
@@ -157,6 +168,7 @@ export class Router {
         }
         this.routesList.push(route);
       }
+
       if (path !== lastRouteList[index]) {
         const willRemoveComponent = this.hasRenderComponentList[index];
         if (willRemoveComponent && willRemoveComponent.$onDestory) willRemoveComponent.$onDestory();
@@ -165,21 +177,28 @@ export class Router {
           console.error('wrong route instantiation in insertRenderRoutes:', this.currentUrl);
           return;
         }
-        if (needRenderRoute.redirectTo && /^\/.*/.test(needRenderRoute.redirectTo)) {
-          console.log('needRenderRoute.redirectTo', needRenderRoute.redirectTo);
+
+        if (needRenderRoute.redirectTo && /^\/.*/.test(needRenderRoute.redirectTo) && (index + 1) === this.renderRouteList.length) {
+          console.log(111, index, needRenderRoute.redirectTo);
+          console.log('this.renderRouteList', this.renderRouteList);
+          console.log('this.hasRenderComponentList', this.hasRenderComponentList);
           this.hasRenderComponentList.forEach((c, i) => {
-            if (i >= index) {
+            if (i > index) {
               if (c.$onDestory) c.$onDestory();
             }
           });
           this.hasRenderComponentList.length = index;
-          this.redirectTo(needRenderRoute.redirectTo);
+          // this.redirectTo(needRenderRoute.redirectTo);
+          this.needRedirectPath = needRenderRoute.redirectTo;
           return;
         }
+
+        console.log(11111111);
         const needRenderComponent = this.$vm.$components[needRenderRoute.component];
         const renderDom = document.querySelectorAll('router-render')[index - 1];
+        console.log('renderDom', index, renderDom);
         this.hasRenderComponentList.forEach((c, i) => {
-          if (i >= index) {
+          if (i > index) {
             if (c.$onDestory) c.$onDestory();
           }
         });
@@ -187,8 +206,24 @@ export class Router {
         this.instantiateComponent(needRenderComponent, renderDom).then(component => {
           this.hasRenderComponentList[index] = component;
         });
+
+        // if (needRenderRoute.redirectTo && /^\/.*/.test(needRenderRoute.redirectTo) && (index + 1) === this.renderRouteList.length) {
+        //   console.log(111, index, needRenderRoute.redirectTo);
+        //   console.log('this.renderRouteList', this.renderRouteList);
+        //   console.log('this.hasRenderComponentList', this.hasRenderComponentList);
+        //   this.hasRenderComponentList.forEach((c, i) => {
+        //     if (i > index) {
+        //       if (c.$onDestory) c.$onDestory();
+        //     }
+        //   });
+        //   this.hasRenderComponentList.length = index;
+        //   // this.redirectTo(needRenderRoute.redirectTo);
+        //   this.needRedirectPath = needRenderRoute.redirectTo;
+        //   return;
+        // }
       }
     }
+
     // this.renderRouteList.forEach((path, index) => {
     //   if (index === 0) {
     //     const rootRoute = this.routes.find(route => route.path === `${path}` || /^\/\:.+/.test(route.path));
@@ -260,20 +295,23 @@ export class Router {
   }
 
   generalDistributeRoutes() {
-    console.log('this.renderRouteList', this.renderRouteList);
-
     for (let index = 0; index < this.renderRouteList.length; index++) {
       const path = this.renderRouteList[index];
       if (index === 0) {
         const rootRoute = this.routes.find(route => route.path === `${path}` || /^\/\:.+/.test(route.path));
         if (!rootRoute) {
-          console.error('wrong route instantiation in generalDistributeRoutes:', this.currentUrl, 'and root path can not redirectTo');
+          console.error('wrong route instantiation in generalDistributeRoutes:', this.currentUrl);
           return;
         }
-        // if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo)) {
-        //   this.redirectTo(rootRoute.redirectTo);
+
+        // if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo) && (index + 1) === this.renderRouteList.length) {
+        //   // this.redirectTo(rootRoute.redirectTo);
+        //   this.needRedirectPath = rootRoute.redirectTo;
+        //   this.hasRenderComponentList.length = index;
+        //   // console.log(222, this.needRedirectPath);
         //   return;
         // }
+
         if (this.oldComponent && this.oldComponent.$routeChange) this.oldComponent.$routeChange(this.lastRoute, this.currentUrl);
         let Component = null;
         if (this.$vm.$rootModule.$components[rootRoute.component]) {
@@ -290,6 +328,14 @@ export class Router {
             this.hasRenderComponentList[index] = component;
           })
           .catch(() => console.error('renderComponent failed'));
+
+        if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo) && (index + 1) === this.renderRouteList.length) {
+          // this.redirectTo(rootRoute.redirectTo);
+          this.needRedirectPath = rootRoute.redirectTo;
+          this.hasRenderComponentList.length = index;
+          // console.log(222, this.needRedirectPath);
+          return;
+        }
       } else {
         const lastRoute = this.routesList[index - 1].children;
         if (!lastRoute || !(lastRoute instanceof Array)) {
@@ -300,15 +346,19 @@ export class Router {
           console.error('wrong route instantiation1:', this.currentUrl);
           return;
         }
-        if (route.redirectTo && /^\/.*/.test(route.redirectTo)) {
+
+        if (route.redirectTo && /^\/.*/.test(route.redirectTo) && (index + 1) === this.renderRouteList.length) {
           this.hasRenderComponentList.forEach((c, i) => {
-            if (i >= index) {
+            if (i > index) {
               if (c.$onDestory) c.$onDestory();
             }
           });
-          this.redirectTo(route.redirectTo);
+          this.needRedirectPath = route.redirectTo;
+          this.hasRenderComponentList.length = index;
+          // this.redirectTo(route.redirectTo);
           return;
         }
+
         if (this.oldComponent && this.oldComponent.$routeChange) this.oldComponent.$routeChange(this.lastRoute, this.currentUrl);
         let Component = null;
         if (this.$vm.$rootModule.$components[route.component]) {
@@ -325,8 +375,20 @@ export class Router {
             this.hasRenderComponentList[index] = component;
           })
           .catch(() => console.error('renderComponent failed'));
+        // if (route.redirectTo && /^\/.*/.test(route.redirectTo) && (index + 1) === this.renderRouteList.length) {
+        //   this.hasRenderComponentList.forEach((c, i) => {
+        //     if (i > index) {
+        //       if (c.$onDestory) c.$onDestory();
+        //     }
+        //   });
+        //   this.needRedirectPath = route.redirectTo;
+        //   this.hasRenderComponentList.length = index;
+        //   // this.redirectTo(route.redirectTo);
+        //   return;
+        // }
       }
     }
+
     // this.renderRouteList.forEach((path, index) => {
     //   // first bootstrap route
     //   if (index === 0) {
@@ -474,7 +536,7 @@ export class RouterHash {
     // has render father route
     if (this.lastRoute && this.lastRoute !== this.currentUrl && new RegExp(`^${this.lastRoute}.*`).test(this.currentUrl)) {
       this.insertRenderRoutes();
-    // didn't render father route
+      // didn't render father route
     } else {
       this.generalDistributeRoutes();
     }

@@ -390,13 +390,13 @@ const router = new Router();
 const routes = [
   {
     path: '/',
-    // redirectTo: '/R1',
+    redirectTo: '/R1',
     component: 'container-wrap',
     children: [
       {
         path: '/R1',
-        // component: 'R1',
-        redirectTo: '/R1/C1',
+        component: 'R1',
+        // redirectTo: '/R2',
         children: [
           {
             path: '/C1',

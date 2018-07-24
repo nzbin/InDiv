@@ -32,7 +32,7 @@ export default class Router {
         query: {},
         params: {},
       };
-    }, false);
+    },                      false);
   }
 
   $init(arr) {

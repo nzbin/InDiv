@@ -6,7 +6,7 @@ export { default as Watcher } from './Watcher';
 export { default as KeyWatcher } from './KeyWatcher';
 export { default as Compile } from './Compile';
 export { default as Component } from './Component';
-// export * from './Router';
+// export { default as Router } from './Router';
 // export { default as Easiest } from './Easiest';
 // export { default as EsModule } from './EsModule';
 export { default as Service } from './Service';

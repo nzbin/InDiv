@@ -1,5 +1,5 @@
-import { Easiest, Component, Router, RouterHash, Utils, EsModule, Service, Http } from '../es';
-// import { Easiest, Component, Router, RouterHash, Utils, EsModule, Service } from '../build';
+import { Easiest, Component, Router, Utils, EsModule, Service, Http } from '../es';
+// import { Easiest, Component, Router, Utils, EsModule, Service } from '../build';
 
 class HeroSearchService extends Service {
   constructor() {
@@ -386,11 +386,11 @@ class M1 extends EsModule {
 }
 
 const router = new Router();
-// const router = new RouterHash();
+
 const routes = [
   {
     path: '/',
-    redirectTo: '/R1',
+    // redirectTo: '/R1',
     component: 'container-wrap',
     children: [
       {
@@ -431,44 +431,7 @@ const routes = [
         ],
       },
     ],
-    // redirectTo: '/R1',
   },
-  // {
-  //   path: '/R1',
-  //   component: 'R1',
-  //   children: [
-  //     {
-  //       path: '/C1',
-  //       component: 'R2',
-  //       children: [
-  //         {
-  //           path: '/D1',
-  //           redirectTo: '/R2',
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       path: '/C2',
-  //       redirectTo: '/R2',
-  //     },
-  //   ],
-  // },
-  // {
-  //   path: '/R2',
-  //   component: 'R2',
-  //   children: [
-  //     {
-  //       path: '/:id',
-  //       component: 'R1',
-  //       children: [
-  //         {
-  //           path: '/D1',
-  //           redirectTo: '/R1/C1',
-  //         },
-  //       ],
-  //     },
-  //   ],
-  // },
 ];
 router.$setRootPath('/demo');
 // router.$setRootPath('/');

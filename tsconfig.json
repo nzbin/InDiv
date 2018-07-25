@@ -16,7 +16,6 @@
     "outDir": "build",
     "module": "commonjs",
     "target": "es5",
-    "jsx": "react",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
@@ -27,6 +26,7 @@
     "noEmitHelpers": false,
     "lib": ["dom", "es2015.promise", "es5", "es2017"],
     "allowJs": true,
+    "declaration": true,
   },
   "exclude": [
     "node_modules",

@@ -1,25 +1,23 @@
-import { IUtils } from './types';
-
 import Cookie from 'easier-cookie';
 
-class Utils implements IUtils {
+class Utils {
   constructor() {
     this.toString = Object.prototype.toString;
   }
 
-  setCookie(name: string, value: any, options?: any): void {
+  public setCookie(name: string, value: any, options?: any): void {
     Cookie.set(name, value, options);
   }
 
-  getCookie(name: string): any {
+  public getCookie(name: string): any {
     return Cookie.get(name);
   }
 
-  removeCookie(name: string): boolean {
+  public removeCookie(name: string): boolean {
     return Cookie.remove(name);
   }
 
-  buildQuery(object: any): string {
+  public buildQuery(object: any): string {
     if (!object || !(object instanceof Object)) return '';
     let query = '?';
     for (const key in object) {
@@ -32,7 +30,7 @@ class Utils implements IUtils {
     return query.slice(0, query.length - 1);
   }
 
-  getQuery(name: string): string {
+  public getQuery(name: string): string {
     const parts: string[] = window.location.search.replace('?', '').split('&');
     const params: any = {};
     for (let i = 0; i < parts.length; i++) {
@@ -46,11 +44,11 @@ class Utils implements IUtils {
     }
   }
 
-  isFunction(func: any): boolean {
+  public isFunction(func: any): boolean {
     return this.toString.call(func) === '[object Function]';
   }
 
-  isEqual(a: any, b: any, aStack?: any[], bStack?: any[]): boolean {
+  public isEqual(a: any, b: any, aStack?: any[], bStack?: any[]): boolean {
     // === 结果为 true 的区别出 +0 和 -0
     if (a === b) return a !== 0 || 1 / a === 1 / b;
     // typeof null 的结果为 object ，这里做判断，是为了让有 null 的情况尽早退出函数
@@ -64,7 +62,7 @@ class Utils implements IUtils {
     return this.deepIsEqual(a, b, aStack, bStack);
   }
 
-  deepIsEqual(a: any, b: any, aStack?: any[], bStack?: any[]): boolean {
+  public deepIsEqual(a: any, b: any, aStack?: any[], bStack?: any[]): boolean {
     // a 和 b 的内部属性 [[class]] 相同时 返回 true
     const className = this.toString.call(a);
     if (className !== this.toString.call(b)) return false;
@@ -126,7 +124,7 @@ class Utils implements IUtils {
     return true;
   }
 
-  formatInnerHTML(inner: string): string {
+  public formatInnerHTML(inner: string): string {
     inner = inner.replace(/(\n\s*)/g, '');
     inner = inner.replace(/^[^\S\n]+/gm, '');
     return inner;

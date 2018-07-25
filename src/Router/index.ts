@@ -1,9 +1,26 @@
-import Utils from './Utils';
-import KeyWatcher from './KeyWatcher';
+import { IRouter, Easiest } from './types';
+
+import Utils from '../Utils';
+import KeyWatcher from '../KeyWatcher';
+import Component from '../Component';
 
 export default class Router {
+  public routes: IRouter[];
+  public routesList: IRouter[];
+  public currentUrl: string;
+  public lastRoute: string;
+  public rootDom: Element;
+  public utils: Utils;
+  public $rootPath: string;
+  public hasRenderComponentList: Component[];
+  public needRedirectPath: string;
+  public $vm: Easiest;
+  public watcher: KeyWatcher;
+  public renderRouteList: string[];
+
   constructor() {
-    this.routes = {};
+    this.routes = [];
+    this.routesList = [];
     this.currentUrl = '';
     this.lastRoute = null;
     this.rootDom = null;
@@ -11,9 +28,12 @@ export default class Router {
     this.$rootPath = '/';
     this.hasRenderComponentList = [];
     this.needRedirectPath = null;
+    this.$vm = null;
+    this.watcher = null;
+    this.renderRouteList = [];
   }
 
-  $bootstrap(vm) {
+  public $bootstrap(vm: Easiest): void {
     this.$vm = vm;
     this.$vm.$setRootPath(this.$rootPath);
     this.$vm.$canRenderModule = false;
@@ -35,7 +55,7 @@ export default class Router {
     },                      false);
   }
 
-  $init(arr) {
+  public $init(arr: IRouter[]): void {
     if (arr && arr instanceof Array) {
       const rootDom = document.querySelector('#root');
       this.rootDom = rootDom || null;
@@ -46,7 +66,7 @@ export default class Router {
     }
   }
 
-  $setRootPath(rootPath) {
+  public $setRootPath(rootPath: string): void {
     if (rootPath && typeof rootPath === 'string') {
       this.$rootPath = rootPath;
     } else {
@@ -54,9 +74,9 @@ export default class Router {
     }
   }
 
-  $routeChange(lastRoute, nextRoute) {}
+  public $routeChange(lastRoute?: string, nextRoute?: string): void {}
 
-  redirectTo(redirectTo) {
+  public redirectTo(redirectTo: string): void {
     const rootPath = this.$rootPath === '/' ? '' : this.$rootPath;
     history.replaceState(null, null, `${rootPath}${redirectTo}`);
     this.$vm.$esRouteObject = {
@@ -66,7 +86,7 @@ export default class Router {
     };
   }
 
-  refresh() {
+  public refresh(): void {
     if (!this.$vm.$esRouteObject || !this.watcher) {
       let path;
       if (this.$rootPath === '/') {
@@ -90,7 +110,7 @@ export default class Router {
     this.distributeRoutes();
   }
 
-  distributeRoutes() {
+  public distributeRoutes() {
     if (this.lastRoute && this.lastRoute !== this.currentUrl) {
       // has rendered
       this.insertRenderRoutes();
@@ -106,7 +126,7 @@ export default class Router {
     }
   }
 
-  insertRenderRoutes() {
+  public insertRenderRoutes() {
     const lastRouteList = this.lastRoute === '/' ? ['/'] : this.lastRoute.split('/');
     lastRouteList[0] = '/';
 
@@ -125,7 +145,7 @@ export default class Router {
           console.error('routes not exit or routes must be an array!');
           return;
         }
-        const route = lastRoute.find(route => route.path === `/${path}` || /^\/\:.+/.test(route.path));
+        const route = lastRoute.find((r: IRouter) => r.path === `/${path}` || /^\/\:.+/.test(r.path));
         if (!route) {
           console.error('wrong route instantiation1:', this.currentUrl);
           return;
@@ -176,7 +196,7 @@ export default class Router {
     }
   }
 
-  generalDistributeRoutes() {
+  public generalDistributeRoutes() {
     for (let index = 0; index < this.renderRouteList.length; index++) {
       const path = this.renderRouteList[index];
       if (index === 0) {
@@ -186,9 +206,9 @@ export default class Router {
           return;
         }
 
-        let Component = null;
+        let FindComponent = null;
         if (this.$vm.$rootModule.$components[rootRoute.component]) {
-          Component = this.$vm.$components[rootRoute.component];
+          FindComponent = this.$vm.$components[rootRoute.component];
         } else {
           console.error(`route error: ${rootRoute.component} is undefined`);
           return;
@@ -196,7 +216,7 @@ export default class Router {
 
         const rootDom = document.querySelector('#root');
         this.routesList.push(rootRoute);
-        this.instantiateComponent(Component, rootDom)
+        this.instantiateComponent(FindComponent, rootDom)
           .then(component => {
             this.hasRenderComponentList[index] = component;
           })
@@ -216,7 +236,7 @@ export default class Router {
         if (!lastRoute || !(lastRoute instanceof Array)) {
           console.error('routes not exit or routes must be an array!');
         }
-        const route = lastRoute.find(route => route.path === `/${path}` || /^\/\:.+/.test(route.path));
+        const route = lastRoute.find((r: IRouter) => r.path === `/${path}` || /^\/\:.+/.test(r.path));
         if (!route) {
           console.error('wrong route instantiation1:', this.currentUrl);
           return;
@@ -232,9 +252,9 @@ export default class Router {
           return;
         }
 
-        let Component = null;
+        let FindComponent = null;
         if (this.$vm.$rootModule.$components[route.component]) {
-          Component = this.$vm.$components[route.component];
+          FindComponent = this.$vm.$components[route.component];
         } else {
           console.error(`route error: ${route.component} is undefined`);
           return;
@@ -244,7 +264,7 @@ export default class Router {
         this.hasRenderComponentList.forEach((c) => {
           if (c.$routeChange) c.$routeChange(this.lastRoute, this.currentUrl);
         });
-        this.instantiateComponent(Component, renderDom)
+        this.instantiateComponent(FindComponent, renderDom)
           .then(component => {
             this.hasRenderComponentList[index] = component;
           })
@@ -253,7 +273,7 @@ export default class Router {
     }
   }
 
-  instantiateComponent(Component, renderDom) {
-    return this.$vm.$renderComponent(Component, renderDom);
+  public instantiateComponent(FindComponent: Component, renderDom: Element) {
+    return this.$vm.$renderComponent(FindComponent, renderDom);
   }
 }

@@ -1,24 +1,26 @@
-import { IWatcher, ComponentList, IComponent, IService } from './types';
+import { ComponentList, Service } from './types';
 
 import Lifecycle from '../Lifecycle';
 import Compile from '../Compile';
 import Watcher from '../Watcher';
 
-abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<Vm> implements IComponent<State, Props, Vm> {
-  static scope: Component<any, any, any>;
-  static _injectedComponents: Component<any, any, any>[];
-  static _injectedProviders: IService[];
+export default abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<Vm> {
+  public static scope: Component<any, any, any>;
+  public static _injectedProviders: Service[];
+  public static _injectedComponents: {
+    [name: string]: Component;
+  };
 
-  state: State | any;
-  props: Props | any;
-  $renderDom: Element;
-  $globalContext: any;
-  $vm: Vm | any;
-  $template: string;
-  $components: any;
-  $componentList: ComponentList[];
-  stateWatcher: IWatcher;
-  propsWatcher?: IWatcher;
+  public state: State | any;
+  public props: Props | any;
+  public $renderDom: Element;
+  public $globalContext: any;
+  public $vm: Vm | any;
+  public $template: string;
+  public $components: any;
+  public $componentList: ComponentList<Component<any, any, any>>[];
+  public stateWatcher: Watcher;
+  public propsWatcher?: Watcher;
 
   constructor() {
     super();
@@ -34,16 +36,16 @@ abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<V
     if (this.$bootstrap) this.$bootstrap();
   }
 
-  abstract $bootstrap(): void;
+  public abstract $bootstrap(): void;
 
-  $beforeInit(): void {
+  public $beforeInit(): void {
     if (this.props) this.propsWatcher = new Watcher(this.props, this.$watchState.bind(this), this.$reRender.bind(this));
     this.stateWatcher = new Watcher(this.state, this.$watchState.bind(this), this.$reRender.bind(this));
   }
 
-  $routeChange(lastRoute: string, newRoute: string) {}
+  public $routeChange(lastRoute: string, newRoute: string) {}
 
-  $render() {
+  public $render() {
     const dom = this.$renderDom;
     // this.compile = new Compile(dom, this);
     const compile = new Compile(dom, this);
@@ -56,7 +58,7 @@ abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<V
     // this.compile = null;
   }
 
-  $reRender(): void {
+  public $reRender(): void {
     const dom = this.$renderDom;
     const routerRenderDom = dom.querySelectorAll(this.$vm.$routeDOMKey)[0];
     // this.compile = new Compile(dom, this, routerRenderDom);
@@ -70,8 +72,8 @@ abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<V
     // this.compile = null;
   }
 
-  $mountComponent(dom: Element, isFirstRender?: boolean): void {
-    const saveStates: ComponentList[] = [];
+  public $mountComponent(dom: Element, isFirstRender?: boolean): void {
+    const saveStates: ComponentList<Component<any, any, any>>[] = [];
     this.$componentList.forEach(component => {
       saveStates.push(component);
     });
@@ -91,7 +93,7 @@ abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<V
     });
   }
 
-  $componentsConstructor(dom: Element): void {
+  public $componentsConstructor(dom: Element): void {
     this.$componentList = [];
     const routerRenderDom = dom.querySelectorAll(this.$vm.$routeDOMKey)[0];
     for (const name in (this.constructor as any)._injectedComponents) {
@@ -133,7 +135,7 @@ abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<V
     }
   }
 
-  $setState(newState: any): void {
+  public $setState(newState: any): void {
     if (newState && this.utils.isFunction(newState)) {
       const _newState = newState();
       if (_newState && _newState instanceof Object) {
@@ -149,7 +151,7 @@ abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<V
     }
   }
 
-  $setProps(newProps: any): void {
+  public $setProps(newProps: any): void {
     if (newProps && this.utils.isFunction(newProps)) {
       const _newProps = newProps();
       if (_newProps && _newProps instanceof Object) {
@@ -167,7 +169,7 @@ abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<V
     }
   }
 
-  $setGlobalContext(newGlobalContext: any): void {
+  public $setGlobalContext(newGlobalContext: any): void {
     if (newGlobalContext && this.utils.isFunction(newGlobalContext)) {
       const _newGlobalContext = newGlobalContext();
       if (_newGlobalContext && _newGlobalContext instanceof Object) {
@@ -185,7 +187,7 @@ abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<V
     }
   }
 
-  getPropsValue(valueList: any[], value: any): void {
+  public getPropsValue(valueList: any[], value: any): void {
     let val = value;
     valueList.forEach((v, index: number) => {
       if (index === 0) return;
@@ -194,7 +196,7 @@ abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<V
     return val;
   }
 
-  buildProps(prop: any): any {
+  public buildProps(prop: any): any {
     if (this.utils.isFunction(prop)) {
       return prop.bind(this);
     } else {
@@ -202,7 +204,7 @@ abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<V
     }
   }
 
-  buildComponentScope(ComponentClass: any, props: any, dom: Element): Component<any, any, any> {
+  public buildComponentScope(ComponentClass: any, props: any, dom: Element): Component<any, any, any> {
     const args = this.createInjector(ComponentClass);
     const _component = Reflect.construct(ComponentClass, args);
     _component.props = props;
@@ -211,7 +213,7 @@ abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<V
     return _component;
   }
 
-  createInjector(ComponentClass: any): any[] {
+  public createInjector(ComponentClass: any): any[] {
     // const DELEGATE_CTOR = /^function\s+\S+\(\)\s*{[\s\S]+\.apply\(this,\s*arguments\)/;
     // const INHERITED_CLASS = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{/;
     // const INHERITED_CLASS_WITH_CTOR = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{[\s\S]*constructor\s*\(/;
@@ -219,11 +221,9 @@ abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<V
     const argList = ComponentClass.toString().match(CLASS_ARGUS)[1].replace(/ /g, '').split(',');
     const args: any[] = [];
     argList.forEach((arg: string) => {
-      const Service = ComponentClass._injectedProviders.find((service: IService) => service.constructor.name === arg) ? Component._injectedProviders.find(service => service.constructor.name === arg) : this.$vm.$rootModule.$providers.find((service: IService) => service.constructor.name === arg);
-      if (Service) args.push(Service);
+      const service = ComponentClass._injectedProviders.find((s: Service) => s.constructor.name === arg) ? ComponentClass._injectedProviders.find((s: Service) => s.constructor.name === arg) : this.$vm.$rootModule.$providers.find((s: Service) => s.constructor.name === arg);
+      if (service) args.push(service);
     });
     return args;
   }
 }
-
-export default Component;

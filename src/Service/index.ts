@@ -1,12 +1,10 @@
-import { IService, IHttp  } from './types';
-
 import Http from '../Http';
 
-class Service implements IService {
-  static isSingletonMode: boolean;
-  static instance: IService = null;
+class Service {
+  public static isSingletonMode: boolean;
+  public static instance: Service = null;
 
-  $http: IHttp;
+  public $http: Http;
 
   private constructor() {
     const _http = new Http();
@@ -19,7 +17,7 @@ class Service implements IService {
     };
   }
 
-  static getInstance() {
+  public static getInstance() {
     const Instance = this;
     if (!this.isSingletonMode) {
       return new Instance();

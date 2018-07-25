@@ -1,12 +1,12 @@
-import { IWatcher, IFnWatcher, IFnRender, IUtils } from './types';
+import { IFnWatcher, IFnRender } from './types';
 
 import Utils from '../Utils';
 
-class Watcher implements IWatcher {
-  data: any;
-  watcher: IFnWatcher;
-  render: IFnRender;
-  utils: IUtils;
+class Watcher {
+  public data: any;
+  public watcher: IFnWatcher;
+  public render: IFnRender;
+  public utils: Utils;
 
   constructor(
     data: any,
@@ -20,7 +20,7 @@ class Watcher implements IWatcher {
     this.utils = new Utils();
   }
 
-  watchData(data: any): void {
+  public watchData(data: any): void {
     if (!data || typeof data !== 'object') return;
     const vm = this;
     for (const key in data) {

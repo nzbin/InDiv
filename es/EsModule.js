@@ -23,11 +23,7 @@ class EsModule {
   $buildExports() {
     if (!this.$exports) return;
     this.$exports.forEach(ex => {
-      if (this.$components[ex]) {
-        const result = {};
-        this.$exportList[ex] = this.$components[ex];
-        return result;
-      }
+      if (this.$components[ex]) this.$exportList[ex] = this.$components[ex];
     });
   }
 
@@ -50,6 +46,7 @@ class EsModule {
       } else {
         component._injectedComponents = this.$components;
       }
+      console.log('component._injectedComponents', component._injectedComponents);
     }
   }
 

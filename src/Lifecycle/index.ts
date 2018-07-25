@@ -1,16 +1,16 @@
-import { ILifecycle, ILocationState, ICompileUtil, IUtils } from './types';
+import { ILocationState } from './types';
 
 import Utils from '../Utils';
 import { CompileUtil } from '../CompileUtils';
 
-abstract class Lifecycle<Vm> {
-  compileUtil: ICompileUtil;
-  utils: IUtils;
-  $location: {
+abstract class Lifecycle<Vm = any> {
+  public compileUtil: CompileUtil;
+  public utils: Utils;
+  public $location: {
     state: () => ILocationState;
     go: (path: string, query?: any, params?: any) => void;
   }
-  $vm: Vm | any;
+  public $vm: Vm | any;
 
   constructor() {
     this.compileUtil = new CompileUtil();
@@ -21,7 +21,7 @@ abstract class Lifecycle<Vm> {
     };
   }
 
-  $getLocationState(): ILocationState {
+  public $getLocationState(): ILocationState {
     return {
       path: this.$vm.$esRouteObject.path,
       query: this.$vm.$esRouteObject.query,
@@ -29,7 +29,7 @@ abstract class Lifecycle<Vm> {
     };
   }
 
-  $locationGo(path: string, query?: any, params?: any): void {
+  public $locationGo(path: string, query?: any, params?: any): void {
     if (this.$vm.$esRouteMode === 'state') {
       const rootPath = this.$vm.$rootPath === '/' ? '' : this.$vm.$rootPath;
       history.pushState(
@@ -58,17 +58,17 @@ abstract class Lifecycle<Vm> {
     };
   }
 
-  $onInit(): void {}
+  public $onInit(): void {}
 
-  $beforeMount(): void {}
+  public $beforeMount(): void {}
 
-  $afterMount(): void {}
+  public $afterMount(): void {}
 
-  $onDestory(): void {}
+  public $onDestory(): void {}
 
-  $hasRender(): void {}
+  public $hasRender(): void {}
 
-  $watchState(oldData?: any, newData?: any): void {}
+  public $watchState(oldData?: any, newData?: any): void {}
 }
 
 export default Lifecycle;

@@ -3,7 +3,8 @@ import KeyWatcher from './KeyWatcher';
 
 export default class Router {
   constructor() {
-    this.routes = {};
+    this.routes = [];
+    this.routesList = [];
     this.currentUrl = '';
     this.lastRoute = null;
     this.rootDom = null;
@@ -11,10 +12,14 @@ export default class Router {
     this.$rootPath = '/';
     this.hasRenderComponentList = [];
     this.needRedirectPath = null;
+    this.$vm = null;
+    this.watcher = null;
+    this.renderRouteList = [];
   }
 
   $bootstrap(vm) {
     this.$vm = vm;
+    console.log('vm', vm);
     this.$vm.$setRootPath(this.$rootPath);
     this.$vm.$canRenderModule = false;
     this.$vm.$esRouteMode = 'state';

@@ -1,13 +1,13 @@
 import { IVnode, IAttributes, IPatchList, IVirtualDOM } from './types';
 
 class Vnode implements IVnode {
-  tagName?: string;
-  node?: DocumentFragment | Element;
-  parentNode?: Node;
-  attributes?: IAttributes[];
-  nodeValue?: string | null;
-  childNodes?: IVnode[] | any[];
-  type?: string;
+  public tagName?: string;
+  public node?: DocumentFragment | Element;
+  public parentNode?: Node;
+  public attributes?: IAttributes[];
+  public nodeValue?: string | null;
+  public childNodes?: IVnode[] | any[];
+  public type?: string;
 
   constructor(info: IVnode) {
     this.tagName = info.tagName;

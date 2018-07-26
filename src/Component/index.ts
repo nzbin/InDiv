@@ -5,24 +5,26 @@ import Compile from '../Compile';
 import Watcher from '../Watcher';
 
 export default abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<Vm> {
-  public static scope: Component<any, any, any>;
-  public static _injectedProviders: Service[];
-  public static _injectedComponents: {
-    [name: string]: Component;
+  public static scope?: Component<any, any, any>;
+  public static _injectedProviders?: Map<string, Function>;
+  public static _injectedComponents?: {
+    [name: string]: Function;
   };
 
-  public state: State | any;
-  public props: Props | any;
-  public $renderDom: Element;
-  public $globalContext: any;
-  public $vm: Vm | any;
-  public $template: string;
-  public $components: any;
-  public $componentList: ComponentList<Component<any, any, any>>[];
-  public stateWatcher: Watcher;
+  public state?: State | any;
+  public props?: Props | any;
+  public $renderDom?: Element;
+  public $globalContext?: any;
+  public $vm?: Vm | any;
+  public $template?: string;
+  public $components?: {
+    [name: string]: Function;
+  };
+  public $componentList?: ComponentList<Component<any, any, any>>[];
+  public stateWatcher?: Watcher;
   public propsWatcher?: Watcher;
 
-  constructor() {
+  constructor(...args: Service[]) {
     super();
     this.state = {};
     this.$renderDom = null;
@@ -36,7 +38,7 @@ export default abstract class Component<State = any, Props = any, Vm = any> exte
     if (this.$bootstrap) this.$bootstrap();
   }
 
-  public abstract $bootstrap(): void;
+  public $bootstrap(): void {};
 
   public $beforeInit(): void {
     if (this.props) this.propsWatcher = new Watcher(this.props, this.$watchState.bind(this), this.$reRender.bind(this));
@@ -204,7 +206,7 @@ export default abstract class Component<State = any, Props = any, Vm = any> exte
     }
   }
 
-  public buildComponentScope(ComponentClass: any, props: any, dom: Element): Component<any, any, any> {
+  public buildComponentScope(ComponentClass: Function, props: any, dom: Element): Component<any, any, any> {
     const args = this.createInjector(ComponentClass);
     const _component = Reflect.construct(ComponentClass, args);
     _component.props = props;
@@ -213,15 +215,17 @@ export default abstract class Component<State = any, Props = any, Vm = any> exte
     return _component;
   }
 
-  public createInjector(ComponentClass: any): any[] {
+  public createInjector(ComponentClass: any): Service[] {
     // const DELEGATE_CTOR = /^function\s+\S+\(\)\s*{[\s\S]+\.apply\(this,\s*arguments\)/;
     // const INHERITED_CLASS = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{/;
     // const INHERITED_CLASS_WITH_CTOR = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{[\s\S]*constructor\s*\(/;
     const CLASS_ARGUS = /^function\s+[^\(]*\(\s*([^\)]*)\)/m;
     const argList = ComponentClass.toString().match(CLASS_ARGUS)[1].replace(/ /g, '').split(',');
-    const args: any[] = [];
+    const args: Service[] = [];
     argList.forEach((arg: string) => {
-      const service = ComponentClass._injectedProviders.find((s: Service) => s.constructor.name === arg) ? ComponentClass._injectedProviders.find((s: Service) => s.constructor.name === arg) : this.$vm.$rootModule.$providers.find((s: Service) => s.constructor.name === arg);
+      const argu = `${arg.charAt(0).toUpperCase()}${arg.slice(1)}`;
+      const service = Component._injectedProviders.has(argu) ? Component._injectedProviders.get(argu) : this.$vm.$rootModule.$providers.find((service: Service) => service.constructor.name === argu);
+      // const service = ComponentClass._injectedProviders.find((s: Service) => s.constructor.name === arg) ? ComponentClass._injectedProviders.find((s: Service) => s.constructor.name === arg) : this.$vm.$rootModule.$providers.find((s: Service) => s.constructor.name === arg);
       if (service) args.push(service);
     });
     return args;

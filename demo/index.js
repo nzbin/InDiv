@@ -30,9 +30,9 @@ class HeroSearchService1 extends Service {
 }
 
 class RouteChild extends Component {
-  constructor(HeroSearchService2) {
+  constructor(heroSearchService2) {
     super();
-    this.heroSearchService = HeroSearchService2;
+    this.heroSearchService = heroSearchService2;
     this.heroSearchService.test();
     this.state = {
       a: 'a',
@@ -156,9 +156,9 @@ class PComponent extends Component {
 }
 
 class R1 extends Component {
-  constructor(HeroSearchService) {
+  constructor(heroSearchService) {
     super();
-    this.heroSearchService = HeroSearchService;
+    this.heroSearchService = heroSearchService;
     this.heroSearchService.test();
     this.utils = new Utils();
     this.state = {
@@ -258,12 +258,12 @@ class R1 extends Component {
 
 class R2 extends Component {
   constructor(
-    HeroSearchService1,
-    HeroSearchService,
+    heroSearchService1,
+    heroSearchService,
   ) {
     super();
     this.state = { a: 1 };
-    this.heroSearchService1 = HeroSearchService1;
+    this.heroSearchService1 = heroSearchService1;
     this.heroSearchService1.test();
   }
   $bootstrap() {

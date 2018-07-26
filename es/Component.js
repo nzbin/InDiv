@@ -202,7 +202,9 @@ class Component extends Lifecycle {
     const argList = Component.toString().match(CLASS_ARGUS)[1].replace(/ /g, '').split(',');
     let args = [];
     argList.forEach(arg => {
-      const Service = Component._injectedProviders.find(service => service.constructor.name === arg) ? Component._injectedProviders.find(service => service.constructor.name === arg) : this.$vm.$rootModule.$providers.find(service => service.constructor.name === arg);
+      const argu = `${arg.charAt(0).toUpperCase()}${arg.slice(1)}`;
+      const Service = Component._injectedProviders.has(argu) ? Component._injectedProviders.get(argu) : this.$vm.$rootModule.$providers.find(service => service.constructor.name === argu);
+      // const Service = Component._injectedProviders.find(service => service.constructor.name === arg) ? Component._injectedProviders.find(service => service.constructor.name === arg) : this.$vm.$rootModule.$providers.find(service => service.constructor.name === arg);
       if (Service) args.push(Service);
     });
     return args;

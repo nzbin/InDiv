@@ -1,12 +1,13 @@
+import { IService, IHttp } from './types';
 import Http from '../Http';
 
-class Service {
-  public static isSingletonMode: boolean;
-  public static instance: Service = null;
+class Service implements IService {
+  public static isSingletonMode?: boolean;
+  public static instance?: IService = null;
 
-  public $http: Http;
+  public $http?: IHttp;
 
-  private constructor() {
+  constructor() {
     const _http = new Http();
     this.$http = {
       $get: _http.$get,
@@ -17,7 +18,7 @@ class Service {
     };
   }
 
-  public static getInstance() {
+  public static getInstance?() {
     const Instance = this;
     if (!this.isSingletonMode) {
       return new Instance();

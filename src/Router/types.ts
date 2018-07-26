@@ -1,5 +1,5 @@
 export { default as Easiest } from '../Easiest';
-export { IESModal, EsRouteObject } from '../Easiest/types';
+// export { IESModal, EsRouteObject } from '../Easiest/types';
 
 export interface IRouter {
     path: string;

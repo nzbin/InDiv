@@ -110,7 +110,7 @@ export default class Router {
     this.distributeRoutes();
   }
 
-  public distributeRoutes() {
+  public distributeRoutes(): void {
     if (this.lastRoute && this.lastRoute !== this.currentUrl) {
       // has rendered
       this.insertRenderRoutes();
@@ -126,7 +126,7 @@ export default class Router {
     }
   }
 
-  public insertRenderRoutes() {
+  public insertRenderRoutes(): void {
     const lastRouteList = this.lastRoute === '/' ? ['/'] : this.lastRoute.split('/');
     lastRouteList[0] = '/';
 
@@ -196,7 +196,7 @@ export default class Router {
     }
   }
 
-  public generalDistributeRoutes() {
+  public generalDistributeRoutes(): void {
     for (let index = 0; index < this.renderRouteList.length; index++) {
       const path = this.renderRouteList[index];
       if (index === 0) {
@@ -273,7 +273,7 @@ export default class Router {
     }
   }
 
-  public instantiateComponent(FindComponent: Component, renderDom: Element) {
+  public instantiateComponent(FindComponent: Component, renderDom: Element): Promise<any> {
     return this.$vm.$renderComponent(FindComponent, renderDom);
   }
 }

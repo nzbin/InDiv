@@ -3,14 +3,14 @@ import { ILocationState } from './types';
 import Utils from '../Utils';
 import { CompileUtil } from '../CompileUtils';
 
-abstract class Lifecycle<Vm = any> {
-  public compileUtil: CompileUtil;
-  public utils: Utils;
-  public $location: {
-    state: () => ILocationState;
-    go: (path: string, query?: any, params?: any) => void;
+abstract class Lifecycle<Vm = any>  {
+  public compileUtil?: CompileUtil;
+  public utils?: Utils;
+  public $location?: {
+    state?: () => ILocationState;
+    go?: (path: string, query?: any, params?: any) => void;
   }
-  public $vm: Vm | any;
+  public $vm?: Vm | any;
 
   constructor() {
     this.compileUtil = new CompileUtil();

@@ -1,8 +1,8 @@
-export { default as Component } from '../Component';
-export { default as EsModule } from '../EsModule';
-export { default as Service } from '../Service';
+// export { IComponent } from '../Component/types';
+// export { IEsModule } from '../EsModule/types';
+// export { IService } from '../Service/types';
 
-export interface IESModal<ES> {
+export interface IMiddleware<ES> {
     $bootstrap(vm: ES): any;
 }
 

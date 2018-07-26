@@ -3,16 +3,6 @@
   "buildOnSave": false,
   "compilerOptions": {
     "baseUrl": "./",
-    "paths": {
-      "Actions": ["web/store/actions"],
-      "Components": ["web/components"],
-      "Pages": ["web/pages"],
-      "Constants": ["web/constants"],
-      "Containers": ["web/containers"],
-      "Utils": ["web/utils"],
-      "Axios": ["web/utils/axios"],
-      "Service": ["web/utils/service"],
-    },
     "outDir": "build",
     "module": "commonjs",
     "target": "es5",
@@ -26,10 +16,13 @@
     "noEmitHelpers": false,
     "lib": ["dom", "es2015.promise", "es5", "es2017"],
     "allowJs": true,
-    "declaration": true,
   },
+  "include": [
+    "src/**/*"
+  ],
   "exclude": [
     "node_modules",
-    "build"
+    "build",
+    "dist"
   ]
 }

@@ -1,6 +1,7 @@
+import { IHttp } from './types';
 import axios from 'axios';
 
-class Http {
+class Http implements IHttp {
   public $get(url: string, params?: any): Promise<any> {
     return new Promise((resolve, reject) => {
       const pms = params ? { params } : null;
@@ -14,7 +15,7 @@ class Http {
     });
   }
 
-  public $delete(url: string, params?: any): Promise<any > {
+  public $delete(url: string, params?: any): Promise<any> {
     return new Promise((resolve, reject) => {
       const pms = params ? { params } : null;
       axios.delete(url, pms)
@@ -27,7 +28,7 @@ class Http {
     });
   }
 
-  public $post(url: string, params ?: any): Promise< any > {
+  public $post(url: string, params ?: any): Promise<any> {
     return new Promise((resolve, reject) => {
       axios.post(url, params)
         .then((res: any) => {
@@ -39,7 +40,7 @@ class Http {
     });
   }
 
-  public $put(url: string, params?: any): Promise< any > {
+  public $put(url: string, params?: any): Promise<any> {
     return new Promise((resolve, reject) => {
       axios.put(url, params)
         .then((res: any) => {
@@ -51,7 +52,7 @@ class Http {
     });
   }
 
-  public $patch(url: string, params ?: any): Promise < any > {
+  public $patch(url: string, params ?: any): Promise <any> {
     return new Promise((resolve, reject) => {
       axios.patch(url, params)
         .then((res: any) => {

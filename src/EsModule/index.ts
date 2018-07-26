@@ -1,31 +1,32 @@
 import { Component, Service } from './types';
 import Utils from '../Utils';
 
-abstract class EsModule {
-  public utils: Utils;
-  public $exportList?: {
-      [name: string]: Component,
-  };
-  public $imports?: EsModule[];
+class EsModule {
+  public utils?: Utils;
+  public $imports?: Function[];
   public $components?: {
-      [name: string]: Component,
+      [name: string]: Function;
   };
-  public $providers?: Service[];
+  public $providers?: Function[];
   public $exports?: string[];
-  public singletonList?: Service[];
-  public $bootstrap?: Component | Function;
+  public $exportList?: {
+    [name: string]: Function;
+  };
+  public singletonList?: Map<string, Service>;
+  public $bootstrap?: Function;
 
   constructor() {
     this.utils = new Utils();
-    this.$exportList = {};
 
     this.$imports = [];
     this.$components = {};
     this.$providers = [];
     this.$exports = [];
-    this.singletonList = [];
 
-    // this.$bootstrap = function () {};
+    this.$exportList = {};
+    this.singletonList = new Map();
+
+    this.$bootstrap = function () {};
 
     this.$declarations();
     this.$buildImports();
@@ -54,13 +55,22 @@ abstract class EsModule {
 
   public $buildProviders4Components(): void {
     if (!this.$providers) return;
-    this.singletonList = this.$providers.map((service: any) => service.getInstance());
+    // this.singletonList = this.$providers.map((service: any) => service.getInstance());
+    this.$providers.forEach((service: any) => {
+      this.singletonList.set(`${service.name.charAt(0).toUpperCase()}${service.name.slice(1)}`, service.getInstance());
+      // return service.getInstance();
+    });
     for (const name in this.$components) {
       const component: any = this.$components[name];
-      if (component._injectedProviders && component._injectedProviders.length > 0) {
-        this.singletonList.forEach(singleton => {
-          if (!component._injectedProviders.find((s: Service) => s.constructor.name === singleton.constructor.name)) component._injectedProviders.push(singleton);
+      if (component._injectedProviders) {
+        this.singletonList.forEach((value, key) => {
+          if (!component._injectedProviders.has(key)) component._injectedProviders.set(key, value);
+          // if (!component._injectedProviders.find(provider => provider.constructor.name === singleton.constructor.name)) component._injectedProviders.push(singleton);
         });
+      // if (component._injectedProviders && component._injectedProviders.length > 0) {
+        // this.singletonList.forEach(singleton => {
+        //   if (!component._injectedProviders.find((s: Service) => s.constructor.name === singleton.constructor.name)) component._injectedProviders.push(singleton);
+        // });
       } else {
         component._injectedProviders = this.singletonList;
       }

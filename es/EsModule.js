@@ -5,6 +5,8 @@ class EsModule {
     this.utils = new Utils();
     this.$exportList = {};
 
+    this.singletonList = new Map();
+
     this.$declarations();
     this.$buildImports();
     this.$buildComponents4Components();
@@ -17,6 +19,8 @@ class EsModule {
     this.$components = {};
     this.$providers = [];
     this.$exports = [];
+
+    this.singletonList = new Map();
     this.$bootstrap = function () {};
   }
 
@@ -46,20 +50,32 @@ class EsModule {
       } else {
         component._injectedComponents = this.$components;
       }
-      console.log('component._injectedComponents', component._injectedComponents);
     }
   }
 
   $buildProviders4Components() {
     if (!this.$providers) return;
-    this.singletonList = this.$providers.map(Service => Service.getInstance());
+    // this.singletonList = this.$providers.map(Service => {
+    //   console.log('service', Service.name);
+    //   return Service.getInstance();
+    // });
+    this.$providers.forEach(service => {
+      this.singletonList.set(`${service.name.charAt(0).toUpperCase()}${service.name.slice(1)}`, service.getInstance());
+      // return service.getInstance();
+    });
     for (const name in this.$components) {
       const component = this.$components[name];
-      if (component._injectedProviders && component._injectedProviders.length > 0) {
-        this.singletonList.forEach(singleton => {
-          if (!component._injectedProviders.find(provider => provider.constructor.name === singleton.constructor.name)) component._injectedProviders.push(singleton);
+      if (component._injectedProviders) {
+        this.singletonList.forEach((value, key) => {
+          if (!component._injectedProviders.has(key)) component._injectedProviders.set(key, value);
+          // if (!component._injectedProviders.find(provider => provider.constructor.name === singleton.constructor.name)) component._injectedProviders.push(singleton);
         });
       } else {
+      // if (component._injectedProviders && component._injectedProviders.length > 0) {
+      //   this.singletonList.forEach(singleton => {
+      //     if (!component._injectedProviders.find(provider => provider.constructor.name === singleton.constructor.name)) component._injectedProviders.push(singleton);
+      //   });
+      // } else {
         component._injectedProviders = this.singletonList;
       }
     }

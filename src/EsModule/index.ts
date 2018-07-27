@@ -1,17 +1,19 @@
+import { IUtil, IEsModule, IService } from '../types';
+
 import Utils from '../Utils';
 
-class EsModule implements ES.IEsModule {
-  public utils?: ES.IUtil;
+class EsModule implements IEsModule {
+  public utils?: IUtil;
   public $imports?: Function[];
   public $components?: {
       [name: string]: Function;
   };
-  public $providers?: ES.IService[];
+  public $providers?: Function[];
   public $exports?: string[];
   public $exportList?: {
     [name: string]: Function;
   };
-  public singletonList?: Map<string, ES.IService>;
+  public singletonList?: Map<string, IService>;
   public $bootstrap?: Function;
 
   constructor() {

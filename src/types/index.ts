@@ -1,5 +1,3 @@
-export as namespace ES;
-
 export { ICompile } from './compile';
 export { ICompileUtilForRepeat, ICompileUtil } from './compileUtils';
 export { ComponentList, IComponent } from './component';
@@ -11,5 +9,5 @@ export { ILocationState, ILifecycle } from './lifecycle';
 export { TRouter, IRouter } from './router';
 export { IService } from './service';
 export { IUtil } from './utils';
-export { IVnode, IAttributes, IPatchList, IParseToVnode, IDiffVnode, IRenderVnode, IVirtualDOM } from './virtualDOM';
+export { IVnode, TAttributes, IPatchList, IParseToVnode, IDiffVnode, IRenderVnode, IVirtualDOM } from './virtualDOM';
 export { TFnWatcher, TFnRender, IWatcher } from './watcher';

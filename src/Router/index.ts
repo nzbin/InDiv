@@ -1,10 +1,12 @@
+import { IRouter, TRouter, IEasiest } from '../types';
+
 import Utils from '../Utils';
 import KeyWatcher from '../KeyWatcher';
 import Component from '../Component';
 
-export default class Router implements ES.IRouter {
-  public routes: ES.TRouter[];
-  public routesList: ES.TRouter[];
+export default class Router implements IRouter {
+  public routes: TRouter[];
+  public routesList: TRouter[];
   public currentUrl: string;
   public lastRoute: string;
   public rootDom: Element;
@@ -12,7 +14,7 @@ export default class Router implements ES.IRouter {
   public $rootPath: string;
   public hasRenderComponentList: Component[];
   public needRedirectPath: string;
-  public $vm: ES.IEasiest;
+  public $vm: IEasiest;
   public watcher: KeyWatcher;
   public renderRouteList: string[];
 
@@ -31,7 +33,7 @@ export default class Router implements ES.IRouter {
     this.renderRouteList = [];
   }
 
-  public $bootstrap(vm: ES.IEasiest): void {
+  public $bootstrap(vm: IEasiest): void {
     this.$vm = vm;
     this.$vm.$setRootPath(this.$rootPath);
     this.$vm.$canRenderModule = false;
@@ -50,10 +52,10 @@ export default class Router implements ES.IRouter {
         query: {},
         params: {},
       };
-    },                      false);
+    }, false);
   }
 
-  public $init(arr: ES.TRouter[]): void {
+  public $init(arr: TRouter[]): void {
     if (arr && arr instanceof Array) {
       const rootDom = document.querySelector('#root');
       this.rootDom = rootDom || null;
@@ -143,7 +145,7 @@ export default class Router implements ES.IRouter {
           console.error('routes not exit or routes must be an array!');
           return;
         }
-        const route = lastRoute.find((r: ES.TRouter) => r.path === `/${path}` || /^\/\:.+/.test(r.path));
+        const route = lastRoute.find((r: TRouter) => r.path === `/${path}` || /^\/\:.+/.test(r.path));
         if (!route) {
           console.error('wrong route instantiation1:', this.currentUrl);
           return;

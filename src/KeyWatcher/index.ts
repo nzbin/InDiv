@@ -1,12 +1,14 @@
+import { IKeyWatcher, IFnWatcher, IUtil  } from '../types';
+
 import Utils from '../Utils';
 
-class KeyWatcher implements ES.IKeyWatcher {
+class KeyWatcher implements IKeyWatcher {
   public data: any;
-  public watcher?: ES.IFnWatcher;
+  public watcher?: IFnWatcher;
   public key: string;
-  public utils: ES.IUtil;
+  public utils: IUtil;
 
-  constructor(data: any, key: string, watcher?: ES.IFnWatcher) {
+  constructor(data: any, key: string, watcher?: IFnWatcher) {
     this.data = data;
     this.key = key;
     this.watcher = watcher;

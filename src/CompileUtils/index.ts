@@ -1,10 +1,11 @@
+import { ICompileUtilForRepeat } from '../types';
 declare global {
   interface Element {
     value?: any;
   }
 }
 
-export class CompileUtilForRepeat implements ES.ICompileUtilForRepeat {
+export class CompileUtilForRepeat implements ICompileUtilForRepeat {
   [index: string]: any;
   public $fragment?: Element | DocumentFragment;
 

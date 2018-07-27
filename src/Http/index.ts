@@ -1,6 +1,8 @@
+import { IHttp } from '../types';
+
 import axios from 'axios';
 
-class Http implements ES.IHttp {
+class Http implements IHttp {
   public $get(url: string, params?: any): Promise<any> {
     return new Promise((resolve, reject) => {
       const pms = params ? { params } : null;

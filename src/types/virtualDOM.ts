@@ -2,13 +2,13 @@ export interface IVnode {
     tagName?: string;
     node?: DocumentFragment | Element;
     parentNode?: Node;
-    attributes?: IAttributes[];
+    attributes?: TAttributes[];
     nodeValue?: string | null;
     childNodes?: IVnode[] | any[];
     type?: string;
 }
 
-export interface IAttributes {
+export type TAttributes = {
     name: string;
     value: string;
 }
@@ -19,8 +19,8 @@ export interface IPatchList {
     parentNode?: Node;
     newNode?: DocumentFragment | Element;
     oldVnode?: DocumentFragment | Element;
-    newValue?: IAttributes | string;
-    oldValue?: IAttributes | string;
+    newValue?: TAttributes | string;
+    oldValue?: TAttributes | string;
 }
 
 export interface IParseToVnode {

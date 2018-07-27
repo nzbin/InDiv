@@ -1,6 +1,4 @@
-import { IPatchList } from './virtualDOM';
 import { IUtil } from './utils';
-import { ICompileUtil } from './compileUtils';
 
 export interface ICompile {
     utils: IUtil;

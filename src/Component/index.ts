@@ -1,3 +1,5 @@
+import { IComponent, IService } from '../types';
+
 import Lifecycle from '../Lifecycle';
 import Compile from '../Compile';
 import Watcher from '../Watcher';
@@ -8,8 +10,8 @@ export type ComponentList<C> = {
   scope: C;
 }
 
-export default abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<Vm> implements ES.IComponent<State, Props, Vm> {
-  public static scope?: ES.IComponent<any, any, any>;
+export default abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<Vm> implements IComponent<State, Props, Vm> {
+  public static scope?: IComponent<any, any, any>;
   public static _injectedProviders?: Map<string, Function>;
   public static _injectedComponents?: {
     [name: string]: Function;
@@ -24,7 +26,7 @@ export default abstract class Component<State = any, Props = any, Vm = any> exte
   public $components?: {
     [name: string]: Function;
   };
-  public $componentList?: ComponentList<ES.IComponent<any, any, any>>[];
+  public $componentList?: ComponentList<IComponent<any, any, any>>[];
   public stateWatcher?: Watcher;
   public propsWatcher?: Watcher;
 
@@ -81,7 +83,7 @@ export default abstract class Component<State = any, Props = any, Vm = any> exte
   }
 
   public $mountComponent(dom: Element, isFirstRender?: boolean): void {
-    const saveStates: ComponentList<ES.IComponent<any, any, any>>[] = [];
+    const saveStates: ComponentList<IComponent<any, any, any>>[] = [];
     this.$componentList.forEach(component => {
       saveStates.push(component);
     });
@@ -221,16 +223,16 @@ export default abstract class Component<State = any, Props = any, Vm = any> exte
     return _component;
   }
 
-  public createInjector(ComponentClass: any): ES.IService[] {
+  public createInjector(ComponentClass: any): IService[] {
     // const DELEGATE_CTOR = /^function\s+\S+\(\)\s*{[\s\S]+\.apply\(this,\s*arguments\)/;
     // const INHERITED_CLASS = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{/;
     // const INHERITED_CLASS_WITH_CTOR = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{[\s\S]*constructor\s*\(/;
     const CLASS_ARGUS = /^function\s+[^\(]*\(\s*([^\)]*)\)/m;
     const argList = ComponentClass.toString().match(CLASS_ARGUS)[1].replace(/ /g, '').split(',');
-    const args: ES.IService[] = [];
+    const args: IService[] = [];
     argList.forEach((arg: string) => {
       const argu = `${arg.charAt(0).toUpperCase()}${arg.slice(1)}`;
-      const service = ComponentClass._injectedProviders.has(argu) ? ComponentClass._injectedProviders.get(argu) : this.$vm.$rootModule.$providers.find((service: ES.IService) => service.constructor.name === argu);
+      const service = ComponentClass._injectedProviders.has(argu) ? ComponentClass._injectedProviders.get(argu) : this.$vm.$rootModule.$providers.find((service: IService) => service.constructor.name === argu);
       // const service = ComponentClass._injectedProviders.find((s: Service) => s.constructor.name === arg) ? ComponentClass._injectedProviders.find((s: Service) => s.constructor.name === arg) : this.$vm.$rootModule.$providers.find((s: Service) => s.constructor.name === arg);
       if (service) args.push(service);
     });

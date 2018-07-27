@@ -1,9 +1,10 @@
+import { ICompile, IUtil, IPatchList } from '../types';
 import VirtualDOM from '../VirtualDOM';
 import Utils from '../Utils';
 import { CompileUtil } from '../CompileUtils';
 
-class Compile implements ES.ICompile {
-  public utils: ES.IUtil;
+class Compile implements ICompile {
+  public utils: IUtil;
   public $vm: any;
   public $el: Element;
   public $fragment: DocumentFragment;
@@ -23,8 +24,7 @@ class Compile implements ES.ICompile {
       }
       let oldVnode = VirtualDOM.parseToVnode(this.$el);
       let newVnode = VirtualDOM.parseToVnode(this.$fragment);
-      console.log('newVnodenewVnodenewVnode', newVnode);
-      let patchList: ES.IPatchList[] = [];
+      let patchList: IPatchList[] = [];
       VirtualDOM.diffVnode(oldVnode, newVnode, patchList);
       VirtualDOM.renderVnode(patchList);
 
@@ -45,7 +45,6 @@ class Compile implements ES.ICompile {
     elementCreated.innerHTML = this.utils.formatInnerHTML(this.$vm.$template);
     const childNodes = elementCreated.childNodes;
     this.recursiveDOM(childNodes, fragment);
-    console.log('this.$fragment', this.$fragment);
   }
 
   public recursiveDOM(childNodes: NodeListOf<Node & ChildNode>, fragment: DocumentFragment | Element): void {

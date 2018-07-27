@@ -28,12 +28,12 @@ export interface IEasiest {
     }
     $esRouteObject?: EsRouteObject;
 
-    $use(modal: ES.IMiddleware<IEasiest>): number;
+    $use(modal: IMiddleware<IEasiest>): number;
     $setRootPath(rootPath: string): void;
-    $bootstrapModule(Esmodule: ES.IEsModule): void;
+    $bootstrapModule(Esmodule: IEsModule): void;
     $init(): void;
     $renderModuleBootstrap(): void;
     $renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any>;
-    createInjector(BootstrapComponent: any): ES.IService[];
-    replaceDom(component: ES.IComponent, renderDOM: Element): Promise<any>;
+    createInjector(BootstrapComponent: any): IService[];
+    replaceDom(component: IComponent, renderDOM: Element): Promise<any>;
 }

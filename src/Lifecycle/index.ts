@@ -1,11 +1,13 @@
+import { ILifecycle, IUtil, ILocationState } from '../types';
+
 import Utils from '../Utils';
 import { CompileUtil } from '../CompileUtils';
 
-abstract class Lifecycle<Vm = any> implements ES.ILifecycle {
+abstract class Lifecycle<Vm = any> implements ILifecycle {
   public compileUtil?: CompileUtil;
-  public utils?: ES.IUtil;
+  public utils?: IUtil;
   public $location?: {
-    state?: () => ES.ILocationState;
+    state?: () => ILocationState;
     go?: (path: string, query?: any, params?: any) => void;
   }
   public $vm?: Vm | any;
@@ -19,7 +21,7 @@ abstract class Lifecycle<Vm = any> implements ES.ILifecycle {
     };
   }
 
-  public $getLocationState(): ES.ILocationState {
+  public $getLocationState(): ILocationState {
     return {
       path: this.$vm.$esRouteObject.path,
       query: this.$vm.$esRouteObject.query,

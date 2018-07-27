@@ -8,7 +8,7 @@ export interface IEsModule {
   $components?: {
     [name: string]: Function;
   };
-  $providers?: IService[];
+  $providers?: Function[];
   $exports?: string[];
   $exportList?: {
     [name: string]: Function;

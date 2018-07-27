@@ -1,4 +1,4 @@
-import { Easiest, Component, Router, Utils, EsModule, Service, Http } from '../src';
+import { Easiest, Component, Router, Utils, EsModule, Service } from '../src';
 // import { Easiest, Component, Router, RouterHash, Utils, EsModule, Service } from '../build';
 
 class HeroSearchService extends Service {
@@ -323,6 +323,33 @@ class R2 extends Component {
   }
 }
 
+class Container extends Component {
+  constructor() {
+    super();
+    this.state = {
+      a: 1,
+    };
+  }
+
+  public $bootstrap() {
+    this.$template = (`
+      <div>
+        <p es-on:click="this.go()">container: {{this.state.a}}</p>
+        <input es-model="this.state.a" />
+        <router-render></router-render>
+      </div>
+    `);
+  }
+
+  public $afterMount() {
+    // this.$location.go('/R1', { b: '1' });
+  }
+
+  public go() {
+    this.$location.go('/R1', { b: '1' });
+  }
+}
+
 class M2 extends EsModule {
   constructor() {
     super();
@@ -355,6 +382,7 @@ class M1 extends EsModule {
       M2,
     ];
     this.$components = {
+      'container-wrap': Container,
       'pc-component': PComponent,
       'R1': R1,
     };
@@ -367,43 +395,47 @@ class M1 extends EsModule {
 }
 
 const router = new Router();
-// const router = new RouterHash();
+
 const routes = [
   {
     path: '/',
-    redirectTo: '/R1',
-  },
-  {
-    path: '/R1',
-    component: 'R1',
+    // redirectTo: '/R1',
+    component: 'container-wrap',
     children: [
       {
-        path: '/C1',
-        component: 'R2',
+        path: '/R1',
+        component: 'R1',
+        // redirectTo: '/R2',
         children: [
           {
-            path: '/D1',
+            path: '/C1',
+            component: 'R2',
+            children: [
+              {
+                path: '/D1',
+                redirectTo: '/R2',
+              },
+            ],
+          },
+          {
+            path: '/C2',
             redirectTo: '/R2',
           },
         ],
       },
       {
-        path: '/C2',
-        redirectTo: '/R2',
-      },
-    ],
-  },
-  {
-    path: '/R2',
-    component: 'R2',
-    children: [
-      {
-        path: '/:id',
-        component: 'R1',
+        path: '/R2',
+        component: 'R2',
         children: [
           {
-            path: '/D1',
-            redirectTo: '/R1/C1',
+            path: '/:id',
+            component: 'R1',
+            children: [
+              {
+                path: '/D1',
+                redirectTo: '/R1/C1',
+              },
+            ],
           },
         ],
       },

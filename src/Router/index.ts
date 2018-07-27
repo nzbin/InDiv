@@ -1,12 +1,10 @@
-import { IRouter, Easiest } from './types';
-
 import Utils from '../Utils';
 import KeyWatcher from '../KeyWatcher';
 import Component from '../Component';
 
-export default class Router {
-  public routes: IRouter[];
-  public routesList: IRouter[];
+export default class Router implements ES.IRouter {
+  public routes: ES.TRouter[];
+  public routesList: ES.TRouter[];
   public currentUrl: string;
   public lastRoute: string;
   public rootDom: Element;
@@ -14,7 +12,7 @@ export default class Router {
   public $rootPath: string;
   public hasRenderComponentList: Component[];
   public needRedirectPath: string;
-  public $vm: Easiest;
+  public $vm: ES.IEasiest;
   public watcher: KeyWatcher;
   public renderRouteList: string[];
 
@@ -33,7 +31,7 @@ export default class Router {
     this.renderRouteList = [];
   }
 
-  public $bootstrap(vm: Easiest): void {
+  public $bootstrap(vm: ES.IEasiest): void {
     this.$vm = vm;
     this.$vm.$setRootPath(this.$rootPath);
     this.$vm.$canRenderModule = false;
@@ -55,7 +53,7 @@ export default class Router {
     },                      false);
   }
 
-  public $init(arr: IRouter[]): void {
+  public $init(arr: ES.TRouter[]): void {
     if (arr && arr instanceof Array) {
       const rootDom = document.querySelector('#root');
       this.rootDom = rootDom || null;
@@ -145,7 +143,7 @@ export default class Router {
           console.error('routes not exit or routes must be an array!');
           return;
         }
-        const route = lastRoute.find((r: IRouter) => r.path === `/${path}` || /^\/\:.+/.test(r.path));
+        const route = lastRoute.find((r: ES.TRouter) => r.path === `/${path}` || /^\/\:.+/.test(r.path));
         if (!route) {
           console.error('wrong route instantiation1:', this.currentUrl);
           return;
@@ -236,7 +234,7 @@ export default class Router {
         if (!lastRoute || !(lastRoute instanceof Array)) {
           console.error('routes not exit or routes must be an array!');
         }
-        const route = lastRoute.find((r: IRouter) => r.path === `/${path}` || /^\/\:.+/.test(r.path));
+        const route = lastRoute.find(r => r.path === `/${path}` || /^\/\:.+/.test(r.path));
         if (!route) {
           console.error('wrong route instantiation1:', this.currentUrl);
           return;
@@ -273,7 +271,7 @@ export default class Router {
     }
   }
 
-  public instantiateComponent(FindComponent: Component, renderDom: Element): Promise<any> {
+  public instantiateComponent(FindComponent: Function, renderDom: Element): Promise<any> {
     return this.$vm.$renderComponent(FindComponent, renderDom);
   }
 }

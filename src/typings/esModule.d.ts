@@ -1,4 +1,4 @@
-import { IComponent } from './component';
+// import { IComponent } from './component';
 import { IService } from './service';
 import { IUtil } from './utils';
 
@@ -6,15 +6,15 @@ export interface IEsModule {
   utils?: IUtil;
   $imports?: Function[];
   $components?: {
-    [name: string]: IComponent;
+    [name: string]: Function;
   };
   $providers?: IService[];
   $exports?: string[];
   $exportList?: {
-    [name: string]: IComponent;
+    [name: string]: Function;
   };
   singletonList?: Map<string, IService>;
-  $bootstrap?: IComponent;
+  $bootstrap?: Function;
 
   $declarations?(): void;
   $buildImports?(): void;

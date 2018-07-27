@@ -24,7 +24,16 @@ export interface IEasiest {
     $routeDOMKey: string;
     $rootModule: IEsModule;
     $components: {
-        [name: string]: IComponent;
+        [name: string]: Function;
     }
     $esRouteObject?: EsRouteObject;
+
+    $use(modal: ES.IMiddleware<IEasiest>): number;
+    $setRootPath(rootPath: string): void;
+    $bootstrapModule(Esmodule: ES.IEsModule): void;
+    $init(): void;
+    $renderModuleBootstrap(): void;
+    $renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any>;
+    createInjector(BootstrapComponent: any): ES.IService[];
+    replaceDom(component: ES.IComponent, renderDOM: Element): Promise<any>;
 }

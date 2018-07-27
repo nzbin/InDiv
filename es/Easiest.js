@@ -55,6 +55,7 @@ class Easiest {
   }
 
   $renderComponent(Component, renderDOM) {
+    console.log('ComponentComponent', Component);
     const args = this.createInjector(Component);
     const component = Reflect.construct(Component, args);
     component.$vm = this;

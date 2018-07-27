@@ -1,6 +1,6 @@
 import Cookie from 'easier-cookie';
 
-class Utils {
+class Utils implements ES.IUtil {
   constructor() {
     this.toString = Object.prototype.toString;
   }

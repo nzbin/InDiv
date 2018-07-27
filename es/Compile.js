@@ -18,6 +18,7 @@ class Compile {
       }
       let oldVnode = VirtualDOM.parseToVnode(this.$el);
       let newVnode = VirtualDOM.parseToVnode(this.$fragment);
+      console.log('newVnodenewVnode', newVnode);
       let patchList = [];
       VirtualDOM.diffVnode(oldVnode, newVnode, patchList);
       VirtualDOM.renderVnode(patchList);

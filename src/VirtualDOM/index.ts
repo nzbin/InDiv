@@ -1,15 +1,13 @@
-import { IVnode, IAttributes, IPatchList, IVirtualDOM } from './types';
-
-class Vnode implements IVnode {
+class Vnode implements ES.IVnode {
   public tagName?: string;
   public node?: DocumentFragment | Element;
   public parentNode?: Node;
-  public attributes?: IAttributes[];
+  public attributes?: ES.IAttributes[];
   public nodeValue?: string | null;
-  public childNodes?: IVnode[] | any[];
+  public childNodes?: ES.IVnode[] | any[];
   public type?: string;
 
-  constructor(info: IVnode) {
+  constructor(info: ES.IVnode) {
     this.tagName = info.tagName;
     this.node = info.node;
     this.parentNode = info.parentNode;
@@ -27,9 +25,9 @@ function bindNodeType(node: Node): string {
   return '';
 }
 
-function bindAttributes(node: DocumentFragment | Element): IAttributes[] {
+function bindAttributes(node: DocumentFragment | Element): ES.IAttributes[] {
   const nodeAttrs: NamedNodeMap = (node as Element).attributes;
-  const attributes: IAttributes[] = [];
+  const attributes: ES.IAttributes[] = [];
   if (nodeAttrs) {
     Array.from(nodeAttrs).forEach(attr => {
       attributes.push({
@@ -41,8 +39,8 @@ function bindAttributes(node: DocumentFragment | Element): IAttributes[] {
   return attributes;
 }
 
-function parseToVnode(node: DocumentFragment | Element): IVnode {
-  const childNodes: IVnode[] = [];
+function parseToVnode(node: DocumentFragment | Element): ES.IVnode {
+  const childNodes: ES.IVnode[] = [];
   if (node.childNodes) {
     Array.from(node.childNodes).forEach((child: Element) => {
       childNodes.push(parseToVnode(child));
@@ -59,7 +57,7 @@ function parseToVnode(node: DocumentFragment | Element): IVnode {
   });
 }
 
-function diffAttributes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
+function diffAttributes(oldVnode: ES.IVnode, newVnode: ES.IVnode, patchList: ES.IPatchList[]): void {
   newVnode.attributes.forEach((attr) => {
     const oldVnodeAttr = oldVnode.attributes.find(at => at.name === attr.name);
     if (!oldVnodeAttr || oldVnodeAttr.value !== attr.value) {
@@ -83,7 +81,7 @@ function diffAttributes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
   });
 }
 
-function diffNodeValue(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
+function diffNodeValue(oldVnode: ES.IVnode, newVnode: ES.IVnode, patchList: ES.IPatchList[]): void {
   if (!oldVnode.nodeValue || !newVnode.nodeValue) return;
   if (oldVnode.nodeValue !== newVnode.nodeValue) {
     patchList.push({
@@ -95,7 +93,7 @@ function diffNodeValue(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList
   }
 }
 
-function diffTagName(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
+function diffTagName(oldVnode: ES.IVnode, newVnode: ES.IVnode, patchList: ES.IPatchList[]): void {
   if (oldVnode.tagName !== newVnode.tagName) {
     patchList.push({
       type: 0,
@@ -106,9 +104,9 @@ function diffTagName(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]
   }
 }
 
-function diffChildNodes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
+function diffChildNodes(newVnode: ES.IVnode, oldVnode: ES.IVnode, patchList: ES.IPatchList[]): void {
   if (newVnode.childNodes.length > 0) {
-    (newVnode.childNodes as IVnode[]).forEach((nChild, index) => {
+    (newVnode.childNodes as ES.IVnode[]).forEach((nChild, index) => {
       if (!oldVnode.childNodes[index]) {
         patchList.push({
           type: 1,
@@ -121,7 +119,7 @@ function diffChildNodes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
     });
   }
   if (oldVnode.childNodes.length > 0) {
-    (oldVnode.childNodes as IVnode[]).forEach((oChild, index) => {
+    (oldVnode.childNodes as ES.IVnode[]).forEach((oChild, index) => {
       if (!newVnode.childNodes[index]) {
         patchList.push({
           type: 2,
@@ -133,7 +131,7 @@ function diffChildNodes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
   }
 }
 
-function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
+function diffVnode(oldVnode: ES.IVnode, newVnode: ES.IVnode, patchList: ES.IPatchList[]): void {
   if (!patchList) {
     console.error('patchList can not be null, diffVnode must need an Array');
     return;
@@ -163,7 +161,8 @@ function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]):
  * TEXT: 5, 更改文字: 5
  * @param [] patchList
  */
-function renderVnode(patchList: IPatchList[]) {
+function renderVnode(patchList: ES.IPatchList[]): void {
+  console.log('patchListpatchList', patchList);
   patchList.forEach(patch => {
     switch (patch.type) {
       case 0:
@@ -176,10 +175,10 @@ function renderVnode(patchList: IPatchList[]) {
         patch.parentNode.removeChild(patch.node);
         break;
       case 3:
-        (patch.node as Element).setAttribute((patch.newValue as IAttributes).name, (patch.newValue as IAttributes).value);
+        (patch.node as Element).setAttribute((patch.newValue as ES.IAttributes).name, (patch.newValue as ES.IAttributes).value);
         break;
       case 4:
-        (patch.node as Element).removeAttribute((patch.newValue as IAttributes).name);
+        (patch.node as Element).removeAttribute((patch.newValue as ES.IAttributes).name);
         break;
       case 5:
         patch.node.nodeValue = (patch.newValue as string);
@@ -188,7 +187,7 @@ function renderVnode(patchList: IPatchList[]) {
   });
 }
 
-const VirtualDOM: IVirtualDOM = {
+const VirtualDOM: ES.IVirtualDOM = {
   parseToVnode,
   diffVnode,
   renderVnode,

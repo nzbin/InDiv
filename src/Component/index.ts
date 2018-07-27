@@ -1,11 +1,15 @@
-import { ComponentList, Service } from './types';
-
 import Lifecycle from '../Lifecycle';
 import Compile from '../Compile';
 import Watcher from '../Watcher';
 
-export default abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<Vm> {
-  public static scope?: Component<any, any, any>;
+export type ComponentList<C> = {
+  dom: Element;
+  props: any;
+  scope: C;
+}
+
+export default abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<Vm> implements ES.IComponent<State, Props, Vm> {
+  public static scope?: ES.IComponent<any, any, any>;
   public static _injectedProviders?: Map<string, Function>;
   public static _injectedComponents?: {
     [name: string]: Function;
@@ -20,11 +24,12 @@ export default abstract class Component<State = any, Props = any, Vm = any> exte
   public $components?: {
     [name: string]: Function;
   };
-  public $componentList?: ComponentList<Component<any, any, any>>[];
+  public $componentList?: ComponentList<ES.IComponent<any, any, any>>[];
   public stateWatcher?: Watcher;
   public propsWatcher?: Watcher;
 
-  constructor(...args: Service[]) {
+  constructor() {
+    // ...args: ES.IService[]
     super();
     this.state = {};
     this.$renderDom = null;
@@ -51,6 +56,7 @@ export default abstract class Component<State = any, Props = any, Vm = any> exte
     const dom = this.$renderDom;
     // this.compile = new Compile(dom, this);
     const compile = new Compile(dom, this);
+    console.log('compile', compile);
     this.$mountComponent(dom, true);
     this.$componentList.forEach(component => {
       if (component.scope.$render) component.scope.$render();
@@ -75,7 +81,7 @@ export default abstract class Component<State = any, Props = any, Vm = any> exte
   }
 
   public $mountComponent(dom: Element, isFirstRender?: boolean): void {
-    const saveStates: ComponentList<Component<any, any, any>>[] = [];
+    const saveStates: ComponentList<ES.IComponent<any, any, any>>[] = [];
     this.$componentList.forEach(component => {
       saveStates.push(component);
     });
@@ -215,16 +221,16 @@ export default abstract class Component<State = any, Props = any, Vm = any> exte
     return _component;
   }
 
-  public createInjector(ComponentClass: any): Service[] {
+  public createInjector(ComponentClass: any): ES.IService[] {
     // const DELEGATE_CTOR = /^function\s+\S+\(\)\s*{[\s\S]+\.apply\(this,\s*arguments\)/;
     // const INHERITED_CLASS = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{/;
     // const INHERITED_CLASS_WITH_CTOR = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{[\s\S]*constructor\s*\(/;
     const CLASS_ARGUS = /^function\s+[^\(]*\(\s*([^\)]*)\)/m;
     const argList = ComponentClass.toString().match(CLASS_ARGUS)[1].replace(/ /g, '').split(',');
-    const args: Service[] = [];
+    const args: ES.IService[] = [];
     argList.forEach((arg: string) => {
       const argu = `${arg.charAt(0).toUpperCase()}${arg.slice(1)}`;
-      const service = Component._injectedProviders.has(argu) ? Component._injectedProviders.get(argu) : this.$vm.$rootModule.$providers.find((service: Service) => service.constructor.name === argu);
+      const service = ComponentClass._injectedProviders.has(argu) ? ComponentClass._injectedProviders.get(argu) : this.$vm.$rootModule.$providers.find((service: ES.IService) => service.constructor.name === argu);
       // const service = ComponentClass._injectedProviders.find((s: Service) => s.constructor.name === arg) ? ComponentClass._injectedProviders.find((s: Service) => s.constructor.name === arg) : this.$vm.$rootModule.$providers.find((s: Service) => s.constructor.name === arg);
       if (service) args.push(service);
     });

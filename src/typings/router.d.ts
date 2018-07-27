@@ -12,8 +12,8 @@ export type TRouter = {
 };
 
 export interface IRouter {
-    routes: IRouter[];
-    routesList: IRouter[];
+    routes: TRouter[];
+    routesList: TRouter[];
     currentUrl: string;
     lastRoute: string;
     rootDom: Element;
@@ -26,12 +26,12 @@ export interface IRouter {
     renderRouteList: string[];
 
     $bootstrap(vm: IEasiest): void;
-    $init(arr: IRouter[]): void;
+    $init(arr: TRouter[]): void;
     $routeChange(lastRoute?: string, nextRoute?: string): void;
     redirectTo(redirectTo: string): void;
     refresh(): void;
     distributeRoutes(): void;
     insertRenderRoutes(): void;
     generalDistributeRoutes(): void;
-    instantiateComponent(FindComponent: IComponent, renderDom: Element): Promise<any>;
+    instantiateComponent(FindComponent: Function, renderDom: Element): Promise<any>;
 }

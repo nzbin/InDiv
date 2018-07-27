@@ -1,17 +1,14 @@
-import { IFnWatcher, IFnRender } from './types';
-
 import Utils from '../Utils';
-
-class Watcher {
+class Watcher implements ES.IWatcher {
   public data: any;
-  public watcher: IFnWatcher;
-  public render: IFnRender;
+  public watcher: ES.IFnWatcher;
+  public render: ES.TFnRender;
   public utils: Utils;
 
   constructor(
     data: any,
-    watcher?: IFnWatcher,
-    render?: IFnRender,
+    watcher?: ES.IFnWatcher,
+    render?: ES.TFnRender,
   ) {
     this.data = data;
     this.watcher = watcher;

@@ -1,18 +1,15 @@
-// import { ICompile, IUtils, IPatchList } from './types';
-import { IPatchList } from '../VirtualDOM/types';
-
 import VirtualDOM from '../VirtualDOM';
 import Utils from '../Utils';
 import { CompileUtil } from '../CompileUtils';
 
-class Compile {
-    public utils: Utils;
-    public $vm: any;
-    public $el: Element;
-    public $fragment: DocumentFragment;
+class Compile implements ES.ICompile {
+  public utils: ES.IUtil;
+  public $vm: any;
+  public $el: Element;
+  public $fragment: DocumentFragment;
 
   // removeDOM
-    constructor(el: string | Element, vm: any, routerRenderDom?: Element) {
+  constructor(el: string | Element, vm: any, routerRenderDom?: Element) {
     this.utils = new Utils();
     this.$vm = vm;
     this.$el = this.isElementNode(el) ? el as Element : document.querySelector(el as string);
@@ -26,7 +23,8 @@ class Compile {
       }
       let oldVnode = VirtualDOM.parseToVnode(this.$el);
       let newVnode = VirtualDOM.parseToVnode(this.$fragment);
-      let patchList: IPatchList[] = [];
+      console.log('newVnodenewVnodenewVnode', newVnode);
+      let patchList: ES.IPatchList[] = [];
       VirtualDOM.diffVnode(oldVnode, newVnode, patchList);
       VirtualDOM.renderVnode(patchList);
 
@@ -38,18 +36,19 @@ class Compile {
     }
   }
 
-    public init(): void {
+  public init(): void {
     this.compileElement(this.$fragment);
   }
 
-    public compileElement(fragment: DocumentFragment): void {
+  public compileElement(fragment: DocumentFragment): void {
     const elementCreated = document.createElement('div');
     elementCreated.innerHTML = this.utils.formatInnerHTML(this.$vm.$template);
     const childNodes = elementCreated.childNodes;
     this.recursiveDOM(childNodes, fragment);
+    console.log('this.$fragment', this.$fragment);
   }
 
-    public recursiveDOM(childNodes: NodeListOf<Node & ChildNode>, fragment: DocumentFragment | Element): void {
+  public recursiveDOM(childNodes: NodeListOf<Node & ChildNode>, fragment: DocumentFragment | Element): void {
     Array.from(childNodes).forEach((node: Element) => {
       if (node.hasChildNodes() && !this.isRepeatNode(node)) {
         this.recursiveDOM(node.childNodes, node);
@@ -72,7 +71,7 @@ class Compile {
     });
   }
 
-    public compile(node: Element, fragment: DocumentFragment | Element): void {
+  public compile(node: Element, fragment: DocumentFragment | Element): void {
     const nodeAttrs = node.attributes;
     if (nodeAttrs) {
       Array.from(nodeAttrs).forEach(attr => {
@@ -90,15 +89,15 @@ class Compile {
     }
   }
 
-    public node2Fragment(el: Element): DocumentFragment {
+  public node2Fragment(el: Element): DocumentFragment {
     return document.createDocumentFragment();
   }
 
-    public compileText(node: Element, exp: string): void {
+  public compileText(node: Element, exp: string): void {
     new CompileUtil(this.$fragment).templateUpdater(node, this.$vm, exp);
   }
 
-    public eventHandler(node: Element, vm: any, exp: string, eventName: string): void {
+  public eventHandler(node: Element, vm: any, exp: string, eventName: string): void {
     let compileUtil = new CompileUtil();
     const eventType = eventName.split(':')[1];
     const fnList = exp.replace(/\(.*\)/, '').split('.');
@@ -124,20 +123,20 @@ class Compile {
     compileUtil = null;
   }
 
-    public isDirective(attr: string): boolean {
+  public isDirective(attr: string): boolean {
     return attr.indexOf('es-') === 0;
   }
 
-    public isEventDirective(eventName: string): boolean {
+  public isEventDirective(eventName: string): boolean {
     return eventName.indexOf('on') === 0;
   }
 
-    public isElementNode(node: Element | string): boolean {
+  public isElementNode(node: Element | string): boolean {
     if (typeof node === 'string') return false;
     return node.nodeType === 1;
   }
 
-    public isRepeatNode(node: Element): boolean {
+  public isRepeatNode(node: Element): boolean {
     const nodeAttrs = node.attributes;
     let result = false;
     if (nodeAttrs) {
@@ -149,7 +148,7 @@ class Compile {
     return result;
   }
 
-    public isIfNode(node: Element): boolean {
+  public isIfNode(node: Element): boolean {
     const nodeAttrs = node.attributes;
     let result = false;
     if (nodeAttrs) {
@@ -161,7 +160,7 @@ class Compile {
     return result;
   }
 
-    public isTextNode(node: Element): boolean {
+  public isTextNode(node: Element): boolean {
     return node.nodeType === 3;
   }
 }

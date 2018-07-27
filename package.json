@@ -25,6 +25,7 @@
     "start-ts": "parcel ./demo/index-ts.html -d dist --open",
     "start-test": "parcel watch ./demo/index.html -d dist & nodemon app.js",
     "build": "parcel build ./es/index.js -d build",
+    "build-ts": "tsc ./src/index.ts",
     "pub-prod": "npm run build && npm publish"
   },
   "repository": {

@@ -20,13 +20,13 @@
     "service"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "parcel ./demo/index.html -d dist --open",
-    "start-ts": "parcel ./demo/index-ts.html -d dist --open",
-    "start-test": "parcel watch ./demo/index.html -d dist & nodemon app.js",
-    "build": "parcel build ./es/index.js -d build",
-    "build-ts": "tsc ./src/index.ts",
-    "pub-prod": "npm run build && npm publish"
+    "start": "rm -rf build && parcel ./demo/index.html -d dist --open",
+    "start-ts": "rm -rf build && parcel ./demo/index-ts.html -d dist --open",
+    "start-test": "rm -rf build && parcel watch ./demo/index.html -d dist & nodemon app.js",
+    "start-test-ts": "rm -rf build && parcel watch ./demo/index-ts.html -d dist & nodemon app.js",
+    "build": "rm -rf build && parcel build ./es/index.js -d build",
+    "build-webpack": "rm -rf build && webpack --watch --mode=development",
+    "pub-prod": "rm -rf build && npm run build && npm publish"
   },
   "repository": {
     "type": "git",
@@ -39,7 +39,10 @@
   },
   "homepage": "https://github.com/DimaLiLongJi/easiest#readme",
   "devDependencies": {
+    "awesome-typescript-loader": "^5.2.0",
     "babel-eslint": "^8.2.0",
+    "babel-loader": "^7.1.5",
+    "babel-preset-env": "^1.7.0",
     "ejs": "^2.6.1",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^11.1.1",
@@ -50,7 +53,10 @@
     "eslint-plugin-react": "^7.5.1",
     "express": "^4.16.3",
     "nodemon": "^1.17.5",
-    "parcel-bundler": "^1.8.1"
+    "parcel-bundler": "^1.8.1",
+    "url-loader": "^1.0.1",
+    "webpack": "^4.16.2",
+    "webpack-cli": "^3.1.0"
   },
   "dependencies": {
     "axios": "^0.18.0",

@@ -30,7 +30,7 @@ export interface IEasiest {
 
     $use(modal: IMiddleware<IEasiest>): number;
     $setRootPath(rootPath: string): void;
-    $bootstrapModule(Esmodule: IEsModule): void;
+    $bootstrapModule(Esmodule: Function): void;
     $init(): void;
     $renderModuleBootstrap(): void;
     $renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any>;

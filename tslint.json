@@ -17,7 +17,7 @@
     "no-string-literal": true,
     "no-switch-case-fall-through": true,
     "no-unreachable": true,
-    "no-unused-variable": [ true, "react" ],
+    "no-unused-variable": [ true ],
     "radix": true,
     "new-parens": true,
     "no-angle-bracket-type-assertion": true,

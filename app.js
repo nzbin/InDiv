@@ -17,7 +17,6 @@ app.use(express.static('./demo'));
 //   res.send({ a: 1 });
 // });
 app.use('/demo', (req, res, next) => {
-  console.log('demodemodemo');
   res.render('index.html');
 });
 app.use('/demo-ts', (req, res, next) => {

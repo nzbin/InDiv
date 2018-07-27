@@ -1,4 +1,4 @@
-import { IUtil, IVnode, TAttributes, IPatchList, IVirtualDOM  } from '../types';
+import { IVnode, TAttributes, IPatchList, IVirtualDOM  } from '../types';
 
 class Vnode implements IVnode {
   public tagName?: string;

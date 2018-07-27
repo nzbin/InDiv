@@ -2,7 +2,8 @@ const path = require('path');
 
 module.exports = (env) => {
   const entry = {
-    index: './src/index.ts',
+    'index': './src/index.ts',
+    'test-ts': './demo/index.ts',
   };
 
   const output = {
@@ -40,14 +41,14 @@ module.exports = (env) => {
         ],
         exclude: [path.resolve(__dirname, 'node_modules')],
         use: [
-        // {
-        //   loader: 'babel-loader',
-        //   options: {
-        //     presets: [
-        //       'env', 'react', 'stage-1', 'stage-3',
-        //     ],
-        //   },
-        // },
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                'env',
+              ],
+            },
+          },
           {
             loader: 'awesome-typescript-loader',
           },

@@ -20,10 +20,11 @@
     "service"
   ],
   "scripts": {
-    "start": "rm -rf build && parcel ./demo/index.html -d dist --open",
-    "start-ts": "rm -rf build && parcel ./demo/index-ts.html -d dist --open",
-    "start-test": "rm -rf build && parcel watch ./demo/index.html -d dist & nodemon app.js",
-    "start-test-ts": "rm -rf build && parcel watch ./demo/index-ts.html -d dist & nodemon app.js",
+    "start": "&& parcel ./demo/index.html -d dist --open",
+    "start-ts": "parcel ./demo/index-ts.html -d dist --open",
+    "start-test": "parcel watch ./demo/index.html -d dist & nodemon app.js",
+    "start-test-ts": "parcel watch ./demo/index-ts.html -d dist & nodemon app.js",
+    "start-test-webpack-ts": "webpack --watch --mode=development & nodemon app.js",
     "build": "rm -rf build && parcel build ./es/index.js -d build",
     "build-webpack": "rm -rf build && webpack --watch --mode=development",
     "pub-prod": "rm -rf build && npm run build && npm publish"

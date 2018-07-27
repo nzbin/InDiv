@@ -56,22 +56,18 @@ export default abstract class Component<State = any, Props = any, Vm = any> exte
 
   public $render() {
     const dom = this.$renderDom;
-    // this.compile = new Compile(dom, this);
     const compile = new Compile(dom, this);
-    console.log('compile', compile);
     this.$mountComponent(dom, true);
     this.$componentList.forEach(component => {
       if (component.scope.$render) component.scope.$render();
       if (component.scope.$afterMount) component.scope.$afterMount();
     });
     if (this.$hasRender) this.$hasRender();
-    // this.compile = null;
   }
 
   public $reRender(): void {
     const dom = this.$renderDom;
     const routerRenderDom = dom.querySelectorAll(this.$vm.$routeDOMKey)[0];
-    // this.compile = new Compile(dom, this, routerRenderDom);
     const compile = new Compile(dom, this, routerRenderDom);
     this.$mountComponent(dom, false);
     this.$componentList.forEach(component => {
@@ -79,7 +75,6 @@ export default abstract class Component<State = any, Props = any, Vm = any> exte
       if (component.scope.$afterMount) component.scope.$afterMount();
     });
     if (this.$hasRender) this.$hasRender();
-    // this.compile = null;
   }
 
   public $mountComponent(dom: Element, isFirstRender?: boolean): void {

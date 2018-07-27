@@ -154,7 +154,6 @@ function diffVnode(oldVnode, newVnode, patchList) {
  * @param [] patchList
  */
 function renderVnode(patchList) {
-  console.log('patchListpatchList', patchList);
   patchList.forEach(patch => {
     switch (patch.type) {
     case 0:

@@ -1,0 +1,30 @@
+{
+  "compileOnSave": false,
+  "buildOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "build",
+    "module": "commonjs",
+    "target": "es5",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
+    "removeComments": false,
+    "sourceMap": false,
+    "inlineSourceMap": true,
+    "noEmitHelpers": false,
+    "lib": ["dom", "es2015.promise", "es5", "es2017"],
+    // "allowJs": false,
+    "allowJs": true,
+    // "declaration": true
+  },
+  // "include": [
+  //   "src/**/*"
+  // ],
+  "exclude": [
+    "node_modules",
+    "build",
+    "dist"
+  ]
+}

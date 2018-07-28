@@ -8,20 +8,20 @@ app.engine('.html', require('ejs').__express);
 app.set('view engine', 'html');
 
 // 静态文件
-app.set('views', './dist');
-app.use(express.static('./dist'));
+app.set('views', './demo');
+app.use(express.static('./demo'));
 
 
-app.use('/', (req, res, next) => {
-  console.log('////');
-  res.send({ a: 1 });
-});
+// app.use('/', (req, res, next) => {
+//   console.log('////');
+//   res.send({ a: 1 });
+// });
 app.use('/demo', (req, res, next) => {
-  console.log('demodemodemo');
   res.render('index.html');
 });
-app.use('/dess', (req, res, next) => {
-  res.send({ a: 1 });
+app.use('/demo-ts', (req, res, next) => {
+  // res.send({ a: 1 });
+  res.render('index-ts.html');
 });
 
 app.listen(1234);

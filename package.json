@@ -1,7 +1,7 @@
 {
   "name": "easiest",
-  "version": "1.1.5",
-  "description": "A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。",
+  "version": "1.2.0",
+  "description": "A minimal, blazing web mvvm framework.一个小的Web mvvm库。",
   "main": "build/index.js",
   "keywords": [
     "mvvm",
@@ -20,10 +20,9 @@
     "service"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "parcel ./demo/index.html -d dist --open",
-    "start-test": "parcel watch ./demo/index.html -d dist & nodemon app.js",
-    "build": "parcel build ./src/index.js -d build",
+    "start-ts": "parcel ./demo/index-ts.html -d dist --open",
+    "build": "rm -rf build && parcel build ./src/index.ts --no-source-maps -d build && cp -r src/index.d.ts build",
     "pub-prod": "npm run build && npm publish"
   },
   "repository": {
@@ -53,6 +52,8 @@
   "dependencies": {
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
-    "easier-cookie": "^1.0.6"
+    "easier-cookie": "^1.0.11",
+    "tslint": "^5.11.0",
+    "typescript": "^2.9.2"
   }
 }

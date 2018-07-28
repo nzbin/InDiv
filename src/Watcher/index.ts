@@ -1,7 +1,16 @@
-import Utils from './Utils';
-
+import { TFnWatcher, TFnRender } from '../types';
+import Utils from '../Utils';
 class Watcher {
-  constructor(data, watcher, render) {
+  public data: any;
+  public watcher: TFnWatcher;
+  public render: TFnRender;
+  public utils: Utils;
+
+  constructor(
+    data: any,
+    watcher?: TFnWatcher,
+    render?: TFnRender,
+  ) {
     this.data = data;
     this.watcher = watcher;
     this.render = render;
@@ -9,10 +18,10 @@ class Watcher {
     this.utils = new Utils();
   }
 
-  watchData(data) {
+  public watchData(data: any): void {
     if (!data || typeof data !== 'object') return;
     const vm = this;
-    for (let key in data) {
+    for (const key in data) {
       let val = data[key];
       vm.watchData(val);
       Object.defineProperty(data, key, {
@@ -21,11 +30,11 @@ class Watcher {
         get() {
           return val;
         },
-        set(newVal) {
+        set(newVal: any) {
           if (vm.utils.isEqual(newVal, val)) return;
-          const oldData = {};
+          const oldData: any = {};
           oldData[key] = val;
-          const newData = {};
+          const newData: any = {};
           newData[key] = newVal;
           val = newVal;
           vm.watchData(val);

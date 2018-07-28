@@ -1,15 +1,22 @@
-import Utils from './Utils';
+import { TFnWatcher } from '../types';
+
+import Utils from '../Utils';
 
 class KeyWatcher {
-  constructor(data, key, watcher) {
+  public data: any;
+  public watcher?: TFnWatcher;
+  public key: string;
+  public utils: Utils;
+
+  constructor(data: any, key: string, watcher?: TFnWatcher) {
     this.data = data;
-    this.watcher = watcher;
     this.key = key;
+    this.watcher = watcher;
     this.watchData(this.data, this.key);
     this.utils = new Utils();
   }
 
-  watchData(data, key) {
+  public watchData(data: any, key: string): void {
     if (!data || typeof data !== 'object' || !data[key]) return;
     const vm = this;
     let val = data[key];
@@ -19,12 +26,12 @@ class KeyWatcher {
       get() {
         return val;
       },
-      set(newVal) {
+      set(newVal: any) {
         if (vm.utils.isEqual(newVal, val)) return;
         if (newVal === val) return;
-        const oldData = {};
+        const oldData: any = {};
         oldData[key] = val;
-        const newData = {};
+        const newData: any = {};
         newData[key] = newVal;
         val = newVal;
         if (vm.watcher) vm.watcher(oldData, newData);

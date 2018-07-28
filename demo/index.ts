@@ -1,5 +1,5 @@
-import { Easiest, Component, Router, Utils, EsModule, Service } from '../src';
-// import { Easiest, Component, Router, Utils, EsModule, Service } from '../build';
+// import { Easiest, Component, Router, Utils, EsModule, Service } from '../src';
+import { Easiest, Component, Router, Utils, EsModule, Service } from '../build/index';
 
 class HeroSearchService extends Service {
   constructor() {
@@ -65,7 +65,7 @@ class RouteChild extends Component {
     console.log('RouteChild: this.props.a', this.props.a);
   }
 }
-class PCChild extends Component {
+class PCChild extends Component<any, any> {
   constructor() {
     super();
     this.state = {

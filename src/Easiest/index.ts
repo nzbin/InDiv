@@ -1,16 +1,16 @@
-import { IEasiest, IMiddleware, IEsModule, EsRouteObject, IComponent, IService } from '../types';
+import { IMiddleware, IEsModule, EsRouteObject } from '../types';
 
 import Utils from '../Utils';
 
-// class Easiest implements IEasiest {
+import Component from '../Component';
+
 class Easiest {
-  public modalList: IMiddleware<IEasiest>[];
+  public modalList: IMiddleware<Easiest>[];
   public utils: Utils;
   public $globalContext: any;
   public rootDom: Element;
   public $rootPath: string;
   public $canRenderModule: boolean;
-  public $esRouteMode: string;
   public $routeDOMKey: string;
   public $rootModule: IEsModule;
   public $components: {
@@ -26,14 +26,13 @@ class Easiest {
     this.rootDom = document.querySelector('#root');
     this.$rootPath = '/';
     this.$canRenderModule = true;
-    this.$esRouteMode = null;
     this.$routeDOMKey = 'router-render';
 
     this.$rootModule = null;
     this.$esRouteObject = null;
   }
 
-  public $use(modal: IMiddleware<IEasiest>): number {
+  public $use(modal: IMiddleware<Easiest>): number {
     modal.$bootstrap(this);
     this.modalList.push(modal);
     return this.modalList.findIndex(md => this.utils.isEqual(md, modal));
@@ -75,7 +74,7 @@ class Easiest {
 
   public $renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any> {
     const args = this.createInjector(BootstrapComponent);
-    const component: IComponent = Reflect.construct((BootstrapComponent as any), args);
+    const component: Component = Reflect.construct((BootstrapComponent as any), args);
     component.$vm = this;
     component.$components = this.$rootModule.$components;
     if (component.$beforeInit) component.$beforeInit();
@@ -97,13 +96,13 @@ class Easiest {
     }
   }
 
-  public createInjector(BootstrapComponent: any): IService[] {
+  public createInjector(BootstrapComponent: any): Function[] {
     // const DELEGATE_CTOR = /^function\s+\S+\(\)\s*{[\s\S]+\.apply\(this,\s*arguments\)/;
     // const INHERITED_CLASS = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{/;
     // const INHERITED_CLASS_WITH_CTOR = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{[\s\S]*constructor\s*\(/;
     const CLASS_ARGUS = /^function\s+[^\(]*\(\s*([^\)]*)\)/m;
     const argList = BootstrapComponent.toString().match(CLASS_ARGUS)[1].replace(/ /g, '').split(',');
-    const args: IService[] = [];
+    const args: Function[] = [];
     argList.forEach((arg: string) => {
       const argu = `${arg.charAt(0).toUpperCase()}${arg.slice(1)}`;
       const service = BootstrapComponent._injectedProviders.has(argu) ? BootstrapComponent._injectedProviders.get(argu) : this.$rootModule.$providers.find((s: Function) => s.constructor.name === argu);
@@ -112,7 +111,7 @@ class Easiest {
     return args;
   }
 
-  public replaceDom(component: IComponent, renderDOM: Element): Promise<any> {
+  public replaceDom(component: Component, renderDOM: Element): Promise<any> {
     component.$renderDom = renderDOM;
     if (component.$render) {
       component.$render();

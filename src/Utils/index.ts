@@ -1,8 +1,5 @@
-// import { IUtil } from '../types';
-
 import Cookie from 'easier-cookie';
 
-// class Utils implements IUtil {
 class Utils {
   constructor() {
     this.toString = Object.prototype.toString;

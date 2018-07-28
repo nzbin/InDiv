@@ -7,7 +7,7 @@ export interface IMiddleware<ES> {
     $bootstrap(vm: ES): any;
 }
 
-export interface EsRouteObject {
+export type EsRouteObject = {
     path: string;
     query?: any;
     params?: any;
@@ -20,7 +20,6 @@ export interface IEasiest {
     rootDom: Element;
     $rootPath: string;
     $canRenderModule: boolean;
-    $esRouteMode: string;
     $routeDOMKey: string;
     $rootModule: IEsModule;
     $components: {

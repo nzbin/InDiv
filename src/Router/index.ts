@@ -1,10 +1,9 @@
-import { IRouter, TRouter, IEasiest } from '../types';
+import { TRouter, IEasiest } from '../types';
 
 import Utils from '../Utils';
 import KeyWatcher from '../KeyWatcher';
 import Component from '../Component';
 
-// export default class Router implements IRouter {
 export default class Router {
   public routes: TRouter[];
   public routesList: TRouter[];
@@ -38,7 +37,6 @@ export default class Router {
     this.$vm = vm;
     this.$vm.$setRootPath(this.$rootPath);
     this.$vm.$canRenderModule = false;
-    this.$vm.$esRouteMode = 'state';
     this.$vm.$routeDOMKey = 'router-render';
     window.addEventListener('load', this.refresh.bind(this), false);
     window.addEventListener('popstate', (e) => {

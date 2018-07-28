@@ -1,6 +1,5 @@
-import { IWatcher, TFnWatcher, TFnRender } from '../types';
+import { TFnWatcher, TFnRender } from '../types';
 import Utils from '../Utils';
-// class Watcher implements IWatcher {
 class Watcher {
   public data: any;
   public watcher: TFnWatcher;

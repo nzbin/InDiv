@@ -11,16 +11,23 @@ export type TRouter = {
     component?: string;
     children?: TRouter[];
 };
+export declare type ComponentList<C> = {
+    dom: Element;
+    props: any;
+    scope: C;
+};
+
 export interface IMiddleware<ES> {
     $bootstrap(vm: ES): any;
 }
 
-export interface EsRouteObject {
+export type EsRouteObject = {
     path: string;
     query?: any;
     params?: any;
 }
-declare class Watcher {
+
+export declare class Watcher {
     data: any;
     watcher: TFnWatcher;
     render: TFnRender;
@@ -28,7 +35,8 @@ declare class Watcher {
     constructor(data: any, watcher?: TFnWatcher, render?: TFnRender);
     watchData(data: any): void;
 }
-declare class Utils {
+
+export declare class Utils {
     constructor();
     setCookie(name: string, value: any, options?: any): void;
     getCookie(name: string): any;
@@ -40,104 +48,30 @@ declare class Utils {
     deepIsEqual(a: any, b: any, aStack?: any[], bStack?: any[]): boolean;
     formatInnerHTML(inner: string): string;
 }
-declare class Service {
-    static isSingletonMode?: boolean;
-    static instance?: Service;
-    $http?: Http;
-    constructor();
-    static getInstance?(): Service;
-}
-declare abstract class Lifecycle<Vm = any> {
-    compileUtil?: CompileUtil;
-    utils?: Utils;
-    $location?: {
-        state?: () => TLocationState;
-        go?: (path: string, query?: any, params?: any) => void;
-    };
-    $vm?: Vm | any;
-    constructor();
-    $getLocationState(): TLocationState;
-    $locationGo(path: string, query?: any, params?: any): void;
-    $onInit(): void;
-    $beforeMount(): void;
-    $afterMount(): void;
-    $onDestory(): void;
-    $hasRender(): void;
-    $watchState(oldData?: any, newData?: any): void;
-}
-declare class Http {
+
+export declare class Http {
     $get(url: string, params?: any): Promise<any>;
     $delete(url: string, params?: any): Promise<any>;
     $post(url: string, params?: any): Promise<any>;
     $put(url: string, params?: any): Promise<any>;
     $patch(url: string, params?: any): Promise<any>;
 }
-declare class KeyWatcher {
+
+export declare class Service {
+    static isSingletonMode?: boolean;
+    static instance?: Service;
+    $http?: Http;
+    constructor();
+    static getInstance?(): Service;
+}
+
+export declare class KeyWatcher {
     data: any;
     watcher?: TFnWatcher;
     key: string;
     utils: Utils;
     constructor(data: any, key: string, watcher?: TFnWatcher);
     watchData(data: any, key: string): void;
-}
-export declare type ComponentList<C> = {
-    dom: Element;
-    props: any;
-    scope: C;
-};
-export declare class Component<State = any, Props = any, Vm = any> extends Lifecycle<Vm> {
-    static scope?: Component<any, any, any>;
-    static _injectedProviders?: Map<string, Function>;
-    static _injectedComponents?: {
-        [name: string]: Function;
-    };
-    state?: State | any;
-    props?: Props | any;
-    $renderDom?: Element;
-    $globalContext?: any;
-    $vm?: Vm | any;
-    $template?: string;
-    $components?: {
-        [name: string]: Function;
-    };
-    $componentList?: ComponentList<Component<any, any, any>>[];
-    stateWatcher?: Watcher;
-    propsWatcher?: Watcher;
-    constructor();
-    $bootstrap(): void;
-    $beforeInit(): void;
-    $routeChange(lastRoute: string, newRoute: string): void;
-    $render(): void;
-    $reRender(): void;
-    $mountComponent(dom: Element, isFirstRender?: boolean): void;
-    $componentsConstructor(dom: Element): void;
-    $setState(newState: any): void;
-    $setProps(newProps: any): void;
-    $setGlobalContext(newGlobalContext: any): void;
-    getPropsValue(valueList: any[], value: any): void;
-    buildProps(prop: any): any;
-    buildComponentScope(ComponentClass: Function, props: any, dom: Element): Component<any, any, any>;
-    createInjector(ComponentClass: any): Service[];
-}
-export declare class Compile {
-    utils: Utils;
-    $vm: any;
-    $el: Element;
-    $fragment: DocumentFragment;
-    constructor(el: string | Element, vm: any, routerRenderDom?: Element);
-    init(): void;
-    compileElement(fragment: DocumentFragment): void;
-    recursiveDOM(childNodes: NodeListOf<Node & ChildNode>, fragment: DocumentFragment | Element): void;
-    compile(node: Element, fragment: DocumentFragment | Element): void;
-    node2Fragment(el: Element): DocumentFragment;
-    compileText(node: Element, exp: string): void;
-    eventHandler(node: Element, vm: any, exp: string, eventName: string): void;
-    isDirective(attr: string): boolean;
-    isEventDirective(eventName: string): boolean;
-    isElementNode(node: Element | string): boolean;
-    isRepeatNode(node: Element): boolean;
-    isIfNode(node: Element): boolean;
-    isTextNode(node: Element): boolean;
 }
 
 export declare class CompileUtilForRepeat {
@@ -178,7 +112,82 @@ export declare class CompileUtil {
     isIfNode(node: Element): boolean;
     isRepeatProp(node: Element): boolean;
 }
-declare class EsModule {
+export declare class Compile {
+    utils: Utils;
+    $vm: any;
+    $el: Element;
+    $fragment: DocumentFragment;
+    constructor(el: string | Element, vm: any, routerRenderDom?: Element);
+    init(): void;
+    compileElement(fragment: DocumentFragment): void;
+    recursiveDOM(childNodes: NodeListOf<Node & ChildNode>, fragment: DocumentFragment | Element): void;
+    compile(node: Element, fragment: DocumentFragment | Element): void;
+    node2Fragment(el: Element): DocumentFragment;
+    compileText(node: Element, exp: string): void;
+    eventHandler(node: Element, vm: any, exp: string, eventName: string): void;
+    isDirective(attr: string): boolean;
+    isEventDirective(eventName: string): boolean;
+    isElementNode(node: Element | string): boolean;
+    isRepeatNode(node: Element): boolean;
+    isIfNode(node: Element): boolean;
+    isTextNode(node: Element): boolean;
+}
+
+export declare abstract class Lifecycle<Vm = any> {
+    compileUtil?: CompileUtil;
+    utils?: Utils;
+    $location?: {
+        state?: () => TLocationState;
+        go?: (path: string, query?: any, params?: any) => void;
+    };
+    $vm?: Vm | any;
+    constructor();
+    $getLocationState(): TLocationState;
+    $locationGo(path: string, query?: any, params?: any): void;
+    $onInit(): void;
+    $beforeMount(): void;
+    $afterMount(): void;
+    $onDestory(): void;
+    $hasRender(): void;
+    $watchState(oldData?: any, newData?: any): void;
+}
+
+export declare class Component<State = any, Props = any, Vm = any> extends Lifecycle<Vm> {
+    static scope?: Component<any, any, any>;
+    static _injectedProviders?: Map<string, Function>;
+    static _injectedComponents?: {
+        [name: string]: Function;
+    };
+    state?: State | any;
+    props?: Props | any;
+    $renderDom?: Element;
+    $globalContext?: any;
+    $vm?: Vm | any;
+    $template?: string;
+    $components?: {
+        [name: string]: Function;
+    };
+    $componentList?: ComponentList<Component<any, any, any>>[];
+    stateWatcher?: Watcher;
+    propsWatcher?: Watcher;
+    constructor();
+    $bootstrap(): void;
+    $beforeInit(): void;
+    $routeChange(lastRoute: string, newRoute: string): void;
+    $render(): void;
+    $reRender(): void;
+    $mountComponent(dom: Element, isFirstRender?: boolean): void;
+    $componentsConstructor(dom: Element): void;
+    $setState(newState: any): void;
+    $setProps(newProps: any): void;
+    $setGlobalContext(newGlobalContext: any): void;
+    getPropsValue(valueList: any[], value: any): void;
+    buildProps(prop: any): any;
+    buildComponentScope(ComponentClass: Function, props: any, dom: Element): Component<any, any, any>;
+    createInjector(ComponentClass: any): Service[];
+}
+
+export declare class EsModule {
     utils?: Utils;
     $imports?: Function[];
     $components?: {
@@ -198,14 +207,13 @@ declare class EsModule {
     $buildComponents4Components(): void;
     $buildExports(): void;
 }
-declare class Easiest {
+export declare class Easiest {
     modalList: IMiddleware<Easiest>[];
     utils: Utils;
     $globalContext: any;
     rootDom: Element;
     $rootPath: string;
     $canRenderModule: boolean;
-    $esRouteMode: string;
     $routeDOMKey: string;
     $rootModule: EsModule;
     $components: {
@@ -222,7 +230,7 @@ declare class Easiest {
     createInjector(BootstrapComponent: any): Service[];
     replaceDom(component: Component, renderDOM: Element): Promise<any>;
 }
-export class Router {
+export declare class Router {
     routes: TRouter[];
     routesList: TRouter[];
     currentUrl: string;

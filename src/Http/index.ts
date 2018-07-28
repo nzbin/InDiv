@@ -1,8 +1,5 @@
-// import { IHttp } from '../types';
-
 import axios from 'axios';
 
-// class Http implements IHttp {
 class Http {
   public $get(url: string, params?: any): Promise<any> {
     return new Promise((resolve, reject) => {

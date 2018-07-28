@@ -1,11 +1,9 @@
-import { ICompile, IUtil, IPatchList } from '../types';
+import { IPatchList } from '../types';
 import VirtualDOM from '../VirtualDOM';
 import Utils from '../Utils';
 import { CompileUtil } from '../CompileUtils';
 
-// class Compile implements ICompile {
 class Compile {
-  // public utils: IUtil;
   public utils: Utils;
   public $vm: any;
   public $el: Element;

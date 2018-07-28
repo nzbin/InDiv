@@ -1,7 +1,7 @@
 {
   "name": "easiest",
-  "version": "1.1.5",
-  "description": "A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。",
+  "version": "1.2.0",
+  "description": "A minimal, blazing web mvvm framework.一个小的Web mvvm库。",
   "main": "build/index.js",
   "keywords": [
     "mvvm",
@@ -20,14 +20,10 @@
     "service"
   ],
   "scripts": {
-    "start": "&& parcel ./demo/index.html -d dist --open",
+    "start": "parcel ./demo/index.html -d dist --open",
     "start-ts": "parcel ./demo/index-ts.html -d dist --open",
-    "start-test": "parcel watch ./demo/index.html -d dist & nodemon app.js",
-    "start-test-ts": "parcel watch ./demo/index-ts.html -d dist & nodemon app.js",
-    "start-test-webpack-ts": "webpack --watch --mode=development & nodemon app.js",
-    "build": "rm -rf build && parcel build ./es/index.js -d build",
-    "build-webpack": "rm -rf build && webpack --watch --mode=development",
-    "pub-prod": "rm -rf build && npm run build && npm publish"
+    "build": "rm -rf build && parcel build ./src/index.ts --no-source-maps -d build && cp -r src/index.d.ts build",
+    "pub-prod": "npm run build && npm publish"
   },
   "repository": {
     "type": "git",
@@ -40,10 +36,7 @@
   },
   "homepage": "https://github.com/DimaLiLongJi/easiest#readme",
   "devDependencies": {
-    "awesome-typescript-loader": "^5.2.0",
     "babel-eslint": "^8.2.0",
-    "babel-loader": "^7.1.5",
-    "babel-preset-env": "^1.7.0",
     "ejs": "^2.6.1",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^11.1.1",
@@ -54,10 +47,7 @@
     "eslint-plugin-react": "^7.5.1",
     "express": "^4.16.3",
     "nodemon": "^1.17.5",
-    "parcel-bundler": "^1.8.1",
-    "url-loader": "^1.0.1",
-    "webpack": "^4.16.2",
-    "webpack-cli": "^3.1.0"
+    "parcel-bundler": "^1.8.1"
   },
   "dependencies": {
     "axios": "^0.18.0",

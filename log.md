@@ -63,3 +63,5 @@
 15. 2018-07-10 add rewrite `Component`, discard `Controllor`, and add `EsModule`
 
 16. 2018-07-14 finish singleton in `Service`
+
+17. 2018-07-28 support for ts

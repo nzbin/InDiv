@@ -1,8 +1,10 @@
 # easiest
 
 A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
+Now we support for typescript!
 
 ## demo
+  - `npm run start-ts`
   - `npm run start`
   - open `http://localhost:1234`
 
@@ -34,60 +36,67 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
       4. routes can assign children and use `children: Array`
       5. routes can set a path like `path: '/:id'`
 
-  - if u are using `Router`, u must need to `router.$setRootPath('/RootPath')` to set an root path. If using `RouterHash`, then dont't use to set an root path
+  - if u are using `Router`, u must need to `router.$setRootPath('/RootPath')` to set an root path.
   - `router.$routeChange = (old, next)` can listen route change
   - `router.$init(routes);` can init Array routes
   - if u want to watch routes changes, plz use `router.$routeChange=(old.new) => {}`
-  - now you can use two modes: `Router` or `RouterHash`
 
       1. use `this.$location.go((path: String, query: Object, params: Object)` to go to Path or `location.href`
       2. use `this.$location.state()` to get location states
       3. `Router` : `http://localhost:1234/R1`
-      4. `RouterHash`: `http://localhost:1234/#/R1`
 
-  ``` javascript
+  ``` typescript
+  type TRouter = {
+    path: string;
+    redirectTo?: string;
+    component?: string;
+    children?: TRouter[];
+  };
   const router = new Router();
-  // const router = new RouterHash();
-  const routes = [
-    {
-      path: '/',
-      redirectTo: '/R1',
-    },
-    {
-      path: '/R1',
-      component: 'R1',
-      children: [
-        {
-          path: '/C1',
-          component: 'R2',
-          children: [
-            {
-              path: '/D1',
-              redirectTo: '/R2',
-            },
-          ],
-        },
-        {
-          path: '/C2',
-          redirectTo: '/R2',
-        },
-      ],
-    },
-    {
-      path: '/R2',
-      component: 'R2',
-      children: [
-        {
-          path: '/:id',
-          component: 'R1',
-          children: [
-            {
-              path: '/D1',
-              redirectTo: '/R1/C1',
-            },
-          ],
-        },
-      ],
+  const routes: TRouter = [
+  {
+    path: '/',
+    // redirectTo: '/R1',
+    component: 'container-wrap',
+    children: [
+      {
+        path: '/R1',
+        component: 'R1',
+        // redirectTo: '/R2',
+        children: [
+          {
+            path: '/C1',
+            component: 'R2',
+            children: [
+              {
+                path: '/D1',
+                redirectTo: '/R2',
+              },
+            ],
+          },
+          {
+            path: '/C2',
+            redirectTo: '/R2',
+          },
+        ],
+      },
+      {
+        path: '/R2',
+        component: 'R2',
+        children: [
+          {
+            path: '/:id',
+            component: 'R1',
+            children: [
+              {
+                path: '/D1',
+                redirectTo: '/R1/C1',
+              },
+            ],
+          },
+        ],
+      },
+    ],
     },
   ];
   router.$setRootPath('/demo'); // so routes:Array => `/` is `/demo`
@@ -351,6 +360,6 @@ route => EsModule => component
 - [x] Virtual DOM
 - [x] Service => $http
 - [x] Route bug
-- [ ] ts (strongly typed さいこう)
+- [x] ts (strongly typed 赛高)
 
 

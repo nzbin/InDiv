@@ -1,12 +1,12 @@
-// import { Easiest, Component, Router, Utils, EsModule, Service, Http } from '../es';
-import { Easiest, Component, Router, Utils, EsModule, Service } from '../build';
+// import { Easiest, Component, Router, Utils, EsModule, Service } from '../src';
+import { Easiest, Component, Router, Utils, EsModule, Service } from '../build/index';
 
 class HeroSearchService extends Service {
   constructor() {
     super();
   }
 
-  test() {
+  public test() {
     console.log('HeroSearchService !!!000000000');
   }
 }
@@ -15,7 +15,7 @@ class HeroSearchService2 extends Service {
     super();
   }
 
-  test() {
+  public test(): void {
     console.log('HeroSearchService !!!2222');
   }
 }
@@ -24,13 +24,16 @@ class HeroSearchService1 extends Service {
     super();
   }
 
-  test() {
+  public test() {
     console.log('HeroSearchService !!!1111');
   }
 }
 
 class RouteChild extends Component {
-  constructor(heroSearchService2) {
+  public heroSearchService: HeroSearchService2;
+  constructor(
+    private heroSearchService2: HeroSearchService2,
+  ) {
     super();
     this.heroSearchService = heroSearchService2;
     this.heroSearchService.test();
@@ -49,7 +52,7 @@ class RouteChild extends Component {
     };
   }
 
-  $bootstrap() {
+  public $bootstrap() {
     this.$template = (`
       <div>
         <p>子路由的子组件::{{this.props.a}}</p>
@@ -58,11 +61,11 @@ class RouteChild extends Component {
     `);
   }
 
-  $hasRender() {
+  public $hasRender() {
     console.log('RouteChild: this.props.a', this.props.a);
   }
 }
-class PCChild extends Component {
+class PCChild extends Component<any, any> {
   constructor() {
     super();
     this.state = {
@@ -80,7 +83,7 @@ class PCChild extends Component {
     };
   }
 
-  $bootstrap() {
+  public $bootstrap() {
     this.$template = (`
       <div>
       子组件的子组件<br/>
@@ -90,12 +93,14 @@ class PCChild extends Component {
     `);
   }
 
-  $hasRender() {
+  public $hasRender() {
     console.log('PCChild: this.props.ax', this.props.ax);
   }
 }
 
 class PComponent extends Component {
+  private a: number;
+
   constructor() {
     super();
     this.state = {
@@ -116,7 +121,7 @@ class PComponent extends Component {
     };
   }
 
-  $bootstrap() {
+  public $bootstrap() {
     this.$template = (`
       <div>
         $globalContext in Component: <span>{{this.$globalContext.a}}</span>
@@ -127,10 +132,10 @@ class PComponent extends Component {
     `);
   }
 
-  $onInit() {
+  public $onInit() {
     console.log('props11', this.props);
   }
-  componentClick(e) {
+  public componentClick(e: Event) {
     alert('点击了组件');
     console.log('this.props.ax', this.props.ax);
     this.$setState({ b: 2 });
@@ -138,25 +143,27 @@ class PComponent extends Component {
     this.props.b(3);
     this.a = 1;
   }
-  sendProps(ax) {
+  public sendProps(ax: any) {
     this.$setProps({ ax: ax });
     this.props.b(ax);
     console.log('this', this);
   }
-  getProps(a) {
+  public getProps(a: any) {
     alert('子组件里 里面传出来了');
     this.$setState({ a: a });
     this.$setProps({ ax: a });
     this.props.b(a);
   }
-  $watchState(oldData, newData) {
+  public $watchState(oldData: string, newData: string) {
     console.log('oldData Component:', oldData);
     console.log('newData Component:', newData);
   }
 }
 
 class R1 extends Component {
-  constructor(heroSearchService) {
+  public heroSearchService: HeroSearchService;
+
+  constructor(heroSearchService: HeroSearchService) {
     super();
     this.heroSearchService = heroSearchService;
     this.heroSearchService.test();
@@ -169,7 +176,7 @@ class R1 extends Component {
         b: 'a',
         show: true,
       },
-      {
+          {
         z: 33333333333333,
         b: 'a',
         show: true,
@@ -180,7 +187,7 @@ class R1 extends Component {
         b: 'a',
         show: true,
       },
-      {
+          {
         z: 1111,
         b: 'a',
         show: false,
@@ -189,7 +196,7 @@ class R1 extends Component {
     };
   }
 
-  $bootstrap() {
+  public $bootstrap() {
     this.$template = (`
     <div>
       <pc-component ax="{this.state.a}" b="{this.getProps}"></pc-component>
@@ -208,29 +215,29 @@ class R1 extends Component {
     `);
   }
 
-  $onInit() {
+  public $onInit() {
     this.utils.setCookie('tutor', {
       name: 'gerry',
       github: 'https://github.com/DimaLiLongJi',
     }, { expires: 7 });
     console.log('is $this.$globalContext', this.$globalContext);
   }
-  $beforeMount() {
+  public $beforeMount() {
     const cookie = this.utils.getCookie('tutor');
     console.log('cookie is', cookie);
     console.log('is $beforeMount');
   }
-  $afterMount() {
+  public $afterMount() {
     // console.log('is $afterMount');
   }
-  $routeChange(lastRoute, newRoute) {
+  public $routeChange(lastRoute: string, newRoute: string) {
     console.log('R1 is $routeChange', lastRoute, newRoute);
   }
-  $watchState(oldData, newData) {
+  public $watchState(oldData: any, newData: any) {
     console.log('oldData Controller:', oldData);
     console.log('newData Controller:', newData);
   }
-  showAlert(a) {
+  public showAlert(a: any) {
     console.log('this.$globalContext R1', this.$globalContext);
     this.$setGlobalContext({ a: 3 });
     console.log('this.$globalContext R12', this.$globalContext);
@@ -249,7 +256,7 @@ class R1 extends Component {
     // });
     // console.log('state', this.state.f);
   }
-  getProps(a) {
+  public getProps(a: any) {
     // alert('里面传出来了');
     console.log('被触发了！', a);
     this.$setState({ a: a });
@@ -257,19 +264,21 @@ class R1 extends Component {
 }
 
 class R2 extends Component {
+  public heroSearchService1: HeroSearchService1;
+
   constructor(
-    heroSearchService1,
-    heroSearchService,
+    heroSearchService1: HeroSearchService1,
+    heroSearchService: HeroSearchService,
   ) {
     super();
     this.state = { a: 1 };
     this.heroSearchService1 = heroSearchService1;
     this.heroSearchService1.test();
   }
-  $bootstrap() {
+  public $bootstrap() {
     this.$template = (`
       <div>
-      <p es-on:click="this.showLocation()">R2 点击显示子路由跳转</p>
+      <p es-on:click="this.showLocation()">点击显示子路由跳转</p>
         <input es-model="this.state.a"/>
         <br/>
         <p es-on:click="this.showAlert()">点击显示this.state.a:{{this.state.a}}</p>
@@ -278,37 +287,37 @@ class R2 extends Component {
       </div>
     `);
   }
-  $onInit() {
+  public $onInit() {
     console.log('this.$vm', this.$vm);
     console.log('this.$globalContext R2', this.$globalContext);
     console.log('this.$location222', this.$location.state());
     // console.log('is $onInit');
   }
-  $beforeMount() {
+  public $beforeMount() {
     // console.log('is $beforeMount');
   }
-  $afterMount() {
+  public $afterMount() {
     // console.log('is $afterMount');
   }
-  $hasRender() {
+  public $hasRender() {
     console.log('！！father: this.state.a', this.state.a);
   }
-  $routeChange(lastRoute, newRoute) {
+  public $routeChange(lastRoute: string, newRoute: string) {
     console.log('R2 is $routeChange', lastRoute, newRoute);
   }
-  $watchState(oldData, newData) {
+  public $watchState(oldData: any, newData: any) {
     console.log('oldData Controller:', oldData);
     console.log('newData Controller:', newData);
   }
-  showAlert() {
+  public showAlert() {
     console.log('this.state.a', this.state.a);
     // alert('我错了 点下控制台看看吧');
     // this.$setState(() => ({ a: 2 }));
   }
-  bindChange(a) {
+  public bindChange(a: any) {
     console.log('aaa', a);
   }
-  showLocation() {
+  public showLocation() {
     this.$location.go('/R1/C1/D1', { b: '1' });
     console.log('this.$location', this.$location.state());
   }
@@ -322,7 +331,7 @@ class Container extends Component {
     };
   }
 
-  $bootstrap() {
+  public $bootstrap() {
     this.$template = (`
       <div>
         <p es-on:click="this.go()">container: {{this.state.a}}</p>
@@ -332,11 +341,11 @@ class Container extends Component {
     `);
   }
 
-  $afterMount() {
+  public $afterMount() {
     // this.$location.go('/R1', { b: '1' });
   }
 
-  go() {
+  public go() {
     this.$location.go('/R1', { b: '1' });
   }
 }
@@ -346,7 +355,7 @@ class M2 extends EsModule {
     super();
   }
 
-  $declarations() {
+  public $declarations(): void {
     this.$components = {
       'R2': R2,
       'route-child': RouteChild,
@@ -368,7 +377,7 @@ class M1 extends EsModule {
     super();
   }
 
-  $declarations() {
+  public $declarations() {
     this.$imports = [
       M2,
     ];
@@ -436,8 +445,8 @@ const routes = [
 router.$setRootPath('/demo');
 // router.$setRootPath('/');
 router.$init(routes);
-router.$routeChange = function (old, next) {
-  console.log('$routeChange 3', old, next);
+router.$routeChange = function (old: string, next: string) {
+  console.log('$routeChange', old, next);
 };
 
 const easiest = new Easiest();

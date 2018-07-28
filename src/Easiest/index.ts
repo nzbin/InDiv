@@ -1,6 +1,24 @@
-import Utils from './Utils';
+import { IMiddleware, IEsModule, EsRouteObject } from '../types';
+
+import Utils from '../Utils';
+
+import Component from '../Component';
 
 class Easiest {
+  public modalList: IMiddleware<Easiest>[];
+  public utils: Utils;
+  public $globalContext: any;
+  public rootDom: Element;
+  public $rootPath: string;
+  public $canRenderModule: boolean;
+  public $routeDOMKey: string;
+  public $rootModule: IEsModule;
+  public $components: {
+    [name: string]: Function;
+  }
+  public $esRouteObject?: EsRouteObject;
+
+
   constructor() {
     this.modalList = [];
     this.utils = new Utils();
@@ -8,19 +26,19 @@ class Easiest {
     this.rootDom = document.querySelector('#root');
     this.$rootPath = '/';
     this.$canRenderModule = true;
-    this.$esRouteMode = null;
     this.$routeDOMKey = 'router-render';
 
     this.$rootModule = null;
+    this.$esRouteObject = null;
   }
 
-  $use(modal) {
+  public $use(modal: IMiddleware<Easiest>): number {
     modal.$bootstrap(this);
     this.modalList.push(modal);
     return this.modalList.findIndex(md => this.utils.isEqual(md, modal));
   }
 
-  $setRootPath(rootPath) {
+  public $setRootPath(rootPath: string): void {
     if (rootPath && typeof rootPath === 'string') {
       this.$rootPath = rootPath;
     } else {
@@ -28,16 +46,16 @@ class Easiest {
     }
   }
 
-  $bootstrapModule(Esmodule) {
+  public $bootstrapModule(Esmodule: Function): void {
     if (!Esmodule) {
       console.error('must send a root module');
       return;
     }
-    this.$rootModule = new Esmodule();
+    this.$rootModule = new (Esmodule as any)();
     this.$components = Object.assign({}, this.$rootModule.$components);
   }
 
-  $init() {
+  public $init(): void {
     if (!this.$rootModule) {
       console.error('must use $bootstrapModule to declare a root EsModule before $init');
       return;
@@ -45,18 +63,18 @@ class Easiest {
     if (this.$canRenderModule) this.$renderModuleBootstrap();
   }
 
-  $renderModuleBootstrap() {
+  public $renderModuleBootstrap(): void {
     if (!this.$rootModule.$bootstrap) {
       console.error('need $bootstrap for render Module Bootstrap');
       return;
     }
-    const Component = this.$rootModule.$bootstrap;
-    this.$renderComponent(Component, this.rootDom);
+    const BootstrapComponent = this.$rootModule.$bootstrap;
+    this.$renderComponent(BootstrapComponent, this.rootDom);
   }
 
-  $renderComponent(Component, renderDOM) {
-    const args = this.createInjector(Component);
-    const component = Reflect.construct(Component, args);
+  public $renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any> {
+    const args = this.createInjector(BootstrapComponent);
+    const component: Component = Reflect.construct((BootstrapComponent as any), args);
     component.$vm = this;
     component.$components = this.$rootModule.$components;
     if (component.$beforeInit) component.$beforeInit();
@@ -78,21 +96,22 @@ class Easiest {
     }
   }
 
-  createInjector(Component) {
+  public createInjector(BootstrapComponent: any): Function[] {
     // const DELEGATE_CTOR = /^function\s+\S+\(\)\s*{[\s\S]+\.apply\(this,\s*arguments\)/;
     // const INHERITED_CLASS = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{/;
     // const INHERITED_CLASS_WITH_CTOR = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{[\s\S]*constructor\s*\(/;
     const CLASS_ARGUS = /^function\s+[^\(]*\(\s*([^\)]*)\)/m;
-    const argList = Component.toString().match(CLASS_ARGUS)[1].replace(/ /g, '').split(',');
-    let args = [];
-    argList.forEach(arg => {
-      const Service = Component._injectedProviders.find(service => service.constructor.name === arg) ? Component._injectedProviders.find(service => service.constructor.name === arg) : this.$rootModule.$providers.find(service => service.constructor.name === arg);
-      if (Service) args.push(Service);
+    const argList = BootstrapComponent.toString().match(CLASS_ARGUS)[1].replace(/ /g, '').split(',');
+    const args: Function[] = [];
+    argList.forEach((arg: string) => {
+      const argu = `${arg.charAt(0).toUpperCase()}${arg.slice(1)}`;
+      const service = BootstrapComponent._injectedProviders.has(argu) ? BootstrapComponent._injectedProviders.get(argu) : this.$rootModule.$providers.find((s: Function) => s.constructor.name === argu);
+      if (service) args.push(service);
     });
     return args;
   }
 
-  replaceDom(component, renderDOM) {
+  public replaceDom(component: Component, renderDOM: Element): Promise<any> {
     component.$renderDom = renderDOM;
     if (component.$render) {
       component.$render();

@@ -1,9 +1,18 @@
+declare global {
+  interface Element {
+    value?: any;
+  }
+}
+
 export class CompileUtilForRepeat {
-  constructor(fragment) {
+  [index: string]: any;
+  public $fragment?: Element | DocumentFragment;
+
+  constructor(fragment?: Element | DocumentFragment) {
     this.$fragment = fragment;
   }
 
-  _getVMVal(vm, exp) {
+  public _getVMVal(vm: any, exp: string): any {
     const valueList = exp.replace('()', '').split('.');
     let value = vm;
     valueList.forEach(v => {
@@ -13,8 +22,8 @@ export class CompileUtilForRepeat {
     return value;
   }
 
-  _getVMRepeatVal(val, exp, key) {
-    let value;
+  public _getVMRepeatVal(val: any, exp: string, key: string): any {
+    let value: any;
     const valueList = exp.replace('()', '').split('.');
     valueList.forEach((v, index) => {
       if (v === key && index === 0) {
@@ -26,7 +35,7 @@ export class CompileUtilForRepeat {
     return value;
   }
 
-  bind(node, val, key, dir, exp, index, vm, watchData) {
+  public bind(node: Element, val?: any, key?: string, dir?: string, exp?: string, index?: number, vm?: any, watchData?: any): void {
     let value;
     if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
       value = this._getVMRepeatVal(val, exp, key);
@@ -36,17 +45,17 @@ export class CompileUtilForRepeat {
     const watchValue = this._getVMVal(vm, watchData);
     if (!node.hasChildNodes()) this.templateUpdater(node, val, key, vm);
     // this.templateUpdater(node, val, key, vm);
-    const updaterFn = this[`${dir}Updater`];
+    const updaterFn: any = this[`${dir}Updater`];
     switch (dir) {
     case 'model':
-      updaterFn && updaterFn.call(this, node, value, exp, key, index, watchValue, watchData, vm);
+      if (updaterFn) (updaterFn as Function).call(this, node, value, exp, key, index, watchValue, watchData, vm);
       break;
     default:
-      updaterFn && updaterFn.call(this, node, value);
+      if (updaterFn) (updaterFn as Function).call(this, node, value);
     }
   }
 
-  templateUpdater(node, val, key, vm) {
+  public templateUpdater(node: Element, val?: any, key?: string, vm?: any): void {
     const text = node.textContent;
     const reg = /\{\{(.*)\}\}/g;
     if (reg.test(text)) {
@@ -61,42 +70,38 @@ export class CompileUtilForRepeat {
     }
   }
 
-  textUpdater(node, value) {
+  public textUpdater(node: Element, value: any): void {
     node.textContent = typeof value === 'undefined' ? '' : value;
   }
 
-  htmlUpdater(node, value) {
+  public htmlUpdater(node: Element, value: any): void {
     node.innerHTML = typeof value === 'undefined' ? '' : value;
   }
 
-  ifUpdater(node, value) {
+  public ifUpdater(node: Element, value: any): void {
     if (value) this.$fragment.appendChild(node);
   }
 
-  classUpdater(node, value, oldValue) {
+  public classUpdater(node: Element, value: any, oldValue: any): void {
     let className = node.className;
     className = className.replace(oldValue, '').replace(/\s$/, '');
     const space = className && String(value) ? ' ' : '';
     node.className = className + space + value;
   }
 
-  modelUpdater(node, value, exp, key, index, watchValue, watchData, vm) {
+  public modelUpdater(node: Element, value: any, exp: string, key: string, index: number, watchValue: any, watchData: any, vm: any): void {
     node.value = typeof value === 'undefined' ? '' : value;
     const val = exp.replace(`${key}.`, '');
-    const fn = function (event) {
+    const fn = function (event: Event) {
       event.preventDefault();
-      if (event.target.value === watchValue[index][val]) return;
-      watchValue[index][val] = event.target.value;
+      if ((event.target as HTMLInputElement).value === watchValue[index][val]) return;
+      watchValue[index][val] = (event.target as HTMLInputElement).value;
     };
-    try {
-      node.addEventListener('input', fn, false);
-    } catch (err) {
-      node.attachEvent('oninput', fn);
-    }
+    node.addEventListener('input', fn, false);
   }
 
-  eventHandler(node, vm, exp, event, key, val) {
-    const eventType = event.split(':')[1];
+  public eventHandler(node: Element, vm: any, exp: string, eventName: string, key: string, val: any): void {
+    const eventType = eventName.split(':')[1];
     const fnList = exp.replace(/\(.*\)/, '').split('.');
     const args = exp.match(/\((.*)\)/)[1].replace(/ /g, '').split(',');
     let fn = vm;
@@ -104,8 +109,8 @@ export class CompileUtilForRepeat {
       if (f === 'this') return;
       fn = fn[f];
     });
-    const func = (event) => {
-      let argsList = [];
+    const func = (event: Event): any => {
+      const argsList: any[] = [];
       args.forEach(arg => {
         if (arg === '') return false;
         if (arg === '$event') argsList.push(event);
@@ -122,11 +127,14 @@ export class CompileUtilForRepeat {
 }
 
 export class CompileUtil {
-  constructor(fragment) {
+  [index: string]: any;
+  public $fragment?: Element | DocumentFragment;
+
+  constructor(fragment?: Element | DocumentFragment) {
     this.$fragment = fragment;
   }
 
-  _getVMVal(vm, exp) {
+  public _getVMVal(vm: any, exp: string): any {
     const valueList = exp.replace('()', '').split('.');
     let value = vm;
     valueList.forEach((v, index) => {
@@ -136,16 +144,16 @@ export class CompileUtil {
     return value;
   }
 
-  _getVMRepeatVal(vm, exp) {
+  public _getVMRepeatVal(vm: any, exp: string): void {
     const vlList = exp.split(' ');
     const value = this._getVMVal(vm, vlList[3]);
     return value;
   }
 
-  _setVMVal(vm, exp, value) {
-    var val = vm;
-    exp = exp.split('.');
-    exp.forEach((k, i) => {
+  public _setVMVal(vm: any, exp: string, value: any): void {
+    let val = vm;
+    const expList = exp.split('.');
+    expList.forEach((k, i) => {
       if (i < exp.length - 1) {
         val = val[k];
       } else {
@@ -154,45 +162,45 @@ export class CompileUtil {
     });
   }
 
-  bind(node, vm, exp, dir) {
+  public bind(node: Element, vm: any, exp: string, dir: string): void {
     const updaterFn = this[`${dir}Updater`];
     const isRepeatNode = this.isRepeatNode(node);
     if (isRepeatNode) { // compile repeatNode's attributes
       switch (dir) {
       case 'repeat':
-        updaterFn && updaterFn.call(this, node, this._getVMRepeatVal(vm, exp), exp, vm);
+        if (updaterFn) (updaterFn as Function).call(this, node, this._getVMRepeatVal(vm, exp), exp, vm);
         break;
       }
     } else { // compile unrepeatNode's attributes
       switch (dir) {
       case 'model':
-        updaterFn && updaterFn.call(this, node, this._getVMVal(vm, exp), exp, vm);
+        if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp), exp, vm);
         break;
       case 'text':
-        updaterFn && updaterFn.call(this, node, this._getVMVal(vm, exp));
+        if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp));
         break;
       case 'if':
-        updaterFn && updaterFn.call(this, node, this._getVMVal(vm, exp), exp, vm);
+        if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp), exp, vm);
         break;
       default:
-        updaterFn && updaterFn.call(this, node, this._getVMVal(vm, exp));
+        if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp));
       }
     }
   }
 
-  templateUpdater(node, vm, exp) {
+  public templateUpdater(node: any, vm: any, exp: string): void {
     node.textContent = node.textContent.replace(/(\{\{.*\}\})/g, this._getVMVal(vm, exp));
   }
 
-  textUpdater(node, value) {
+  public textUpdater(node: Element, value: any): void {
     node.textContent = typeof value === 'undefined' ? '' : value;
   }
 
-  htmlUpdater(node, value) {
+  public htmlUpdater(node: Element, value: any): void {
     node.innerHTML = typeof value === 'undefined' ? '' : value;
   }
 
-  ifUpdater(node, value) {
+  public ifUpdater(node: Element, value: any): void {
     if (!value && this.$fragment.contains(node)) {
       this.$fragment.removeChild(node);
     } else {
@@ -200,38 +208,34 @@ export class CompileUtil {
     }
   }
 
-  classUpdater(node, value, oldValue) {
+  public classUpdater(node: Element, value: any, oldValue: any): void {
     let className = node.className;
     className = className.replace(oldValue, '').replace(/\s$/, '');
     const space = className && String(value) ? ' ' : '';
     node.className = className + space + value;
   }
 
-  modelUpdater(node, value, exp, vm) {
+  public modelUpdater(node: Element, value: any, exp: string, vm: any): void {
     node.value = typeof value === 'undefined' ? '' : value;
     const val = exp.replace(/(this.state.)|(this.props)/, '');
-    const fn = function (event) {
+    const fn = function (event: Event) {
       event.preventDefault();
-      if (/(this.state.).*/.test(exp)) vm.state[val] = event.target.value;
-      if (/(this.props.).*/.test(exp)) vm.props[val] = event.target.value;
+      if (/(this.state.).*/.test(exp)) vm.state[val] = (event.target as HTMLInputElement).value;
+      if (/(this.props.).*/.test(exp)) vm.props[val] = (event.target as HTMLInputElement).value;
     };
-    try {
-      node.addEventListener('input', fn, false);
-    } catch (err) {
-      node.attachEvent('oninput', fn);
-    }
+    node.addEventListener('input', fn, false);
   }
 
-  repeatUpdater(node, value, expFather, vm) {
+  public repeatUpdater(node: Element, value: any, expFather: string, vm: any): void {
     const key = expFather.split(' ')[1];
     const watchData = expFather.split(' ')[3];
-    value.forEach((val, index) => {
+    value.forEach((val: any, index: number) => {
       const newElement = node.cloneNode(true);
-      const nodeAttrs = newElement.attributes;
+      const nodeAttrs = (newElement as Element).attributes;
       const text = newElement.textContent;
       const reg = /\{\{(.*)\}\}/g;
       if (reg.test(text) && text.indexOf(`{{${key}`) >= 0 && !newElement.hasChildNodes()) {
-        new CompileUtilForRepeat(this.$fragment).templateUpdater(newElement, val, key, vm);
+        new CompileUtilForRepeat(this.$fragment).templateUpdater(newElement as Element, val, key, vm);
       }
       if (nodeAttrs) {
         Array.from(nodeAttrs).forEach(attr => {
@@ -240,9 +244,9 @@ export class CompileUtil {
             const dir = attrName.substring(3);
             const exp = attr.value;
             if (this.isEventDirective(dir)) {
-              new CompileUtilForRepeat(this.$fragment).eventHandler(newElement, vm, exp, dir, key, val);
+              new CompileUtilForRepeat(this.$fragment).eventHandler(newElement as Element, vm, exp, dir, key, val);
             } else {
-              new CompileUtilForRepeat(this.$fragment).bind(newElement, val, key, dir, exp, index, vm, watchData);
+              new CompileUtilForRepeat(this.$fragment).bind(newElement as Element, val, key, dir, exp, index, vm, watchData);
             }
           }
         });
@@ -250,14 +254,14 @@ export class CompileUtil {
       // if (!this.isIfNode(node)) this.$fragment.appendChild(newElement);
       if (!this.isIfNode(node)) this.$fragment.insertBefore(newElement, node);
       // if (this.$fragment.contains(node)) this.$fragment.removeChild(node);
-      if (newElement.hasChildNodes()) this.repeatChildrenUpdater(newElement, val, expFather, index, vm);
+      if (newElement.hasChildNodes()) this.repeatChildrenUpdater((newElement as Element), val, expFather, index, vm);
     });
   }
 
-  repeatChildrenUpdater(node, value, expFather, index, vm) {
+  public repeatChildrenUpdater(node: Element, value: any, expFather: string, index: number, vm: any): void {
     const key = expFather.split(' ')[1];
     const watchData = expFather.split(' ')[3];
-    Array.from(node.childNodes).forEach(child => {
+    Array.from(node.childNodes).forEach((child: Element) => {
       if (this.isRepeatProp(child)) child.setAttribute(`_prop-${key}`, JSON.stringify(value));
 
       const nodeAttrs = child.attributes;
@@ -303,19 +307,19 @@ export class CompileUtil {
     });
   }
 
-  isDirective(attr) {
+  public isDirective(attr: string): boolean {
     return attr.indexOf('es-') === 0;
   }
 
-  isEventDirective(event) {
+  public isEventDirective(event: string): boolean {
     return event.indexOf('on') === 0;
   }
 
-  isElementNode(node) {
+  public isElementNode(node: Element): boolean {
     return node.nodeType === 1;
   }
 
-  isRepeatNode(node) {
+  public isRepeatNode(node: Element): boolean {
     const nodeAttrs = node.attributes;
     let result = false;
     if (nodeAttrs) {
@@ -327,7 +331,7 @@ export class CompileUtil {
     return result;
   }
 
-  isIfNode(node) {
+  public isIfNode(node: Element): boolean {
     const nodeAttrs = node.attributes;
     let result = false;
     if (nodeAttrs) {
@@ -339,10 +343,10 @@ export class CompileUtil {
     return result;
   }
 
-  isRepeatProp(node) {
+  public isRepeatProp(node: Element): boolean {
     const nodeAttrs = node.attributes;
-    let result = false;
-    if (nodeAttrs) return Array.from(nodeAttrs).find(attr => /^\{(.+)\}$/.test(attr.value));
+    const result = false;
+    if (nodeAttrs) return !!(Array.from(nodeAttrs).find(attr => /^\{(.+)\}$/.test(attr.value)));
     return result;
   }
 }

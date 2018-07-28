@@ -5,7 +5,8 @@ declare global {
   }
 }
 
-export class CompileUtilForRepeat implements ICompileUtilForRepeat {
+// export class CompileUtilForRepeat implements ICompileUtilForRepeat {
+export class CompileUtilForRepeat {
   [index: string]: any;
   public $fragment?: Element | DocumentFragment;
 

@@ -2,7 +2,8 @@ import { IUtil, IEsModule, IService } from '../types';
 
 import Utils from '../Utils';
 
-class EsModule implements IEsModule {
+class EsModule {
+// class EsModule implements IEsModule {
   public utils?: IUtil;
   public $imports?: Function[];
   public $components?: {

@@ -10,7 +10,8 @@ export type ComponentList<C> = {
   scope: C;
 }
 
-export default abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<Vm> implements IComponent<State, Props, Vm> {
+// export default abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<Vm> implements IComponent<State, Props, Vm> {
+export default abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<Vm> {
   public static scope?: IComponent<any, any, any>;
   public static _injectedProviders?: Map<string, Function>;
   public static _injectedComponents?: {

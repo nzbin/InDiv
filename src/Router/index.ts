@@ -4,7 +4,8 @@ import Utils from '../Utils';
 import KeyWatcher from '../KeyWatcher';
 import Component from '../Component';
 
-export default class Router implements IRouter {
+// export default class Router implements IRouter {
+export default class Router {
   public routes: TRouter[];
   public routesList: TRouter[];
   public currentUrl: string;
@@ -99,9 +100,7 @@ export default class Router implements IRouter {
         query: {},
         params: {},
       };
-      this.watcher = new KeyWatcher(this.$vm, '$esRouteObject', (o, n) => {
-        this.refresh();
-      });
+      this.watcher = new KeyWatcher(this.$vm, '$esRouteObject', this.refresh.bind(this));
     }
     this.currentUrl = this.$vm.$esRouteObject.path || '/';
     this.routesList = [];

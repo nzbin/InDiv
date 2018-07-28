@@ -3,7 +3,8 @@ import { ILifecycle, IUtil, ILocationState } from '../types';
 import Utils from '../Utils';
 import { CompileUtil } from '../CompileUtils';
 
-abstract class Lifecycle<Vm = any> implements ILifecycle {
+// abstract class Lifecycle<Vm = any> implements ILifecycle {
+abstract class Lifecycle<Vm = any> {
   public compileUtil?: CompileUtil;
   public utils?: IUtil;
   public $location?: {

@@ -2,7 +2,8 @@ import { IService, IHttp } from '../types';
 
 import Http from '../Http';
 
-class Service implements IService {
+// class Service implements IService {
+class Service {
   public static isSingletonMode?: boolean;
   public static instance?: IService = null;
 

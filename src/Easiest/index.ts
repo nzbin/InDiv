@@ -2,7 +2,8 @@ import { IEasiest, IMiddleware, IEsModule, EsRouteObject, IComponent, IService }
 
 import Utils from '../Utils';
 
-class Easiest implements IEasiest {
+// class Easiest implements IEasiest {
+class Easiest {
   public modalList: IMiddleware<IEasiest>[];
   public utils: Utils;
   public $globalContext: any;

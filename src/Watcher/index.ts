@@ -1,14 +1,15 @@
-import { IWatcher, IFnWatcher, TFnRender } from '../types';
+import { IWatcher, TFnWatcher, TFnRender } from '../types';
 import Utils from '../Utils';
-class Watcher implements IWatcher {
+// class Watcher implements IWatcher {
+class Watcher {
   public data: any;
-  public watcher: IFnWatcher;
+  public watcher: TFnWatcher;
   public render: TFnRender;
   public utils: Utils;
 
   constructor(
     data: any,
-    watcher?: IFnWatcher,
+    watcher?: TFnWatcher,
     render?: TFnRender,
   ) {
     this.data = data;

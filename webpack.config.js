@@ -2,8 +2,8 @@ const path = require('path');
 
 module.exports = (env) => {
   const entry = {
-    'index': './src/index.ts',
-    'test-ts': './demo/index.ts',
+    index: './src/index.ts',
+    // 'test-ts': './demo/index.ts',
   };
 
   const output = {
@@ -20,21 +20,19 @@ module.exports = (env) => {
 
   const module = {
     rules: [
-    //   {
-    //   test: [
-    //     /\.js$/, /\.jsx$/,
-    //   ],
-    //   exclude: [path.resolve(__dirname, 'node_modules')],
-    //   use: [{
-    //     loader: 'babel-loader',
-    //     options: {
-    //       presets: [
-    //         'env', 'react', 'stage-1', 'stage-3',
-    //       ],
-    //     },
-    //   },
-    //   ],
-    // },
+      {
+        test: [
+          /\.js$/, /\.jsx$/,
+        ],
+        exclude: [path.resolve(__dirname, 'node_modules')],
+        use: [{
+          loader: 'babel-loader',
+          options: {
+            presets: ['env'],
+          },
+        },
+        ],
+      },
       {
         test: [
           /\.ts$/, /\.tsx$/,
@@ -44,9 +42,7 @@ module.exports = (env) => {
           {
             loader: 'babel-loader',
             options: {
-              presets: [
-                'env',
-              ],
+              presets: ['env'],
             },
           },
           {

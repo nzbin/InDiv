@@ -15,13 +15,13 @@
     "inlineSourceMap": true,
     "noEmitHelpers": false,
     "lib": ["dom", "es2015.promise", "es5", "es2017"],
-    "allowJs": false,
-    // "allowJs": true,
-    "declaration": true
+    // "allowJs": false,
+    "allowJs": true,
+    // "declaration": true
   },
-  "include": [
-    "src/**/*"
-  ],
+  // "include": [
+  //   "src/**/*"
+  // ],
   "exclude": [
     "node_modules",
     "build",

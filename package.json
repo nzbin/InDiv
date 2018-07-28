@@ -3,6 +3,11 @@
   "version": "1.2.0",
   "description": "A minimal, blazing web mvvm framework.一个小的Web mvvm库。",
   "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "files": [
+    "build",
+    "src"
+  ],
   "keywords": [
     "mvvm",
     "model",

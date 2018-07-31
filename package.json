@@ -59,6 +59,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
-    "easier-cookie": "^1.0.11"
+    "easier-cookie": "^1.1.0",
+    "reflect-metadata": "^0.1.12"
   }
 }

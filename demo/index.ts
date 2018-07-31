@@ -1,5 +1,5 @@
-// import { Easiest, Component, Router, Utils, EsModule, Service } from '../src';
-import { Easiest, Component, Router, Utils, EsModule, Service } from '../build/index';
+import { Easiest, Component, Router, Utils, EsModule, Service, Injectable } from '../src';
+// import { Easiest, Component, Router, Utils, EsModule, Service } from '../build/index';
 
 class HeroSearchService extends Service {
   constructor() {
@@ -160,6 +160,7 @@ class PComponent extends Component {
   }
 }
 
+@Injectable
 class R1 extends Component {
   public heroSearchService: HeroSearchService;
 

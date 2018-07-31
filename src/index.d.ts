@@ -255,3 +255,5 @@ export declare class Router {
     generalDistributeRoutes(): void;
     instantiateComponent(FindComponent: Function, renderDom: Element): Promise<any>;
 }
+
+export declare function Injectable(_constructor: Function): void;

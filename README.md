@@ -4,8 +4,8 @@ A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
 Now we support for typescript!
 
 ## demo
-  - `npm run start-ts`
   - `npm run start`
+  - `npm run start-js`
   - open `http://localhost:1234`
 
 ## Basic Usage

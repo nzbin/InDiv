@@ -1,11 +1,11 @@
 import { IService } from '../types';
+
 import "reflect-metadata";
 
 export function Injectable(_constructor: Function): void {
     // 通过反射机制，获取参数类型列表    
     const paramsTypes: Array<Function> = Reflect.getMetadata('design:paramtypes', _constructor);
     console.log('paramsTypesparamsTypes', paramsTypes);
-    console.log('_constructor_constructor', (_constructor as any)._injectedProviders);
     if (paramsTypes.length) {
         paramsTypes.forEach((v, i) => {
             if (v === _constructor) {
@@ -23,27 +23,26 @@ export function Injectable(_constructor: Function): void {
     console.log('_needInjectedClass', (_constructor as any)._needInjectedClass);
 }
 
-export function Injector(_constructor: Function, module: any): any {
+export function injector(_constructor: Function, _module: any): any[] {
     const args: IService[] = [];
-    if ((_constructor as any)._needInjectedClass) {
-        (_constructor as any)._needInjectedClass.forEach((arg: string) => {
-            const service = (_constructor as any)._injectedProviders.has(arg) ? (_constructor as any)._injectedProviders.get(arg) : module.$providers.find((service: IService) => service.constructor.name === arg);
-            if (service) args.push(service);
-        });
-    } else {
+    let _service = null;
+    if ((_constructor as any)._needInjectedClass) (_constructor as any)._needInjectedClass.forEach((arg: string) => _service = (_constructor as any)._injectedProviders.has(arg) ? (_constructor as any)._injectedProviders.get(arg) : _module.$providers.find((service: IService) => service.constructor.name === arg));
+    if (!(_constructor as any)._needInjectedClass) {
         const CLASS_ARGUS = /^function\s+[^\(]*\(\s*([^\)]*)\)/m;
         const argList = _constructor.toString().match(CLASS_ARGUS)[1].replace(/ /g, '').split(',');
-        // const args: IService[] = [];
         argList.forEach((arg: string) => {
             const argu = `${arg.charAt(0).toUpperCase()}${arg.slice(1)}`;
-            const service = (_constructor as any)._injectedProviders.has(argu) ? (_constructor as any)._injectedProviders.get(argu) : module.$providers.find((service: IService) => service.constructor.name === argu);
-            if (service) args.push(service);
+            _service = (_constructor as any)._injectedProviders.has(argu) ? (_constructor as any)._injectedProviders.get(argu) : _module.$providers.find((service: IService) => service.constructor.name === argu);
         });
-        // return args;
     }
+    if (_service) args.push(factoryCreator(_service, _module));
     return args;
 }
 
-export function FactoryCreator(_constructor: Function, injector: any[]) {
-    
+export function factoryCreator(_constructor: Function, _module: any): any {
+    const args = injector(_constructor, _module);
+    let factory;
+    if ((_constructor as any).isSingletonMode) factory = (_constructor as any).getInstance(args)
+    factory = Reflect.construct(_constructor, args);
+    return factory;
 }

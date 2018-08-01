@@ -25,8 +25,8 @@
     "service"
   ],
   "scripts": {
-    "start": "parcel ./demo/index.html -d dist --open",
-    "start-ts": "parcel ./demo/index-ts.html -d dist --open",
+    "start": "parcel ./demo/index-ts.html -d dist --open",
+    "start-ts": "parcel ./demo/index.html -d dist --open",
     "build": "rm -rf build && parcel build ./src/index.ts --no-source-maps -d build && cp -r src/index.d.ts build",
     "pub-prod": "npm run build && npm publish"
   },

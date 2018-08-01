@@ -1,6 +1,7 @@
 import { IService } from '../types';
 
 import Utils from '../Utils';
+import { factoryCreator } from '../Injectable';
 
 class EsModule {
   public utils?: Utils;
@@ -31,6 +32,7 @@ class EsModule {
 
     this.$declarations();
     this.$buildImports();
+    this.$buildProviders4Services();
     this.$buildComponents4Components();
     this.$buildProviders4Components();
     this.$buildExports();
@@ -54,10 +56,29 @@ class EsModule {
     });
   }
 
+  public $buildProviders4Services(): void {
+    if (!this.$providers) return;
+    this.$providers.forEach((service: any) => {
+      // this.singletonList.set(`${service.name.charAt(0).toUpperCase()}${service.name.slice(1)}`, service.getInstance());
+      this.singletonList.set(`${service.name.charAt(0).toUpperCase()}${service.name.slice(1)}`, service);
+    });
+    for (const name in this.$providers) {
+      const service: any = this.$providers[name];
+      if (service._injectedProviders) {
+        this.singletonList.forEach((value, key) => {
+          if (!service._injectedProviders.has(key)) service._injectedProviders.set(key, value);
+        });
+      } else {
+        service._injectedProviders = this.singletonList;
+      }
+    }
+  }
+
   public $buildProviders4Components(): void {
     if (!this.$providers) return;
     this.$providers.forEach((service: any) => {
-      this.singletonList.set(`${service.name.charAt(0).toUpperCase()}${service.name.slice(1)}`, service.getInstance());
+      // this.singletonList.set(`${service.name.charAt(0).toUpperCase()}${service.name.slice(1)}`, service.getInstance());
+      this.singletonList.set(`${service.name.charAt(0).toUpperCase()}${service.name.slice(1)}`, service);
     });
     for (const name in this.$components) {
       const component: any = this.$components[name];

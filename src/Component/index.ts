@@ -3,7 +3,7 @@ import { IService } from '../types';
 import Lifecycle from '../Lifecycle';
 import Compile from '../Compile';
 import Watcher from '../Watcher';
-import { Injector } from '../Injectable';
+import { factoryCreator } from '../Injectable';
 
 export type ComponentList<C> = {
   dom: Element;
@@ -213,8 +213,11 @@ export default abstract class Component<State = any, Props = any, Vm = any> exte
 
   public buildComponentScope(ComponentClass: Function, props: any, dom: Element): Component<any, any, any> {
     // const args = this.createInjector(ComponentClass);
-    const args = Injector(ComponentClass, this.$vm.$rootModule);
-    const _component: Component<any, any, any> = Reflect.construct(ComponentClass, args);
+    // const args = Injector(ComponentClass, this.$vm.$rootModule);
+
+    // const _component: Component<any, any, any> = Reflect.construct(ComponentClass, args);
+    const _component: any = factoryCreator(ComponentClass, this.$vm.$rootModule);
+
     _component.props = props;
     _component.$renderDom = dom;
     _component.$components = this.$components;

@@ -18,7 +18,7 @@ export declare type ComponentList<C> = {
 };
 
 export interface IMiddleware<ES> {
-    $bootstrap(vm: ES): any;
+    $bootstrap(vm: ES): void;
 }
 
 export type EsRouteObject = {
@@ -60,9 +60,11 @@ export declare class Http {
 export declare class Service {
     static isSingletonMode?: boolean;
     static instance?: Service;
+    static _injectedProviders?: Map<string, Service>;
+
     $http?: Http;
     constructor();
-    static getInstance?(): Service;
+    static getInstance?(args: any[]): Service;
 }
 
 export declare class KeyWatcher {
@@ -184,7 +186,7 @@ export declare class Component<State = any, Props = any, Vm = any> extends Lifec
     getPropsValue(valueList: any[], value: any): void;
     buildProps(prop: any): any;
     buildComponentScope(ComponentClass: Function, props: any, dom: Element): Component<any, any, any>;
-    createInjector(ComponentClass: any): Service[];
+    // createInjector(ComponentClass: any): Service[];
 }
 
 export declare class EsModule {
@@ -203,6 +205,7 @@ export declare class EsModule {
     constructor();
     $declarations(): void;
     $buildImports(): void;
+    $buildProviders4Services(): void;
     $buildProviders4Components(): void;
     $buildComponents4Components(): void;
     $buildExports(): void;
@@ -227,7 +230,7 @@ export declare class Easiest {
     $init(): void;
     $renderModuleBootstrap(): void;
     $renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any>;
-    createInjector(BootstrapComponent: any): Service[];
+    // createInjector(BootstrapComponent: any): Service[];
     replaceDom(component: Component, renderDOM: Element): Promise<any>;
 }
 export declare class Router {
@@ -255,3 +258,7 @@ export declare class Router {
     generalDistributeRoutes(): void;
     instantiateComponent(FindComponent: Function, renderDom: Element): Promise<any>;
 }
+
+export declare function Injectable(_constructor: Function): void;
+export declare function injectorinjector(_constructor: Function, _module: any): any[];
+export declare function factoryCreator(_constructor: Function, _module: any): any;

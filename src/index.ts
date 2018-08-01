@@ -12,4 +12,4 @@ export { default as EsModule } from './EsModule';
 export { default as Service } from './Service';
 export { default as Http } from './Http';
 
-export { Injectable, Injector } from './Injectable';
+export { Injectable, injector, factoryCreator } from './Injectable';

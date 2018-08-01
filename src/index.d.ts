@@ -1,16 +1,20 @@
 export type TFnWatcher = (oldData: any, newData: any) => void;
+
 export type TFnRender = () => void;
+
 export type TLocationState = {
     path: string;
     query?: any,
     params?: any;
 }
+
 export type TRouter = {
     path: string;
     redirectTo?: string;
     component?: string;
     children?: TRouter[];
 };
+
 export declare type ComponentList<C> = {
     dom: Element;
     props: any;
@@ -259,5 +263,7 @@ export declare class Router {
 }
 
 export declare function Injectable(_constructor: Function): void;
+
 export declare function injectorinjector(_constructor: Function, _module: any): any[];
+
 export declare function factoryCreator(_constructor: Function, _module: any): any;

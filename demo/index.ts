@@ -1,5 +1,5 @@
-import { Easiest, Component, Router, Utils, EsModule, Service, Injectable } from '../src';
-// import { Easiest, Component, Router, Utils, EsModule, Service } from '../build/index';
+// import { Easiest, Component, Router, Utils, EsModule, Service, Injectable } from '../src';
+import { Easiest, Component, Router, Utils, EsModule, Service, Injectable } from '../build';
 
 class HeroSearchService1 extends Service {
   constructor() {
@@ -338,10 +338,10 @@ class R2 extends Component {
 class Container extends Component {
   public ss: HeroSearchService;
   constructor(
-    private heroSearchService: HeroSearchService,
+    private hss: HeroSearchService,
   ) {
     super();
-    this.ss = heroSearchService;
+    this.ss = hss;
     this.ss.test();
     this.state = {
       a: 1,

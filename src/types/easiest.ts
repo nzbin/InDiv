@@ -33,6 +33,5 @@ export interface IEasiest {
     $init(): void;
     $renderModuleBootstrap(): void;
     $renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any>;
-    // createInjector(BootstrapComponent: any): IService[];
     replaceDom(component: IComponent, renderDOM: Element): Promise<any>;
 }

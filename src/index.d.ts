@@ -186,7 +186,6 @@ export declare class Component<State = any, Props = any, Vm = any> extends Lifec
     getPropsValue(valueList: any[], value: any): void;
     buildProps(prop: any): any;
     buildComponentScope(ComponentClass: Function, props: any, dom: Element): Component<any, any, any>;
-    // createInjector(ComponentClass: any): Service[];
 }
 
 export declare class EsModule {
@@ -200,11 +199,12 @@ export declare class EsModule {
     $exportList?: {
         [name: string]: Function;
     };
-    singletonList?: Map<string, Service>;
+    providerList?: Map<string, Service>;
     $bootstrap?: Function;
     constructor();
     $declarations(): void;
     $buildImports(): void;
+    $buildProviderList(): void
     $buildProviders4Services(): void;
     $buildProviders4Components(): void;
     $buildComponents4Components(): void;
@@ -230,7 +230,6 @@ export declare class Easiest {
     $init(): void;
     $renderModuleBootstrap(): void;
     $renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any>;
-    // createInjector(BootstrapComponent: any): Service[];
     replaceDom(component: Component, renderDOM: Element): Promise<any>;
 }
 export declare class Router {

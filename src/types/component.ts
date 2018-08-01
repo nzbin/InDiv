@@ -34,5 +34,4 @@ export interface IComponent<State = any, Props = any, Vm = any> extends ILifecyc
     getPropsValue(valueList: any[], value: any): void;
     buildProps(prop: any): any;
     buildComponentScope(ComponentClass: any, props: any, dom: Element): IComponent<any, any, any>;
-    // createInjector(ComponentClass: IComponent): any[];
 }

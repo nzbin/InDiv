@@ -1,12 +1,11 @@
 {
   "name": "easiest",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A minimal, blazing web mvvm framework.一个小的Web mvvm库。",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
-    "build",
-    "src"
+    "build"
   ],
   "keywords": [
     "mvvm",
@@ -22,11 +21,12 @@
     "mvc",
     "OOP",
     "Virtual DOM",
-    "service"
+    "service",
+    "Dependency Injection"
   ],
   "scripts": {
-    "start": "parcel ./demo/index.html -d dist --open",
-    "start-ts": "parcel ./demo/index-ts.html -d dist --open",
+    "start": "parcel ./demo/index-ts.html -d dist --open",
+    "start-js": "parcel ./demo/index.html -d dist --open",
     "build": "rm -rf build && parcel build ./src/index.ts --no-source-maps -d build && cp -r src/index.d.ts build",
     "pub-prod": "npm run build && npm publish"
   },
@@ -59,6 +59,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "babel-polyfill": "^6.26.0",
-    "easier-cookie": "^1.0.11"
+    "easier-cookie": "^1.1.0",
+    "reflect-metadata": "^0.1.12"
   }
 }

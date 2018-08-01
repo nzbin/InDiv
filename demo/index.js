@@ -1,15 +1,17 @@
-// import { Easiest, Component, Router, Utils, EsModule, Service, Http } from '../es';
 import { Easiest, Component, Router, Utils, EsModule, Service } from '../build';
 
-class HeroSearchService extends Service {
+class HeroSearchService1 extends Service {
   constructor() {
     super();
+    console.log('js HeroSearchService1 is comming');
   }
 
   test() {
-    console.log('HeroSearchService !!!000000000');
+    console.log('HeroSearchService !!!1111');
   }
 }
+HeroSearchService1.isSingletonMode = true;
+
 class HeroSearchService2 extends Service {
   constructor() {
     super();
@@ -19,13 +21,18 @@ class HeroSearchService2 extends Service {
     console.log('HeroSearchService !!!2222');
   }
 }
-class HeroSearchService1 extends Service {
-  constructor() {
+
+class HeroSearchService extends Service {
+  constructor(
+    heroSearchService1,
+  ) {
     super();
+    this.hsr = heroSearchService1;
+    this.hsr.test();
   }
 
   test() {
-    console.log('HeroSearchService !!!1111');
+    console.log('HeroSearchService !!!000000000');
   }
 }
 
@@ -315,8 +322,12 @@ class R2 extends Component {
 }
 
 class Container extends Component {
-  constructor() {
+  constructor(
+    heroSearchService
+  ) {
     super();
+    this.ss = heroSearchService;
+    this.ss.test();
     this.state = {
       a: 1,
     };

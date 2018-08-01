@@ -305,8 +305,119 @@ Now we support for typescript!
   http.$patch(url, params);
   ```
 
+10. Dependency Injection
+    
+    Dependency injection is an important application design pattern. It's used so widely that almost everyone just calls it DI
+    
+    - Use Typescript
 
-10. LifeCycle hooks which from the beginning to the end:
+    If u are using `Typescript` to build an app, u can easily use our Dependency Injection.Only use `@Injectable` before the `Class` which need to use other services, that which are declarated in `this.$providers` of `EsModule` or root module.
+
+    ```typescript
+    import { Injectable, Component, EsModule, Service } from 'easiest';
+
+    class HeroSearchService1 extends Service {
+      constructor() {
+        super();
+      }
+      public test() {
+        console.log('HeroSearchService !!!1111');
+      }
+    }
+
+    @Injectable
+    class HeroSearchService extends Service {
+      public hsr: HeroSearchService1;
+      constructor(
+        private hsrS: HeroSearchService1,
+      ) {
+        super();
+        this.hsr = hsrS;
+        this.hsr.test();
+      }
+
+      public test() {
+        console.log('HeroSearchService !!!000000000');
+      }
+    }
+
+    @Injectable
+    class Container extends Component {
+      public ss: HeroSearchService;
+      constructor(private hss: HeroSearchService) {
+        super();
+        this.ss = hss;
+        this.ss.test();
+      }
+
+      public $bootstrap() {
+        this.$template = (`
+          <div>1111</div>
+        `);
+      }
+    }
+
+    class M1 extends EsModule {
+      constructor() {
+        super();
+      }
+
+      public $declarations() {
+        this.$imports = [
+          M2,
+        ];
+        this.$components = {
+          'container-wrap': Container,
+        };
+        this.$providers = [
+          HeroSearchService,
+          HeroSearchService1,
+        ];
+      }
+    }
+    ```
+
+    - Use Javascript
+
+    If u are using Javascript, plase use lower-case initial letter of `Class`. Like `Service HeroService`, u must inject `heroService` in `constructor` of `Class`
+
+    ```javascript
+    class HeroSearchService1 extends Service {
+      constructor() {
+        super();
+      }
+      test() {
+        console.log('HeroSearchService !!!1111');
+      }
+    }
+    class HeroSearchService extends Service {
+      constructor(
+        heroSearchService1, // inject Service and use lower-case initial letter of Class
+      ) {
+        super();
+        this.hsr = heroSearchService1;
+        this.hsr.test();
+      }
+
+      test() {
+        console.log('HeroSearchService !!!000000000');
+      }
+    }
+
+    class Container extends Component {
+      constructor(heroSearchService) { // inject Service and use lower-case initial letter of Class
+        super();
+        this.ss = heroSearchService;
+        this.ss.test();
+      }
+
+      $bootstrap() {
+        this.$template = (`<div>1111</div>`);
+      }
+    }
+    ```
+
+11. LifeCycle hooks which from the beginning to the end:
 
   - EsModule
 
@@ -361,5 +472,4 @@ route => EsModule => component
 - [x] Service => $http
 - [x] Route bug
 - [x] ts (strongly typed 赛高)
-
-
+- [x] 依赖注入

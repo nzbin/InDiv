@@ -13,7 +13,7 @@ class EsModule {
   public $exportList?: {
     [name: string]: Function;
   };
-  public singletonList?: Map<string, IService>;
+  public providerList?: Map<string, IService>;
   public $bootstrap?: Function;
 
   constructor() {
@@ -25,12 +25,14 @@ class EsModule {
     this.$exports = [];
 
     this.$exportList = {};
-    this.singletonList = new Map();
+    this.providerList = new Map();
 
     this.$bootstrap = function () {};
 
     this.$declarations();
     this.$buildImports();
+    this.$buildProviderList();
+    this.$buildProviders4Services();
     this.$buildComponents4Components();
     this.$buildProviders4Components();
     this.$buildExports();
@@ -54,19 +56,35 @@ class EsModule {
     });
   }
 
+  public $buildProviderList(): void {
+    if (!this.$providers) return;
+    this.$providers.forEach((service: any) => this.providerList.set(`${service.name.charAt(0).toUpperCase()}${service.name.slice(1)}`, service));
+  }
+
+  public $buildProviders4Services(): void {
+    if (!this.$providers) return;
+    for (const name in this.$providers) {
+      const service: any = this.$providers[name];
+      if (service._injectedProviders) {
+        this.providerList.forEach((value, key) => {
+          if (!service._injectedProviders.has(key)) service._injectedProviders.set(key, value);
+        });
+      } else {
+        service._injectedProviders = this.providerList;
+      }
+    }
+  }
+
   public $buildProviders4Components(): void {
     if (!this.$providers) return;
-    this.$providers.forEach((service: any) => {
-      this.singletonList.set(`${service.name.charAt(0).toUpperCase()}${service.name.slice(1)}`, service.getInstance());
-    });
     for (const name in this.$components) {
       const component: any = this.$components[name];
       if (component._injectedProviders) {
-        this.singletonList.forEach((value, key) => {
+        this.providerList.forEach((value, key) => {
           if (!component._injectedProviders.has(key)) component._injectedProviders.set(key, value);
         });
       } else {
-        component._injectedProviders = this.singletonList;
+        component._injectedProviders = this.providerList;
       }
     }
   }

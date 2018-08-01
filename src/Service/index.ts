@@ -3,6 +3,7 @@ import Http from '../Http';
 class Service {
   public static isSingletonMode?: boolean;
   public static instance?: Service = null;
+  public static _injectedProviders?: Map<string, Service> = new Map();
 
   public $http?: Http;
 
@@ -17,15 +18,11 @@ class Service {
     };
   }
 
-  public static getInstance?() {
+  public static getInstance?(args?: any[]) {
     const Instance = this;
-    if (!this.isSingletonMode) {
-      return new Instance();
-    }
+    if (!this.isSingletonMode) return Reflect.construct(Instance, args);
     if (this.isSingletonMode) {
-      if (!this.instance) {
-        this.instance = new Instance();
-      }
+      if (!this.instance) this.instance = Reflect.construct(Instance, args);
       return this.instance;
     }
   }

@@ -4,7 +4,7 @@ import Utils from '../Utils';
 import KeyWatcher from '../KeyWatcher';
 import Component from '../Component';
 
-export default class Router {
+class Router {
   public routes: TRouter[];
   public routesList: TRouter[];
   public currentUrl: string;
@@ -274,3 +274,5 @@ export default class Router {
     return this.$vm.$renderComponent(FindComponent, renderDom);
   }
 }
+
+export default Router;

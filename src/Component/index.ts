@@ -1,8 +1,7 @@
-import { IService } from '../types';
-
 import Lifecycle from '../Lifecycle';
 import Compile from '../Compile';
 import Watcher from '../Watcher';
+import { factoryCreator } from '../Injectable';
 
 export type ComponentList<C> = {
   dom: Element;
@@ -10,12 +9,13 @@ export type ComponentList<C> = {
   scope: C;
 }
 
-export default abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<Vm> {
+abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<Vm> {
   public static scope?: Component<any, any, any>;
   public static _injectedProviders?: Map<string, Function>;
   public static _injectedComponents?: {
     [name: string]: Function;
   };
+  public static _needInjectedClass?: string[];
 
   public state?: State | any;
   public props?: Props | any;
@@ -31,7 +31,6 @@ export default abstract class Component<State = any, Props = any, Vm = any> exte
   public propsWatcher?: Watcher;
 
   constructor() {
-    // ...args: ES.IService[]
     super();
     this.state = {};
     this.$renderDom = null;
@@ -210,26 +209,13 @@ export default abstract class Component<State = any, Props = any, Vm = any> exte
   }
 
   public buildComponentScope(ComponentClass: Function, props: any, dom: Element): Component<any, any, any> {
-    const args = this.createInjector(ComponentClass);
-    const _component: Component<any, any, any> = Reflect.construct(ComponentClass, args);
+    const _component: any = factoryCreator(ComponentClass, this.$vm.$rootModule);
+
     _component.props = props;
     _component.$renderDom = dom;
     _component.$components = this.$components;
     return _component;
   }
-
-  public createInjector(ComponentClass: any): IService[] {
-    // const DELEGATE_CTOR = /^function\s+\S+\(\)\s*{[\s\S]+\.apply\(this,\s*arguments\)/;
-    // const INHERITED_CLASS = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{/;
-    // const INHERITED_CLASS_WITH_CTOR = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{[\s\S]*constructor\s*\(/;
-    const CLASS_ARGUS = /^function\s+[^\(]*\(\s*([^\)]*)\)/m;
-    const argList = ComponentClass.toString().match(CLASS_ARGUS)[1].replace(/ /g, '').split(',');
-    const args: IService[] = [];
-    argList.forEach((arg: string) => {
-      const argu = `${arg.charAt(0).toUpperCase()}${arg.slice(1)}`;
-      const service = ComponentClass._injectedProviders.has(argu) ? ComponentClass._injectedProviders.get(argu) : this.$vm.$rootModule.$providers.find((service: IService) => service.constructor.name === argu);
-      if (service) args.push(service);
-    });
-    return args;
-  }
 }
+
+export default Component;

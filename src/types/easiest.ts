@@ -4,7 +4,7 @@ import { IService } from './service';
 import { IUtil } from './utils';
 
 export interface IMiddleware<ES> {
-    $bootstrap(vm: ES): any;
+    $bootstrap(vm: ES): void;
 }
 
 export type EsRouteObject = {
@@ -33,6 +33,5 @@ export interface IEasiest {
     $init(): void;
     $renderModuleBootstrap(): void;
     $renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any>;
-    createInjector(BootstrapComponent: any): IService[];
     replaceDom(component: IComponent, renderDOM: Element): Promise<any>;
 }

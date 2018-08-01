@@ -1,15 +1,18 @@
-// import { Easiest, Component, Router, Utils, EsModule, Service } from '../src';
-import { Easiest, Component, Router, Utils, EsModule, Service } from '../build/index';
+// import { Easiest, Component, Router, Utils, EsModule, Service, Injectable } from '../src';
+import { Easiest, Component, Router, Utils, EsModule, Service, Injectable } from '../build';
 
-class HeroSearchService extends Service {
+class HeroSearchService1 extends Service {
+  public static isSingletonMode: boolean = true;
   constructor() {
     super();
+    console.log('fuck ts HeroSearchService1 is comming');
   }
 
   public test() {
-    console.log('HeroSearchService !!!000000000');
+    console.log('HeroSearchService !!!1111');
   }
 }
+
 class HeroSearchService2 extends Service {
   constructor() {
     super();
@@ -19,13 +22,20 @@ class HeroSearchService2 extends Service {
     console.log('HeroSearchService !!!2222');
   }
 }
-class HeroSearchService1 extends Service {
-  constructor() {
+
+@Injectable
+class HeroSearchService extends Service {
+  public hsr: HeroSearchService1;
+  constructor(
+    private hsrS: HeroSearchService1,
+  ) {
     super();
+    this.hsr = hsrS;
+    this.hsr.test();
   }
 
   public test() {
-    console.log('HeroSearchService !!!1111');
+    console.log('HeroSearchService !!!000000000');
   }
 }
 
@@ -160,13 +170,16 @@ class PComponent extends Component {
   }
 }
 
+@Injectable
 class R1 extends Component {
-  public heroSearchService: HeroSearchService;
+  public hSr: HeroSearchService;
 
-  constructor(heroSearchService: HeroSearchService) {
+  constructor(
+    private heroSearchService: HeroSearchService,
+  ) {
     super();
-    this.heroSearchService = heroSearchService;
-    this.heroSearchService.test();
+    this.hSr = heroSearchService;
+    this.hSr.test();
     this.utils = new Utils();
     this.state = {
       a: 'a11',
@@ -323,9 +336,15 @@ class R2 extends Component {
   }
 }
 
+@Injectable
 class Container extends Component {
-  constructor() {
+  public ss: HeroSearchService;
+  constructor(
+    private hss: HeroSearchService,
+  ) {
     super();
+    this.ss = hss;
+    this.ss.test();
     this.state = {
       a: 1,
     };

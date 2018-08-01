@@ -73,10 +73,6 @@ class Easiest {
   }
 
   public $renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any> {
-    // const args = this.createInjector(BootstrapComponent);
-    // const args =  Injector(BootstrapComponent, this.$rootModule);
-
-    // const component: Component = Reflect.construct((BootstrapComponent as any), args);
     const component: any = factoryCreator(BootstrapComponent, this.$rootModule);
 
     component.$vm = this;
@@ -99,21 +95,6 @@ class Easiest {
       return Promise.reject();
     }
   }
-
-  // public createInjector(BootstrapComponent: any): Function[] {
-  //   // const DELEGATE_CTOR = /^function\s+\S+\(\)\s*{[\s\S]+\.apply\(this,\s*arguments\)/;
-  //   // const INHERITED_CLASS = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{/;
-  //   // const INHERITED_CLASS_WITH_CTOR = /^class\s+[A-Za-z\d$_]*\s*extends\s+[A-Za-z\d$_]+\s*{[\s\S]*constructor\s*\(/;
-  //   const CLASS_ARGUS = /^function\s+[^\(]*\(\s*([^\)]*)\)/m;
-  //   const argList = BootstrapComponent.toString().match(CLASS_ARGUS)[1].replace(/ /g, '').split(',');
-  //   const args: Function[] = [];
-  //   argList.forEach((arg: string) => {
-  //     const argu = `${arg.charAt(0).toUpperCase()}${arg.slice(1)}`;
-  //     const service = BootstrapComponent._injectedProviders.has(argu) ? BootstrapComponent._injectedProviders.get(argu) : this.$rootModule.$providers.find((s: Function) => s.constructor.name === argu);
-  //     if (service) args.push(service);
-  //   });
-  //   return args;
-  // }
 
   public replaceDom(component: Component, renderDOM: Element): Promise<any> {
     component.$renderDom = renderDOM;

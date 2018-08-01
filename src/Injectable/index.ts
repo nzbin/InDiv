@@ -5,7 +5,6 @@ import "reflect-metadata";
 export function Injectable(_constructor: Function): void {
     // 通过反射机制，获取参数类型列表    
     const paramsTypes: Array<Function> = Reflect.getMetadata('design:paramtypes', _constructor);
-    console.log('paramsTypesparamsTypes', paramsTypes);
     if (paramsTypes.length) {
         paramsTypes.forEach((v, i) => {
             if (v === _constructor) {
@@ -20,7 +19,6 @@ export function Injectable(_constructor: Function): void {
             }
         })
     }
-    console.log('_needInjectedClass', (_constructor as any)._needInjectedClass);
 }
 
 export function injector(_constructor: Function, _module: any): any[] {
@@ -42,7 +40,7 @@ export function injector(_constructor: Function, _module: any): any[] {
 export function factoryCreator(_constructor: Function, _module: any): any {
     const args = injector(_constructor, _module);
     let factory;
-    if ((_constructor as any).isSingletonMode) factory = (_constructor as any).getInstance(args)
+    if ((_constructor as any).isSingletonMode) factory = (_constructor as any).getInstance(args);
     factory = Reflect.construct(_constructor, args);
     return factory;
 }

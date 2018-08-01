@@ -3,12 +3,14 @@ import { Easiest, Component, Router, Utils, EsModule, Service } from '../build';
 class HeroSearchService1 extends Service {
   constructor() {
     super();
+    console.log('js HeroSearchService1 is comming');
   }
 
   test() {
     console.log('HeroSearchService !!!1111');
   }
 }
+HeroSearchService1.isSingletonMode = true;
 
 class HeroSearchService2 extends Service {
   constructor() {

@@ -18,17 +18,11 @@ class Service {
     };
   }
 
-  public static getInstance?(args: any[]) {
+  public static getInstance?(args?: any[]) {
     const Instance = this;
-    if (!this.isSingletonMode) {
-      // return new Instance();
-      return Reflect.construct(Instance, args);
-    }
+    if (!this.isSingletonMode) return Reflect.construct(Instance, args);
     if (this.isSingletonMode) {
-      if (!this.instance) {
-        // this.instance = new Instance();
-        this.instance = Reflect.construct(Instance, args);
-      }
+      if (!this.instance) this.instance = Reflect.construct(Instance, args);
       return this.instance;
     }
   }

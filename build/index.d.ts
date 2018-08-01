@@ -64,7 +64,7 @@ export declare class Service {
 
     $http?: Http;
     constructor();
-    static getInstance?(args: any[]): Service;
+    static getInstance?(args?: any[]): Service;
 }
 
 export declare class KeyWatcher {

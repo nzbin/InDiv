@@ -2,8 +2,10 @@
 import { Easiest, Component, Router, Utils, EsModule, Service, Injectable } from '../build';
 
 class HeroSearchService1 extends Service {
+  public static isSingletonMode: boolean = true;
   constructor() {
     super();
+    console.log('fuck ts HeroSearchService1 is comming');
   }
 
   public test() {
@@ -168,7 +170,7 @@ class PComponent extends Component {
   }
 }
 
-// @Injectable
+@Injectable
 class R1 extends Component {
   public hSr: HeroSearchService;
 

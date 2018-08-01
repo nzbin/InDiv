@@ -28,7 +28,7 @@
     "no-duplicate-key": true,
     "no-duplicate-variable": true,
     "no-eval": true,
-    "no-inferrable-types": [ true, "ignore-params" ],
+    "no-inferrable-types": [ true, "ignore-params", "ignore-properties" ],
     "no-internal-module": true,
     "no-invalid-this": [ true ],
     "no-reference": true,

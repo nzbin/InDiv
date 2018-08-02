@@ -1,5 +1,5 @@
-// import { Easiest, Component, Router, Utils, EsModule, Service, Injectable } from '../src';
-import { Easiest, Component, Router, Utils, EsModule, Service, Injectable } from '../build';
+import { Easiest, Component, Router, Utils, EsModule, Service, Injectable } from '../src';
+// import { Easiest, Component, Router, Utils, EsModule, Service, Injectable } from '../build';
 
 class HeroSearchService1 extends Service {
   public static isSingletonMode: boolean = true;

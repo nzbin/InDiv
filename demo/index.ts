@@ -347,6 +347,25 @@ class Container extends Component {
     this.ss.test();
     this.state = {
       a: 1,
+      testArray: [
+        {
+          name: '李龙吉',
+          sex: '男',
+          job: [ {a: 1},  {a: 2}, {a: 3} ],
+        },
+        {
+          name: '邱宝环',
+          sex: '女',
+          // job: [ '程序员', '码农', '帅' ],
+          job: [ {a: 1},  {a: 2}, {a: 3} ],
+        },
+        {
+          name: '胡文',
+          sex: '男',
+          // job: [ '程序员', '码农', '帅' ],
+          job: [ {a: 1},  {a: 2}, {a: 3} ],
+        },
+      ],
     };
   }
 
@@ -355,6 +374,11 @@ class Container extends Component {
       <div>
         <p es-on:click="this.go()">container: {{this.state.a}}</p>
         <input es-model="this.state.a" />
+        <div es-repeat="let man in this.state.testArray">
+          <div>姓名：{{man.name}}</div>
+          <div>性别：{{man.sex}}</div>
+          <div es-repeat="let a in man.job" es-class="a.a">{{a.a}}</div>
+        </div>
         <router-render></router-render>
       </div>
     `);

@@ -10,9 +10,7 @@ app.set('view engine', 'html');
 
 // 静态文件
 app.set('views', './demo');
-// app.use(express.static('./demo'));
 app.use(express.static(path.join(__dirname, 'dist')));
-// app.use(express.static(path.join(__dirname, '')));
 
 app.use('/demo', (req, res, next) => {
   res.render('index-app.html');

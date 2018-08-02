@@ -262,7 +262,13 @@ export class CompileUtil {
     const key = expFather.split(' ')[1];
     const watchData = expFather.split(' ')[3];
     Array.from(node.childNodes).forEach((child: Element) => {
-      if (this.isRepeatProp(child)) child.setAttribute(`_prop-${key}`, JSON.stringify(value));
+      console.log('11', child);
+      if (this.isRepeatProp(child)) {
+        console.log('22', child);
+        child.setAttribute(`_prop-${key}`, JSON.stringify(value));
+      } else {
+        console.log('444', child);
+      }
 
       const nodeAttrs = child.attributes;
       const text = child.textContent;
@@ -347,6 +353,7 @@ export class CompileUtil {
     const nodeAttrs = node.attributes;
     const result = false;
     if (nodeAttrs) return !!(Array.from(nodeAttrs).find(attr => /^\{(.+)\}$/.test(attr.value)));
+    console.log('nodenode', result);
     return result;
   }
 }

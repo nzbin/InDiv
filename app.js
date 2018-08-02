@@ -9,22 +9,14 @@ app.set('view engine', 'html');
 
 // 静态文件
 app.set('views', './demo');
-app.use(express.static('./demo'));
+// app.use(express.static('./demo'));
+app.use(express.static('./dist'));
 
-
-// app.use('/', (req, res, next) => {
-//   console.log('////');
-//   res.send({ a: 1 });
-// });
 app.use('/demo', (req, res, next) => {
-  res.render('index.html');
-});
-app.use('/demo-ts', (req, res, next) => {
-  // res.send({ a: 1 });
-  res.render('index-ts.html');
+  res.render('index-app.html');
 });
 
-app.listen(1234);
-console.log(`listening port 1234`);
+app.listen(2234);
+console.log(`listening port 2234`);
 
 module.exports = app;

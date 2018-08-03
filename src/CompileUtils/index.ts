@@ -12,6 +12,16 @@ export class CompileUtilForRepeat {
     this.$fragment = fragment;
   }
 
+  public _getValueByValue(vm: any, exp: string, key: string): any {
+    const valueList = exp.replace('()', '').split('.');
+    let value = vm;
+    valueList.forEach((v, index) => {
+      if (v === key && index === 0) return;
+      value = value[v];
+    });
+    return value;
+  }
+
   public _getVMVal(vm: any, exp: string): any {
     const valueList = exp.replace('()', '').split('.');
     let value = vm;
@@ -35,20 +45,39 @@ export class CompileUtilForRepeat {
     return value;
   }
 
-  public bind(node: Element, val?: any, key?: string, dir?: string, exp?: string, index?: number, vm?: any, watchData?: any): void {
+  public bind(node: Element, val?: any, key?: string, dir?: string, exp?: string, index?: number, vm?: any, watchValue?: any): void {
     let value;
     if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
       value = this._getVMRepeatVal(val, exp, key);
     } else {
       value = this._getVMVal(vm, exp);
     }
-    const watchValue = this._getVMVal(vm, watchData);
+    // console.log('node1111', node);
+    // let watchValue;
+    // if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
+    //   console.log('watchData', watchData);
+    //   console.log('valval', val);
+    //   console.log('key', key);
+    //   // console.log('exp', exp);
+    //   // console.log('vm', vm);
+    //   watchValue = this._getVMVal(vm, watchData);
+    //   // console.log('watchValue', watchValue);
+    //   // watchValue = this._getVMRepeatVal(val, watchData, key);
+    // } else {
+    //   console.log('watchData', watchData);
+    //   console.log('valval', val);
+    //   watchValue = this._getVMVal(vm, watchData);
+    //   console.log('watchValue', watchValue);
+    // }
+    // const watchValue = this._getVMVal(vm, watchData);
+    // if (watchData)
     if (!node.hasChildNodes()) this.templateUpdater(node, val, key, vm);
     // this.templateUpdater(node, val, key, vm);
     const updaterFn: any = this[`${dir}Updater`];
     switch (dir) {
-    case 'model':
-      if (updaterFn) (updaterFn as Function).call(this, node, value, exp, key, index, watchValue, watchData, vm);
+      case 'model':
+      // if (updaterFn) (updaterFn as Function).call(this, node, value, exp, key, index, watchValue, watchData, vm);
+      if (updaterFn) (updaterFn as Function).call(this, node, value, exp, key, index, watchValue);
       break;
     default:
       if (updaterFn) (updaterFn as Function).call(this, node, value);
@@ -89,15 +118,26 @@ export class CompileUtilForRepeat {
     node.className = className + space + value;
   }
 
-  public modelUpdater(node: Element, value: any, exp: string, key: string, index: number, watchValue: any, watchData: any, vm: any): void {
+  public modelUpdater(node: Element, value: any, exp: string, key: string, index: number, watchValue: any): void {
     node.value = typeof value === 'undefined' ? '' : value;
-    const val = exp.replace(`${key}.`, '');
-    const fn = function (event: Event) {
+    // const val = exp.replace(`${key}.`, '');
+    const func = function (event: Event) {
       event.preventDefault();
-      if ((event.target as HTMLInputElement).value === watchValue[index][val]) return;
-      watchValue[index][val] = (event.target as HTMLInputElement).value;
+      if ((event.target as HTMLInputElement).value === watchValue[index]) return;
+      // if ((event.target as HTMLInputElement).value === watchValue[index][val]) return;
+      // watchValue[index][val] = (event.target as HTMLInputElement).value;
+      watchValue[index] = (event.target as HTMLInputElement).value;
     };
-    node.addEventListener('input', fn, false);
+    // node.addEventListener('input', func, false);
+    // node.setAttribute(`_event-input`, `(${func.toString()})(event)`);
+    (node as any).oninput = func;
+    if (node.getAttribute('eventTypes')) {
+      const eventlist = JSON.parse(node.getAttribute('eventTypes'));
+      console.log('eventlist', eventlist);
+      // node.setAttribute(`eventTypes`, JSON.stringify((JSON.parse(eventlist.push('input'))));
+    } else {
+      node.setAttribute(`eventTypes`, JSON.stringify([].push('input')));
+    }
   }
 
   public eventHandler(node: Element, vm: any, exp: string, eventName: string, key: string, val: any): void {
@@ -122,7 +162,16 @@ export class CompileUtilForRepeat {
       });
       fn.apply(vm, argsList);
     };
-    if (eventType && fn) node.addEventListener(eventType, func, false);
+    if (eventType && fn) {
+      // node.addEventListener(eventType, func, false);
+      // node.setAttribute(`_event-${eventType}`, `(${func.toString()})(event)`);
+      (node as any)[`on${eventType}`] = func;
+      if (node.getAttribute('eventTypes')) {
+        node.setAttribute(`eventTypes`, JSON.stringify((JSON.parse(node.getAttribute('eventTypes'))).push(eventType)));
+      } else {
+        node.setAttribute(`eventTypes`, JSON.stringify([].push(eventType)));
+      }
+    }
   }
 }
 
@@ -132,6 +181,16 @@ export class CompileUtil {
 
   constructor(fragment?: Element | DocumentFragment) {
     this.$fragment = fragment;
+  }
+
+  public _getValueByValue(vm: any, exp: string, key: string): any {
+    const valueList = exp.replace('()', '').split('.');
+    let value = vm;
+    valueList.forEach((v, index) => {
+      if (v === key && index === 0) return;
+      value = value[v];
+    });
+    return value;
   }
 
   public _getVMVal(vm: any, exp: string): any {
@@ -218,19 +277,29 @@ export class CompileUtil {
   public modelUpdater(node: Element, value: any, exp: string, vm: any): void {
     node.value = typeof value === 'undefined' ? '' : value;
     const val = exp.replace(/(this.state.)|(this.props)/, '');
-    const fn = function (event: Event) {
+    const func = function (event: Event) {
       event.preventDefault();
       if (/(this.state.).*/.test(exp)) vm.state[val] = (event.target as HTMLInputElement).value;
       if (/(this.props.).*/.test(exp)) vm.props[val] = (event.target as HTMLInputElement).value;
     };
-    node.addEventListener('input', fn, false);
+    // node.addEventListener('input', func, false);
+    (node as any).oninput = func;
+    if (node.getAttribute('eventTypes')) {
+      const eventlist = JSON.parse(node.getAttribute('eventTypes'));
+      // node.setAttribute(`eventTypes`, JSON.stringify((JSON.parse(node.getAttribute('eventTypes'))).push('input')));
+    } else {
+      node.setAttribute(`eventTypes`, JSON.stringify([].push('input')));
+    }
   }
 
   public repeatUpdater(node: Element, value: any, expFather: string, vm: any): void {
     const key = expFather.split(' ')[1];
-    const watchData = expFather.split(' ')[3];
+    // const watchData = expFather.split(' ')[3];
     value.forEach((val: any, index: number) => {
-      const newElement = node.cloneNode(true);
+      // const newElement = node.cloneNode(true);
+      const newElement = this.cloneNode(node);
+      // console.log('newElementnewElement', newElement);
+      // console.log('nodenode', node);
       const nodeAttrs = (newElement as Element).attributes;
       const text = newElement.textContent;
       const reg = /\{\{(.*)\}\}/g;
@@ -246,11 +315,14 @@ export class CompileUtil {
             if (this.isEventDirective(dir)) {
               new CompileUtilForRepeat(this.$fragment).eventHandler(newElement as Element, vm, exp, dir, key, val);
             } else {
-              new CompileUtilForRepeat(this.$fragment).bind(newElement as Element, val, key, dir, exp, index, vm, watchData);
+              // new CompileUtilForRepeat(this.$fragment).bind(newElement as Element, val, key, dir, exp, index, vm, watchData);
+              // console.log('www 11', dir);
+              new CompileUtilForRepeat(this.$fragment).bind(newElement as Element, val, key, dir, exp, index, vm, value);
             }
           }
         });
       }
+      // console.log('newElementnewElement', newElement);
       // if (!this.isIfNode(node)) this.$fragment.appendChild(newElement);
       if (!this.isIfNode(node)) this.$fragment.insertBefore(newElement, node);
       // if (this.$fragment.contains(node)) this.$fragment.removeChild(node);
@@ -260,15 +332,9 @@ export class CompileUtil {
 
   public repeatChildrenUpdater(node: Element, value: any, expFather: string, index: number, vm: any): void {
     const key = expFather.split(' ')[1];
-    const watchData = expFather.split(' ')[3];
+    // const watchData = expFather.split(' ')[3];
     Array.from(node.childNodes).forEach((child: Element) => {
-      console.log('11', child);
-      if (this.isRepeatProp(child)) {
-        console.log('22', child);
-        child.setAttribute(`_prop-${key}`, JSON.stringify(value));
-      } else {
-        console.log('444', child);
-      }
+      if (this.isRepeatProp(child)) child.setAttribute(`_prop-${key}`, JSON.stringify(value));
 
       const nodeAttrs = child.attributes;
       const text = child.textContent;
@@ -287,7 +353,10 @@ export class CompileUtil {
             if (this.isEventDirective(dir)) {
               new CompileUtilForRepeat(node).eventHandler(child, vm, exp, dir, key, value);
             } else {
-              new CompileUtilForRepeat(node).bind(child, value, key, dir, exp, index, vm, watchData);
+              // console.log(3333, dir, key);
+              // console.log('222 www', child);
+              // new CompileUtilForRepeat(node).bind(child, value, key, dir, exp, index, vm, watchData);
+              new CompileUtilForRepeat(node).bind(child, value, key, dir, exp, index, vm, value);
             }
             if (dir === 'if' && new RegExp(`(^${key})`).test(exp)) canShowByIf = repeatUtils._getVMRepeatVal(value, exp, key);
             if (dir === 'if' && /^(this\.)/.test(exp)) canShowByIf = repeatUtils._getVMVal(vm, exp);
@@ -298,16 +367,24 @@ export class CompileUtil {
 
       if (child.hasChildNodes()) this.repeatChildrenUpdater(child, value, expFather, index, vm);
 
-      if (!canShowByIf) {
-        if (node.contains(child)) node.removeChild(child);
-      }
+      if (!canShowByIf) if (node.contains(child)) node.removeChild(child);
 
       const newAttrs = child.attributes;
       if (newAttrs && canShowByIf) {
         const restRepeat = Array.from(newAttrs).find(attr => this.isDirective(attr.name) && attr.name === 'es-repeat');
         if (restRepeat) {
-          new CompileUtil(node).bind(child, vm, restRepeat.value, restRepeat.name.substring(3));
-          if (node.contains(child)) node.removeChild(child);
+          const newWatchData = restRepeat.value.split(' ')[3]
+          if (/^(this\.)/.test(newWatchData)) {
+
+            // console.log(4444, restRepeat.name.substring(3));
+
+            new CompileUtil(node).bind(child, vm, restRepeat.value, restRepeat.name.substring(3));
+            // if (node.contains(child)) node.removeChild(child);
+          }
+          if (new RegExp(`(^${key})`).test(newWatchData)) {
+            new CompileUtil(node).repeatUpdater(child, this._getValueByValue(value, newWatchData, key), restRepeat.value, vm);
+            if (node.contains(child)) node.removeChild(child);
+          }
         }
       }
     });
@@ -353,7 +430,27 @@ export class CompileUtil {
     const nodeAttrs = node.attributes;
     const result = false;
     if (nodeAttrs) return !!(Array.from(nodeAttrs).find(attr => /^\{(.+)\}$/.test(attr.value)));
-    console.log('nodenode', result);
     return result;
+  }
+
+  public cloneNode(node: Element): Node {
+    const newElement = node.cloneNode(true);
+    const eventList = (newElement as Element).getAttribute('eventTypes');
+    console.log('eventList', eventList);
+    // const nodeAttrs = (newElement as Element).attributes;
+    // if (nodeAttrs) {
+    //   Array.from(nodeAttrs).forEach(attr => {
+    //     // if (/on.+/.test(attr.name)) console.log(11);
+    //   })
+    // }
+    return newElement;
+  }
+
+  public parseEvent(node: Element, attr: Attr) {
+    const eventType = attr.name.split('_event-')[1];
+    // const func: any = new Function(attr.value);
+    // console.log('func', func);
+    // node.addEventListener(eventType, func, false);
+    // console.log('eventType', eventType);
   }
 }

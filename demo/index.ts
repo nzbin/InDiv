@@ -291,7 +291,7 @@ class R2 extends Component {
   public $bootstrap() {
     this.$template = (`
       <div>
-      <p es-on:click="this.showLocation()">点击显示子路由跳转</p>
+        <p es-on:click="this.showLocation()">点击显示子路由跳转</p>
         <input es-model="this.state.a"/>
         <br/>
         <p es-on:click="this.showAlert()">点击显示this.state.a:{{this.state.a}}</p>
@@ -351,33 +351,34 @@ class Container extends Component {
         {
           name: '李龙吉',
           sex: '男',
-          job: [ {a: 1},  {a: 2}, {a: 3} ],
+          job: [ '程序员1', '码农1', '帅1' ],
         },
-        {
-          name: '邱宝环',
-          sex: '女',
-          // job: [ '程序员', '码农', '帅' ],
-          job: [ {a: 1},  {a: 2}, {a: 3} ],
-        },
-        {
-          name: '胡文',
-          sex: '男',
-          // job: [ '程序员', '码农', '帅' ],
-          job: [ {a: 1},  {a: 2}, {a: 3} ],
-        },
+        // {
+        //   name: '邱宝环',
+        //   sex: '女',
+        //   job: [ '程序员2', '码农2', '帅2' ],
+        // },
+        // {
+        //   name: '胡文',
+        //   sex: '男',
+        //   job: [ '程序员3', '码农3', '帅3' ],
+        // },
       ],
+      testArray2: [ '程序员3', '码农3', '帅3' ],
     };
   }
 
   public $bootstrap() {
+    //  <input es-repeat="let a in man.job" es-model="a" />
+    // <div es-repeat="let a in man.job" es-class="man.name">{{a}}</div>
     this.$template = (`
       <div>
         <p es-on:click="this.go()">container: {{this.state.a}}</p>
         <input es-model="this.state.a" />
         <div es-repeat="let man in this.state.testArray">
-          <div>姓名：{{man.name}}</div>
+          <div es-on:click="this.show(man)">姓名：{{man.name}}</div>
           <div>性别：{{man.sex}}</div>
-          <div es-repeat="let a in man.job" es-class="a.a">{{a.a}}</div>
+          <input es-on:click="this.show(b)" es-repeat="let b in this.state.testArray2" es-class="b" es-model="man.sex" />
         </div>
         <router-render></router-render>
       </div>
@@ -390,6 +391,9 @@ class Container extends Component {
 
   public go() {
     this.$location.go('/R1', { b: '1' });
+  }
+  public show(a: any) {
+    console.log('aaaa', a);
   }
 }
 

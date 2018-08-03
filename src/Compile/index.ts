@@ -97,7 +97,6 @@ class Compile {
   }
 
   public eventHandler(node: Element, vm: any, exp: string, eventName: string): void {
-    let compileUtil = new CompileUtil();
     const eventType = eventName.split(':')[1];
     const fnList = exp.replace(/\(.*\)/, '').split('.');
     const args = exp.match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
@@ -111,15 +110,25 @@ class Compile {
       args.forEach(arg => {
         if (arg === '') return false;
         if (arg === '$event') argsList.push(event);
-        if (/(this.).*/g.test(arg) || /(this.state.).*/g.test(arg) || /(this.props.).*/g.test(arg)) argsList.push(compileUtil._getVMVal(vm, arg));
+        if (/(this.).*/g.test(arg) || /(this.state.).*/g.test(arg) || /(this.props.).*/g.test(arg)) argsList.push(new CompileUtil()._getVMVal(vm, arg));
         if (/\'.*\'/g.test(arg)) argsList.push(arg.match(/\'(.*)\'/)[1]);
         if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) argsList.push(Number(arg));
         if (arg === 'true' || arg === 'false') argsList.push(arg === 'true');
       });
       fn.apply(vm, argsList);
     };
-    if (eventType && fn) node.addEventListener(eventType, func, false);
-    compileUtil = null;
+    if (eventType && fn) {
+      // node.addEventListener(eventType, func, false);
+      (node as any)[`on${eventType}`] = func;
+      if (node.getAttribute('eventTypes')) {
+        const eventlist = JSON.parse(node.getAttribute('eventTypes'));
+        console.log('eventlist', eventlist);
+        node.setAttribute(`eventTypes`, JSON.stringify(eventlist.push(eventType)));
+      } else {
+        node.setAttribute(`eventTypes`, JSON.stringify([].push(eventType)));
+      }
+      // node.setAttribute(`_event-${eventType}`, `eventType`);
+    }
   }
 
   public isDirective(attr: string): boolean {

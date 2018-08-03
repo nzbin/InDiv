@@ -123,7 +123,7 @@ class Compile {
       if (node.getAttribute('eventTypes')) {
         const eventlist = JSON.parse(node.getAttribute('eventTypes'));
         console.log('eventlist', eventlist);
-        node.setAttribute(`eventTypes`, JSON.stringify(eventlist.push(eventType)));
+        // node.setAttribute(`eventTypes`, JSON.stringify(eventlist.push(eventType)));
       } else {
         node.setAttribute(`eventTypes`, JSON.stringify([].push(eventType)));
       }

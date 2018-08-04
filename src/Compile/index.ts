@@ -118,16 +118,15 @@ class Compile {
       fn.apply(vm, argsList);
     };
     if (eventType && fn) {
-      // node.addEventListener(eventType, func, false);
-      (node as any)[`on${eventType}`] = func;
+      node.addEventListener(eventType, func, false);
+      (node as any)[`event${eventType}`] = func;
       if (node.getAttribute('eventTypes')) {
         const eventlist = JSON.parse(node.getAttribute('eventTypes'));
-        console.log('eventlist', eventlist);
-        // node.setAttribute(`eventTypes`, JSON.stringify(eventlist.push(eventType)));
+        eventlist.push(eventType);
+        node.setAttribute(`eventTypes`, JSON.stringify(eventlist));
       } else {
-        node.setAttribute(`eventTypes`, JSON.stringify([].push(eventType)));
+        node.setAttribute(`eventTypes`, JSON.stringify([eventType]));
       }
-      // node.setAttribute(`_event-${eventType}`, `eventType`);
     }
   }
 

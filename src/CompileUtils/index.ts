@@ -127,16 +127,16 @@ export class CompileUtilForRepeat {
       // if ((event.target as HTMLInputElement).value === watchValue[index][val]) return;
       // watchValue[index][val] = (event.target as HTMLInputElement).value;
       watchValue[index] = (event.target as HTMLInputElement).value;
+      console.log('watchValuewatchValue', watchValue);
     };
-    // node.addEventListener('input', func, false);
-    // node.setAttribute(`_event-input`, `(${func.toString()})(event)`);
-    (node as any).oninput = func;
+    node.addEventListener('input', func, false);
+    (node as any).eventinput = func;
     if (node.getAttribute('eventTypes')) {
       const eventlist = JSON.parse(node.getAttribute('eventTypes'));
-      console.log('eventlist', eventlist);
-      // node.setAttribute(`eventTypes`, JSON.stringify((JSON.parse(eventlist.push('input'))));
+      eventlist.push('input');
+      node.setAttribute(`eventTypes`, JSON.stringify(eventlist));
     } else {
-      node.setAttribute(`eventTypes`, JSON.stringify([].push('input')));
+      node.setAttribute(`eventTypes`, JSON.stringify(['input']));
     }
   }
 
@@ -160,16 +160,18 @@ export class CompileUtilForRepeat {
         if (arg === 'true' || arg === 'false') argsList.push(arg === 'true');
         if (arg.indexOf(key) === 0 || arg.indexOf(`${key}.`) === 0) argsList.push(this._getVMRepeatVal(val, arg, key));
       });
+      console.log('argsList', argsList);
       fn.apply(vm, argsList);
     };
     if (eventType && fn) {
-      // node.addEventListener(eventType, func, false);
-      // node.setAttribute(`_event-${eventType}`, `(${func.toString()})(event)`);
-      (node as any)[`on${eventType}`] = func;
+      node.addEventListener(eventType, func, false);
+      (node as any)[`event${eventType}`] = func;
       if (node.getAttribute('eventTypes')) {
-        node.setAttribute(`eventTypes`, JSON.stringify((JSON.parse(node.getAttribute('eventTypes'))).push(eventType)));
+        const eventlist = JSON.parse(node.getAttribute('eventTypes'));
+        eventlist.push(eventType);
+        node.setAttribute(`eventTypes`, JSON.stringify(eventlist));
       } else {
-        node.setAttribute(`eventTypes`, JSON.stringify([].push(eventType)));
+        node.setAttribute(`eventTypes`, JSON.stringify([eventType]));
       }
     }
   }
@@ -281,14 +283,17 @@ export class CompileUtil {
       event.preventDefault();
       if (/(this.state.).*/.test(exp)) vm.state[val] = (event.target as HTMLInputElement).value;
       if (/(this.props.).*/.test(exp)) vm.props[val] = (event.target as HTMLInputElement).value;
+      console.log(222);
     };
-    // node.addEventListener('input', func, false);
-    (node as any).oninput = func;
+    node.addEventListener('input', func, false);
+    (node as any).eventinput = func;
+    console.log(111);
     if (node.getAttribute('eventTypes')) {
       const eventlist = JSON.parse(node.getAttribute('eventTypes'));
-      // node.setAttribute(`eventTypes`, JSON.stringify((JSON.parse(node.getAttribute('eventTypes'))).push('input')));
+      eventlist.push('input');
+      node.setAttribute(`eventTypes`, JSON.stringify(eventlist));
     } else {
-      node.setAttribute(`eventTypes`, JSON.stringify([].push('input')));
+      node.setAttribute(`eventTypes`, JSON.stringify(['input']));
     }
   }
 
@@ -298,8 +303,6 @@ export class CompileUtil {
     value.forEach((val: any, index: number) => {
       // const newElement = node.cloneNode(true);
       const newElement = this.cloneNode(node);
-      // console.log('newElementnewElement', newElement);
-      // console.log('nodenode', node);
       const nodeAttrs = (newElement as Element).attributes;
       const text = newElement.textContent;
       const reg = /\{\{(.*)\}\}/g;
@@ -316,13 +319,11 @@ export class CompileUtil {
               new CompileUtilForRepeat(this.$fragment).eventHandler(newElement as Element, vm, exp, dir, key, val);
             } else {
               // new CompileUtilForRepeat(this.$fragment).bind(newElement as Element, val, key, dir, exp, index, vm, watchData);
-              // console.log('www 11', dir);
               new CompileUtilForRepeat(this.$fragment).bind(newElement as Element, val, key, dir, exp, index, vm, value);
             }
           }
         });
       }
-      // console.log('newElementnewElement', newElement);
       // if (!this.isIfNode(node)) this.$fragment.appendChild(newElement);
       if (!this.isIfNode(node)) this.$fragment.insertBefore(newElement, node);
       // if (this.$fragment.contains(node)) this.$fragment.removeChild(node);
@@ -353,8 +354,6 @@ export class CompileUtil {
             if (this.isEventDirective(dir)) {
               new CompileUtilForRepeat(node).eventHandler(child, vm, exp, dir, key, value);
             } else {
-              // console.log(3333, dir, key);
-              // console.log('222 www', child);
               // new CompileUtilForRepeat(node).bind(child, value, key, dir, exp, index, vm, watchData);
               new CompileUtilForRepeat(node).bind(child, value, key, dir, exp, index, vm, value);
             }
@@ -367,7 +366,7 @@ export class CompileUtil {
 
       if (child.hasChildNodes()) this.repeatChildrenUpdater(child, value, expFather, index, vm);
 
-      if (!canShowByIf) if (node.contains(child)) node.removeChild(child);
+      if (!canShowByIf && node.contains(child)) node.removeChild(child);
 
       const newAttrs = child.attributes;
       if (newAttrs && canShowByIf) {
@@ -375,10 +374,8 @@ export class CompileUtil {
         if (restRepeat) {
           const newWatchData = restRepeat.value.split(' ')[3]
           if (/^(this\.)/.test(newWatchData)) {
-
-            // console.log(4444, restRepeat.name.substring(3));
-
             new CompileUtil(node).bind(child, vm, restRepeat.value, restRepeat.name.substring(3));
+            // 要恢复
             // if (node.contains(child)) node.removeChild(child);
           }
           if (new RegExp(`(^${key})`).test(newWatchData)) {
@@ -435,22 +432,8 @@ export class CompileUtil {
 
   public cloneNode(node: Element): Node {
     const newElement = node.cloneNode(true);
-    const eventList = (newElement as Element).getAttribute('eventTypes');
-    console.log('eventList', eventList);
-    // const nodeAttrs = (newElement as Element).attributes;
-    // if (nodeAttrs) {
-    //   Array.from(nodeAttrs).forEach(attr => {
-    //     // if (/on.+/.test(attr.name)) console.log(11);
-    //   })
-    // }
+    const eventList: string[] = JSON.parse((newElement as Element).getAttribute('eventTypes'));
+    if (eventList) eventList.forEach(eve => { newElement.addEventListener(eve, (node as any)[`event${eve}`], false); });
     return newElement;
-  }
-
-  public parseEvent(node: Element, attr: Attr) {
-    const eventType = attr.name.split('_event-')[1];
-    // const func: any = new Function(attr.value);
-    // console.log('func', func);
-    // node.addEventListener(eventType, func, false);
-    // console.log('eventType', eventType);
   }
 }

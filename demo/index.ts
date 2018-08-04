@@ -378,7 +378,7 @@ class Container extends Component {
         <div es-repeat="let man in this.state.testArray">
           <div es-on:click="this.show(man)">姓名：{{man.name}}</div>
           <div>性别：{{man.sex}}</div>
-          <input es-on:click="this.show(b)" es-repeat="let b in this.state.testArray2" es-class="b" es-model="man.sex" />
+          <input es-model="this.state.a" es-on:click="this.show(this.state.a)" es-repeat="let b in this.state.testArray2" es-class="b" />
         </div>
         <router-render></router-render>
       </div>

@@ -353,24 +353,12 @@ class Container extends Component {
           sex: '男',
           job: [ '程序员1', '码农1', '帅1' ],
         },
-        // {
-        //   name: '邱宝环',
-        //   sex: '女',
-        //   job: [ '程序员2', '码农2', '帅2' ],
-        // },
-        // {
-        //   name: '胡文',
-        //   sex: '男',
-        //   job: [ '程序员3', '码农3', '帅3' ],
-        // },
       ],
       testArray2: [ '程序员3', '码农3', '帅3' ],
     };
   }
 
   public $bootstrap() {
-    //  <input es-repeat="let a in man.job" es-model="a" />
-    // <div es-repeat="let a in man.job" es-class="man.name">{{a}}</div>
     this.$template = (`
       <div>
         <p es-on:click="this.go()">container: {{this.state.a}}</p>
@@ -378,7 +366,7 @@ class Container extends Component {
         <div es-repeat="let man in this.state.testArray">
           <div es-on:click="this.show(man)">姓名：{{man.name}}</div>
           <div>性别：{{man.sex}}</div>
-          <input es-model="this.state.a" es-on:click="this.show(this.state.a)" es-repeat="let b in this.state.testArray2" es-class="b" />
+          <input es-model="b" es-on:click="this.show(this.state.testArray2)" es-repeat="let b in man.job" es-class="b" />
         </div>
         <router-render></router-render>
       </div>

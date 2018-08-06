@@ -52,35 +52,23 @@ export class CompileUtilForRepeat {
     } else {
       value = this._getVMVal(vm, exp);
     }
-    // console.log('node1111', node);
-    // let watchValue;
-    // if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
-    //   console.log('watchData', watchData);
-    //   console.log('valval', val);
-    //   console.log('key', key);
-    //   // console.log('exp', exp);
-    //   // console.log('vm', vm);
-    //   watchValue = this._getVMVal(vm, watchData);
-    //   // console.log('watchValue', watchValue);
-    //   // watchValue = this._getVMRepeatVal(val, watchData, key);
-    // } else {
-    //   console.log('watchData', watchData);
-    //   console.log('valval', val);
-    //   watchValue = this._getVMVal(vm, watchData);
-    //   console.log('watchValue', watchValue);
-    // }
-    // const watchValue = this._getVMVal(vm, watchData);
-    // if (watchData)
+
+    let watchData;
+    if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
+      watchData = watchValue;
+    } else {
+      watchData = this._getVMVal(vm, exp);
+    }
+
     if (!node.hasChildNodes()) this.templateUpdater(node, val, key, vm);
-    // this.templateUpdater(node, val, key, vm);
+
     const updaterFn: any = this[`${dir}Updater`];
     switch (dir) {
       case 'model':
-      // if (updaterFn) (updaterFn as Function).call(this, node, value, exp, key, index, watchValue, watchData, vm);
-      if (updaterFn) (updaterFn as Function).call(this, node, value, exp, key, index, watchValue);
-      break;
-    default:
-      if (updaterFn) (updaterFn as Function).call(this, node, value);
+        if (updaterFn) (updaterFn as Function).call(this, node, value, exp, key, index, watchData, vm);
+        break;
+      default:
+        if (updaterFn) (updaterFn as Function).call(this, node, value);
     }
   }
 
@@ -118,16 +106,24 @@ export class CompileUtilForRepeat {
     node.className = className + space + value;
   }
 
-  public modelUpdater(node: Element, value: any, exp: string, key: string, index: number, watchValue: any): void {
+  public modelUpdater(node: Element, value: any, exp: string, key: string, index: number, watchData: any, vm: any): void {
     node.value = typeof value === 'undefined' ? '' : value;
-    // const val = exp.replace(`${key}.`, '');
     const func = function (event: Event) {
       event.preventDefault();
-      if ((event.target as HTMLInputElement).value === watchValue[index]) return;
-      // if ((event.target as HTMLInputElement).value === watchValue[index][val]) return;
-      // watchValue[index][val] = (event.target as HTMLInputElement).value;
-      watchValue[index] = (event.target as HTMLInputElement).value;
-      console.log('watchValuewatchValue', watchValue);
+      if (/(this.state.).*/.test(exp)) {
+        const val = exp.replace(/(this.state.)|(this.props)/, '');
+        if ((event.target as HTMLInputElement).value === watchData) return;
+        vm.state[val] = (event.target as HTMLInputElement).value;
+      }
+      if (/(this.props.).*/.test(exp)) {
+        const val = exp.replace(/(this.state.)|(this.props)/, '');
+        if ((event.target as HTMLInputElement).value === watchData) return;
+        vm.props[val] = (event.target as HTMLInputElement).value;
+      }
+      if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
+        if ((event.target as HTMLInputElement).value === watchData[index]) return;
+        watchData[index] = (event.target as HTMLInputElement).value;
+      }
     };
     node.addEventListener('input', func, false);
     (node as any).eventinput = func;
@@ -160,7 +156,6 @@ export class CompileUtilForRepeat {
         if (arg === 'true' || arg === 'false') argsList.push(arg === 'true');
         if (arg.indexOf(key) === 0 || arg.indexOf(`${key}.`) === 0) argsList.push(this._getVMRepeatVal(val, arg, key));
       });
-      console.log('argsList', argsList);
       fn.apply(vm, argsList);
     };
     if (eventType && fn) {
@@ -228,23 +223,23 @@ export class CompileUtil {
     const isRepeatNode = this.isRepeatNode(node);
     if (isRepeatNode) { // compile repeatNode's attributes
       switch (dir) {
-      case 'repeat':
-        if (updaterFn) (updaterFn as Function).call(this, node, this._getVMRepeatVal(vm, exp), exp, vm);
-        break;
+        case 'repeat':
+          if (updaterFn) (updaterFn as Function).call(this, node, this._getVMRepeatVal(vm, exp), exp, vm);
+          break;
       }
     } else { // compile unrepeatNode's attributes
       switch (dir) {
-      case 'model':
-        if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp), exp, vm);
-        break;
-      case 'text':
-        if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp));
-        break;
-      case 'if':
-        if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp), exp, vm);
-        break;
-      default:
-        if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp));
+        case 'model':
+          if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp), exp, vm);
+          break;
+        case 'text':
+          if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp));
+          break;
+        case 'if':
+          if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp), exp, vm);
+          break;
+        default:
+          if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp));
       }
     }
   }
@@ -283,11 +278,9 @@ export class CompileUtil {
       event.preventDefault();
       if (/(this.state.).*/.test(exp)) vm.state[val] = (event.target as HTMLInputElement).value;
       if (/(this.props.).*/.test(exp)) vm.props[val] = (event.target as HTMLInputElement).value;
-      console.log(222);
     };
     node.addEventListener('input', func, false);
     (node as any).eventinput = func;
-    console.log(111);
     if (node.getAttribute('eventTypes')) {
       const eventlist = JSON.parse(node.getAttribute('eventTypes'));
       eventlist.push('input');
@@ -299,9 +292,7 @@ export class CompileUtil {
 
   public repeatUpdater(node: Element, value: any, expFather: string, vm: any): void {
     const key = expFather.split(' ')[1];
-    // const watchData = expFather.split(' ')[3];
     value.forEach((val: any, index: number) => {
-      // const newElement = node.cloneNode(true);
       const newElement = this.cloneNode(node);
       const nodeAttrs = (newElement as Element).attributes;
       const text = newElement.textContent;
@@ -318,22 +309,18 @@ export class CompileUtil {
             if (this.isEventDirective(dir)) {
               new CompileUtilForRepeat(this.$fragment).eventHandler(newElement as Element, vm, exp, dir, key, val);
             } else {
-              // new CompileUtilForRepeat(this.$fragment).bind(newElement as Element, val, key, dir, exp, index, vm, watchData);
               new CompileUtilForRepeat(this.$fragment).bind(newElement as Element, val, key, dir, exp, index, vm, value);
             }
           }
         });
       }
-      // if (!this.isIfNode(node)) this.$fragment.appendChild(newElement);
       if (!this.isIfNode(node)) this.$fragment.insertBefore(newElement, node);
-      // if (this.$fragment.contains(node)) this.$fragment.removeChild(node);
       if (newElement.hasChildNodes()) this.repeatChildrenUpdater((newElement as Element), val, expFather, index, vm);
     });
   }
 
   public repeatChildrenUpdater(node: Element, value: any, expFather: string, index: number, vm: any): void {
     const key = expFather.split(' ')[1];
-    // const watchData = expFather.split(' ')[3];
     Array.from(node.childNodes).forEach((child: Element) => {
       if (this.isRepeatProp(child)) child.setAttribute(`_prop-${key}`, JSON.stringify(value));
 
@@ -354,7 +341,6 @@ export class CompileUtil {
             if (this.isEventDirective(dir)) {
               new CompileUtilForRepeat(node).eventHandler(child, vm, exp, dir, key, value);
             } else {
-              // new CompileUtilForRepeat(node).bind(child, value, key, dir, exp, index, vm, watchData);
               new CompileUtilForRepeat(node).bind(child, value, key, dir, exp, index, vm, value);
             }
             if (dir === 'if' && new RegExp(`(^${key})`).test(exp)) canShowByIf = repeatUtils._getVMRepeatVal(value, exp, key);
@@ -375,8 +361,7 @@ export class CompileUtil {
           const newWatchData = restRepeat.value.split(' ')[3]
           if (/^(this\.)/.test(newWatchData)) {
             new CompileUtil(node).bind(child, vm, restRepeat.value, restRepeat.name.substring(3));
-            // 要恢复
-            // if (node.contains(child)) node.removeChild(child);
+            if (node.contains(child)) node.removeChild(child);
           }
           if (new RegExp(`(^${key})`).test(newWatchData)) {
             new CompileUtil(node).repeatUpdater(child, this._getValueByValue(value, newWatchData, key), restRepeat.value, vm);

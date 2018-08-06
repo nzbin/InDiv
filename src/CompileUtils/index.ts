@@ -108,7 +108,7 @@ export class CompileUtilForRepeat {
 
   public modelUpdater(node: Element, value: any, exp: string, key: string, index: number, watchData: any, vm: any): void {
     node.value = typeof value === 'undefined' ? '' : value;
-    const func = function (event: Event) {
+    const func = (event: Event) => {
       event.preventDefault();
       if (/(this.state.).*/.test(exp)) {
         const val = exp.replace(/(this.state.)|(this.props)/, '');
@@ -123,7 +123,7 @@ export class CompileUtilForRepeat {
       if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {   
         const val = exp.replace(`${key}.`, '');
         if (val === key) watchData[index] = (event.target as HTMLInputElement).value;
-        if (val !== key) watchData[index][val] = (event.target as HTMLInputElement).value;
+        if (val !== key) watchData[index][val] = (event.target as HTMLInputElement).value
       }
     };
     node.addEventListener('input', func, false);
@@ -207,18 +207,6 @@ export class CompileUtil {
     return value;
   }
 
-  public _setVMVal(vm: any, exp: string, value: any): void {
-    let val = vm;
-    const expList = exp.split('.');
-    expList.forEach((k, i) => {
-      if (i < exp.length - 1) {
-        val = val[k];
-      } else {
-        val[k] = value;
-      }
-    });
-  }
-
   public bind(node: Element, vm: any, exp: string, dir: string): void {
     const updaterFn = this[`${dir}Updater`];
     const isRepeatNode = this.isRepeatNode(node);
@@ -275,7 +263,7 @@ export class CompileUtil {
   public modelUpdater(node: Element, value: any, exp: string, vm: any): void {
     node.value = typeof value === 'undefined' ? '' : value;
     const val = exp.replace(/(this.state.)|(this.props)/, '');
-    const func = function (event: Event) {
+    const func = (event: Event) => {
       event.preventDefault();
       if (/(this.state.).*/.test(exp)) vm.state[val] = (event.target as HTMLInputElement).value;
       if (/(this.props.).*/.test(exp)) vm.props[val] = (event.target as HTMLInputElement).value;

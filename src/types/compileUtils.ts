@@ -3,22 +3,22 @@ export interface ICompileUtilForRepeat {
     $fragment?: Element | DocumentFragment;
     _getVMVal(vm: any, exp: string): any;
     _getVMRepeatVal(val: any, exp: string, key: string): any;
-    bind(node: Element, val?: any, key?: string, dir?: string, exp?: string, index?: number, vm?: any, watchData?: any): void;
+    bind(node: Element, val?: any, key?: string, dir?: string, exp?: string, index?: number, vm?: any, watchValue?: any): void;
     templateUpdater(node: Element, val?: any, key?: string, vm?: any): void;
     textUpdater(node: Element, value: any): void;
     htmlUpdater(node: Element, value: any): void;
     ifUpdater(node: Element, value: any): void;
     classUpdater(node: Element, value: any, oldValue: any): void;
-    modelUpdater(node: Element, value: any, exp: string, key: string, index: number, watchValue: any, watchData: any, vm: any): void;
+    modelUpdater(node: Element, value: any, exp: string, key: string, index: number, watchData: any, vm: any): void;
     eventHandler(node: Element, vm: any, exp: string, eventName: string, key: string, val: any): void;
 }
 
 export interface ICompileUtil {
     [index: string]: any;
     $fragment?: Element | DocumentFragment;
+    _getValueByValue(vm: any, exp: string, key: string): any;
     _getVMVal(vm: any, exp: string): any;
     _getVMRepeatVal(vm: any, exp: string): void;
-    _setVMVal(vm: any, exp: string, value: any): void;
     bind(node: Element, vm: any, exp: string, dir: string): void;
     templateUpdater(node: any, vm: any, exp: string): void;
     textUpdater(node: Element, value: any): void;
@@ -34,4 +34,5 @@ export interface ICompileUtil {
     isRepeatNode(node: Element): boolean;
     isIfNode(node: Element): boolean;
     isRepeatProp(node: Element): boolean;
+    cloneNode(node: Element): Node;
 }

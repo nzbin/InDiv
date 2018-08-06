@@ -102,7 +102,6 @@ export declare class CompileUtil {
     _getValueByValue(vm: any, exp: string, key: string): any;
     _getVMVal(vm: any, exp: string): any;
     _getVMRepeatVal(vm: any, exp: string): void;
-    _setVMVal(vm: any, exp: string, value: any): void;
     bind(node: Element, vm: any, exp: string, dir: string): void;
     templateUpdater(node: any, vm: any, exp: string): void;
     textUpdater(node: Element, value: any): void;

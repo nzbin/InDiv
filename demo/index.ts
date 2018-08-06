@@ -135,7 +135,7 @@ class PComponent extends Component {
     this.$template = (`
       <div>
         $globalContext in Component: <span>{{this.$globalContext.a}}</span>
-        <p es-if="this.state.e" es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick($event, this.state.b, '111', 1, false, true, a, this.aaa)">你好： {{a.z}}</p>
+        <p es-if="this.state.e" es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick(this.state.d)">你好： {{a.z}}</p>
         state.d: <input es-repeat="let a in this.state.d" es-model="a.z" />
         <p es-on:click="this.sendProps(5)">props from component.state.a: {{this.props.ax}}</p>
       </div>
@@ -145,13 +145,14 @@ class PComponent extends Component {
   public $onInit() {
     console.log('props11', this.props);
   }
-  public componentClick(e: Event) {
-    alert('点击了组件');
-    console.log('this.props.ax', this.props.ax);
-    this.$setState({ b: 2 });
-    // this.$setProps({ ax: 5 });
-    this.props.b(3);
-    this.a = 1;
+  public componentClick(a: any) {
+    // alert('点击了组件');
+    // console.log('this.props.ax', this.props.ax);
+    // this.$setState({ b: 2 });
+    // // this.$setProps({ ax: 5 });
+    // this.props.b(3);
+    // this.a = 1;
+    console.log('aa', a);
   }
   public sendProps(ax: any) {
     this.$setProps({ ax: ax });

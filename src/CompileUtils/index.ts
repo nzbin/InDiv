@@ -120,9 +120,10 @@ export class CompileUtilForRepeat {
         if ((event.target as HTMLInputElement).value === watchData) return;
         vm.props[val] = (event.target as HTMLInputElement).value;
       }
-      if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
-        if ((event.target as HTMLInputElement).value === watchData[index]) return;
-        watchData[index] = (event.target as HTMLInputElement).value;
+      if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {   
+        const val = exp.replace(`${key}.`, '');
+        if (val === key) watchData[index] = (event.target as HTMLInputElement).value;
+        if (val !== key) watchData[index][val] = (event.target as HTMLInputElement).value;
       }
     };
     node.addEventListener('input', func, false);

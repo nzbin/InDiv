@@ -126,7 +126,7 @@ class RouteChild {
   template: (`
     <div>
     子组件的子组件<br/>
-      <p es-on:click="this.props.b(3)">PCChild props.ax:: {{this.props.ax}}</p>
+      <p es-on:click="this.props.b(3)">PCChild props.a:: {{this.props.a}}</p>
       <p es-repeat="let a in this.state.d">1232{{a.z}}</p>
     </div>
   `),

@@ -36,6 +36,13 @@ export type TComponentOptions = {
     state: any;
 };
 
+type TServiceOptions = {
+    isSingletonMode?: boolean;
+};
+export interface IService {
+    $http?: Http;
+}
+
 export interface IComponent<State = any, Props = any, Vm = any> {
     state?: State | any;
     props?: Props | any;
@@ -94,15 +101,15 @@ export declare class Http {
     $patch(url: string, params?: any): Promise<any>;
 }
 
-export declare class Service {
-    static isSingletonMode?: boolean;
-    static instance?: Service;
-    static _injectedProviders?: Map<string, Service>;
+// export declare class Service {
+//     static isSingletonMode?: boolean;
+//     static instance?: Service;
+//     static _injectedProviders?: Map<string, Service>;
 
-    $http?: Http;
-    constructor();
-    static getInstance?(args?: any[]): Service;
-}
+//     $http?: Http;
+//     constructor();
+//     static getInstance?(args?: any[]): Service;
+// }
 
 export declare class KeyWatcher {
     data: any;
@@ -237,7 +244,7 @@ export declare class EsModule {
     $exportList?: {
         [name: string]: Function;
     };
-    providerList?: Map<string, Service>;
+    providerList?: Map<string, IService>;
     $bootstrap?: Function;
     constructor();
     $declarations(): void;

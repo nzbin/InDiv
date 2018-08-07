@@ -1,11 +1,16 @@
 import { Easiest, Component, Router, Utils, EsModule, Service, Injectable } from '../src';
 // import { Easiest, Component, Router, Utils, EsModule, Service, Injectable } from '../build';
 
-class HeroSearchService1 extends Service {
-  public static isSingletonMode: boolean = true;
+// class HeroSearchService1 extends Service {
+
+@Service({
+  isSingletonMode: true,
+})
+class HeroSearchService1 {
+  // public static isSingletonMode: boolean = true;
   constructor() {
-    super();
-    console.log('fuck ts HeroSearchService1 is comming');
+    // super();
+    // console.log('fuck ts HeroSearchService1 is comming');
   }
 
   public test() {
@@ -13,9 +18,11 @@ class HeroSearchService1 extends Service {
   }
 }
 
-class HeroSearchService2 extends Service {
+@Service()
+// class HeroSearchService2 extends Service {
+class HeroSearchService2 {
   constructor() {
-    super();
+    // super();
   }
 
   public test(): void {
@@ -24,12 +31,14 @@ class HeroSearchService2 extends Service {
 }
 
 @Injectable
-class HeroSearchService extends Service {
+@Service()
+class HeroSearchService {
+// class HeroSearchService extends Service {
   public hsr: HeroSearchService1;
   constructor(
     private hsrS: HeroSearchService1,
   ) {
-    super();
+    // super();
     this.hsr = hsrS;
     this.hsr.test();
   }

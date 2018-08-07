@@ -36,8 +36,18 @@ export type TComponentOptions = {
     state: any;
 };
 
-type TServiceOptions = {
+export type TServiceOptions = {
     isSingletonMode?: boolean;
+};
+
+export type TEsModuleOptions = {
+    imports?: Function[],
+    components: {
+        [name: string]: Function;
+    },
+    providers?: Function[],
+    exports?: string[],
+    bootstrap?: Function,
 };
 export interface IService {
     $http?: Http;
@@ -69,6 +79,27 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     getPropsValue(valueList: any[], value: any): void;
     buildProps(prop: any): any;
     buildComponentScope(ComponentClass: any, props: any, dom: Element): IComponent<any, any, any>;
+}
+
+export interface IEsModule {
+    utils?: Utils;
+    $imports?: Function[];
+    $components?: {
+        [name: string]: Function;
+    };
+    $providers?: Function[];
+    $exports?: string[];
+    $exportList?: {
+        [name: string]: Function;
+    };
+    providerList?: Map<string, IService>;
+    $bootstrap?: Function;
+    $buildImports(): void;
+    $buildProviderList(): void
+    $buildProviders4Services(): void;
+    $buildProviders4Components(): void;
+    $buildComponents4Components(): void;
+    $buildExports(): void;
 }
 
 export declare class Watcher {
@@ -233,28 +264,28 @@ export declare class Compile {
 //     buildComponentScope(ComponentClass: Function, props: any, dom: Element): Component<any, any, any>;
 // }
 
-export declare class EsModule {
-    utils?: Utils;
-    $imports?: Function[];
-    $components?: {
-        [name: string]: Function;
-    };
-    $providers?: Function[];
-    $exports?: string[];
-    $exportList?: {
-        [name: string]: Function;
-    };
-    providerList?: Map<string, IService>;
-    $bootstrap?: Function;
-    constructor();
-    $declarations(): void;
-    $buildImports(): void;
-    $buildProviderList(): void
-    $buildProviders4Services(): void;
-    $buildProviders4Components(): void;
-    $buildComponents4Components(): void;
-    $buildExports(): void;
-}
+// export declare class EsModule {
+//     utils?: Utils;
+//     $imports?: Function[];
+//     $components?: {
+//         [name: string]: Function;
+//     };
+//     $providers?: Function[];
+//     $exports?: string[];
+//     $exportList?: {
+//         [name: string]: Function;
+//     };
+//     providerList?: Map<string, IService>;
+//     $bootstrap?: Function;
+//     constructor();
+//     $declarations(): void;
+//     $buildImports(): void;
+//     $buildProviderList(): void
+//     $buildProviders4Services(): void;
+//     $buildProviders4Components(): void;
+//     $buildComponents4Components(): void;
+//     $buildExports(): void;
+// }
 export declare class Easiest {
     modalList: IMiddleware<Easiest>[];
     utils: Utils;
@@ -263,7 +294,7 @@ export declare class Easiest {
     $rootPath: string;
     $canRenderModule: boolean;
     $routeDOMKey: string;
-    $rootModule: EsModule;
+    $rootModule: IEsModule;
     $components: {
         [name: string]: Function;
     };
@@ -310,3 +341,7 @@ export declare function injectorinjector(_constructor: Function, _module: any): 
 export declare function factoryCreator(_constructor: Function, _module: any): any;
 
 export declare function Component<State = any, Props = any, Vm = any>(options: TComponentOptions): (_constructor: Function) => void;
+
+export declare function EsModule(options: TEsModuleOptions): (_constructor: Function) => void;
+
+export declare function factoryModule(EM: Function): IEsModule;

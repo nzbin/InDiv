@@ -3,6 +3,7 @@ import { IMiddleware, IEsModule, EsRouteObject } from '../types';
 import Utils from '../Utils';
 // import Component from '../Component';
 import { factoryCreator } from '../Injectable';
+import { factoryModule } from '../EsModule';
 
 import { IComponent } from '../types/component';
 
@@ -53,7 +54,8 @@ class Easiest {
       console.error('must send a root module');
       return;
     }
-    this.$rootModule = new (Esmodule as any)();
+    // this.$rootModule = new (Esmodule as any)();
+    this.$rootModule = factoryModule(Esmodule);
     this.$components = Object.assign({}, this.$rootModule.$components);
   }
 

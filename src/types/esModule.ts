@@ -15,7 +15,7 @@ export interface IEsModule {
   providerList?: Map<string, IService>;
   $bootstrap?: Function;
 
-  $declarations?(): void;
+  // $declarations?(): void;
   $buildImports?(): void;
   $buildProviderList(): void;
   $buildProviders4Services(): void;

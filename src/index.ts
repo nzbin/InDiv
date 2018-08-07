@@ -9,7 +9,8 @@ export { default as Compile } from './Compile';
 export { default as Component } from './Component';
 export { default as Router } from './Router';
 export { default as Easiest } from './Easiest';
-export { default as EsModule } from './EsModule';
+// export { default as EsModule } from './EsModule';
+export { EsModule, factoryModule } from './EsModule';
 export { default as Service } from './Service';
 export { default as Http } from './Http';
 

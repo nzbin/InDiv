@@ -580,49 +580,79 @@ class Container {
   }
 }
 
-class M2 extends EsModule {
-  constructor() {
-    super();
-  }
+// class M2 extends EsModule {
+//   constructor() {
+//     super();
+//   }
 
-  public $declarations(): void {
-    this.$components = {
-      'R2': R2,
-      'route-child': RouteChild,
-      'pp-childs': PCChild,
-    };
-    this.$providers = [
-      HeroSearchService2,
-    ];
-    this.$exports = [
-      'R2',
-      'route-child',
-    ];
-    // this.$bootstrap = R2;
-  }
-}
+//   public $declarations(): void {
+//     this.$components = {
+//       'R2': R2,
+//       'route-child': RouteChild,
+//       'pp-childs': PCChild,
+//     };
+//     this.$providers = [
+//       HeroSearchService2,
+//     ];
+//     this.$exports = [
+//       'R2',
+//       'route-child',
+//     ];
+//     // this.$bootstrap = R2;
+//   }
+// }
+@EsModule({
+  components: {
+    'R2': R2,
+    'route-child': RouteChild,
+    'pp-childs': PCChild,
+  },
+  providers: [
+    HeroSearchService2,
+  ],
+  exports: [
+    'R2',
+    'route-child',
+  ],
+})
+class M2 {}
 
-class M1 extends EsModule {
-  constructor() {
-    super();
-  }
+// class M1 extends EsModule {
+//   constructor() {
+//     super();
+//   }
 
-  public $declarations() {
-    this.$imports = [
-      M2,
-    ];
-    this.$components = {
-      'container-wrap': Container,
-      'pc-component': PComponent,
-      'R1': R1,
-    };
-    this.$providers = [
-      HeroSearchService,
-      HeroSearchService1,
-    ];
-    // this.$bootstrap = R1;
-  }
-}
+//   public $declarations() {
+//     this.$imports = [
+//       M2,
+//     ];
+//     this.$components = {
+//       'container-wrap': Container,
+//       'pc-component': PComponent,
+//       'R1': R1,
+//     };
+//     this.$providers = [
+//       HeroSearchService,
+//       HeroSearchService1,
+//     ];
+//     // this.$bootstrap = R1;
+//   }
+// }
+@EsModule({
+  imports: [
+    M2,
+  ],
+  components: {
+    'container-wrap': Container,
+    'pc-component': PComponent,
+    'R1': R1,
+  },
+  providers: [
+    HeroSearchService,
+    HeroSearchService1,
+  ],
+})
+class M1 {}
 
 const router = new Router();
 

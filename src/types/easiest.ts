@@ -11,7 +11,7 @@ export type EsRouteObject = {
     path: string;
     query?: any;
     params?: any;
-}
+};
 
 export interface IEasiest {
     modalList: IMiddleware<IEasiest>[];
@@ -24,7 +24,7 @@ export interface IEasiest {
     $rootModule: IEsModule;
     $components: {
         [name: string]: Function;
-    }
+    };
     $esRouteObject?: EsRouteObject;
 
     $use(modal: IMiddleware<IEasiest>): number;

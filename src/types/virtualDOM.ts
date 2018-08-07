@@ -11,7 +11,7 @@ export interface IVnode {
 export type TAttributes = {
     name: string;
     value: string;
-}
+};
 
 export interface IPatchList {
     type?: number;
@@ -36,7 +36,7 @@ export interface IRenderVnode {
 }
 
 export interface IVirtualDOM {
-    parseToVnode: IParseToVnode,
-    diffVnode: IDiffVnode,
-    renderVnode: IRenderVnode,
+    parseToVnode: IParseToVnode;
+    diffVnode: IDiffVnode;
+    renderVnode: IRenderVnode;
 }

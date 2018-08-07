@@ -1,8 +1,10 @@
 import { IMiddleware, IEsModule, EsRouteObject } from '../types';
 
 import Utils from '../Utils';
-import Component from '../Component';
+// import Component from '../Component';
 import { factoryCreator } from '../Injectable';
+
+import { IComponent } from '../types/component';
 
 class Easiest {
   public modalList: IMiddleware<Easiest>[];
@@ -15,7 +17,7 @@ class Easiest {
   public $rootModule: IEsModule;
   public $components: {
     [name: string]: Function;
-  }
+  };
   public $esRouteObject?: EsRouteObject;
 
 
@@ -78,16 +80,16 @@ class Easiest {
     component.$vm = this;
     component.$components = this.$rootModule.$components;
     if (component.$beforeInit) component.$beforeInit();
-    if (component.$onInit) component.$onInit();
+    if (component.esOnInit) component.esOnInit();
     if (!component.$template) {
       console.error('must decaler this.$template in $bootstrap()');
       return;
     }
     const template = component.$template;
     if (template && typeof template === 'string' && renderDOM) {
-      if (component.$beforeMount) component.$beforeMount();
+      if (component.esBeforeMount) component.esBeforeMount();
       this.replaceDom(component, renderDOM).then(() => {
-        if (component.$afterMount) component.$afterMount();
+        if (component.esAfterMount) component.esAfterMount();
       });
       return Promise.resolve(component);
     } else {
@@ -96,7 +98,7 @@ class Easiest {
     }
   }
 
-  public replaceDom(component: Component, renderDOM: Element): Promise<any> {
+  public replaceDom(component: IComponent, renderDOM: Element): Promise<any> {
     component.$renderDom = renderDOM;
     if (component.$render) {
       component.$render();

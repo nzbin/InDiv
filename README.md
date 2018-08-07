@@ -151,7 +151,7 @@ Now we support for typescript!
       `);
     }
 
-    $onInit() {
+    esOnInit() {
       console.log('props', this.props);
     }
     componentClick(e) {
@@ -162,7 +162,7 @@ Now we support for typescript!
       this.$location.state();
       // this.props.b(3);
     }
-    $watchState(oldData, newData) {
+    esWatchState(oldData, newData) {
       console.log('oldData Component:', oldData);
       console.log('newData Component:', newData);
     }
@@ -239,7 +239,7 @@ Now we support for typescript!
   - use `this.state: Object` and `this.$setState(parmars: Function || Object)`
   - if u have some variable, u can set `this.state` in `constructor(){}`
   - if u want to change State, plz use `this.$setState`, parmars can be `Object` or `Function` which must return an `Object`
-  - and u can recive this change in life cycle `$watchState(oldData, newData)`
+  - and u can recive this change in life cycle `esWatchState(oldData, newData)`
 
 8. `Watcher` and `KeyWatcher`
 
@@ -431,13 +431,13 @@ Now we support for typescript!
     ```javascript
       constructor()
       $bootstrap()
-      $onInit()
-      $beforeMount()
-      $hasRender()
-      $afterMount()
-      $onDestory()
+      esOnInit()
+      esBeforeMount()
+      esHasRender()
+      esAfterMount()
+      esOnDestory()
       $routeChange(lastRoute, newRoute)
-      $watchState(oldData, newData)
+      esWatchState(oldData, newData)
       // $routeChange only for route Component
     ```
 

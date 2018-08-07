@@ -30,7 +30,7 @@
     "no-eval": false,
     "no-inferrable-types": [ true, "ignore-params", "ignore-properties" ],
     "no-internal-module": true,
-    "no-invalid-this": [ true ],
+    "no-invalid-this": false,
     "no-reference": true,
     "no-unused-expression": true,
     "no-use-before-declare": true,
@@ -65,6 +65,7 @@
       }
     ],
     "use-isnan": true,
+    "semicolon": [true, "always"],
     "variable-name": [ true, "ban-keywords" ],
     "whitespace": [ true, "check-branch", "check-decl", "check-operator", "check-module", "check-separator", "check-type", "check-typecast" ]
   }

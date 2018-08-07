@@ -5,7 +5,7 @@ export type ComponentList<C> = {
     dom: Element;
     props: any;
     scope: C;
-}
+};
 
 export interface IComponent<State = any, Props = any, Vm = any> extends ILifecycle<Vm> {
     state?: State | any;
@@ -21,7 +21,7 @@ export interface IComponent<State = any, Props = any, Vm = any> extends ILifecyc
     stateWatcher?: IWatcher;
     propsWatcher?: IWatcher;
 
-    $bootstrap(): void;
+    // $bootstrap(): void;
     $beforeInit?(): void;
     $routeChange?(lastRoute: string, newRoute: string): void;
     $render(): void;

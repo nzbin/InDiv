@@ -123,7 +123,10 @@ export class CompileUtilForRepeat {
       if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {   
         const val = exp.replace(`${key}.`, '');
         if (val === key) watchData[index] = (event.target as HTMLInputElement).value;
-        if (val !== key) watchData[index][val] = (event.target as HTMLInputElement).value
+        // if (val !== key) watchData[index][val] = (event.target as HTMLInputElement).value;
+        if (val !== key) {
+          watchData[index][val] = (event.target as HTMLInputElement).value;
+        }
       }
     };
     node.addEventListener('input', func, false);
@@ -347,7 +350,7 @@ export class CompileUtil {
       if (newAttrs && canShowByIf) {
         const restRepeat = Array.from(newAttrs).find(attr => this.isDirective(attr.name) && attr.name === 'es-repeat');
         if (restRepeat) {
-          const newWatchData = restRepeat.value.split(' ')[3]
+          const newWatchData = restRepeat.value.split(' ')[3];
           if (/^(this\.)/.test(newWatchData)) {
             new CompileUtil(node).bind(child, vm, restRepeat.value, restRepeat.name.substring(3));
             if (node.contains(child)) node.removeChild(child);

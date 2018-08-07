@@ -5,7 +5,7 @@ export { IMiddleware, EsRouteObject, IEasiest } from './easiest';
 export { IEsModule } from './esModule';
 export { IHttpGet, IHttpDelete, IHttpPost, IHttpPut, IHttpPatch, IHttp } from './http';
 export { IKeyWatcher } from './keyWatcher';
-export { ILocationState, ILifecycle } from './lifecycle';
+// export { ILocationState, ILifecycle } from './lifecycle';
 export { TRouter, IRouter } from './router';
 export { IService } from './service';
 export { IUtil } from './utils';

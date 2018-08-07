@@ -1,7 +1,8 @@
 import 'babel-polyfill';
 
 export { default as Utils } from './Utils';
-export { default as Lifecycle } from './Lifecycle';
+// export { default as Lifecycle } from './Lifecycle';
+export { OnInit, BeforeMount, AfterMount, OnDestory, HasRender, WatchState } from './Lifecycle';
 export { default as Watcher } from './Watcher';
 export { default as KeyWatcher } from './KeyWatcher';
 export { default as Compile } from './Compile';

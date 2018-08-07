@@ -17,7 +17,7 @@ export function Injectable(_constructor: Function): void {
                     (_constructor as any)._needInjectedClass = [service];
                 }
             }
-        })
+        });
     }
 }
 

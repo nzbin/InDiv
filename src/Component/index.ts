@@ -1,221 +1,431 @@
-import Lifecycle from '../Lifecycle';
+// import Lifecycle from '../Lifecycle';
 import Compile from '../Compile';
 import Watcher from '../Watcher';
+import Utils from '../Utils';
+import { CompileUtil } from '../CompileUtils';
 import { factoryCreator } from '../Injectable';
 
-export type ComponentList<C> = {
-  dom: Element;
-  props: any;
-  scope: C;
-}
+import { IComponent, ComponentList } from '../types/component';
 
-abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<Vm> {
-  public static scope?: Component<any, any, any>;
-  public static _injectedProviders?: Map<string, Function>;
-  public static _injectedComponents?: {
-    [name: string]: Function;
-  };
-  public static _needInjectedClass?: string[];
+// export abstract class Component<State = any, Props = any, Vm = any> extends Lifecycle<Vm> {
+//   public static scope?: Component<any, any, any>;
+//   public static _injectedProviders?: Map<string, Function>;
+//   public static _injectedComponents?: {
+//     [name: string]: Function;
+//   };
+//   public static _needInjectedClass?: string[];
 
-  public state?: State | any;
-  public props?: Props | any;
-  public $renderDom?: Element;
-  public $globalContext?: any;
-  public $vm?: Vm | any;
-  public $template?: string;
-  public $components?: {
-    [name: string]: Function;
-  };
-  public $componentList?: ComponentList<Component<any, any, any>>[];
-  public stateWatcher?: Watcher;
-  public propsWatcher?: Watcher;
+//   public state?: State | any;
+//   public props?: Props | any;
+//   public $renderDom?: Element;
+//   public $globalContext?: any;
+//   public $vm?: Vm | any;
+//   public $template?: string;
+//   public $components?: {
+//     [name: string]: Function;
+//   };
+//   public $componentList?: ComponentList<Component<any, any, any>>[];
+//   public stateWatcher?: Watcher;
+//   public propsWatcher?: Watcher;
 
-  constructor() {
-    super();
-    this.state = {};
-    this.$renderDom = null;
-    this.$globalContext = {};
+//   constructor() {
+//     super();
+//     this.state = {};
+//     this.$renderDom = null;
+//     this.$globalContext = {};
 
-    this.$vm = null;
-    this.$template = null;
-    this.$components = {};
-    this.$componentList = [];
+//     this.$vm = null;
+//     this.$template = null;
+//     this.$components = {};
+//     this.$componentList = [];
 
-    if (this.$bootstrap) this.$bootstrap();
-  }
+//     if (this.$bootstrap) this.$bootstrap();
+//   }
 
-  public $bootstrap(): void {};
+//   public $bootstrap(): void {}
 
-  public $beforeInit(): void {
-    if (this.props) this.propsWatcher = new Watcher(this.props, this.$watchState.bind(this), this.$reRender.bind(this));
-    this.stateWatcher = new Watcher(this.state, this.$watchState.bind(this), this.$reRender.bind(this));
-  }
+//   public $beforeInit(): void {
+//     if (this.props) this.propsWatcher = new Watcher(this.props, this.esWatchState.bind(this), this.$reRender.bind(this));
+//     this.stateWatcher = new Watcher(this.state, this.esWatchState.bind(this), this.$reRender.bind(this));
+//   }
 
-  public $routeChange(lastRoute: string, newRoute: string) {}
+//   public $routeChange(lastRoute: string, newRoute: string) {}
 
-  public $render() {
-    const dom = this.$renderDom;
-    const compile = new Compile(dom, this);
-    this.$mountComponent(dom, true);
-    this.$componentList.forEach(component => {
-      if (component.scope.$render) component.scope.$render();
-      if (component.scope.$afterMount) component.scope.$afterMount();
-    });
-    if (this.$hasRender) this.$hasRender();
-  }
+//   public $render() {
+//     const dom = this.$renderDom;
+//     const compile = new Compile(dom, this);
+//     this.$mountComponent(dom, true);
+//     this.$componentList.forEach(component => {
+//       if (component.scope.$render) component.scope.$render();
+//       if (component.scope.esAfterMount) component.scope.esAfterMount();
+//     });
+//     if (this.esHasRender) this.esHasRender();
+//   }
 
-  public $reRender(): void {
-    const dom = this.$renderDom;
-    const routerRenderDom = dom.querySelectorAll(this.$vm.$routeDOMKey)[0];
-    const compile = new Compile(dom, this, routerRenderDom);
-    this.$mountComponent(dom, false);
-    this.$componentList.forEach(component => {
-      if (component.scope.$render) component.scope.$reRender();
-      if (component.scope.$afterMount) component.scope.$afterMount();
-    });
-    if (this.$hasRender) this.$hasRender();
-  }
+//   public $reRender(): void {
+//     const dom = this.$renderDom;
+//     const routerRenderDom = dom.querySelectorAll(this.$vm.$routeDOMKey)[0];
+//     const compile = new Compile(dom, this, routerRenderDom);
+//     this.$mountComponent(dom, false);
+//     this.$componentList.forEach(component => {
+//       if (component.scope.$render) component.scope.$reRender();
+//       if (component.scope.esAfterMount) component.scope.esAfterMount();
+//     });
+//     if (this.esHasRender) this.esHasRender();
+//   }
 
-  public $mountComponent(dom: Element, isFirstRender?: boolean): void {
-    const saveStates: ComponentList<Component<any, any, any>>[] = [];
-    this.$componentList.forEach(component => {
-      saveStates.push(component);
-    });
-    this.$componentsConstructor(dom);
-    this.$componentList.forEach(component => {
-      const saveComponent = saveStates.find(save => save.dom === component.dom);
-      if (saveComponent) {
-        component.scope = saveComponent.scope;
-        component.scope.props = component.props;
-      }
-      component.scope.$vm = this.$vm;
-      component.scope.$globalContext = this.$globalContext;
-      component.scope.$components = this.$components;
-      if (component.scope.$beforeInit) component.scope.$beforeInit();
-      if (component.scope.$onInit && isFirstRender) component.scope.$onInit();
-      if (component.scope.$beforeMount) component.scope.$beforeMount();
-    });
-  }
+//   public $mountComponent(dom: Element, isFirstRender?: boolean): void {
+//     const saveStates: ComponentList<Component<any, any, any>>[] = [];
+//     this.$componentList.forEach(component => {
+//       saveStates.push(component);
+//     });
+//     this.$componentsConstructor(dom);
+//     this.$componentList.forEach(component => {
+//       const saveComponent = saveStates.find(save => save.dom === component.dom);
+//       if (saveComponent) {
+//         component.scope = saveComponent.scope;
+//         component.scope.props = component.props;
+//       }
+//       component.scope.$vm = this.$vm;
+//       component.scope.$globalContext = this.$globalContext;
+//       component.scope.$components = this.$components;
+//       if (component.scope.$beforeInit) component.scope.$beforeInit();
+//       if (component.scope.esOnInit && isFirstRender) component.scope.esOnInit();
+//       if (component.scope.esBeforeMount) component.scope.esBeforeMount();
+//     });
+//   }
 
-  public $componentsConstructor(dom: Element): void {
-    this.$componentList = [];
-    const routerRenderDom = dom.querySelectorAll(this.$vm.$routeDOMKey)[0];
-    for (const name in (this.constructor as any)._injectedComponents) {
-      this.$components[name] = (this.constructor as any)._injectedComponents[name];
-    }
-    for (const name in this.$components) {
-      const tags = dom.getElementsByTagName(name);
-      Array.from(tags).forEach(node => {
-        //  protect component in <router-render>
-        if (routerRenderDom && routerRenderDom.contains(node)) return;
-        const nodeAttrs = node.attributes;
-        const props: any = {};
-        if (nodeAttrs) {
-          const attrList = Array.from(nodeAttrs);
-          const _propsKeys: any = {};
-          attrList.forEach(attr => {
-            if (/^\_prop\-(.+)/.test(attr.name)) _propsKeys[attr.name.replace('_prop-', '')] = JSON.parse(attr.value);
-          });
-          attrList.forEach(attr => {
-            const attrName = attr.name;
-            const prop = /^\{(.+)\}$/.exec(attr.value);
-            if (prop) {
-              const valueList = prop[1].split('.');
-              const key = valueList[0];
-              let _prop = null;
-              if (/^(this.).*/g.test(prop[1])) _prop = this.compileUtil._getVMVal(this, prop[1]);
-              if (_propsKeys.hasOwnProperty(key)) _prop = this.getPropsValue(valueList, _propsKeys[key]);
-              props[attrName] = this.buildProps(_prop);
-            }
-            node.removeAttribute(attrName);
-          });
-        }
-        this.$componentList.push({
-          dom: node,
-          props,
-          scope: this.buildComponentScope(this.$components[name], props, node),
-        });
+//   public $componentsConstructor(dom: Element): void {
+//     this.$componentList = [];
+//     const routerRenderDom = dom.querySelectorAll(this.$vm.$routeDOMKey)[0];
+//     for (const name in (this.constructor as any)._injectedComponents) {
+//       this.$components[name] = (this.constructor as any)._injectedComponents[name];
+//     }
+//     for (const name in this.$components) {
+//       const tags = dom.getElementsByTagName(name);
+//       Array.from(tags).forEach(node => {
+//         //  protect component in <router-render>
+//         if (routerRenderDom && routerRenderDom.contains(node)) return;
+//         const nodeAttrs = node.attributes;
+//         const props: any = {};
+//         if (nodeAttrs) {
+//           const attrList = Array.from(nodeAttrs);
+//           const _propsKeys: any = {};
+//           attrList.forEach(attr => {
+//             if (/^\_prop\-(.+)/.test(attr.name)) _propsKeys[attr.name.replace('_prop-', '')] = JSON.parse(attr.value);
+//           });
+//           attrList.forEach(attr => {
+//             const attrName = attr.name;
+//             const prop = /^\{(.+)\}$/.exec(attr.value);
+//             if (prop) {
+//               const valueList = prop[1].split('.');
+//               const key = valueList[0];
+//               let _prop = null;
+//               if (/^(this.).*/g.test(prop[1])) _prop = this.compileUtil._getVMVal(this, prop[1]);
+//               if (_propsKeys.hasOwnProperty(key)) _prop = this.getPropsValue(valueList, _propsKeys[key]);
+//               props[attrName] = this.buildProps(_prop);
+//             }
+//             node.removeAttribute(attrName);
+//           });
+//         }
+//         this.$componentList.push({
+//           dom: node,
+//           props,
+//           scope: this.buildComponentScope(this.$components[name], props, node),
+//         });
+//       });
+//     }
+//   }
+
+//   public $setState(newState: any): void {
+//     if (newState && this.utils.isFunction(newState)) {
+//       const _newState = newState();
+//       if (_newState && _newState instanceof Object) {
+//         for (const key in _newState) {
+//           if (this.state.hasOwnProperty(key) && this.state[key] !== _newState[key]) this.state[key] = _newState[key];
+//         }
+//       }
+//     }
+//     if (newState && newState instanceof Object) {
+//       for (const key in newState) {
+//         if (this.state.hasOwnProperty(key) && this.state[key] !== newState[key]) this.state[key] = newState[key];
+//       }
+//     }
+//   }
+
+//   public $setProps(newProps: any): void {
+//     if (newProps && this.utils.isFunction(newProps)) {
+//       const _newProps = newProps();
+//       if (_newProps && _newProps instanceof Object) {
+//         for (const key in _newProps) {
+//           if (this.props.hasOwnProperty(key) && this.props[key] !== _newProps[key]) this.props[key] = _newProps[key];
+//         }
+//       }
+//     }
+//     if (newProps && newProps instanceof Object) {
+//       for (const key in newProps) {
+//         if (this.props.hasOwnProperty(key) && this.props[key] !== newProps[key]) {
+//           this.props[key] = newProps[key];
+//         }
+//       }
+//     }
+//   }
+
+//   public $setGlobalContext(newGlobalContext: any): void {
+//     if (newGlobalContext && this.utils.isFunction(newGlobalContext)) {
+//       const _newGlobalContext = newGlobalContext();
+//       if (_newGlobalContext && _newGlobalContext instanceof Object) {
+//         for (const key in _newGlobalContext) {
+//           if (this.$globalContext.hasOwnProperty(key) && this.$globalContext[key] !== _newGlobalContext[key]) this.$globalContext[key] = _newGlobalContext[key];
+//         }
+//       }
+//     }
+//     if (newGlobalContext && newGlobalContext instanceof Object) {
+//       for (const key in newGlobalContext) {
+//         if (this.$globalContext.hasOwnProperty(key) && this.$globalContext[key] !== newGlobalContext[key]) {
+//           this.$globalContext[key] = newGlobalContext[key];
+//         }
+//       }
+//     }
+//   }
+
+//   public getPropsValue(valueList: any[], value: any): void {
+//     let val = value;
+//     valueList.forEach((v, index: number) => {
+//       if (index === 0) return;
+//       val = val[v];
+//     });
+//     return val;
+//   }
+
+//   public buildProps(prop: any): any {
+//     if (this.utils.isFunction(prop)) {
+//       return prop.bind(this);
+//     } else {
+//       return prop;
+//     }
+//   }
+
+//   public buildComponentScope(ComponentClass: Function, props: any, dom: Element): Component<any, any, any> {
+//     const _component: any = factoryCreator(ComponentClass, this.$vm.$rootModule);
+
+//     _component.props = props;
+//     _component.$renderDom = dom;
+//     _component.$components = this.$components;
+//     return _component;
+//   }
+// }
+
+type TComponentOptions = {
+  template: string;
+  state: any;
+};
+
+function Component<State = any, Props = any, Vm = any>(options: TComponentOptions): (_constructor: Function) => void {
+  return function (_constructor: Function): void {
+    const vm: IComponent<State, Props, Vm> = _constructor.prototype;
+    vm.$template = options.template;
+    vm.state = options.state;
+
+    vm.utils = new Utils();
+    vm.compileUtil = new CompileUtil();
+    vm.$globalContext = {};
+    vm.$components = {};
+    vm.$componentList = [];
+
+    // vm.$location = {
+    //   state: vm.$getLocationState.bind(vm),
+    //   go: vm.$locationGo.bind(vm),
+    // };
+
+    vm.$getLocationState = function (): any {
+      return {
+        path: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.path,
+        query: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.query,
+        params: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.params,
+      };
+    };
+
+    vm.$locationGo = function (path: string, query?: any, params?: any): void {
+      const rootPath = (this as IComponent<State, Props, Vm>).$vm.$rootPath === '/' ? '' : (this as IComponent<State, Props, Vm>).$vm.$rootPath;
+      history.pushState(
+        { path, query, params },
+        null,
+        `${rootPath}${path}${(this as IComponent<State, Props, Vm>).utils.buildQuery(query)}`,
+      );
+      (this as IComponent<State, Props, Vm>).$vm.$esRouteObject = { path, query, params };
+    };
+
+    vm.$beforeInit = function (): void {
+      if (this.props) (this as IComponent<State, Props, Vm>).propsWatcher = new Watcher((this as IComponent<State, Props, Vm>).props, (this as IComponent<State, Props, Vm>).esWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).$reRender.bind(this as IComponent<State, Props, Vm>));
+      (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, (this as IComponent<State, Props, Vm>).esWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).$reRender.bind(this as IComponent<State, Props, Vm>));
+    };
+
+    vm.$render = function () {
+      const dom = (this as IComponent<State, Props, Vm>).$renderDom;
+      const compile = new Compile(dom, this as IComponent<State, Props, Vm>);
+      (this as IComponent<State, Props, Vm>).$mountComponent(dom, true);
+      (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
+        if (component.scope.$render) component.scope.$render();
+        if (component.scope.esAfterMount) component.scope.esAfterMount();
       });
-    }
-  }
+      if (this.esHasRender) this.esHasRender();
+    };
 
-  public $setState(newState: any): void {
-    if (newState && this.utils.isFunction(newState)) {
-      const _newState = newState();
-      if (_newState && _newState instanceof Object) {
-        for (const key in _newState) {
-          if (this.state.hasOwnProperty(key) && this.state[key] !== _newState[key]) this.state[key] = _newState[key];
+    vm.esWatchState = (oldData?: any, newData?: any) => { };
+
+    vm.$reRender = function (): void {
+      const dom = (this as IComponent<State, Props, Vm>).$renderDom;
+      const routerRenderDom = dom.querySelectorAll((this as IComponent<State, Props, Vm>).$vm.$routeDOMKey)[0];
+      const compile = new Compile(dom, (this as IComponent<State, Props, Vm>), routerRenderDom);
+      (this as IComponent<State, Props, Vm>).$mountComponent(dom, false);
+      (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
+        if (component.scope.$render) component.scope.$reRender();
+        if (component.scope.esAfterMount) component.scope.esAfterMount();
+      });
+      if ((this as IComponent<State, Props, Vm>).esHasRender) (this as IComponent<State, Props, Vm>).esHasRender();
+    };
+
+    vm.$mountComponent = function (dom: Element, isFirstRender?: boolean): void {
+      const saveStates: ComponentList<IComponent<State, Props, Vm>>[] = [];
+      (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
+        saveStates.push(component);
+      });
+      (this as IComponent<State, Props, Vm>).$componentsConstructor(dom);
+      (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
+        const saveComponent = saveStates.find(save => save.dom === component.dom);
+        if (saveComponent) {
+          component.scope = saveComponent.scope;
+          component.scope.props = component.props;
+        }
+        component.scope.$vm = (this as IComponent<State, Props, Vm>).$vm;
+        component.scope.$globalContext = (this as IComponent<State, Props, Vm>).$globalContext;
+        component.scope.$components = (this as IComponent<State, Props, Vm>).$components;
+        if (component.scope.$beforeInit) component.scope.$beforeInit();
+        if (component.scope.esOnInit && isFirstRender) component.scope.esOnInit();
+        if (component.scope.esBeforeMount) component.scope.esBeforeMount();
+      });
+    };
+
+    vm.$componentsConstructor = function (dom: Element): void {
+      (this as IComponent<State, Props, Vm>).$componentList = [];
+      const routerRenderDom = dom.querySelectorAll((this as IComponent<State, Props, Vm>).$vm.$routeDOMKey)[0];
+      for (const name in ((this as IComponent<State, Props, Vm>).constructor as any)._injectedComponents) {
+        (this as IComponent<State, Props, Vm>).$components[name] = ((this as IComponent<State, Props, Vm>).constructor as any)._injectedComponents[name];
+      }
+      for (const name in (this as IComponent<State, Props, Vm>).$components) {
+        const tags = dom.getElementsByTagName(name);
+        Array.from(tags).forEach(node => {
+          //  protect component in <router-render>
+          if (routerRenderDom && routerRenderDom.contains(node)) return;
+          const nodeAttrs = node.attributes;
+          const props: any = {};
+          if (nodeAttrs) {
+            const attrList = Array.from(nodeAttrs);
+            const _propsKeys: any = {};
+            attrList.forEach(attr => {
+              if (/^\_prop\-(.+)/.test(attr.name)) _propsKeys[attr.name.replace('_prop-', '')] = JSON.parse(attr.value);
+            });
+            attrList.forEach(attr => {
+              const attrName = attr.name;
+              const prop = /^\{(.+)\}$/.exec(attr.value);
+              if (prop) {
+                const valueList = prop[1].split('.');
+                const key = valueList[0];
+                let _prop = null;
+                if (/^(this.).*/g.test(prop[1])) _prop = (this as IComponent<State, Props, Vm>).compileUtil._getVMVal(this as IComponent<State, Props, Vm>, prop[1]);
+                if (_propsKeys.hasOwnProperty(key)) _prop = (this as IComponent<State, Props, Vm>).getPropsValue(valueList, _propsKeys[key]);
+                props[attrName] = (this as IComponent<State, Props, Vm>).buildProps(_prop);
+              }
+              node.removeAttribute(attrName);
+            });
+          }
+          (this as IComponent<State, Props, Vm>).$componentList.push({
+            dom: node,
+            props,
+            scope: (this as IComponent<State, Props, Vm>).buildComponentScope((this as IComponent<State, Props, Vm>).$components[name], props, node),
+          });
+        });
+      }
+    };
+
+    vm.$setState = function (newState: any): void {
+      if (newState && (this as IComponent<State, Props, Vm>).utils.isFunction(newState)) {
+        const _newState = newState();
+        if (_newState && _newState instanceof Object) {
+          for (const key in _newState) {
+            if ((this as IComponent<State, Props, Vm>).state.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).state[key] !== _newState[key]) (this as IComponent<State, Props, Vm>).state[key] = _newState[key];
+          }
         }
       }
-    }
-    if (newState && newState instanceof Object) {
-      for (const key in newState) {
-        if (this.state.hasOwnProperty(key) && this.state[key] !== newState[key]) this.state[key] = newState[key];
-      }
-    }
-  }
-
-  public $setProps(newProps: any): void {
-    if (newProps && this.utils.isFunction(newProps)) {
-      const _newProps = newProps();
-      if (_newProps && _newProps instanceof Object) {
-        for (const key in _newProps) {
-          if (this.props.hasOwnProperty(key) && this.props[key] !== _newProps[key]) this.props[key] = _newProps[key];
+      if (newState && newState instanceof Object) {
+        for (const key in newState) {
+          if ((this as IComponent<State, Props, Vm>).state.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).state[key] !== newState[key]) (this as IComponent<State, Props, Vm>).state[key] = newState[key];
         }
       }
-    }
-    if (newProps && newProps instanceof Object) {
-      for (const key in newProps) {
-        if (this.props.hasOwnProperty(key) && this.props[key] !== newProps[key]) {
-          this.props[key] = newProps[key];
+    };
+
+    vm.$setProps = function (newProps: any): void {
+      if (newProps && (this as IComponent<State, Props, Vm>).utils.isFunction(newProps)) {
+        const _newProps = newProps();
+        if (_newProps && _newProps instanceof Object) {
+          for (const key in _newProps) {
+            if ((this as IComponent<State, Props, Vm>).props.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).props[key] !== _newProps[key]) (this as IComponent<State, Props, Vm>).props[key] = _newProps[key];
+          }
         }
       }
-    }
-  }
-
-  public $setGlobalContext(newGlobalContext: any): void {
-    if (newGlobalContext && this.utils.isFunction(newGlobalContext)) {
-      const _newGlobalContext = newGlobalContext();
-      if (_newGlobalContext && _newGlobalContext instanceof Object) {
-        for (const key in _newGlobalContext) {
-          if (this.$globalContext.hasOwnProperty(key) && this.$globalContext[key] !== _newGlobalContext[key]) this.$globalContext[key] = _newGlobalContext[key];
+      if (newProps && newProps instanceof Object) {
+        for (const key in newProps) {
+          if ((this as IComponent).props.hasOwnProperty(key) && (this as IComponent).props[key] !== newProps[key]) {
+            (this as IComponent).props[key] = newProps[key];
+          }
         }
       }
-    }
-    if (newGlobalContext && newGlobalContext instanceof Object) {
-      for (const key in newGlobalContext) {
-        if (this.$globalContext.hasOwnProperty(key) && this.$globalContext[key] !== newGlobalContext[key]) {
-          this.$globalContext[key] = newGlobalContext[key];
+    };
+
+    vm.$setGlobalContext = function (newGlobalContext: any): void {
+      if (newGlobalContext && (this as IComponent<State, Props, Vm>).utils.isFunction(newGlobalContext)) {
+        const _newGlobalContext = newGlobalContext();
+        if (_newGlobalContext && _newGlobalContext instanceof Object) {
+          for (const key in _newGlobalContext) {
+            if ((this as IComponent<State, Props, Vm>).$globalContext.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).$globalContext[key] !== _newGlobalContext[key]) (this as IComponent<State, Props, Vm>).$globalContext[key] = _newGlobalContext[key];
+          }
         }
       }
-    }
-  }
+      if (newGlobalContext && newGlobalContext instanceof Object) {
+        for (const key in newGlobalContext) {
+          if ((this as IComponent<State, Props, Vm>).$globalContext.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).$globalContext[key] !== newGlobalContext[key]) {
+            (this as IComponent<State, Props, Vm>).$globalContext[key] = newGlobalContext[key];
+          }
+        }
+      }
+    };
 
-  public getPropsValue(valueList: any[], value: any): void {
-    let val = value;
-    valueList.forEach((v, index: number) => {
-      if (index === 0) return;
-      val = val[v];
-    });
-    return val;
-  }
+    vm.getPropsValue = function (valueList: any[], value: any): void {
+      let val = value;
+      valueList.forEach((v, index: number) => {
+        if (index === 0) return;
+        val = val[v];
+      });
+      return val;
+    };
 
-  public buildProps(prop: any): any {
-    if (this.utils.isFunction(prop)) {
-      return prop.bind(this);
-    } else {
-      return prop;
-    }
-  }
+    vm.buildProps = function (prop: any): any {
+      if ((this as IComponent<State, Props, Vm>).utils.isFunction(prop)) {
+        return prop.bind(this as IComponent<State, Props, Vm>);
+      } else {
+        return prop;
+      }
+    };
 
-  public buildComponentScope(ComponentClass: Function, props: any, dom: Element): Component<any, any, any> {
-    const _component: any = factoryCreator(ComponentClass, this.$vm.$rootModule);
-
-    _component.props = props;
-    _component.$renderDom = dom;
-    _component.$components = this.$components;
-    return _component;
-  }
+    vm.buildComponentScope = function (ComponentClass: Function, props: any, dom: Element): IComponent<State, Props, Vm> {
+      const _component = factoryCreator(ComponentClass, (this as IComponent<State, Props, Vm>).$vm.$rootModule);
+      _component.props = props;
+      _component.$renderDom = dom;
+      _component.$components = (this as IComponent<State, Props, Vm>).$components;
+      return _component;
+    };
+  };
 }
 
 export default Component;

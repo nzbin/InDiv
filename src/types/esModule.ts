@@ -17,7 +17,7 @@ export interface IEsModule {
 
   $declarations?(): void;
   $buildImports?(): void;
-  $buildProviderList(): void
+  $buildProviderList(): void;
   $buildProviders4Services(): void;
   $buildProviders4Components?(): void;
   $buildComponents4Components?(): void;

@@ -4,7 +4,7 @@
   - add route and Life cycle
 
 2. 2018-04-29 add watcher
-  - add new life cycle: `$watchState` and `$beforeInit`
+  - add new life cycle: `esWatchState` and `$beforeInit`
   - add new class: `Controller`
   - add watcher for state in `Controller` and `Component`
 
@@ -24,7 +24,7 @@
   - optimize `Controller` and `Component`, update `props` in `Component`
   - update the declaration of `Component` in `Controller`
   - add new function `$setProps` for update `props` in `Component`
-  - add new lifecycle `$hasRender` for update `props` in `Component` and `Controller`
+  - add new lifecycle `esHasRender` for update `props` in `Component` and `Controller`
 
 6. 2018-05-03/04 optimize
   - add new class `Utils`

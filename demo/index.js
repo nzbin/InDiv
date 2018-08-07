@@ -65,7 +65,7 @@ class RouteChild extends Component {
     `);
   }
 
-  $hasRender() {
+  esHasRender() {
     console.log('RouteChild: this.props.a', this.props.a);
   }
 }
@@ -97,7 +97,7 @@ class PCChild extends Component {
     `);
   }
 
-  $hasRender() {
+  esHasRender() {
     console.log('PCChild: this.props.ax', this.props.ax);
   }
 }
@@ -134,7 +134,7 @@ class PComponent extends Component {
     `);
   }
 
-  $onInit() {
+  esOnInit() {
     console.log('props11', this.props);
   }
   componentClick(e) {
@@ -156,7 +156,7 @@ class PComponent extends Component {
     this.$setProps({ ax: a });
     this.props.b(a);
   }
-  $watchState(oldData, newData) {
+  esWatchState(oldData, newData) {
     console.log('oldData Component:', oldData);
     console.log('newData Component:', newData);
   }
@@ -215,25 +215,25 @@ class R1 extends Component {
     `);
   }
 
-  $onInit() {
+  esOnInit() {
     this.utils.setCookie('tutor', {
       name: 'gerry',
       github: 'https://github.com/DimaLiLongJi',
     }, { expires: 7 });
     console.log('is $this.$globalContext', this.$globalContext);
   }
-  $beforeMount() {
+  esBeforeMount() {
     const cookie = this.utils.getCookie('tutor');
     console.log('cookie is', cookie);
-    console.log('is $beforeMount');
+    console.log('is esBeforeMount');
   }
-  $afterMount() {
-    // console.log('is $afterMount');
+  esAfterMount() {
+    // console.log('is esAfterMount');
   }
   $routeChange(lastRoute, newRoute) {
     console.log('R1 is $routeChange', lastRoute, newRoute);
   }
-  $watchState(oldData, newData) {
+  esWatchState(oldData, newData) {
     console.log('oldData Controller:', oldData);
     console.log('newData Controller:', newData);
   }
@@ -285,25 +285,25 @@ class R2 extends Component {
       </div>
     `);
   }
-  $onInit() {
+  esOnInit() {
     console.log('this.$vm', this.$vm);
     console.log('this.$globalContext R2', this.$globalContext);
     console.log('this.$location222', this.$location.state());
-    // console.log('is $onInit');
+    // console.log('is esOnInit');
   }
-  $beforeMount() {
-    // console.log('is $beforeMount');
+  esBeforeMount() {
+    // console.log('is esBeforeMount');
   }
-  $afterMount() {
-    // console.log('is $afterMount');
+  esAfterMount() {
+    // console.log('is esAfterMount');
   }
-  $hasRender() {
+  esHasRender() {
     console.log('！！father: this.state.a', this.state.a);
   }
   $routeChange(lastRoute, newRoute) {
     console.log('R2 is $routeChange', lastRoute, newRoute);
   }
-  $watchState(oldData, newData) {
+  esWatchState(oldData, newData) {
     console.log('oldData Controller:', oldData);
     console.log('newData Controller:', newData);
   }
@@ -343,7 +343,7 @@ class Container extends Component {
     `);
   }
 
-  $afterMount() {
+  esAfterMount() {
     // this.$location.go('/R1', { b: '1' });
   }
 

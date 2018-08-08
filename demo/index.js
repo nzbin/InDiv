@@ -15,10 +15,6 @@ Service({
 
 
 class HeroSearchService2 {
-  constructor() {
-    // super();
-  }
-
   test() {
     console.log('HeroSearchService !!!2222');
   }
@@ -77,8 +73,6 @@ Component({
 })(RouteChild);
 
 class PCChild {
-  constructor() {}
-
   esHasRender() {
     console.log('PCChild: this.props.ax', this.props.ax);
   }
@@ -107,8 +101,6 @@ Component({
 })(PCChild);
 
 class PComponent {
-  constructor() {}
-
   esOnInit() {
     console.log('props11', this.props);
   }
@@ -142,16 +134,13 @@ Component({
     a: 'a子组件',
     b: 100,
     c: '<p>1111</p>',
-    d: [
-      {
-        z: 111111111111111,
-        b: 'a',
-      },
-      {
-        z: 33333333333333,
-        b: 'a',
-      },
-    ],
+    d: [{
+      z: 111111111111111,
+      b: 'a',
+    }, {
+      z: 33333333333333,
+      b: 'a',
+    }],
     e: true,
   },
   template: (`
@@ -187,8 +176,8 @@ class R1 {
   esAfterMount() {
     // console.log('is esAfterMount');
   }
-  $routeChange(lastRoute, newRoute) {
-    console.log('R1 is $routeChange', lastRoute, newRoute);
+  esRouteChange(lastRoute, newRoute) {
+    console.log('R1 is esRouteChange', lastRoute, newRoute);
   }
   esWatchState(oldData, newData) {
     console.log('oldData Controller:', oldData);
@@ -247,7 +236,7 @@ Component({
       b: 'a',
       show: true,
     },
-        {
+    {
       z: 33333333333333,
       b: 'a',
       show: true,
@@ -258,7 +247,7 @@ Component({
       b: 'a',
       show: true,
     },
-        {
+    {
       z: 1111,
       b: 'a',
       show: false,
@@ -292,8 +281,8 @@ class R2 {
   esHasRender() {
     console.log('！！father: this.state.a', this.state.a);
   }
-  $routeChange(lastRoute, newRoute) {
-    console.log('R2 is $routeChange', lastRoute, newRoute);
+  esRouteChange(lastRoute, newRoute) {
+    console.log('R2 is esRouteChange', lastRoute, newRoute);
   }
   esWatchState(oldData, newData) {
     console.log('oldData Controller:', oldData);
@@ -460,8 +449,8 @@ const routes = [
 router.$setRootPath('/demo');
 // router.$setRootPath('/');
 router.$init(routes);
-router.$routeChange = function (old, next) {
-  console.log('$routeChange 3', old, next);
+router.esRouteChange = function (old, next) {
+  console.log('esRouteChange 3', old, next);
 };
 
 const easiest = new Easiest();

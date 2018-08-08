@@ -1,4 +1,5 @@
 import { IPatchList } from '../types';
+
 import VirtualDOM from '../VirtualDOM';
 import Utils from '../Utils';
 import { CompileUtil } from '../CompileUtils';

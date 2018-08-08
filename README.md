@@ -102,7 +102,7 @@ Now we support for typescript!
   router.$setRootPath('/demo'); // so routes:Array => `/` is `/demo`
   router.$init(routes);
   router.$routeChange = function (old, next) {
-    console.log('$routeChange', old, next);
+    console.log('esRouteChange', old, next);
   };
   const easiest = new Easiest();
   easiest.$bootstrapModule(M1);
@@ -112,64 +112,134 @@ Now we support for typescript!
 
 4. Create a Component:
 
-  - must extends`class Component`
-  - must `super(name, props);`
-  - **plz $setState or $setProps after lifecycle `constructor()`**
-  - u need to declare template or component in lifecycle of `EsModule`  in `$declarations => this.$components`
-  - **`$template` must be parceled by a father Dom in lifecycle `$bootstrap()`**
+  - create a `class`
+  - use decorator `Component` in typescript or use function `Component` in javascript
+  - `Component` accepts an object `template: string;state?: any;`
+  - **please use $setState or $setProps after lifecycle `constructor()`**
 
-    1. this.$template is used to set component html
+    1. typescript
 
-    ```javascript
-    $bootstrap() {
-      this.$template = (`
-        <div>
-          <pComponent1 ax="{this.state.a}" b="{this.getProps}"></pComponent1>
-          <input es-repeat="let a in this.state.d" es-model="a.z" />
-        </div>
-      `);
-    }
-    ```
+      - to use decorator `Component` declare `template` and `state`
+      - to implements interface `HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange` to use lifecycle
+      - to use decorator `Injectable` to inject `Service` in `constructor`'s arguments of `Component` 
+
+      ```typescript
+      @Injectable
+      @Component({
+        template: (`
+          <div>
+            <p es-on:click="this.go()">container: {{this.state.a}}</p>
+            <input es-model="this.state.a" />
+            <div es-repeat="let man in this.state.testArray">
+              <div es-on:click="this.show(man)">姓名：{{man.name}}</div>
+              <div>性别：{{man.sex}}</div>
+              <input es-model="b" es-repeat="let b in man.job" es-class="b" />
+            </div>
+            <router-render></router-render>
+          </div>`
+        ),
+        state: {
+          a: 1,
+          testArray: [
+            {
+              name: 'xxx',
+              sex: '男',
+              job: ['xx', '码农1', '帅1'],
+            },
+            {
+              name: 'x22',
+              sex: 'xx',
+              job: ['老师', '英语老师', '美1'],
+            }],
+        },
+      })
+      class Container implements OnInit, AfterMount {
+        public ss: HeroSearchService;
+        public state: any;
+        public $locationGo: (path: string, query?: any, params?: any) => void;
+
+        constructor(
+          private hss: HeroSearchService,
+        ) {
+          this.ss = hss;
+          this.ss.test();
+          console.log(this.state);
+        }
+
+        public esOnInit() {
+          console.log('esOnInit Container');
+        }
+
+        public esAfterMount() {
+          console.log('esAfterMount Container');
+        }
+
+        public go() {
+          this.$locationGo('/R1', { b: '1' });
+        }
+        public show(a: any) {
+          console.log('aaaa', a);
+        }
+      }
+      ```
+
+    2. javascript
+
+      - to use function `Component` declare `template` and `state`
+      - to use lifecycle `esOnInit esBeforeMount esAfterMount esOnDestory esHasRender esWatchState esRouteChange` in Class
+      - to use `constructor`'s arguments of `Component` for inject `Service`, and arguments must be lowercase lette of initials lette  of Service class name
+
+      ```javascript
+      class Container {
+        constructor(
+          heroSearchService
+        ) {
+          this.ss = heroSearchService;
+          this.ss.test();
+        }
+        esOnInit() {
+          console.log('esOnInit Container');
+        }
+
+        go() {
+          this.$locationGo('/R1', { b: '1' });
+        }
+
+        show(a) {
+          console.log('aaaa', a);
+        }
+      }
+
+      Component({
+        template: (`
+          <div>
+            <p es-on:click="this.go()">container: {{this.state.a}}</p>
+            <input es-model="this.state.a" />
+            <div es-repeat="let man in this.state.testArray">
+              <div es-on:click="this.show(man)">姓名：{{man.name}}</div>
+              <div>性别：{{man.sex}}</div>
+              <input es-model="b" es-on:click="this.show(this.state.testArray2)" es-repeat="let b in man.job" es-class="b" />
+            </div>
+            <router-render></router-render>
+          </div>`
+        ),
+        state: {
+          a: 1,
+          testArray: [{
+            name: '李龙吉',
+            sex: '男',
+            job: ['程序员1', '码农1', '帅1'],
+          }],
+          testArray2: ['程序员3', '码农3', '帅3'],
+        },
+      })(Container);
+      ```
+
   - `props: Object` is data which `class Controller` sends to `class Component`
+
   - ** `props: Object` can only be changed or used after lifecycle `constructor()` **
+
   - `props: Object` can only be changed by action `this.$setProps()` and `this.$setProps()` is equal to `$setState`
-
-  ```javascript
-  class pComponent extends Component {
-    constructor() {
-      super();
-      this.state = {
-        a: 'a子组件',
-      };
-    }
-
-    $bootstrap() {
-      this.$template = (`
-        <div>
-          <pComponent1 ax="{this.state.a}" b="{this.getProps}"></pComponent1>
-        </div>
-      `);
-    }
-
-    esOnInit() {
-      console.log('props', this.props);
-    }
-    componentClick(e) {
-      alert('点击了组件');
-      this.$setState({b: 2});
-      this.$setProps({ax: 5});
-      this.$location.go('/R1/R4', { a: '1' });
-      this.$location.state();
-      // this.props.b(3);
-    }
-    esWatchState(oldData, newData) {
-      console.log('oldData Component:', oldData);
-      console.log('newData Component:', newData);
-    }
-
-    $routeChange(lastRoute, newRoute) {}
-  }
-  ```
 
 5. EsModule
 
@@ -436,15 +506,15 @@ Now we support for typescript!
       esHasRender()
       esAfterMount()
       esOnDestory()
-      $routeChange(lastRoute, newRoute)
+      esRouteChange(lastRoute, newRoute)
       esWatchState(oldData, newData)
-      // $routeChange only for route Component
+      // esRouteChange only for route Component
     ```
 
   - Router
 
     ```javascript
-    $routeChange(oldPath, newPath)
+    esRouteChange(oldPath, newPath)
     ```
 
 ## Architecture

@@ -27,7 +27,7 @@ export interface IRouter {
 
     $bootstrap(vm: IEasiest): void;
     $init(arr: TRouter[]): void;
-    $routeChange(lastRoute?: string, nextRoute?: string): void;
+    esRouteChange(lastRoute?: string, nextRoute?: string): void;
     redirectTo(redirectTo: string): void;
     refresh(): void;
     distributeRoutes(): void;

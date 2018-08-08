@@ -306,7 +306,7 @@ export class CompileUtil {
           }
         });
       }
-      if (!this.isIfNode(node)) this.$fragment.insertBefore(newElement, node);
+      if (!this.isIfNode(node)) this.$fragment.appendChild(newElement);
       if (newElement.hasChildNodes()) this.repeatChildrenUpdater((newElement as Element), val, expFather, index, vm);
     });
   }

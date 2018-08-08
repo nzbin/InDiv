@@ -1,6 +1,5 @@
 import { IVnode, TAttributes, IPatchList, IVirtualDOM  } from '../types';
 
-// class Vnode implements IVnode {
 class Vnode {
   public tagName?: string;
   public node?: DocumentFragment | Element;

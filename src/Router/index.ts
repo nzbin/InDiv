@@ -1,9 +1,7 @@
-import { TRouter, IEasiest } from '../types';
+import { TRouter, IEasiest, IComponent } from '../types';
 
 import Utils from '../Utils';
 import KeyWatcher from '../KeyWatcher';
-// import Component from '../Component';
-import { IComponent } from '../types/component';
 
 class Router {
   public routes: TRouter[];
@@ -162,7 +160,7 @@ class Router {
 
         if (needRenderRoute.redirectTo && /^\/.*/.test(needRenderRoute.redirectTo) && (index + 1) === this.renderRouteList.length) {
           this.hasRenderComponentList.forEach((c, i) => {
-            if (c.$routeChange) c.$routeChange(this.lastRoute, this.currentUrl);
+            if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
             if (i > index && c.esOnDestory) c.esOnDestory();
           });
           this.hasRenderComponentList.length = index;
@@ -173,7 +171,7 @@ class Router {
         const needRenderComponent = this.$vm.$components[needRenderRoute.component];
         const renderDom = document.querySelectorAll('router-render')[index - 1];
         this.hasRenderComponentList.forEach((c, i) => {
-          if (c.$routeChange) c.$routeChange(this.lastRoute, this.currentUrl);
+          if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
           if (i > index && c.esOnDestory) c.esOnDestory();
         });
         this.hasRenderComponentList.length = index;
@@ -185,7 +183,7 @@ class Router {
       if (index === (this.renderRouteList.length - 1) && index < (lastRouteList.length - 1)) {
         const renderDom = document.querySelectorAll('router-render')[index];
         this.hasRenderComponentList.forEach((c, i) => {
-          if (c.$routeChange) c.$routeChange(this.lastRoute, this.currentUrl);
+          if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
           if (i > index && c.esOnDestory) c.esOnDestory();
         });
         if (renderDom && renderDom.hasChildNodes()) renderDom.removeChild(renderDom.childNodes[0]);
@@ -220,7 +218,7 @@ class Router {
           })
           .catch(() => console.error('renderComponent failed'));
         this.hasRenderComponentList.forEach((c, i) => {
-          if (c.$routeChange) c.$routeChange(this.lastRoute, this.currentUrl);
+          if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
           if (i > index && c.esOnDestory) c.esOnDestory();
         });
 
@@ -242,7 +240,7 @@ class Router {
 
         if (route.redirectTo && /^\/.*/.test(route.redirectTo) && (index + 1) === this.renderRouteList.length) {
           this.hasRenderComponentList.forEach((c, i) => {
-            if (c.$routeChange) c.$routeChange(this.lastRoute, this.currentUrl);
+            if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
             if (i > index && c.esOnDestory) c.esOnDestory();
           });
           this.needRedirectPath = route.redirectTo;
@@ -260,7 +258,7 @@ class Router {
         const renderDom = document.querySelectorAll('router-render')[index - 1];
         this.routesList.push(route);
         this.hasRenderComponentList.forEach((c) => {
-          if (c.$routeChange) c.$routeChange(this.lastRoute, this.currentUrl);
+          if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
         });
         this.instantiateComponent(FindComponent, renderDom)
           .then(component => {

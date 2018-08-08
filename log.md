@@ -14,7 +14,7 @@
 
 4. 2018-05-01 optimize `Controller` and `Component`
   - add new class `Lifecycle`
-  - add new life cycle: `$routeChange` in class `Router`
+  - add new life cycle: `esRouteChange` in class `Router`
   - optimize `Controller` and `Component`
   - fix lifecycle of class `Component`
 

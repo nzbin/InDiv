@@ -1,17 +1,12 @@
-import { Easiest, Component, Router, Utils, EsModule, Service, Injectable } from '../src';
-// import { Easiest, Component, Router, Utils, EsModule, Service, Injectable } from '../build';
+// import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange } from '../src';
+import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange } from '../build';
 
-// class HeroSearchService1 extends Service {
 
 @Service({
   isSingletonMode: true,
 })
 class HeroSearchService1 {
-  // public static isSingletonMode: boolean = true;
-  constructor() {
-    // super();
-    // console.log('fuck ts HeroSearchService1 is comming');
-  }
+  constructor() {}
 
   public test() {
     console.log('HeroSearchService !!!1111');
@@ -19,11 +14,8 @@ class HeroSearchService1 {
 }
 
 @Service()
-// class HeroSearchService2 extends Service {
 class HeroSearchService2 {
-  constructor() {
-    // super();
-  }
+  constructor() {}
 
   public test(): void {
     console.log('HeroSearchService !!!2222');
@@ -33,12 +25,10 @@ class HeroSearchService2 {
 @Injectable
 @Service()
 class HeroSearchService {
-// class HeroSearchService extends Service {
   public hsr: HeroSearchService1;
   constructor(
     private hsrS: HeroSearchService1,
   ) {
-    // super();
     this.hsr = hsrS;
     this.hsr.test();
   }
@@ -70,39 +60,16 @@ class HeroSearchService {
     </div>
   `),
 })
-// class RouteChild extends Component {
-class RouteChild {
+
+class RouteChild implements HasRender {
   public heroSearchService: HeroSearchService2;
   public props: any;
   constructor(
     private heroSearchService2: HeroSearchService2,
   ) {
-    // super();
     this.heroSearchService = heroSearchService2;
     this.heroSearchService.test();
-    // this.state = {
-    //   a: 'a',
-    //   d: [
-    //     {
-    //       z: 111111111111111,
-    //       b: 'a',
-    //     },
-    //     {
-    //       z: 33333333333333,
-    //       b: 'a',
-    //     },
-    //   ],
-    // };
   }
-
-  // public $bootstrap() {
-  //   this.$template = (`
-  //     <div>
-  //       <p>子路由的子组件::{{this.props.a}}</p>
-  //       <pp-childs ax={this.props.a}></pp-childs>
-  //     </div>
-  //   `);
-  // }
 
   public esHasRender() {
     console.log('RouteChild: this.props.a', this.props.a);
@@ -131,35 +98,9 @@ class RouteChild {
     </div>
   `),
 })
-// class PCChild extends Component<any, any> {
-class PCChild {
+class PCChild implements HasRender {
   public props: any;
-  constructor() {
-    // super();
-    // this.state = {
-    //   a: 'a',
-    //   d: [
-    //     {
-    //       z: 111111111111111,
-    //       b: 'a',
-    //     },
-    //     {
-    //       z: 33333333333333,
-    //       b: 'a',
-    //     },
-    //   ],
-    // };
-  }
-
-  // public $bootstrap() {
-  //   this.$template = (`
-  //     <div>
-  //     子组件的子组件<br/>
-  //       <p es-on:click="this.props.b(3)">PCChild props.ax:: {{this.props.ax}}</p>
-  //       <p es-repeat="let a in this.state.d">1232{{a.z}}</p>
-  //     </div>
-  //   `);
-  // }
+  constructor() {}
 
   public esHasRender() {
     console.log('PCChild: this.props.ax', this.props.ax);
@@ -194,43 +135,13 @@ class PCChild {
     </div>
   `),
 })
-// class PComponent extends Component {
-class PComponent {
+class PComponent implements OnInit, WatchState {
   public $setState: (newState: any) => void;
   public $setProps: (newState: any) => void;
   public props: any;
   private a: number;
 
-  constructor() {
-    // super();
-    // this.state = {
-    //   a: 'a子组件',
-    //   b: 100,
-    //   c: '<p>1111</p>',
-    //   d: [
-    //     {
-    //       z: 111111111111111,
-    //       b: 'a',
-    //     },
-    //     {
-    //       z: 33333333333333,
-    //       b: 'a',
-    //     },
-    //   ],
-    //   e: true,
-    // };
-  }
-
-  // public $bootstrap() {
-  //   this.$template = (`
-  //     <div>
-  //       $globalContext in Component: <span>{{this.$globalContext.a}}</span>
-  //       <p es-if="this.state.e" es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick(this.state.d)">你好： {{a.z}}</p>
-  //       state.d: <input es-repeat="let a in this.state.d" es-model="a.z" />
-  //       <p es-on:click="this.sendProps(5)">props from component.state.a: {{this.props.ax}}</p>
-  //     </div>
-  //   `);
-  // }
+  constructor() {}
 
   public esOnInit() {
     console.log('props11', this.props);
@@ -306,8 +217,7 @@ class PComponent {
     f: true,
   },
 })
-// class R1 extends Component {
-class R1 {
+class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   public hSr: HeroSearchService;
   public utils: Utils;
   public $locationGo: (path: string, query?: any, params?: any) => void;
@@ -318,56 +228,9 @@ class R1 {
   constructor(
     private heroSearchService: HeroSearchService,
   ) {
-    // super();
     this.hSr = heroSearchService;
     this.hSr.test();
-    // this.utils = new Utils();
-    // this.state = {
-    //   a: 'a11',
-    //   b: 2,
-    //   d: [{
-    //     z: 111111111111111,
-    //     b: 'a',
-    //     show: true,
-    //   },
-    //       {
-    //     z: 33333333333333,
-    //     b: 'a',
-    //     show: true,
-    //   }],
-    //   c: 'c',
-    //   e: [{
-    //     z: 232323,
-    //     b: 'a',
-    //     show: true,
-    //   },
-    //       {
-    //     z: 1111,
-    //     b: 'a',
-    //     show: false,
-    //   }],
-    //   f: true,
-    // };
   }
-
-  // public $bootstrap() {
-  //   this.$template = (`
-  //   <div>
-  //     <pc-component ax="{this.state.a}" b="{this.getProps}"></pc-component>
-  //     下面跟组件没关系<br/>
-  //     $globalContext in Component: <span>{{this.$globalContext.a}}</span>
-  //     <div es-if="this.state.f">
-  //       ef
-  //       <input es-repeat="let a in this.state.e" es-model="a.z" />
-  //       <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.e" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
-  //       <p>111this.state.a：{{this.state.a}}</p>
-  //       <input es-model="this.state.a" />
-  //     </div>
-  //     下面是子路由<br/>
-  //     <router-render></router-render>
-  //   </div>
-  //   `);
-  // }
 
   public esOnInit() {
     this.utils.setCookie('tutor', {
@@ -384,8 +247,8 @@ class R1 {
   public esAfterMount() {
     // console.log('is esAfterMount');
   }
-  public $routeChange(lastRoute: string, newRoute: string) {
-    console.log('R1 is $routeChange', lastRoute, newRoute);
+  public esRouteChange(lastRoute: string, newRoute: string) {
+    console.log('R1 is esRouteChange', lastRoute, newRoute);
   }
   public esWatchState(oldData: any, newData: any) {
     console.log('oldData Controller:', oldData);
@@ -419,6 +282,7 @@ class R1 {
   }
 }
 
+@Injectable
 @Component({
   template: (`
     <div>
@@ -432,8 +296,7 @@ class R1 {
   `),
   state: { a: 1 },
 })
-// class R2 extends Component {
-class R2 {
+class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   public heroSearchService1: HeroSearchService1;
   public $getLocationState: () => any;
   public state: any;
@@ -441,23 +304,9 @@ class R2 {
   constructor(
     heroSearchService1: HeroSearchService1,
   ) {
-    // super();
-    // this.state = { a: 1 };
     this.heroSearchService1 = heroSearchService1;
     this.heroSearchService1.test();
   }
-  // public $bootstrap() {
-  //   this.$template = (`
-  //     <div>
-  //       <p es-on:click="this.showLocation()">点击显示子路由跳转</p>
-  //       <input es-model="this.state.a"/>
-  //       <br/>
-  //       <p es-on:click="this.showAlert()">点击显示this.state.a:{{this.state.a}}</p>
-  //       子组件:<br/>
-  //       <route-child a="{this.state.a}"></route-child>
-  //     </div>
-  //   `);
-  // }
   public esOnInit() {
     // console.log('this.$vm', this.$vm);
     // console.log('this.$globalContext R2', this.$globalContext);
@@ -475,8 +324,8 @@ class R2 {
   public esHasRender() {
     console.log('！！father: this.state.a', this.state.a);
   }
-  public $routeChange(lastRoute: string, newRoute: string) {
-    console.log('R2 is $routeChange', lastRoute, newRoute);
+  public esRouteChange(lastRoute: string, newRoute: string) {
+    console.log('R2 is esRouteChange', lastRoute, newRoute);
   }
   public esWatchState(oldData: any, newData: any) {
     console.log('oldData Controller:', oldData);
@@ -513,17 +362,22 @@ class R2 {
   ),
   state: {
     a: 1,
-    testArray: [{
-      name: '李龙吉',
-      sex: '男',
-      job: ['程序员1', '码农1', '帅1'],
-    }],
+    testArray: [
+      {
+        name: '李龙吉',
+        sex: '男',
+        job: ['程序员1', '码农1', '帅1'],
+      },
+      {
+        name: '邱宝环',
+        sex: '女',
+        job: ['老师', '英语老师', '美1'],
+      }],
     testArray2: ['程序员3', '码农3', '帅3'],
   },
 })
 
-class Container {
-// class Container extends Component {
+class Container implements OnInit, AfterMount {
   public ss: HeroSearchService;
   public state: any;
   public $locationGo: (path: string, query?: any, params?: any) => void;
@@ -531,37 +385,10 @@ class Container {
   constructor(
     private hss: HeroSearchService,
   ) {
-    // super();
     this.ss = hss;
     this.ss.test();
     console.log(this.state);
-    // this.state = {
-    //   a: 1,
-    //   testArray: [
-    //     {
-    //       name: '李龙吉',
-    //       sex: '男',
-    //       job: ['程序员1', '码农1', '帅1'],
-    //     },
-    //   ],
-    //   testArray2: ['程序员3', '码农3', '帅3'],
-    // };
   }
-
-  // public $bootstrap() {
-  //   this.$template = (`
-  //     <div>
-  //       <p es-on:click="this.go()">container: {{this.state.a}}</p>
-  //       <input es-model="this.state.a" />
-  //       <div es-repeat="let man in this.state.testArray">
-  //         <div es-on:click="this.show(man)">姓名：{{man.name}}</div>
-  //         <div>性别：{{man.sex}}</div>
-  //         <input es-model="b" es-on:click="this.show(this.state.testArray2)" es-repeat="let b in man.job" es-class="b" />
-  //       </div>
-  //       <router-render></router-render>
-  //     </div>
-  //   `);
-  // }
 
   public esOnInit() {
     console.log('esOnInit Container');
@@ -580,27 +407,6 @@ class Container {
   }
 }
 
-// class M2 extends EsModule {
-//   constructor() {
-//     super();
-//   }
-
-//   public $declarations(): void {
-//     this.$components = {
-//       'R2': R2,
-//       'route-child': RouteChild,
-//       'pp-childs': PCChild,
-//     };
-//     this.$providers = [
-//       HeroSearchService2,
-//     ];
-//     this.$exports = [
-//       'R2',
-//       'route-child',
-//     ];
-//     // this.$bootstrap = R2;
-//   }
-// }
 @EsModule({
   components: {
     'R2': R2,
@@ -617,27 +423,6 @@ class Container {
 })
 class M2 {}
 
-// class M1 extends EsModule {
-//   constructor() {
-//     super();
-//   }
-
-//   public $declarations() {
-//     this.$imports = [
-//       M2,
-//     ];
-//     this.$components = {
-//       'container-wrap': Container,
-//       'pc-component': PComponent,
-//       'R1': R1,
-//     };
-//     this.$providers = [
-//       HeroSearchService,
-//       HeroSearchService1,
-//     ];
-//     // this.$bootstrap = R1;
-//   }
-// }
 @EsModule({
   imports: [
     M2,
@@ -706,7 +491,7 @@ router.$setRootPath('/demo');
 // router.$setRootPath('/');
 router.$init(routes);
 router.$routeChange = function (old: string, next: string) {
-  console.log('$routeChange', old, next);
+  console.log('esRouteChange', old, next);
 };
 
 const easiest = new Easiest();

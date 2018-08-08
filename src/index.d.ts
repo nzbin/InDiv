@@ -33,7 +33,7 @@ export type EsRouteObject = {
 
 export type TComponentOptions = {
     template: string;
-    state: any;
+    state?: any;
 };
 
 export type TServiceOptions = {
@@ -67,8 +67,14 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     stateWatcher?: Watcher;
     propsWatcher?: Watcher;
 
+    esOnInit?(): void;
+    esBeforeMount?(): void;
+    esAfterMount?(): void;
+    esOnDestory?(): void;
+    esHasRender?(): void;
+    esWatchState?(oldData?: any, newData?: any): void;
+    esRouteChange?(lastRoute: string, newRoute: string): void;
     $beforeInit?(): void;
-    $routeChange?(lastRoute: string, newRoute: string): void;
     $render(): void;
     $reRender(): void;
     $mountComponent(dom: Element, isFirstRender?: boolean): void;
@@ -131,16 +137,6 @@ export declare class Http {
     $put(url: string, params?: any): Promise<any>;
     $patch(url: string, params?: any): Promise<any>;
 }
-
-// export declare class Service {
-//     static isSingletonMode?: boolean;
-//     static instance?: Service;
-//     static _injectedProviders?: Map<string, Service>;
-
-//     $http?: Http;
-//     constructor();
-//     static getInstance?(args?: any[]): Service;
-// }
 
 export declare class KeyWatcher {
     data: any;
@@ -211,81 +207,6 @@ export declare class Compile {
     isTextNode(node: Element): boolean;
 }
 
-// export declare abstract class Lifecycle<Vm = any> {
-//     compileUtil?: CompileUtil;
-//     utils?: Utils;
-//     $location?: {
-//         state?: () => TLocationState;
-//         go?: (path: string, query?: any, params?: any) => void;
-//     };
-//     $vm?: Vm | any;
-//     constructor();
-//     $getLocationState(): TLocationState;
-//     $locationGo(path: string, query?: any, params?: any): void;
-//     esOnInit(): void;
-//     esBeforeMount(): void;
-//     esAfterMount(): void;
-//     esOnDestory(): void;
-//     esHasRender(): void;
-//     esWatchState(oldData?: any, newData?: any): void;
-// }
-
-// export declare class Component<State = any, Props = any, Vm = any> extends Lifecycle<Vm> {
-//     static scope?: Component<any, any, any>;
-//     static _injectedProviders?: Map<string, Function>;
-//     static _injectedComponents?: {
-//         [name: string]: Function;
-//     };
-//     state?: State | any;
-//     props?: Props | any;
-//     $renderDom?: Element;
-//     $globalContext?: any;
-//     $vm?: Vm | any;
-//     $template?: string;
-//     $components?: {
-//         [name: string]: Function;
-//     };
-//     $componentList?: ComponentList<Component<any, any, any>>[];
-//     stateWatcher?: Watcher;
-//     propsWatcher?: Watcher;
-//     constructor();
-//     $bootstrap(): void;
-//     $beforeInit(): void;
-//     $routeChange(lastRoute: string, newRoute: string): void;
-//     $render(): void;
-//     $reRender(): void;
-//     $mountComponent(dom: Element, isFirstRender?: boolean): void;
-//     $componentsConstructor(dom: Element): void;
-//     $setState(newState: any): void;
-//     $setProps(newProps: any): void;
-//     $setGlobalContext(newGlobalContext: any): void;
-//     getPropsValue(valueList: any[], value: any): void;
-//     buildProps(prop: any): any;
-//     buildComponentScope(ComponentClass: Function, props: any, dom: Element): Component<any, any, any>;
-// }
-
-// export declare class EsModule {
-//     utils?: Utils;
-//     $imports?: Function[];
-//     $components?: {
-//         [name: string]: Function;
-//     };
-//     $providers?: Function[];
-//     $exports?: string[];
-//     $exportList?: {
-//         [name: string]: Function;
-//     };
-//     providerList?: Map<string, IService>;
-//     $bootstrap?: Function;
-//     constructor();
-//     $declarations(): void;
-//     $buildImports(): void;
-//     $buildProviderList(): void
-//     $buildProviders4Services(): void;
-//     $buildProviders4Components(): void;
-//     $buildComponents4Components(): void;
-//     $buildExports(): void;
-// }
 export declare class Easiest {
     modalList: IMiddleware<Easiest>[];
     utils: Utils;
@@ -345,3 +266,33 @@ export declare function Component<State = any, Props = any, Vm = any>(options: T
 export declare function EsModule(options: TEsModuleOptions): (_constructor: Function) => void;
 
 export declare function factoryModule(EM: Function): IEsModule;
+
+export declare function Service(options?: TServiceOptions): (_constructor: Function) => void;
+
+export declare interface OnInit {
+    esOnInit(): void;
+}
+
+export declare interface BeforeMount {
+    esBeforeMount(): void;
+}
+
+export declare interface AfterMount {
+    esAfterMount(): void;
+}
+
+export declare interface OnDestory {
+    esOnDestory(): void;
+}
+
+export declare interface HasRender {
+    esHasRender(): void;
+}
+
+export declare interface WatchState {
+    esWatchState(oldData?: any, newData?: any): void;
+}
+
+export declare interface RouteChange {
+    esRouteChange(lastRoute?: string, newRoute?: string): void;
+}

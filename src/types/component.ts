@@ -21,9 +21,14 @@ export interface IComponent<State = any, Props = any, Vm = any> extends ILifecyc
     stateWatcher?: IWatcher;
     propsWatcher?: IWatcher;
 
-    // $bootstrap(): void;
+    esOnInit?(): void;
+    esBeforeMount?(): void;
+    esAfterMount?(): void;
+    esOnDestory?(): void;
+    esHasRender?(): void;
+    esWatchState?(oldData?: any, newData?: any): void;
+    esRouteChange?(lastRoute: string, newRoute: string): void;
     $beforeInit?(): void;
-    $routeChange?(lastRoute: string, newRoute: string): void;
     $render(): void;
     $reRender(): void;
     $mountComponent(dom: Element, isFirstRender?: boolean): void;

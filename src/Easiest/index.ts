@@ -1,11 +1,8 @@
-import { IMiddleware, IEsModule, EsRouteObject } from '../types';
+import { IMiddleware, IEsModule, EsRouteObject, IComponent } from '../types';
 
 import Utils from '../Utils';
-// import Component from '../Component';
 import { factoryCreator } from '../Injectable';
 import { factoryModule } from '../EsModule';
-
-import { IComponent } from '../types/component';
 
 class Easiest {
   public modalList: IMiddleware<Easiest>[];

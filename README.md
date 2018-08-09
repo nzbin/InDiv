@@ -1,6 +1,6 @@
 # easiest
 
-A minimal, blazing fast web mvvm framework.一个小而快的Web mvvm库。
+A minimal web mvvm framework.一个小Web mvvm库。
 Now we support for typescript!
 
 ## demo
@@ -187,7 +187,7 @@ Now we support for typescript!
 
       - to use function `Component` declare `template` and `state`
       - to use lifecycle `esOnInit esBeforeMount esAfterMount esOnDestory esHasRender esWatchState esRouteChange` in Class
-      - to use `constructor`'s arguments of `Component` for inject `Service`, and arguments must be lowercase lette of initials lette  of Service class name
+      - to use `constructor`'s arguments of `Component` for inject `Service`, and arguments must be lowercase lette of initials lette  of Service class name. For example, you want to inject a service  class `HeroService`, you must write argument in `constructor` with `heroService`
 
       ```javascript
       class Container {
@@ -245,41 +245,51 @@ Now we support for typescript!
 
   - Easiest apps are modular and Easiest has its own modularity system called `EsModule`. An `EsModule` is a container for a cohesive block of code dedicated to an application domain, a workflow, or a closely related set of capabilities. It can contain components, service providers, and other code files whose scope is defined by the containing `EsModule`. It can import functionality that is exported from other `EsModule`, and export selected functionality for use by other `EsModule`.
 
-  - u need to declare `$imports: Array` `$components: Object` `$providers: Array` `$exports: Array` `$bootstrap: Component` in `$declarations(){}`
-  - `$imports: Array` imports other `EsModule` and respect it's `$exports`
-  - `$components: Array` declare `Components`. Key: name, Value: Components
-  - `$providers: Array` declare `Service`
-  - `$exports: Array` exports `Components` for other `EsModules`
-  - `$bootstrap: Component` declare `Component` for Module bootstrap only if u don't `Router`
+  - u need to declare `imports?: Function[]` `components: {[name: string]: Function;}` `providers?: Function[]` `exports?: string[]` `bootstrap?: Function` in `options`
+  - `imports` imports other `EsModule` and respect it's `exports`
+  - `components` declare `Components`. Key: name, Value: Components
+  - `providers` declare `Service`
+  - `exports:` exports `Components` for other `EsModules`
+  - `bootstrap` declare `Component` for Module bootstrap only if u don't `Router`
 
-  ```javascript
-  class M1 extends EsModule {
-    constructor() {
-    super();
-   }
+    1. typescript
 
-    $declarations() {
-      this.$imports = [
+    ```typescript
+    @EsModule({
+      imports: [
         M2,
-      ];
-      this.$components = {
+      ],
+      components: {
+        'container-wrap': Container,
         'pc-component': PComponent,
-        'route-child': RouteChild,
         'R1': R1,
-        'R2': R2,
-      };
-      this.$providers = [
+      },
+      providers: [
         HeroSearchService,
         HeroSearchService1,
-      ];
-      this.$exports = [
-        'R1',
-        'R2',
-      ];
-      // this.$bootstrap = R1; only don't use Route
-    }
-  }
-  ```
+      ],
+    })
+    class M1 {}
+    ```
+    2. javascript
+  
+    ```javascript
+    class M1 {}
+    EsModule({
+      imports: [
+        M2,
+      ],
+      components: {
+        'container-wrap': Container,
+        'pc-component': PComponent,
+        'R1': R1,
+      },
+      providers: [
+        HeroSearchService,
+        HeroSearchService1,
+      ],
+    })(M1);
+    ```
 
 6. Template Syntax
 
@@ -334,37 +344,50 @@ Now we support for typescript!
 9. Service
 
   - Components shouldn't fetch or save data directly and they certainly shouldn't knowingly present fake data. They should focus on presenting data and delegate data access to a service.
-  - And u can use `Service` to send communication between `Components` , because we have realized **singleton**. 
-  - Use `static isSingletonMode = true;` or `Service.isSingletonMode = true`,
-  - U can use `this.$https` or import `class Http` to use AJAX.
+  - And u can use `Service` to send communication between `Component` , because we have realized singleton.
+  - `Service` accepts an object`isSingletonMode: boolean` to decide use singleton or not.
 
-  ```javascript
-  class HeroSearchService extends Service {
-    static isSingletonMode = true; // singleton service
+    1. typescript
 
-    constructor() {
-      super();
-      console.log(this.$http); // same as Http
-      this.$http.$get(url, params);
-      this.$http.$delete(url, params);
-      this.$http.$post(url, params);
-      this.$http.$put(url, params);
-      this.$http.$patch(url, params);
-    }
+      -  to use decorator `Injectable` to inject `Service` in `constructor`'s arguments of `Service` 
 
-    test() {
-      console.log('i am a services !!!');
-    }
-  }
-  // or this method to use singleton service
-  HeroSearchService.isSingletonMode = true;
+      ```typescript
+      @Injectable
+      @Service({isSingletonMode: false})
+      class HeroSearchService {
+        public hsr: HeroSearchService1;
+        constructor(
+          private hsrS: HeroSearchService1,
+        ) {
+          this.hsr = hsrS;
+          this.hsr.test();
+        }
 
-  class ComponentXX extends Component {
-    constructor(HeroSearchService) {
-      this.heroSearchService = HeroSearchService;
-    }
-  }
-  ```
+        public test() {
+          console.log('HeroSearchService !!!000000000');
+        }
+      }
+      ```
+
+    2. javascript
+
+      - to use `constructor`'s arguments of `Service` for inject an other `Service`, and arguments must be lowercase lette of initials lette  of Service class name. For example, you want to inject a service  class `HeroSearchService`, you must write argument in `constructor` with `heroSearchService`
+
+      ```javascript
+      class HeroSearchService {
+        constructor(heroSearchService1) {
+          this.hsr = heroSearchService1;
+          this.hsr.test();
+        }
+        test() {
+          console.log('HeroSearchService !!!000000000');
+        }
+      }
+
+      Service({
+        isSingletonMode: false,
+      })(HeroSearchService);
+      ```
 
   ```javascript
   const http = new Http();
@@ -379,142 +402,171 @@ Now we support for typescript!
     
     Dependency injection is an important application design pattern. It's used so widely that almost everyone just calls it DI
     
-    - Use Typescript
+    1. Use Typescript
 
-    If u are using `Typescript` to build an app, u can easily use our Dependency Injection.Only use `@Injectable` before the `Class` which need to use other services, that which are declarated in `this.$providers` of `EsModule` or root module.
+      - If u are using `Typescript` to build an app, u can easily use our Dependency Injection.Only use `@Injectable` before the `Class` which need to use other services, that which are declarated in `this.$providers` of `EsModule` or root module.
 
-    ```typescript
-    import { Injectable, Component, EsModule, Service } from 'easiest';
+      ```typescript
+      import { Injectable, Component, EsModule, Service, HasRender } from 'easiest';
 
-    class HeroSearchService1 extends Service {
-      constructor() {
-        super();
-      }
-      public test() {
-        console.log('HeroSearchService !!!1111');
-      }
-    }
+      @Service({
+        isSingletonMode: true,
+      })
+      class HeroSearchService1 {
+        constructor() {}
 
-    @Injectable
-    class HeroSearchService extends Service {
-      public hsr: HeroSearchService1;
-      constructor(
-        private hsrS: HeroSearchService1,
-      ) {
-        super();
-        this.hsr = hsrS;
-        this.hsr.test();
+        public test() {
+          console.log('HeroSearchService !!!1111');
+        }
       }
 
-      public test() {
-        console.log('HeroSearchService !!!000000000');
-      }
-    }
+      @Injectable
+      @Service()
+      class HeroSearchService {
+        public hsr: HeroSearchService1;
+        constructor(
+          private hsrS: HeroSearchService1,
+        ) {
+          this.hsr = hsrS;
+          this.hsr.test();
+        }
 
-    @Injectable
-    class Container extends Component {
-      public ss: HeroSearchService;
-      constructor(private hss: HeroSearchService) {
-        super();
-        this.ss = hss;
-        this.ss.test();
-      }
-
-      public $bootstrap() {
-        this.$template = (`
-          <div>1111</div>
-        `);
-      }
-    }
-
-    class M1 extends EsModule {
-      constructor() {
-        super();
+        public test() {
+          console.log('HeroSearchService !!!000000000');
+        }
       }
 
-      public $declarations() {
-        this.$imports = [
+      @Injectable
+      @Component({
+        state: {
+          a: 'a',
+        },
+        template: (`
+          <div>
+            <p>1232{{this.state.a}}</p>
+          </div>
+        `),
+      })
+      class PCChild implements HasRender {
+        public props: any;
+        public hsr: HeroSearchService;
+        constructor(
+          private hsrS: HeroSearchService,
+        ) {
+          this.hsr = hsrS;
+          this.hsr.test();
+        }
+
+        public esHasRender() {}
+      }
+
+      @EsModule({
+        imports: [
           M2,
-        ];
-        this.$components = {
-          'container-wrap': Container,
-        };
-        this.$providers = [
+        ],
+        components: {
+          'container-wrap': PCChild,
+        },
+        providers: [
           HeroSearchService,
           HeroSearchService1,
-        ];
-      }
-    }
-    ```
+        ],
+      })
+      class M1 {}
+      ```
 
-    - Use Javascript
+    2. Use Javascript
 
-    If u are using Javascript, plase use lower-case initial letter of `Class`. Like `Service HeroService`, u must inject `heroService` in `constructor` of `Class`
+      - to use `constructor`'s arguments of `Service` for inject an other `Service`, and arguments must be lowercase lette of initials lette  of Service class name. For example, you want to inject a service  class `HeroSearchService`, you must write argument in `constructor` with `heroSearchService`
 
-    ```javascript
-    class HeroSearchService1 extends Service {
-      constructor() {
-        super();
+      ```javascript
+      class HeroSearchService1 {
+        constructor() {
+          super();
+        }
+        test() {
+          console.log('HeroSearchService !!!1111');
+        }
       }
-      test() {
-        console.log('HeroSearchService !!!1111');
+      Service({
+        isSingletonMode: true,
+      })(HeroSearchService1);
+
+      class HeroSearchService {
+        constructor(
+          heroSearchService1,
+        ) {
+          super();
+          this.hsr = heroSearchService1;
+          this.hsr.test();
+        }
+
+        test() {
+          console.log('HeroSearchService !!!000000000');
+        }
       }
-    }
-    class HeroSearchService extends Service {
-      constructor(
-        heroSearchService1, // inject Service and use lower-case initial letter of Class
-      ) {
-        super();
-        this.hsr = heroSearchService1;
-        this.hsr.test();
+      Service({
+      isSingletonMode: false,
+      })(HeroSearchService);
+
+      class Container {
+        constructor(heroSearchService) {
+          this.ss = heroSearchService;
+          this.ss.test();
+        }
       }
 
-      test() {
-        console.log('HeroSearchService !!!000000000');
-      }
-    }
+      Component({
+        state: {
+          a: 'a',
+        },
+        template: (`
+          <div>
+            <p>1232{{this.state.a}}</p>
+          </div>
+        `),
+      })(Container)
 
-    class Container extends Component {
-      constructor(heroSearchService) { // inject Service and use lower-case initial letter of Class
-        super();
-        this.ss = heroSearchService;
-        this.ss.test();
-      }
-
-      $bootstrap() {
-        this.$template = (`<div>1111</div>`);
-      }
-    }
-    ```
+      class M1 {}
+      EsModule({
+        imports: [
+          M2,
+        ],
+        components: {
+          'container-wrap': Container,
+        },
+        providers: [
+          HeroSearchService,
+          HeroSearchService1,
+        ],
+      })(M1);
+      ```
 
 11. LifeCycle hooks which from the beginning to the end:
 
   - EsModule
 
-    ```javascript
+    ```typescript
       constructor()
-      $declarations()
     ```
 
   - Components
 
-    ```javascript
+    ```typescript
       constructor()
-      $bootstrap()
-      esOnInit()
-      esBeforeMount()
-      esHasRender()
-      esAfterMount()
-      esOnDestory()
-      esRouteChange(lastRoute, newRoute)
-      esWatchState(oldData, newData)
-      // esRouteChange only for route Component
+      esOnInit(): void;
+      esBeforeMount(): void;
+      esAfterMount(): void;
+      esOnDestory(): void;
+      esHasRender(): void;
+      esWatchState(oldData?: any, newData?: any): void;
+      esRouteChange(lastRoute?: string, newRoute?: string): void;
     ```
 
   - Router
 
-    ```javascript
-    esRouteChange(oldPath, newPath)
+    ```typescript
+    $routeChange((lastRoute?: string, newRoute?: string): void;
     ```
 
 ## Architecture
@@ -527,7 +579,7 @@ route => EsModule => component
 - [x] 无需route渲染
 - [x] 子路由(2/2)
 - [X] 组件化(3/3)
-- [x] 模块化 EsModule
+- [x] 模块化 + EsModule
 - [X] 双向绑定
 - [x] 公共类提取
 - [x] 数据劫持

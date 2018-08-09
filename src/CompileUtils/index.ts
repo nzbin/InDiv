@@ -1,6 +1,7 @@
 declare global {
   interface Element {
     value?: any;
+    eventTypes?: string;
   }
 }
 
@@ -131,13 +132,12 @@ export class CompileUtilForRepeat {
     };
     node.addEventListener('input', func, false);
     (node as any).eventinput = func;
-    if (node.getAttribute('eventTypes')) {
-      const eventlist = JSON.parse(node.getAttribute('eventTypes'));
+    if (node.eventTypes) {
+      const eventlist = JSON.parse(node.eventTypes);
       eventlist.push('input');
-      node.setAttribute(`eventTypes`, JSON.stringify(eventlist));
-    } else {
-      node.setAttribute(`eventTypes`, JSON.stringify(['input']));
+      node.eventTypes = eventlist;
     }
+    if (!node.eventTypes) node.eventTypes = JSON.stringify(['input']);
   }
 
   public eventHandler(node: Element, vm: any, exp: string, eventName: string, key: string, val: any): void {
@@ -165,13 +165,12 @@ export class CompileUtilForRepeat {
     if (eventType && fn) {
       node.addEventListener(eventType, func, false);
       (node as any)[`event${eventType}`] = func;
-      if (node.getAttribute('eventTypes')) {
-        const eventlist = JSON.parse(node.getAttribute('eventTypes'));
+      if (node.eventTypes) {
+        const eventlist = JSON.parse(node.eventTypes);
         eventlist.push(eventType);
-        node.setAttribute(`eventTypes`, JSON.stringify(eventlist));
-      } else {
-        node.setAttribute(`eventTypes`, JSON.stringify([eventType]));
+        node.eventTypes = eventlist;
       }
+      if (!node.eventTypes) node.eventTypes = JSON.stringify([eventType]);
     }
   }
 }
@@ -213,13 +212,15 @@ export class CompileUtil {
   public bind(node: Element, vm: any, exp: string, dir: string): void {
     const updaterFn = this[`${dir}Updater`];
     const isRepeatNode = this.isRepeatNode(node);
-    if (isRepeatNode) { // compile repeatNode's attributes
+    if (isRepeatNode) {
+      // compile repeatNode's attributes
       switch (dir) {
         case 'repeat':
           if (updaterFn) (updaterFn as Function).call(this, node, this._getVMRepeatVal(vm, exp), exp, vm);
           break;
       }
-    } else { // compile unrepeatNode's attributes
+    } else {
+      // compile unrepeatNode's attributes
       switch (dir) {
         case 'model':
           if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp), exp, vm);
@@ -273,13 +274,12 @@ export class CompileUtil {
     };
     node.addEventListener('input', func, false);
     (node as any).eventinput = func;
-    if (node.getAttribute('eventTypes')) {
-      const eventlist = JSON.parse(node.getAttribute('eventTypes'));
+    if (node.eventTypes) {
+      const eventlist = JSON.parse(node.eventTypes);
       eventlist.push('input');
-      node.setAttribute(`eventTypes`, JSON.stringify(eventlist));
-    } else {
-      node.setAttribute(`eventTypes`, JSON.stringify(['input']));
+      node.eventTypes = eventlist;
     }
+    if (!node.eventTypes) node.eventTypes = JSON.stringify(['input']);
   }
 
   public repeatUpdater(node: Element, value: any, expFather: string, vm: any): void {
@@ -409,8 +409,12 @@ export class CompileUtil {
 
   public cloneNode(node: Element): Node {
     const newElement = node.cloneNode(true);
-    const eventList: string[] = JSON.parse((newElement as Element).getAttribute('eventTypes'));
-    if (eventList) eventList.forEach(eve => { newElement.addEventListener(eve, (node as any)[`event${eve}`], false); });
+    if (!node.eventTypes) return newElement;
+    const eventList: string[] = JSON.parse(node.eventTypes);
+    if (eventList) {
+      eventList.forEach(eve => (newElement as any)[eve] = (node as any)[`event${eve}`]);
+      (newElement as Element).eventTypes = node.eventTypes;
+    }
     return newElement;
   }
 }

@@ -1,5 +1,5 @@
-// import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange } from '../src';
-import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange } from '../build';
+import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange } from '../src';
+// import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange } from '../build';
 
 
 @Service({
@@ -348,14 +348,17 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
 
 @Injectable
 @Component({
+  // es-on:click="this.show(man)"
+  // es-on:click="this.show(man)"
+  // es-on:click="this.go()"
   template: (`
     <div>
-      <p es-on:click="this.go()">container: {{this.state.a}}</p>
+      <p>container: {{this.state.a}}</p>
       <input es-model="this.state.a" />
-      <div es-repeat="let man in this.state.testArray">
-        <div es-on:click="this.show(man)">姓名：{{man.name}}</div>
+      <div es-on:click="this.show(man)" es-repeat="let man in this.state.testArray">
+        <div>姓名：{{man.name}}</div>
         <div>性别：{{man.sex}}</div>
-        <input es-model="b" es-on:click="this.show(this.state.testArray2)" es-repeat="let b in man.job" es-class="b" />
+        <input es-model="b" es-repeat="let b in man.job" es-class="b" />
       </div>
       <router-render></router-render>
     </div>`

@@ -121,13 +121,12 @@ class Compile {
     if (eventType && fn) {
       node.addEventListener(eventType, func, false);
       (node as any)[`event${eventType}`] = func;
-      if (node.getAttribute('eventTypes')) {
-        const eventlist = JSON.parse(node.getAttribute('eventTypes'));
+      if (node.eventTypes) {
+        const eventlist = JSON.parse(node.eventTypes);
         eventlist.push(eventType);
-        node.setAttribute(`eventTypes`, JSON.stringify(eventlist));
-      } else {
-        node.setAttribute(`eventTypes`, JSON.stringify([eventType]));
+        node.eventTypes = eventlist;
       }
+      if (!node.eventTypes) node.eventTypes = JSON.stringify([eventType]);
     }
   }
 

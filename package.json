@@ -1,7 +1,7 @@
 {
   "name": "easiest",
   "version": "1.2.3",
-  "description": "A minimal, blazing web mvvm framework.一个小的Web mvvm库。",
+  "description": "A web mvvm framework.一个Web mvvm库。",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [

@@ -119,7 +119,7 @@ class Compile {
       fn.apply(vm, argsList);
     };
     if (eventType && fn) {
-      node.addEventListener(eventType, func, false);
+      (node as any)[`on${eventType}`] = func;
       (node as any)[`event${eventType}`] = func;
       if (node.eventTypes) {
         const eventlist = JSON.parse(node.eventTypes);

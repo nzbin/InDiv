@@ -106,7 +106,7 @@ class Compile {
       if (f === 'this') return;
       fn = fn[f];
     });
-    const func = (event: Event) => {
+    const func = function(event: Event): void {
       const argsList: any[] = [];
       args.forEach(arg => {
         if (arg === '') return false;

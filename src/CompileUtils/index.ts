@@ -6,6 +6,12 @@ declare global {
       [key: string]: any;
     };
   }
+  interface Node {
+    eventTypes?: string;
+    repeatData?: {
+      [key: string]: any;
+    };
+  }
 }
 
 export class CompileUtilForRepeat {
@@ -24,6 +30,18 @@ export class CompileUtilForRepeat {
       value = value[v];
     });
     return value;
+  }
+
+  public _setValueByValue(vm: any, exp: string, key: string, setValue: any): any {
+    const valueList = exp.replace('()', '').split('.');
+    let value = vm;
+    let lastKey;
+    valueList.forEach((v, index) => {
+      if (v === key && index === 0) return lastKey = v;
+      if (index < valueList.length) lastKey = v;
+      if (index < valueList.length - 1 ) value = value[v];
+    });
+    value.lastKey = setValue;
   }
 
   public _getVMVal(vm: any, exp: string): any {
@@ -49,7 +67,7 @@ export class CompileUtilForRepeat {
     return value;
   }
 
-  public bind(node: Element, val?: any, key?: string, dir?: string, exp?: string, index?: number, vm?: any, watchValue?: any): void {
+  public bind(node: Element, val?: any, key?: string, dir?: string, exp?: string, index?: number, vm?: any): void {
     let value;
     if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
       value = this._getVMRepeatVal(val, exp, key);
@@ -59,7 +77,7 @@ export class CompileUtilForRepeat {
 
     let watchData;
     if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
-      watchData = watchValue;
+      watchData = val;
     } else {
       watchData = this._getVMVal(vm, exp);
     }
@@ -112,7 +130,8 @@ export class CompileUtilForRepeat {
 
   public modelUpdater(node: Element, value: any, exp: string, key: string, index: number, watchData: any, vm: any): void {
     node.value = typeof value === 'undefined' ? '' : value;
-    const func = (event: Event) => {
+    const utilVm = this;
+    const func = function(event: Event): void {
       event.preventDefault();
       if (/(this.state.).*/.test(exp)) {
         const val = exp.replace(/(this.state.)|(this.props)/, '');
@@ -125,12 +144,9 @@ export class CompileUtilForRepeat {
         vm.props[val] = (event.target as HTMLInputElement).value;
       }
       if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {   
-        const val = exp.replace(`${key}.`, '');
-        if (val === key) watchData[index] = (event.target as HTMLInputElement).value;
-        // if (val !== key) watchData[index][val] = (event.target as HTMLInputElement).value;
-        if (val !== key) {
-          watchData[index][val] = (event.target as HTMLInputElement).value;
-        }
+        let vals = utilVm._getValueByValue(watchData, exp, key);
+        vals = (event.target as HTMLInputElement).value;
+        utilVm._setValueByValue(watchData, exp, key, vals);
       }
     };
     node.addEventListener('input', func, false);
@@ -152,18 +168,22 @@ export class CompileUtilForRepeat {
       if (f === 'this') return;
       fn = fn[f];
     });
-    const func = (event: Event): any => {
+    const utilVm = this;
+    const func = function(event: Event): any {
       const argsList: any[] = [];
       args.forEach(arg => {
-        console.log('arg', arg, node.repeatData);
         if (arg === '') return false;
         if (arg === '$event') return argsList.push(event);
-        if (/(this.).*/g.test(arg) || /(this.state.).*/g.test(arg) || /(this.props.).*/g.test(arg)) return argsList.push(this._getVMVal(vm, arg));
+        if (/(this.).*/g.test(arg) || /(this.state.).*/g.test(arg) || /(this.props.).*/g.test(arg)) return argsList.push(utilVm._getVMVal(vm, arg));
         if (/\'.*\'/g.test(arg)) return argsList.push(arg.match(/\'(.*)\'/)[1]);
         if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
         if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
-        if (arg.indexOf(key) === 0 || arg.indexOf(`${key}.`) === 0) return argsList.push(this._getVMRepeatVal(val, arg, key));
-        if (node.repeatData[arg]) return argsList.push(node.repeatData[arg]);
+        if (arg.indexOf(key) === 0 || arg.indexOf(`${key}.`) === 0) return argsList.push(utilVm._getVMRepeatVal(val, arg, key));
+        if (this.repeatData) {
+          Object.keys(this.repeatData).forEach(data => {
+            if (arg.indexOf(data) === 0 || arg.indexOf(`${data}.`) === 0) return argsList.push(utilVm._getValueByValue(this.repeatData[data], arg, data));
+          });
+        }
       });
       fn.apply(vm, argsList);
     };
@@ -296,7 +316,6 @@ export class CompileUtil {
         node.repeatData[key] = val;
       }
       const newElement = this.cloneNode(node);
-      console.log(33, newElement, (newElement as Element).repeatData);
       const nodeAttrs = (newElement as Element).attributes;
       const text = newElement.textContent;
       const reg = /\{\{(.*)\}\}/g;
@@ -312,7 +331,7 @@ export class CompileUtil {
             if (this.isEventDirective(dir)) {
               new CompileUtilForRepeat(this.$fragment).eventHandler(newElement as Element, vm, exp, dir, key, val);
             } else {
-              new CompileUtilForRepeat(this.$fragment).bind(newElement as Element, val, key, dir, exp, index, vm, value);
+              new CompileUtilForRepeat(this.$fragment).bind(newElement as Element, val, key, dir, exp, index, vm);
             }
           }
         });
@@ -325,12 +344,10 @@ export class CompileUtil {
   public repeatChildrenUpdater(node: Element, value: any, expFather: string, index: number, vm: any): void {
     const key = expFather.split(' ')[1];
     Array.from(node.childNodes).forEach((child: Element) => {
-      if (child.repeatData) child.repeatData[key] = value;
-      if (!child.repeatData) {
-        child.repeatData = {};
-        child.repeatData[key] = value;
-      }
-      console.log(44, child, child.repeatData);
+      // if (node.repeatData) child.repeatData = JSON.parse(JSON.stringify(node.repeatData));
+      if (node.repeatData) child.repeatData = Object.assign({}, node.repeatData);
+      if (!node.repeatData)  child.repeatData = {};
+      child.repeatData[key] = value;
       if (this.isRepeatProp(child)) child.setAttribute(`_prop-${key}`, JSON.stringify(value));
 
       const nodeAttrs = child.attributes;
@@ -348,9 +365,10 @@ export class CompileUtil {
           const repeatUtils = new CompileUtilForRepeat();
           if (this.isDirective(attrName) && attrName !== 'es-repeat' && new RegExp(`(^${key})|(^this)`).test(exp)) {
             if (this.isEventDirective(dir)) {
+              console.log(11, child, dir);
               new CompileUtilForRepeat(node).eventHandler(child, vm, exp, dir, key, value);
             } else {
-              new CompileUtilForRepeat(node).bind(child, value, key, dir, exp, index, vm, value);
+              new CompileUtilForRepeat(node).bind(child, value, key, dir, exp, index, vm);
             }
             if (dir === 'if' && new RegExp(`(^${key})`).test(exp)) canShowByIf = repeatUtils._getVMRepeatVal(value, exp, key);
             if (dir === 'if' && /^(this\.)/.test(exp)) canShowByIf = repeatUtils._getVMVal(vm, exp);
@@ -426,13 +444,12 @@ export class CompileUtil {
 
   public cloneNode(node: Element): Node {
     const newElement = node.cloneNode(true);
-    if (!node.eventTypes) return newElement;
-    const eventList: string[] = JSON.parse(node.eventTypes);
-    if (eventList) {
-      eventList.forEach(eve => (newElement as any)[`on${eve}`] = (node as any)[`event${eve}`]);
-      (newElement as Element).eventTypes = node.eventTypes;
+    if (node.eventTypes) {
+      JSON.parse(node.eventTypes).forEach((eve: string) => (newElement as any)[`on${eve}`] = (node as any)[`event${eve}`]);
+      newElement.eventTypes = JSON.parse(JSON.stringify(node.eventTypes));
     }
-    if (node.repeatData) (newElement as Element).repeatData = node.repeatData;
+    // if (node.repeatData) newElement.repeatData = JSON.parse(JSON.stringify(node.repeatData));
+    if (node.repeatData) newElement.repeatData = Object.assign({}, node.repeatData);
     return newElement;
   }
 }

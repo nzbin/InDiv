@@ -3,7 +3,7 @@ export interface ICompileUtilForRepeat {
     $fragment?: Element | DocumentFragment;
     _getVMVal(vm: any, exp: string): any;
     _getVMRepeatVal(val: any, exp: string, key: string): any;
-    bind(node: Element, val?: any, key?: string, dir?: string, exp?: string, index?: number, vm?: any, watchValue?: any): void;
+    bind(node: Element, val?: any, key?: string, dir?: string, exp?: string, index?: number, vm?: any): void;
     templateUpdater(node: Element, val?: any, key?: string, vm?: any): void;
     textUpdater(node: Element, value: any): void;
     htmlUpdater(node: Element, value: any): void;

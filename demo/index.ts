@@ -348,16 +348,18 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
 
 @Injectable
 @Component({
-  // es-on:click="this.show(man)"
-  // es-on:click="this.show(man)"
+  // <input es-on:click="this.show(b.name)" es-repeat="let b in man.job" es-model="b.name" es-class="b.id" />
+  // <div class="fuck" es-repeat="let b in man.job">
+  //         <input es-on:click="this.show(b.name)" es-model="b.name" es-class="b.id" />
+  //       </div>
   template: (`
     <div>
       <p es-on:click="this.go()">container: {{this.state.a}}</p>
       <input es-model="this.state.a" />
       <div es-repeat="let man in this.state.testArray">
-        <div>姓名：{{man.name}}</div>
+        <div es-on:click="this.show(man)">姓名：{{man.name}}</div>
         <div>性别：{{man.sex}}</div>
-        <input es-on:click="this.show(b)" es-model="b" es-repeat="let b in man.job" es-class="b" />
+        <input es-on:click="this.show(b.name)" es-repeat="let b in man.job" es-model="b.name" es-class="b.id" />
       </div>
       <router-render></router-render>
     </div>`
@@ -368,12 +370,39 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
       {
         name: '李龙吉',
         sex: '男',
-        job: ['程序员1', '码农1', '帅1'],
+        job: [
+          {
+            id: 1,
+            name: '程序员',
+          },
+          {
+            id: 2,
+            name: '码农',
+          },
+          {
+            id: 3,
+            name: '帅',
+          },
+        ],
       },
       {
         name: '邱宝环',
         sex: '女',
-        job: ['老师', '英语老师', '美1'],
+        // job: ['老师', '英语老师', '美1'],
+        job: [
+          {
+            id: 1,
+            name: '老师',
+          },
+          {
+            id: 2,
+            name: '英语老师',
+          },
+          {
+            id: 3,
+            name: '美',
+          },
+        ],
       }],
     testArray2: ['程序员3', '码农3', '帅3'],
   },

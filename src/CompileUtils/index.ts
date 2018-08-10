@@ -41,7 +41,7 @@ export class CompileUtilForRepeat {
       if (index < valueList.length) lastKey = v;
       if (index < valueList.length - 1 ) value = value[v];
     });
-    value.lastKey = setValue;
+    if (lastKey) value[lastKey] = setValue;
   }
 
   public _getVMVal(vm: any, exp: string): any {
@@ -310,12 +310,9 @@ export class CompileUtil {
   public repeatUpdater(node: Element, value: any, expFather: string, vm: any): void {
     const key = expFather.split(' ')[1];
     value.forEach((val: any, index: number) => {
-      if (node.repeatData) node.repeatData[key] = val;
-      if (!node.repeatData) {
-        node.repeatData = {};
-        node.repeatData[key] = val;
-      }
-      const newElement = this.cloneNode(node);
+      const repeatData: { [key: string]: any } = {};
+      repeatData[key] = val;
+      const newElement = this.cloneNode(node, repeatData);
       const nodeAttrs = (newElement as Element).attributes;
       const text = newElement.textContent;
       const reg = /\{\{(.*)\}\}/g;
@@ -344,7 +341,6 @@ export class CompileUtil {
   public repeatChildrenUpdater(node: Element, value: any, expFather: string, index: number, vm: any): void {
     const key = expFather.split(' ')[1];
     Array.from(node.childNodes).forEach((child: Element) => {
-      // if (node.repeatData) child.repeatData = JSON.parse(JSON.stringify(node.repeatData));
       if (node.repeatData) child.repeatData = Object.assign({}, node.repeatData);
       if (!node.repeatData)  child.repeatData = {};
       child.repeatData[key] = value;
@@ -442,14 +438,13 @@ export class CompileUtil {
     return result;
   }
 
-  public cloneNode(node: Element): Node {
+  public cloneNode(node: Element, repeatData: any): Node {
     const newElement = node.cloneNode(true);
     if (node.eventTypes) {
       JSON.parse(node.eventTypes).forEach((eve: string) => (newElement as any)[`on${eve}`] = (node as any)[`event${eve}`]);
       newElement.eventTypes = JSON.parse(JSON.stringify(node.eventTypes));
     }
-    // if (node.repeatData) newElement.repeatData = JSON.parse(JSON.stringify(node.repeatData));
-    if (node.repeatData) newElement.repeatData = Object.assign({}, node.repeatData);
+    if (node.repeatData) newElement.repeatData = Object.assign({}, repeatData);
     return newElement;
   }
 }

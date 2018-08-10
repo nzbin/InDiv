@@ -361,7 +361,6 @@ export class CompileUtil {
           const repeatUtils = new CompileUtilForRepeat();
           if (this.isDirective(attrName) && attrName !== 'es-repeat' && new RegExp(`(^${key})|(^this)`).test(exp)) {
             if (this.isEventDirective(dir)) {
-              console.log(11, child, dir);
               new CompileUtilForRepeat(node).eventHandler(child, vm, exp, dir, key, value);
             } else {
               new CompileUtilForRepeat(node).bind(child, value, key, dir, exp, index, vm);
@@ -373,7 +372,8 @@ export class CompileUtil {
         });
       }
 
-      if (child.hasChildNodes()) this.repeatChildrenUpdater(child, value, expFather, index, vm);
+      // if (child.hasChildNodes()) this.repeatChildrenUpdater(child, value, expFather, index, vm);
+      if (child.hasChildNodes() && !this.isRepeatNode(child)) this.repeatChildrenUpdater(child, value, expFather, index, vm);
 
       if (!canShowByIf && node.contains(child)) node.removeChild(child);
 
@@ -438,7 +438,7 @@ export class CompileUtil {
     return result;
   }
 
-  public cloneNode(node: Element, repeatData: any): Node {
+  public cloneNode(node: Element, repeatData?: any): Node {
     const newElement = node.cloneNode(true);
     if (node.eventTypes) {
       JSON.parse(node.eventTypes).forEach((eve: string) => (newElement as any)[`on${eve}`] = (node as any)[`event${eve}`]);

@@ -359,9 +359,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
       <div es-repeat="let man in this.state.testArray">
         <div es-on:click="this.show(man)">姓名：{{man.name}}</div>
         <div>性别：{{man.sex}}</div>
-        <div class="fuck" es-repeat="let b in man.job">
-          <input es-on:click="this.show(b.name)" es-model="b.name" es-class="b.id" />
-        </div>
+        <input es-on:click="this.show(b.name)" es-repeat="let b in man.job" es-model="b.name" es-class="b.id" />
       </div>
       <router-render></router-render>
     </div>`

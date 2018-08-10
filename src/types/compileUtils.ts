@@ -34,5 +34,5 @@ export interface ICompileUtil {
     isRepeatNode(node: Element): boolean;
     isIfNode(node: Element): boolean;
     isRepeatProp(node: Element): boolean;
-    cloneNode(node: Element): Node;
+    cloneNode(node: Element, repeatData?: any): Node;
 }

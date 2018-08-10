@@ -220,8 +220,8 @@ class PComponent implements OnInit, WatchState {
 class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   public hSr: HeroSearchService;
   public utils: Utils;
-  public $locationGo: (path: string, query?: any, params?: any) => void;
-  public $getLocationState: () => any;
+  public $getLocation: () => any;
+  public $setLocation: (path: string, query?: any, params?: any) => void;
   public $setState: (newState: any) => void;
   public props: any;
 
@@ -237,7 +237,6 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
       name: 'gerry',
       github: 'https://github.com/DimaLiLongJi',
     }, { expires: 7 });
-    // console.log('is $this.$globalContext', this.$globalContext);
   }
   public esBeforeMount() {
     const cookie = this.utils.getCookie('tutor');
@@ -255,25 +254,8 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
     console.log('newData Controller:', newData);
   }
   public showAlert(a: any) {
-    // console.log('this.$globalContext R1', this.$globalContext);
-    // this.$setGlobalContext({ a: 3 });
-    // console.log('this.$globalContext R12', this.$globalContext);
-    // this.$location.go('/R1/C1', { a: '1' });
-    // console.log('this.$location', this.$location.state());
-    this.$locationGo('/R1/C1', { a: '1' });
-    console.log('this.$location', this.$getLocationState());
-
-    // console.log('location2', history.length);
-    // history.go(1);
-    // alert('我错了 点下控制台看看吧');
-    // console.log('aa', a);
-    // console.log('!this.state.f', !this.state.f);
-    // this.$setState({
-    //   a: 'a2323',
-    //   b: 100,
-    //   f: !this.state.f,
-    // });
-    // console.log('state', this.state.f);
+    this.$setLocation('/R1/C1', { a: '1' });
+    console.log('this.$location', this.$getLocation());
   }
   public getProps(a: any) {
     // alert('里面传出来了');
@@ -298,8 +280,8 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
 })
 class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   public heroSearchService1: HeroSearchService1;
-  public $getLocationState: () => any;
-  public $locationGo: (path: string, query?: any, params?: any) => void;
+  public $getLocation: () => any;
+  public $setLocation: (path: string, query?: any, params?: any) => void;
   public state: any;
 
   constructor(
@@ -309,12 +291,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
     this.heroSearchService1.test();
   }
   public esOnInit() {
-    // console.log('this.$vm', this.$vm);
-    // console.log('this.$globalContext R2', this.$globalContext);
-    // console.log('this.$location222', this.$location.state());
-    // console.log('this.$location222', this.$location.state());
-    console.log('this.$location222', this.$getLocationState());
-    // console.log('is esOnInit');
+    console.log('this.$getLocation', this.$getLocation());
   }
   public esBeforeMount() {
     // console.log('is esBeforeMount');
@@ -341,9 +318,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
     console.log('aaa', a);
   }
   public showLocation() {
-    this.$locationGo('/R1/C1/D1', { b: '1' });
-    // this.$location.go('/R1/C1/D1', { b: '1' });
-    // console.log('this.$location', this.$location.state());
+    this.$setLocation('/R1/C1/D1', { b: '1' });
   }
 }
 
@@ -411,7 +386,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
 class Container implements OnInit, AfterMount {
   public ss: HeroSearchService;
   public state: any;
-  public $locationGo: (path: string, query?: any, params?: any) => void;
+  public $setLocation: (path: string, query?: any, params?: any) => void;
 
   constructor(
     private hss: HeroSearchService,
@@ -430,8 +405,7 @@ class Container implements OnInit, AfterMount {
   }
 
   public go() {
-    // this.$location.go('/R1', { b: '1' });
-    this.$locationGo('/R1', { b: '1' });
+    this.$setLocation('/R1', { b: '1' });
   }
   public show(a: any, index?: string) {
     console.log('aaaa', a);

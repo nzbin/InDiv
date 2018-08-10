@@ -184,25 +184,8 @@ class R1 {
     console.log('newData Controller:', newData);
   }
   showAlert(a) {
-    // console.log('this.$globalContext R1', this.$globalContext);
-    // this.$setGlobalContext({ a: 3 });
-    // console.log('this.$globalContext R12', this.$globalContext);
-    // this.$location.go('/R1/C1', { a: '1' });
-    // console.log('this.$location', this.$location.state());
-    this.$locationGo('/R1/C1', { a: '1' });
-    console.log('this.$location', this.$getLocationState());
-
-    // console.log('location2', history.length);
-    // history.go(1);
-    // alert('我错了 点下控制台看看吧');
-    // console.log('aa', a);
-    // console.log('!this.state.f', !this.state.f);
-    // this.$setState({
-    //   a: 'a2323',
-    //   b: 100,
-    //   f: !this.state.f,
-    // });
-    // console.log('state', this.state.f);
+    this.$setLocation('/R1/C1', { a: '1' });
+    console.log('this.$location', this.$getLocation());
   }
   getProps(a) {
     // alert('里面传出来了');
@@ -266,11 +249,7 @@ class R2 {
     this.heroSearchService1.test();
   }
   esOnInit() {
-    // console.log('this.$vm', this.$vm);
-    // console.log('this.$globalContext R2', this.$globalContext);
-    // console.log('this.$location222', this.$location.state());
-    // console.log('is esOnInit');
-    console.log('this.$location222', this.$getLocationState());
+    console.log('this.$location222', this.$getLocation());
   }
   esBeforeMount() {
     // console.log('is esBeforeMount');
@@ -297,7 +276,7 @@ class R2 {
     console.log('aaa', a);
   }
   showLocation() {
-    this.$locationGo('/R1/C1/D1', { b: '1' });
+    this.$setLocation('/R1/C1/D1', { b: '1' });
     // this.$location.go('/R1/C1/D1', { b: '1' });
     // this.$location.go('/R1/C1/D1', { b: '1' });
     // console.log('this.$location', this.$location.state());
@@ -322,7 +301,6 @@ class Container {
   constructor(
     heroSearchService
   ) {
-    // super();
     this.ss = heroSearchService;
     this.ss.test();
   }
@@ -331,12 +309,10 @@ class Container {
   }
 
   esAfterMount() {
-    // this.$location.go('/R1', { b: '1' });
   }
 
   go() {
-    // this.$location.go('/R1', { b: '1' });
-    this.$locationGo('/R1', { b: '1' });
+    this.$setLocation('/R1', { b: '1' });
   }
 
   show(a, index) {

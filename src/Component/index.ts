@@ -24,12 +24,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     vm.$components = {};
     vm.$componentList = [];
 
-    // vm.$location = {
-    //   state: vm.$getLocationState.bind(vm),
-    //   go: vm.$locationGo.bind(vm),
-    // };
-
-    vm.$getLocationState = function (): any {
+    vm.$getLocation = function (): any {
       return {
         path: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.path,
         query: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.query,
@@ -37,7 +32,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       };
     };
 
-    vm.$locationGo = function (path: string, query?: any, params?: any): void {
+    vm.$setLocation = function (path: string, query?: any, params?: any): void {
       const rootPath = (this as IComponent<State, Props, Vm>).$vm.$rootPath === '/' ? '' : (this as IComponent<State, Props, Vm>).$vm.$rootPath;
       history.pushState(
         { path, query, params },

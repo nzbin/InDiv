@@ -82,6 +82,8 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     $setState(newState: any): void;
     $setProps(newProps: any): void;
     $setGlobalContext(newGlobalContext: any): void;
+    $getLocation(): any;
+    $setLocation(path: string, query?: any, params?: any): void;
     getPropsValue(valueList: any[], value: any): void;
     buildProps(prop: any): any;
     buildComponentScope(ComponentClass: any, props: any, dom: Element): IComponent<any, any, any>;

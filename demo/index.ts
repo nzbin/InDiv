@@ -1,5 +1,5 @@
-import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange } from '../src';
-// import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange } from '../build';
+// import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange } from '../src';
+import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange } from '../build';
 
 
 @Service({
@@ -299,6 +299,7 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
 class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   public heroSearchService1: HeroSearchService1;
   public $getLocationState: () => any;
+  public $locationGo: (path: string, query?: any, params?: any) => void;
   public state: any;
 
   constructor(
@@ -340,6 +341,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
     console.log('aaa', a);
   }
   public showLocation() {
+    this.$locationGo('/R1/C1/D1', { b: '1' });
     // this.$location.go('/R1/C1/D1', { b: '1' });
     // console.log('this.$location', this.$location.state());
   }
@@ -348,22 +350,20 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
 
 @Injectable
 @Component({
-  // <input es-on:click="this.show(b.name)" es-repeat="let b in man.job" es-model="b.name" es-class="b.id" />
-  // <div class="fuck" es-repeat="let b in man.job">
-  //         <input es-on:click="this.show(b.name)" es-model="b.name" es-class="b.id" />
-  //       </div>
   template: (`
     <div>
       <p es-on:click="this.go()">container: {{this.state.a}}</p>
       <input es-model="this.state.a" />
       <div es-repeat="let man in this.state.testArray">
-        <div es-on:click="this.show(man)">姓名：{{man.name}}</div>
+        <div es-on:click="this.show(this.state.testArray2)">姓名：{{man.name}}</div>
         <div>性别：{{man.sex}}</div>
-        <input es-on:click="this.show(b.name)" es-repeat="let b in man.job" es-model="b.name" es-class="b.id" />
+        <input es-on:click="this.show(b, $index)" es-repeat="let b in this.state.testArray2" es-model="b" es-class="b" />
+        <div class="fuck" es-repeat="let b in man.job">
+          <input es-on:click="this.show(b.name)" es-model="b.name" es-class="b.id" />
+        </div>
       </div>
       <router-render></router-render>
-    </div>`
-  ),
+    </div>`),
   state: {
     a: 1,
     testArray: [
@@ -433,8 +433,9 @@ class Container implements OnInit, AfterMount {
     // this.$location.go('/R1', { b: '1' });
     this.$locationGo('/R1', { b: '1' });
   }
-  public show(a: any) {
+  public show(a: any, index?: string) {
     console.log('aaaa', a);
+    console.log('$index', index);
   }
 }
 

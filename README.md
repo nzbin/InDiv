@@ -126,32 +126,62 @@ Now we support for typescript!
       ```typescript
       @Injectable
       @Component({
+        state: {
+          a: 1,
+          testArray: [
+            {
+              name: '李龙吉',
+              sex: '男',
+              job: [
+                {
+                  id: 1,
+                  name: '程序员',
+                },
+                {
+                  id: 2,
+                  name: '码农',
+                },
+                {
+                  id: 3,
+                  name: '帅',
+                },
+              ],
+            },
+            {
+              name: '邱宝环',
+              sex: '女',
+              job: [
+                {
+                  id: 1,
+                  name: '老师',
+                },
+                {
+                  id: 2,
+                  name: '英语老师',
+                },
+                {
+                  id: 3,
+                  name: '美',
+                },
+              ],
+            }],
+          testArray2: ['程序员3', '码农3', '帅3'],
+        },
         template: (`
           <div>
             <p es-on:click="this.go()">container: {{this.state.a}}</p>
             <input es-model="this.state.a" />
             <div es-repeat="let man in this.state.testArray">
-              <div es-on:click="this.show(man)">姓名：{{man.name}}</div>
+              <div es-on:click="this.show(this.state.testArray2)">姓名：{{man.name}}</div>
               <div>性别：{{man.sex}}</div>
-              <input es-model="b" es-repeat="let b in man.job" es-class="b" />
+              <input es-on:click="this.show(b, $index)" es-repeat="let b in this.state.testArray2" es-model="b" es-class="b" />
+              <div class="fuck" es-repeat="let b in man.job">
+                <input es-on:click="this.show(b.name)" es-model="b.name" es-class="b.id" />
+              </div>
             </div>
             <router-render></router-render>
-          </div>`
-        ),
-        state: {
-          a: 1,
-          testArray: [
-            {
-              name: 'xxx',
-              sex: '男',
-              job: ['xx', '码农1', '帅1'],
-            },
-            {
-              name: 'x22',
-              sex: 'xx',
-              job: ['老师', '英语老师', '美1'],
-            }],
-        },
+          </div>
+        `),
       })
       class Container implements OnInit, AfterMount {
         public ss: HeroSearchService;
@@ -177,8 +207,9 @@ Now we support for typescript!
         public go() {
           this.$locationGo('/R1', { b: '1' });
         }
-        public show(a: any) {
+        public show(a: any, index?: string) {
           console.log('aaaa', a);
+          console.log('$index', index);
         }
       }
       ```
@@ -205,8 +236,9 @@ Now we support for typescript!
           this.$locationGo('/R1', { b: '1' });
         }
 
-        show(a) {
+        show(a, index) {
           console.log('aaaa', a);
+          console.log('$index', index);
         }
       }
 
@@ -216,20 +248,54 @@ Now we support for typescript!
             <p es-on:click="this.go()">container: {{this.state.a}}</p>
             <input es-model="this.state.a" />
             <div es-repeat="let man in this.state.testArray">
-              <div es-on:click="this.show(man)">姓名：{{man.name}}</div>
+              <div es-on:click="this.show(this.state.testArray2)">姓名：{{man.name}}</div>
               <div>性别：{{man.sex}}</div>
-              <input es-model="b" es-on:click="this.show(this.state.testArray2)" es-repeat="let b in man.job" es-class="b" />
+              <input es-on:click="this.show(b, $index)" es-repeat="let b in this.state.testArray2" es-model="b" es-class="b" />
+              <div class="fuck" es-repeat="let b in man.job">
+                <input es-on:click="this.show(b.name)" es-model="b.name" es-class="b.id" />
+              </div>
             </div>
             <router-render></router-render>
-          </div>`
-        ),
+          </div>`),
         state: {
           a: 1,
-          testArray: [{
-            name: '李龙吉',
-            sex: '男',
-            job: ['程序员1', '码农1', '帅1'],
-          }],
+          testArray: [
+            {
+              name: '李龙吉',
+              sex: '男',
+              job: [
+                {
+                  id: 1,
+                  name: '程序员',
+                },
+                {
+                  id: 2,
+                  name: '码农',
+                },
+                {
+                  id: 3,
+                  name: '帅',
+                },
+              ],
+            },
+            {
+              name: '邱宝环',
+              sex: '女',
+              job: [
+                {
+                  id: 1,
+                  name: '老师',
+                },
+                {
+                  id: 2,
+                  name: '英语老师',
+                },
+                {
+                  id: 3,
+                  name: '美',
+                },
+              ],
+            }],
           testArray2: ['程序员3', '码农3', '帅3'],
         },
       })(Container);
@@ -299,7 +365,7 @@ Now we support for typescript!
     - Text1: `this.$template = '<p es-text="this.state.b"></p>';`
     - Text2: `this.$template = '<p>this.state.b是：{{this.state.b}}</p>';`
     - HTML: `this.$template = '<p es-html="this.state.c"></p>';`
-    - Model for input: `this.$template = '<input es-model="this.state.c"/>';`
+    - Model for input: `this.$template = '<input es-model="this.state.c"/>';` **if input is a repeat DOM, and intem of Array is'nt an object, please use `$index`**
     - Class: `this.$template = '<p  class="b" es-class="this.state.a"></p>';`
     - Directives: ues `es-on:event`
       - `this.$template = '<p es-on:click="this.componentClick()"></p>';`
@@ -310,9 +376,10 @@ Now we support for typescript!
       1. Event: `$event`
       2. String: `'xxx'`
       3. Number: `123`
-      4. Variable: **`this.state.xxx` `this.props.xxx`**
-      5. Boolean: `true` `false`
-      6. For es-repeat: items like: `es-repeat="let a in this.state.b" es-if="a.f"`
+      4. Index: `$index`, you can only use this in **repeat DOM** : `<input es-on:click="this.show(b, $index)" es-repeat="let b in this.state.testArray2" es-model="b" es-class="b" />`
+      5. Variable: **`this.state.xxx` `this.props.xxx`**
+      6. Boolean: `true` `false`
+      7. For es-repeat: items like: `es-repeat="let a in this.state.b" es-if="a.f"`
 
 7. Data monitor: this.state && this.$setState
 
@@ -443,7 +510,17 @@ Now we support for typescript!
         },
         template: (`
           <div>
-            <p>1232{{this.state.a}}</p>
+            <p es-on:click="this.go()">container: {{this.state.a}}</p>
+            <input es-model="this.state.a" />
+            <div es-repeat="let man in this.state.testArray">
+              <div es-on:click="this.show(this.state.testArray2)">姓名：{{man.name}}</div>
+              <div>性别：{{man.sex}}</div>
+              <input es-on:click="this.show(b, $index)" es-repeat="let b in this.state.testArray2" es-model="b" es-class="b" />
+              <div class="fuck" es-repeat="let b in man.job">
+                <input es-on:click="this.show(b.name)" es-model="b.name" es-class="b.id" />
+              </div>
+            </div>
+            <router-render></router-render>
           </div>
         `),
       })

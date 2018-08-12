@@ -7,7 +7,6 @@ import { factoryModule } from '../EsModule';
 class Easiest {
   public modalList: IMiddleware<Easiest>[];
   public utils: Utils;
-  public $globalContext: any;
   public rootDom: Element;
   public $rootPath: string;
   public $canRenderModule: boolean;
@@ -22,7 +21,7 @@ class Easiest {
   constructor() {
     this.modalList = [];
     this.utils = new Utils();
-    this.$globalContext = {};
+
     this.rootDom = document.querySelector('#root');
     this.$rootPath = '/';
     this.$canRenderModule = true;
@@ -51,7 +50,7 @@ class Easiest {
       console.error('must send a root module');
       return;
     }
-    // this.$rootModule = new (Esmodule as any)();
+
     this.$rootModule = factoryModule(Esmodule);
     this.$components = Object.assign({}, this.$rootModule.$components);
   }

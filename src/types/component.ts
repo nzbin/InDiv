@@ -11,7 +11,6 @@ export interface IComponent<State = any, Props = any, Vm = any> extends ILifecyc
     state?: State | any;
     props?: Props | any;
     $renderDom?: Element;
-    $globalContext?: any;
     $vm?: Vm | any;
     $template?: string;
     $components?: {
@@ -35,7 +34,6 @@ export interface IComponent<State = any, Props = any, Vm = any> extends ILifecyc
     $componentsConstructor(dom: Element): void;
     $setState(newState: any): void;
     $setProps(newProps: any): void;
-    $setGlobalContext(newGlobalContext: any): void;
     $getLocation(): any;
     $setLocation(path: string, query?: any, params?: any): void;
     getPropsValue(valueList: any[], value: any): void;

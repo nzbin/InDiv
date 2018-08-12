@@ -16,7 +16,6 @@ export type EsRouteObject = {
 export interface IEasiest {
     modalList: IMiddleware<IEasiest>[];
     utils: IUtil;
-    $globalContext: any;
     rootDom: Element;
     $rootPath: string;
     $canRenderModule: boolean;

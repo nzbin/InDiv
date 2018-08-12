@@ -20,7 +20,6 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
 
     vm.utils = new Utils();
     vm.compileUtil = new CompileUtil();
-    vm.$globalContext = {};
     vm.$components = {};
     vm.$componentList = [];
 
@@ -85,7 +84,6 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
           component.scope.props = component.props;
         }
         component.scope.$vm = (this as IComponent<State, Props, Vm>).$vm;
-        component.scope.$globalContext = (this as IComponent<State, Props, Vm>).$globalContext;
         component.scope.$components = (this as IComponent<State, Props, Vm>).$components;
         if (component.scope.$beforeInit) component.scope.$beforeInit();
         if (component.scope.esOnInit && isFirstRender) component.scope.esOnInit();
@@ -164,24 +162,6 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
         for (const key in newProps) {
           if ((this as IComponent).props.hasOwnProperty(key) && (this as IComponent).props[key] !== newProps[key]) {
             (this as IComponent).props[key] = newProps[key];
-          }
-        }
-      }
-    };
-
-    vm.$setGlobalContext = function (newGlobalContext: any): void {
-      if (newGlobalContext && (this as IComponent<State, Props, Vm>).utils.isFunction(newGlobalContext)) {
-        const _newGlobalContext = newGlobalContext();
-        if (_newGlobalContext && _newGlobalContext instanceof Object) {
-          for (const key in _newGlobalContext) {
-            if ((this as IComponent<State, Props, Vm>).$globalContext.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).$globalContext[key] !== _newGlobalContext[key]) (this as IComponent<State, Props, Vm>).$globalContext[key] = _newGlobalContext[key];
-          }
-        }
-      }
-      if (newGlobalContext && newGlobalContext instanceof Object) {
-        for (const key in newGlobalContext) {
-          if ((this as IComponent<State, Props, Vm>).$globalContext.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).$globalContext[key] !== newGlobalContext[key]) {
-            (this as IComponent<State, Props, Vm>).$globalContext[key] = newGlobalContext[key];
           }
         }
       }

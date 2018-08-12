@@ -145,7 +145,6 @@ Component({
   },
   template: (`
     <div>
-      $globalContext in Component: <span>{{this.$globalContext.a}}</span>
       <p es-if="this.state.e" es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick(this.state.d)">你好： {{a.z}}</p>
       state.d: <input es-repeat="let a in this.state.d" es-model="a.z" />
       <p es-on:click="this.sendProps(5)">props from component.state.a: {{this.props.ax}}</p>
@@ -166,7 +165,6 @@ class R1 {
       name: 'gerry',
       github: 'https://github.com/DimaLiLongJi',
     }, { expires: 7 });
-    // console.log('is $this.$globalContext', this.$globalContext);
   }
   esBeforeMount() {
     const cookie = this.utils.getCookie('tutor');
@@ -199,7 +197,6 @@ Component({
     <div>
       <pc-component ax="{this.state.a}" b="{this.getProps}"></pc-component>
       下面跟组件没关系<br/>
-      $globalContext in Component: <span>{{this.$globalContext.a}}</span>
       <div es-if="this.state.f">
         ef
         <input es-repeat="let a in this.state.e" es-model="a.z" />

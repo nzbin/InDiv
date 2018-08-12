@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-class Http {
-  public $get(url: string, params?: any): Promise<any> {
+const esHttp = {
+  get: function(url: string, params?: any): Promise<any> {
     return new Promise((resolve, reject) => {
       const pms = params ? { params } : null;
       axios.get(url, pms)
@@ -12,9 +12,9 @@ class Http {
           reject(e.response.data);
         });
     });
-  }
+  },
 
-  public $delete(url: string, params?: any): Promise<any> {
+  delete: function(url: string, params?: any): Promise<any> {
     return new Promise((resolve, reject) => {
       const pms = params ? { params } : null;
       axios.delete(url, pms)
@@ -25,9 +25,9 @@ class Http {
           reject(e.response.data);
         });
     });
-  }
+  },
 
-  public $post(url: string, params ?: any): Promise<any> {
+  post: function(url: string, params?: any): Promise<any> {
     return new Promise((resolve, reject) => {
       axios.post(url, params)
         .then((res: any) => {
@@ -37,9 +37,9 @@ class Http {
           reject(e.response.data);
         });
     });
-  }
+  },
 
-  public $put(url: string, params?: any): Promise<any> {
+  put: function(url: string, params?: any): Promise<any> {
     return new Promise((resolve, reject) => {
       axios.put(url, params)
         .then((res: any) => {
@@ -49,9 +49,9 @@ class Http {
           reject(e.response.data);
         });
     });
-  }
+  },
 
-  public $patch(url: string, params ?: any): Promise <any> {
+  patch: function(url: string, params?: any): Promise<any> {
     return new Promise((resolve, reject) => {
       axios.patch(url, params)
         .then((res: any) => {
@@ -61,7 +61,8 @@ class Http {
           reject(e.response.data);
         });
     });
-  }
-}
+  },
 
-export default Http;
+};
+
+export default esHttp;

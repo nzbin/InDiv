@@ -1,6 +1,5 @@
-// import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange } from '../src';
-import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange } from '../build';
-
+// import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, esHttp } from '../src';
+import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, esHttp } from '../build';
 
 @Service({
   isSingletonMode: true,
@@ -38,7 +37,7 @@ class HeroSearchService {
   }
 }
 
-@Injectable
+// @Injectable
 @Component({
   state: {
     a: 'a',
@@ -383,15 +382,19 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
 
 class Container implements OnInit, AfterMount {
   public ss: HeroSearchService;
+  public ss2: HeroSearchService1;
   public state: any;
   public $setLocation: (path: string, query?: any, params?: any) => void;
 
   constructor(
     private hss: HeroSearchService,
+    private hss2: HeroSearchService1,
   ) {
     this.ss = hss;
+    this.ss2 = hss2;
     this.ss.test();
     console.log(this.state);
+    console.log('esHttp', esHttp);
   }
 
   public esOnInit() {

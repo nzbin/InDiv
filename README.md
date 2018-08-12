@@ -456,14 +456,17 @@ Now we support for typescript!
       })(HeroSearchService);
       ```
 
-  ```javascript
-  const http = new Http();
-  http.$get(url, params);
-  http.$delete(url, params);
-  http.$post(url, params);
-  http.$put(url, params);
-  http.$patch(url, params);
-  ```
+    3. http
+
+      ```javascript
+      import { esHttp } from 'Easiest';
+      const http = esHttp;
+      http.get(url, params);
+      http.delete(url, params);
+      http.post(url, params);
+      http.put(url, params);
+      http.patch(url, params);
+      ```
 
 10. Dependency Injection
     
@@ -668,7 +671,7 @@ route => EsModule => component
 - [x] 改用 history的pushState
 - [x] 监听路由变化动态渲染(2/2)
 - [x] Virtual DOM
-- [x] Service => $http
+- [x] Service
 - [x] Route bug
-- [x] ts (strongly typed 赛高)
-- [x] 依赖注入
+- [x] ts (强类型赛高)
+- [x] DI

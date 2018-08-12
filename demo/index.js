@@ -1,4 +1,4 @@
-import { Easiest, Component, Router, Utils, EsModule, Service } from '../build';
+import { Easiest, Component, Router, Utils, EsModule, Service, esHttp } from '../build';
 
 class HeroSearchService1 {
   constructor() {
@@ -296,10 +296,13 @@ Component({
 
 class Container {
   constructor(
-    heroSearchService
+    heroSearchService,
+    heroSearchService1,
   ) {
     this.ss = heroSearchService;
     this.ss.test();
+    console.log('heroSearchService1', heroSearchService1);
+    console.log('esHttp', esHttp);
   }
   esOnInit() {
     console.log('esOnInit Container');

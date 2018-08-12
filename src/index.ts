@@ -10,6 +10,6 @@ export { default as Router } from './Router';
 export { default as Easiest } from './Easiest';
 export { EsModule, factoryModule } from './EsModule';
 export { default as Service } from './Service';
-export { default as Http } from './Http';
+export { default as esHttp } from './Http';
 
 export { Injectable, injector, factoryCreator } from './Injectable';

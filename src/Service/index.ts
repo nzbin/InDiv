@@ -1,5 +1,3 @@
-import Http from '../Http';
-
 type TServiceOptions = {
   isSingletonMode?: boolean;
 };
@@ -16,15 +14,6 @@ function Service(options?: TServiceOptions): (_constructor: Function) => void {
         if (!this.instance) this.instance = Reflect.construct(Instance, args);
         return this.instance;
       }
-    };
-
-    const _http = new Http();
-    (_constructor as any).prototype.$http = {
-      $get: _http.$get,
-      $delete: _http.$delete,
-      $post: _http.$post,
-      $put: _http.$put,
-      $patch: _http.$patch,
     };
   };
 }

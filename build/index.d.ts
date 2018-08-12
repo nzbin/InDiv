@@ -49,9 +49,7 @@ export type TEsModuleOptions = {
     exports?: string[],
     bootstrap?: Function,
 };
-export interface IService {
-    $http?: Http;
-}
+export interface IService { }
 
 export interface IComponent<State = any, Props = any, Vm = any> {
     state?: State | any;
@@ -130,12 +128,12 @@ export declare class Utils {
     formatInnerHTML(inner: string): string;
 }
 
-export declare class Http {
-    $get(url: string, params?: any): Promise<any>;
-    $delete(url: string, params?: any): Promise<any>;
-    $post(url: string, params?: any): Promise<any>;
-    $put(url: string, params?: any): Promise<any>;
-    $patch(url: string, params?: any): Promise<any>;
+export declare const esHttp: {
+    get(url: string, params?: any): Promise<any>;
+    delete(url: string, params?: any): Promise<any>;
+    post(url: string, params?: any): Promise<any>;
+    put(url: string, params?: any): Promise<any>;
+    patch(url: string, params?: any): Promise<any>;
 }
 
 export declare class KeyWatcher {

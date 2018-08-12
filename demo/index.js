@@ -27,6 +27,7 @@ class HeroSearchService {
   constructor(
     heroSearchService1,
   ) {
+    console.log('测试 js 依赖注入', heroSearchService1);
     this.hsr = heroSearchService1;
     this.hsr.test();
   }

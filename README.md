@@ -475,6 +475,7 @@ Now we support for typescript!
     1. Use Typescript
 
       - If u are using `Typescript` to build an app, u can easily use our Dependency Injection.Only use `@Injectable` before the `Class` which need to use other services, that which are declarated in `this.$providers` of `EsModule` or root module.
+      - Use `this.` names of constructor arguments to directly use `Service`.
 
       ```typescript
       import { Injectable, Component, EsModule, Service, HasRender } from 'easiest';
@@ -497,8 +498,7 @@ Now we support for typescript!
         constructor(
           private hsrS: HeroSearchService1,
         ) {
-          this.hsr = hsrS;
-          this.hsr.test();
+          this.hsrS.test();
         }
 
         public test() {
@@ -533,8 +533,7 @@ Now we support for typescript!
         constructor(
           private hsrS: HeroSearchService,
         ) {
-          this.hsr = hsrS;
-          this.hsr.test();
+          this.hsrS.test();
         }
 
         public esHasRender() {}
@@ -558,6 +557,7 @@ Now we support for typescript!
     2. Use Javascript
 
       - to use `constructor`'s arguments of `Service` for inject an other `Service`, and arguments must be lowercase lette of initials lette  of Service class name. For example, you want to inject a service  class `HeroSearchService`, you must write argument in `constructor` with `heroSearchService`
+      - A little diffrence between javascript and typescript, use constructor arguments to directly use `Service`, and assign them to a variable.
 
       ```javascript
       class HeroSearchService1 {

@@ -1,5 +1,5 @@
-// import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, esHttp } from '../src';
-import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, esHttp } from '../build';
+import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, esHttp } from '../src';
+// import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, esHttp } from '../build';
 
 @Service({
   isSingletonMode: true,
@@ -26,10 +26,10 @@ class HeroSearchService2 {
 class HeroSearchService {
   public hsr: HeroSearchService1;
   constructor(
-    private hsrS: HeroSearchService1,
+    private heroSearchService1: HeroSearchService1,
   ) {
-    this.hsr = hsrS;
-    this.hsr.test();
+    console.log('测试 ts 依赖注入', this.heroSearchService1);
+    this.heroSearchService1.test();
   }
 
   public test() {
@@ -66,8 +66,8 @@ class RouteChild implements HasRender {
   constructor(
     private heroSearchService2: HeroSearchService2,
   ) {
-    this.heroSearchService = heroSearchService2;
-    this.heroSearchService.test();
+    console.log('fuck this.heroSearchService2', this.heroSearchService2);
+    this.heroSearchService2.test();
   }
 
   public esHasRender() {
@@ -225,8 +225,7 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   constructor(
     private heroSearchService: HeroSearchService,
   ) {
-    this.hSr = heroSearchService;
-    this.hSr.test();
+    this.heroSearchService.test();
   }
 
   public esOnInit() {
@@ -276,16 +275,15 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   state: { a: 1 },
 })
 class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
-  public heroSearchService1: HeroSearchService1;
   public $getLocation: () => any;
   public $setLocation: (path: string, query?: any, params?: any) => void;
   public state: any;
 
   constructor(
-    heroSearchService1: HeroSearchService1,
+    public heroSearchService1: HeroSearchService1,
   ) {
-    this.heroSearchService1 = heroSearchService1;
     this.heroSearchService1.test();
+    console.log('this.heroSearchService1', this.heroSearchService1);
   }
   public esOnInit() {
     console.log('this.$getLocation', this.$getLocation());
@@ -390,11 +388,11 @@ class Container implements OnInit, AfterMount {
     private hss: HeroSearchService,
     private hss2: HeroSearchService1,
   ) {
-    this.ss = hss;
-    this.ss2 = hss2;
-    this.ss.test();
-    console.log(this.state);
+    this.hss.test();
+    // console.log(this.state);
     console.log('esHttp', esHttp);
+    // console.log('hss', this.hss);
+    // console.log('hss2', this.hss2);
   }
 
   public esOnInit() {

@@ -460,10 +460,12 @@ const routes = [
           {
             path: '/C1',
             component: 'R2',
+            redirectTo: '/R1/C1/D1',
             children: [
               {
                 path: '/D1',
-                redirectTo: '/R2',
+                component: 'R2',
+                // redirectTo: '/R2',
               },
             ],
           },

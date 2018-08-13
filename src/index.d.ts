@@ -225,8 +225,10 @@ export declare class Easiest {
     $bootstrapModule(Esmodule: Function): void;
     $init(): void;
     $renderModuleBootstrap(): void;
-    $renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any>;
-    replaceDom(component: IComponent, renderDOM: Element): Promise<any>;
+    // $renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any>;
+    // replaceDom(component: IComponent, renderDOM: Element): Promise<any>;
+    $renderComponent(BootstrapComponent: Function, renderDOM: Element): any;
+    replaceDom(component: IComponent, renderDOM: Element): void;
 }
 export declare class Router {
     routes: TRouter[];
@@ -251,7 +253,8 @@ export declare class Router {
     distributeRoutes(): void;
     insertRenderRoutes(): void;
     generalDistributeRoutes(): void;
-    instantiateComponent(FindComponent: Function, renderDom: Element): Promise<any>;
+    // instantiateComponent(FindComponent: Function, renderDom: Element): Promise<any>;
+    instantiateComponent(FindComponent: Function, renderDom: Element): any;
 }
 
 export declare function Injectable(_constructor: Function): void;

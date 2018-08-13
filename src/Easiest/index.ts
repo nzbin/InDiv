@@ -72,7 +72,8 @@ class Easiest {
     this.$renderComponent(BootstrapComponent, this.rootDom);
   }
 
-  public $renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any> {
+  // public $renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any> {
+  public $renderComponent(BootstrapComponent: Function, renderDOM: Element): any {
     const component: any = factoryCreator(BootstrapComponent, this.$rootModule);
 
     component.$vm = this;
@@ -86,24 +87,35 @@ class Easiest {
     const template = component.$template;
     if (template && typeof template === 'string' && renderDOM) {
       if (component.esBeforeMount) component.esBeforeMount();
-      this.replaceDom(component, renderDOM).then(() => {
-        if (component.esAfterMount) component.esAfterMount();
-      });
-      return Promise.resolve(component);
+
+      this.replaceDom(component, renderDOM);
+      if (component.esAfterMount) component.esAfterMount();
+      return component;
+
+      // return Promise.resolve(component);
+      // this.replaceDom(component, renderDOM).then(() => {
+      //   if (component.esAfterMount) component.esAfterMount();
+      // });
+      // return Promise.resolve(component);
+
     } else {
+      console.log('renderDOMrenderDOM', renderDOM);
       console.error('renderBootstrap failed: template or rootDom is not exit');
-      return Promise.reject();
+      // return Promise.reject();
+      return false;
     }
   }
 
-  public replaceDom(component: IComponent, renderDOM: Element): Promise<any> {
+  // public replaceDom(component: IComponent, renderDOM: Element): Promise<any> {
+  public replaceDom(component: IComponent, renderDOM: Element): void {
     component.$renderDom = renderDOM;
-    if (component.$render) {
-      component.$render();
-      return Promise.resolve();
-    } else {
-      return Promise.reject();
-    }
+    // if (component.$render) {
+    //   component.$render();
+    //   return Promise.resolve();
+    // } else {
+    //   return Promise.reject();
+    // }
+    component.$render();
   }
 }
 

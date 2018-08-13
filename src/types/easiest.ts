@@ -31,6 +31,8 @@ export interface IEasiest {
     $bootstrapModule(Esmodule: Function): void;
     $init(): void;
     $renderModuleBootstrap(): void;
-    $renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any>;
-    replaceDom(component: IComponent, renderDOM: Element): Promise<any>;
+    // $renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any>;
+    $renderComponent(BootstrapComponent: Function, renderDOM: Element): any;
+    replaceDom(component: IComponent, renderDOM: Element): void;
+    // replaceDom(component: IComponent, renderDOM: Element): Promise<any>;
 }

@@ -270,6 +270,7 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
       <p es-on:click="this.showAlert()">点击显示this.state.a:{{this.state.a}}</p>
       子组件:<br/>
       <route-child a="{this.state.a}"></route-child>
+      <router-render></router-render>
     </div>
   `),
   state: { a: 1 },
@@ -460,12 +461,12 @@ const routes = [
           {
             path: '/C1',
             component: 'R2',
-            redirectTo: '/R1/C1/D1',
+            // redirectTo: '/R1/C1/D1',
             children: [
               {
                 path: '/D1',
                 component: 'R2',
-                // redirectTo: '/R2',
+                redirectTo: '/R2',
               },
             ],
           },

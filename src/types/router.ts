@@ -33,5 +33,6 @@ export interface IRouter {
     distributeRoutes(): void;
     insertRenderRoutes(): void;
     generalDistributeRoutes(): void;
-    instantiateComponent(FindComponent: Function, renderDom: Element): Promise<any>;
+    // instantiateComponent(FindComponent: Function, renderDom: Element): Promise<any>;
+    instantiateComponent(FindComponent: Function, renderDom: Element): any;
 }

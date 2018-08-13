@@ -158,6 +158,30 @@ class Router {
           return;
         }
 
+        // if (needRenderRoute.redirectTo && /^\/.*/.test(needRenderRoute.redirectTo) && (index + 1) === this.renderRouteList.length) {
+        //   this.hasRenderComponentList.forEach((c, i) => {
+        //     if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
+        //     if (i > index && c.esOnDestory) c.esOnDestory();
+        //   });
+        //   this.hasRenderComponentList.length = index;
+        //   this.needRedirectPath = needRenderRoute.redirectTo;
+        //   return;
+        // }
+
+        const needRenderComponent = this.$vm.$components[needRenderRoute.component];
+        const renderDom = document.querySelectorAll('router-render')[index - 1];
+        this.hasRenderComponentList.forEach((c, i) => {
+          if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
+          if (i > index && c.esOnDestory) c.esOnDestory();
+        });
+        this.hasRenderComponentList.length = index;
+        // this.instantiateComponent(needRenderComponent, renderDom).then(component => {
+        //   this.hasRenderComponentList[index] = component;
+        // });
+
+        const component = this.instantiateComponent(needRenderComponent, renderDom);
+        if (component) this.hasRenderComponentList[index] = component;
+
         if (needRenderRoute.redirectTo && /^\/.*/.test(needRenderRoute.redirectTo) && (index + 1) === this.renderRouteList.length) {
           this.hasRenderComponentList.forEach((c, i) => {
             if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
@@ -168,16 +192,6 @@ class Router {
           return;
         }
 
-        const needRenderComponent = this.$vm.$components[needRenderRoute.component];
-        const renderDom = document.querySelectorAll('router-render')[index - 1];
-        this.hasRenderComponentList.forEach((c, i) => {
-          if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
-          if (i > index && c.esOnDestory) c.esOnDestory();
-        });
-        this.hasRenderComponentList.length = index;
-        this.instantiateComponent(needRenderComponent, renderDom).then(component => {
-          this.hasRenderComponentList[index] = component;
-        });
       }
 
       if (index === (this.renderRouteList.length - 1) && index < (lastRouteList.length - 1)) {
@@ -212,11 +226,15 @@ class Router {
 
         const rootDom = document.querySelector('#root');
         this.routesList.push(rootRoute);
-        this.instantiateComponent(FindComponent, rootDom)
-          .then(component => {
-            this.hasRenderComponentList[index] = component;
-          })
-          .catch(() => console.error('renderComponent failed'));
+
+        // this.instantiateComponent(FindComponent, rootDom)
+        //   .then(component => {
+        //     this.hasRenderComponentList[index] = component;
+        //   })
+        //   .catch(() => console.error('renderComponent failed'));
+        const component = this.instantiateComponent(FindComponent, rootDom);
+        if (component) this.hasRenderComponentList[index] = component;
+
         this.hasRenderComponentList.forEach((c, i) => {
           if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
           if (i > index && c.esOnDestory) c.esOnDestory();
@@ -238,15 +256,15 @@ class Router {
           return;
         }
 
-        if (route.redirectTo && /^\/.*/.test(route.redirectTo) && (index + 1) === this.renderRouteList.length) {
-          this.hasRenderComponentList.forEach((c, i) => {
-            if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
-            if (i > index && c.esOnDestory) c.esOnDestory();
-          });
-          this.needRedirectPath = route.redirectTo;
-          this.hasRenderComponentList.length = index;
-          return;
-        }
+        // if (route.redirectTo && /^\/.*/.test(route.redirectTo) && (index + 1) === this.renderRouteList.length) {
+        //   this.hasRenderComponentList.forEach((c, i) => {
+        //     if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
+        //     if (i > index && c.esOnDestory) c.esOnDestory();
+        //   });
+        //   this.needRedirectPath = route.redirectTo;
+        //   this.hasRenderComponentList.length = index;
+        //   return;
+        // }
 
         let FindComponent = null;
         if (this.$vm.$rootModule.$components[route.component]) {
@@ -260,16 +278,30 @@ class Router {
         this.hasRenderComponentList.forEach((c) => {
           if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
         });
-        this.instantiateComponent(FindComponent, renderDom)
-          .then(component => {
-            this.hasRenderComponentList[index] = component;
-          })
-          .catch(() => console.error('renderComponent failed'));
+
+        // this.instantiateComponent(FindComponent, renderDom)
+        //   .then(component => {
+        //     this.hasRenderComponentList[index] = component;
+        //   })
+        //   .catch(() => console.error('renderComponent failed'));
+
+        const component = this.instantiateComponent(FindComponent, renderDom);
+        if (component) this.hasRenderComponentList[index] = component;
+        if (route.redirectTo && /^\/.*/.test(route.redirectTo) && (index + 1) === this.renderRouteList.length) {
+          this.hasRenderComponentList.forEach((c, i) => {
+            if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
+            if (i > index && c.esOnDestory) c.esOnDestory();
+          });
+          this.needRedirectPath = route.redirectTo;
+          this.hasRenderComponentList.length = index;
+          return;
+        }
       }
     }
   }
 
-  public instantiateComponent(FindComponent: Function, renderDom: Element): Promise<any> {
+  // public async instantiateComponent(FindComponent: Function, renderDom: Element): Promise<any> {
+  public instantiateComponent(FindComponent: Function, renderDom: Element): any {
     return this.$vm.$renderComponent(FindComponent, renderDom);
   }
 }

@@ -17,8 +17,8 @@ export interface IComponent<State = any, Props = any, Vm = any> extends ILifecyc
         [name: string]: Function;
     };
     $componentList?: ComponentList<IComponent<any, any, any>>[];
-    stateWatcher?: IWatcher;
-    propsWatcher?: IWatcher;
+    // stateWatcher?: IWatcher;
+    // propsWatcher?: IWatcher;
 
     esOnInit?(): void;
     esBeforeMount?(): void;

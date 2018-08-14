@@ -202,6 +202,17 @@ class Router {
         });
         if (renderDom && renderDom.hasChildNodes()) renderDom.removeChild(renderDom.childNodes[0]);
         this.hasRenderComponentList.length = index;
+
+        const needRenderRoute = this.routesList[index];
+        if (needRenderRoute.redirectTo && /^\/.*/.test(needRenderRoute.redirectTo) && (index + 1) === this.renderRouteList.length) {
+          this.hasRenderComponentList.forEach((c, i) => {
+            if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
+            if (i > index && c.esOnDestory) c.esOnDestory();
+          });
+          this.hasRenderComponentList.length = index;
+          this.needRedirectPath = needRenderRoute.redirectTo;
+          return;
+        }
       }
     }
   }

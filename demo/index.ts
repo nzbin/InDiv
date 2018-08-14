@@ -330,7 +330,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
         <div>性别：{{man.sex}}</div>
         <input es-on:click="this.show(b, $index)" es-repeat="let b in this.state.testArray2" es-model="b" es-class="b" />
         <div class="fuck" es-repeat="let b in man.job">
-          <input es-on:click="this.show(b.name)" es-model="b.name" es-class="b.id" />
+          <input es-on:click="this.show(b.name, $index)" es-model="b.name" es-class="b.id" />
         </div>
       </div>
       <router-render></router-render>
@@ -384,6 +384,7 @@ class Container implements OnInit, AfterMount {
   public ss2: HeroSearchService1;
   public state: any;
   public $setLocation: (path: string, query?: any, params?: any) => void;
+  public $setState: (newState: any) => void;
 
   constructor(
     private hss: HeroSearchService,
@@ -402,6 +403,48 @@ class Container implements OnInit, AfterMount {
 
   public esAfterMount() {
     console.log('esAfterMount Container');
+    const aaa = JSON.parse(JSON.stringify(this.state.testArray));
+    // aaa[0] = {
+    //   name: '222',
+    //   sex: '男',
+    //   job: [
+    //     {
+    //       id: 1,
+    //       name: '程序员',
+    //     },
+    //     {
+    //       id: 2,
+    //       name: '码农',
+    //     },
+    //     {
+    //       id: 3,
+    //       name: '帅',
+    //     },
+    //   ],
+    // };
+    aaa[0].name = '222';
+    // this.state.testArray[0] = {
+    //   name: '222',
+    //   sex: '男',
+    //   job: [
+    //     {
+    //       id: 1,
+    //       name: '程序员',
+    //     },
+    //     {
+    //       id: 2,
+    //       name: '码农',
+    //     },
+    //     {
+    //       id: 3,
+    //       name: '帅',
+    //     },
+    //   ],
+    // };
+    // this.$setState({
+    //   testArray: aaa,
+    // });
+    console.log('his.state.testArray', this.state.testArray);
   }
 
   public go() {

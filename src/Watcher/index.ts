@@ -23,7 +23,7 @@ class Watcher {
     const vm = this;
     for (const key in data) {
       let val = data[key];
-      vm.watchData(val);
+      // vm.watchData(val);
       Object.defineProperty(data, key, {
         configurable: true,
         enumerable: true,

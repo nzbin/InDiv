@@ -122,6 +122,7 @@ export class CompileUtilForRepeat {
   }
 
   public classUpdater(node: Element, value: any, oldValue: any): void {
+    if (!value && !oldValue) return;
     let className = node.className;
     className = className.replace(oldValue, '').replace(/\s$/, '');
     const space = className && String(value) ? ' ' : '';
@@ -131,6 +132,7 @@ export class CompileUtilForRepeat {
   public modelUpdater(node: Element, value: any, exp: string, key: string, index: number, watchData: any, vm: any): void {
     node.value = typeof value === 'undefined' ? '' : value;
     const utilVm = this;
+    console.log('watchDatawatchData', watchData);
     const func = function(event: Event): void {
       event.preventDefault();
       if (/(this.state.).*/.test(exp)) {
@@ -143,7 +145,7 @@ export class CompileUtilForRepeat {
         if ((event.target as HTMLInputElement).value === watchData) return;
         vm.props[val] = (event.target as HTMLInputElement).value;
       }
-      if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {  
+      if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
         if (typeof watchData[index] !== 'object') watchData[index] = (event.target as HTMLInputElement).value;
         if (typeof watchData[index] === 'object') {
           let vals = utilVm._getValueByValue(watchData[index], exp, key);
@@ -151,6 +153,7 @@ export class CompileUtilForRepeat {
           utilVm._setValueByValue(watchData[index], exp, key, vals);
         }
       }
+      vm.$reRender();
     };
     node.addEventListener('input', func, false);
     (node as any).eventinput = func;
@@ -190,6 +193,7 @@ export class CompileUtilForRepeat {
         }
       });
       fn.apply(vm, argsList);
+      vm.$reRender();
     };
     if (eventType && fn) {
       (node as any)[`on${eventType}`] = func;
@@ -287,6 +291,7 @@ export class CompileUtil {
   }
 
   public classUpdater(node: Element, value: any, oldValue: any): void {
+    if (!value && !oldValue) return;
     let className = node.className;
     className = className.replace(oldValue, '').replace(/\s$/, '');
     const space = className && String(value) ? ' ' : '';
@@ -300,6 +305,7 @@ export class CompileUtil {
       event.preventDefault();
       if (/(this.state.).*/.test(exp)) vm.state[val] = (event.target as HTMLInputElement).value;
       if (/(this.props.).*/.test(exp)) vm.props[val] = (event.target as HTMLInputElement).value;
+      vm.$reRender();
     };
     node.addEventListener('input', func, false);
     (node as any).eventinput = func;
@@ -378,7 +384,7 @@ export class CompileUtil {
         });
       }
 
-      if (child.hasChildNodes() && !this.isRepeatNode(child)) this.repeatChildrenUpdater(child, value, expFather, index, vm, watchValue);
+      if (child.hasChildNodes() && !this.isRepeatNode(child) && canShowByIf) this.repeatChildrenUpdater(child, value, expFather, index, vm, watchValue);
 
       if (!canShowByIf && node.contains(child)) node.removeChild(child);
 

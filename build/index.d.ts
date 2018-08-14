@@ -61,8 +61,8 @@ export interface IComponent<State = any, Props = any, Vm = any> {
         [name: string]: Function;
     };
     $componentList?: ComponentList<IComponent<any, any, any>>[];
-    stateWatcher?: Watcher;
-    propsWatcher?: Watcher;
+    // stateWatcher?: Watcher;
+    // propsWatcher?: Watcher;
 
     esOnInit?(): void;
     esBeforeMount?(): void;
@@ -270,6 +270,8 @@ export declare function EsModule(options: TEsModuleOptions): (_constructor: Func
 export declare function factoryModule(EM: Function): IEsModule;
 
 export declare function Service(options?: TServiceOptions): (_constructor: Function) => void;
+
+export declare function toImmutabletoImmutable<T = any>(data: T): void;
 
 export declare interface OnInit {
     esOnInit(): void;

@@ -132,7 +132,6 @@ export class CompileUtilForRepeat {
   public modelUpdater(node: Element, value: any, exp: string, key: string, index: number, watchData: any, vm: any): void {
     node.value = typeof value === 'undefined' ? '' : value;
     const utilVm = this;
-    console.log('watchDatawatchData', watchData);
     const func = function(event: Event): void {
       event.preventDefault();
       if (/(this.state.).*/.test(exp)) {
@@ -249,6 +248,7 @@ export class CompileUtil {
       // compile repeatNode's attributes
       switch (dir) {
         case 'repeat':
+          console.log('vmvmvmvm', vm);
           if (updaterFn) (updaterFn as Function).call(this, node, this._getVMRepeatVal(vm, exp), exp, vm);
           break;
       }

@@ -99,7 +99,6 @@ class Easiest {
       // return Promise.resolve(component);
 
     } else {
-      console.log('renderDOMrenderDOM', renderDOM);
       console.error('renderBootstrap failed: template or rootDom is not exit');
       // return Promise.reject();
       return false;

@@ -1,7 +1,7 @@
 import { IComponent, ComponentList } from '../types';
 
 import Compile from '../Compile';
-import Watcher from '../Watcher';
+// import Watcher from '../Watcher';
 import Utils from '../Utils';
 import { CompileUtil } from '../CompileUtils';
 import { factoryCreator } from '../Injectable';
@@ -151,22 +151,16 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
         const _newState = newState();
         if (_newState && _newState instanceof Object) {
           for (const key in _newState) {
-            // if ((this as IComponent<State, Props, Vm>).state.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).state[key] !== _newState[key]) (this as IComponent<State, Props, Vm>).state[key] = _newState[key];
-            if ((this as IComponent<State, Props, Vm>).state.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).state[key] !== _newState[key]) {
-              (this as IComponent<State, Props, Vm>).state[key] = _newState[key];
-              (this as IComponent<State, Props, Vm>).$reRender();
-            }
+            if ((this as IComponent<State, Props, Vm>).state.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).state[key] !== _newState[key]) (this as IComponent<State, Props, Vm>).state[key] = _newState[key];
           }
+          (this as IComponent<State, Props, Vm>).$reRender();
         }
       }
       if (newState && newState instanceof Object) {
         for (const key in newState) {
-          // if ((this as IComponent<State, Props, Vm>).state.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).state[key] !== newState[key]) (this as IComponent<State, Props, Vm>).state[key] = newState[key];
-          if ((this as IComponent<State, Props, Vm>).state.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).state[key] !== newState[key]) {
-            (this as IComponent<State, Props, Vm>).state[key] = newState[key];
-            (this as IComponent<State, Props, Vm>).$reRender();
-          }
+          if ((this as IComponent<State, Props, Vm>).state.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).state[key] !== newState[key]) (this as IComponent<State, Props, Vm>).state[key] = newState[key];
         }
+        (this as IComponent<State, Props, Vm>).$reRender();
       }
     };
 
@@ -175,21 +169,16 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
         const _newProps = newProps();
         if (_newProps && _newProps instanceof Object) {
           for (const key in _newProps) {
-            // if ((this as IComponent<State, Props, Vm>).props.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).props[key] !== _newProps[key]) (this as IComponent<State, Props, Vm>).props[key] = _newProps[key];
-            if ((this as IComponent<State, Props, Vm>).props.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).props[key] !== _newProps[key]) {
-              (this as IComponent<State, Props, Vm>).props[key] = _newProps[key];
-              (this as IComponent<State, Props, Vm>).$reRender();
-            }
+            if ((this as IComponent<State, Props, Vm>).props.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).props[key] !== _newProps[key]) (this as IComponent<State, Props, Vm>).props[key] = _newProps[key];
           }
+          (this as IComponent<State, Props, Vm>).$reRender();
         }
       }
       if (newProps && newProps instanceof Object) {
         for (const key in newProps) {
-          if ((this as IComponent).props.hasOwnProperty(key) && (this as IComponent).props[key] !== newProps[key]) {
-            (this as IComponent).props[key] = newProps[key];
-            (this as IComponent<State, Props, Vm>).$reRender();
-          }
+          if ((this as IComponent).props.hasOwnProperty(key) && (this as IComponent).props[key] !== newProps[key]) (this as IComponent).props[key] = newProps[key];
         }
+        (this as IComponent<State, Props, Vm>).$reRender();
       }
     };
 

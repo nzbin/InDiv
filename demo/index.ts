@@ -508,7 +508,7 @@ const routes = [
             children: [
               {
                 path: '/D1',
-                component: 'R2',
+                // component: 'R2',
                 redirectTo: '/R2',
               },
             ],

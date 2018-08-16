@@ -141,7 +141,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       }
     };
 
-    vm.$setState = function (newState: any): void {
+    vm.setState = function (newState: any): void {
       if (newState && (this as IComponent<State, Props, Vm>).utils.isFunction(newState)) {
         const _newState = newState();
         if (_newState && _newState instanceof Object) {
@@ -159,7 +159,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       }
     };
 
-    vm.$setProps = function (newProps: any): void {
+    vm.setProps = function (newProps: any): void {
       if (newProps && (this as IComponent<State, Props, Vm>).utils.isFunction(newProps)) {
         const _newProps = newProps();
         if (_newProps && _newProps instanceof Object) {

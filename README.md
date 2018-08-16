@@ -115,7 +115,7 @@ Now we support for typescript!
   - create a `class`
   - use decorator `Component` in typescript or use function `Component` in javascript
   - `Component` accepts an object `template: string;state?: any;`
-  - **please use $setState or $setProps after lifecycle `constructor()`**
+  - **please use setState or setProps after lifecycle `constructor()`**
 
     1. typescript
 
@@ -305,7 +305,7 @@ Now we support for typescript!
 
   - ** `props: Object` can only be changed or used after lifecycle `constructor()` **
 
-  - `props: Object` can only be changed by action `this.$setProps()` and `this.$setProps()` is equal to `$setState`
+  - `props: Object` can only be changed by action `this.setProps()` and `this.setProps()` is equal to `setState`
 
 5. EsModule
 
@@ -381,11 +381,11 @@ Now we support for typescript!
       6. Boolean: `true` `false`
       7. For es-repeat: items like: `es-repeat="let a in this.state.b" es-if="a.f"`
 
-7. Data monitor: this.state && this.$setState
+7. Data monitor: this.state && this.setState
 
-  - use `this.state: Object` and `this.$setState(parmars: Function || Object)`
+  - use `this.state: Object` and `this.setState(parmars: Function || Object)`
   - if u have some variable, u can set `this.state` in `constructor(){}`
-  - if u want to change State, plz use `this.$setState`, parmars can be `Object` or `Function` which must return an `Object`
+  - if u want to change State, plz use `this.setState`, parmars can be `Object` or `Function` which must return an `Object`
   - and u can recive this change in life cycle `esWatchState(oldData, newData)`
 
 8. `Watcher` and `KeyWatcher`

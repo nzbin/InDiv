@@ -134,8 +134,8 @@ class PCChild implements HasRender {
   `),
 })
 class PComponent implements OnInit, WatchState {
-  public $setState: (newState: any) => void;
-  public $setProps: (newState: any) => void;
+  public setState: (newState: any) => void;
+  public setProps: (newState: any) => void;
   public props: any;
   private a: number;
 
@@ -147,21 +147,21 @@ class PComponent implements OnInit, WatchState {
   public componentClick(a: any) {
     // alert('点击了组件');
     // console.log('this.props.ax', this.props.ax);
-    // this.$setState({ b: 2 });
-    // // this.$setProps({ ax: 5 });
+    // this.setState({ b: 2 });
+    // // this.setProps({ ax: 5 });
     // this.props.b(3);
     // this.a = 1;
     console.log('aa', a);
   }
   public sendProps(ax: any) {
-    this.$setProps({ ax: ax });
+    this.setProps({ ax: ax });
     this.props.b(ax);
     console.log('this', this);
   }
   public getProps(a: any) {
     alert('子组件里 里面传出来了');
-    this.$setState({ a: a });
-    this.$setProps({ ax: a });
+    this.setState({ a: a });
+    this.setProps({ ax: a });
     this.props.b(a);
   }
   public esWatchState(oldData: string, newData: string) {
@@ -219,7 +219,7 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   public utils: Utils;
   public $getLocation: () => any;
   public $setLocation: (path: string, query?: any, params?: any) => void;
-  public $setState: (newState: any) => void;
+  public setState: (newState: any) => void;
   public props: any;
 
   constructor(
@@ -256,7 +256,7 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   public getProps(a: any) {
     // alert('里面传出来了');
     console.log('被触发了！', a);
-    this.$setState({ a: a });
+    this.setState({ a: a });
   }
 }
 
@@ -308,7 +308,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   public showAlert() {
     console.log('this.state.a', this.state.a);
     // alert('我错了 点下控制台看看吧');
-    // this.$setState(() => ({ a: 2 }));
+    // this.setState(() => ({ a: 2 }));
   }
   public bindChange(a: any) {
     console.log('aaa', a);
@@ -384,7 +384,7 @@ class Container implements OnInit, AfterMount {
   public ss2: HeroSearchService1;
   public state: any;
   public $setLocation: (path: string, query?: any, params?: any) => void;
-  public $setState: (newState: any) => void;
+  public setState: (newState: any) => void;
 
   constructor(
     private hss: HeroSearchService,

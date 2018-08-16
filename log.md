@@ -23,7 +23,7 @@
   - add two types for `props` for `Component` : value or action
   - optimize `Controller` and `Component`, update `props` in `Component`
   - update the declaration of `Component` in `Controller`
-  - add new function `$setProps` for update `props` in `Component`
+  - add new function `setProps` for update `props` in `Component`
   - add new lifecycle `esHasRender` for update `props` in `Component` and `Controller`
 
 6. 2018-05-03/04 optimize
@@ -49,7 +49,7 @@
 
 11. 2018-05-19 add `es-if`
   - add `es-if`
-  - fix `setProp` and `$setState`, now u can set `false`, `0`
+  - fix `setProp` and `setState`, now u can set `false`, `0`
 
 12. 2018-05-26 add `Router` and `RouterHash` and `KeyWatcher`
   - add `Router` and `RouterHash`

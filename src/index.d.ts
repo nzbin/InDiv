@@ -76,8 +76,8 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     $reRender(): void;
     $mountComponent(dom: Element, isFirstRender?: boolean): void;
     $componentsConstructor(dom: Element): void;
-    $setState(newState: any): void;
-    $setProps(newProps: any): void;
+    setState(newState: any): void;
+    setProps(newProps: any): void;
     $getLocation(): any;
     $setLocation(path: string, query?: any, params?: any): void;
     getPropsValue(valueList: any[], value: any): void;

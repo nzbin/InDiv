@@ -108,20 +108,20 @@ class PComponent {
   componentClick(e) {
     alert('点击了组件');
     console.log('this.props.ax', this.props.ax);
-    this.$setState({ b: 2 });
-    // this.$setProps({ ax: 5 });
+    this.setState({ b: 2 });
+    // this.setProps({ ax: 5 });
     this.props.b(3);
     this.a = 1;
   }
   sendProps(ax) {
-    this.$setProps({ ax: ax });
+    this.setProps({ ax: ax });
     this.props.b(ax);
     console.log('this', this);
   }
   getProps(a) {
     alert('子组件里 里面传出来了');
-    this.$setState({ a: a });
-    this.$setProps({ ax: a });
+    this.setState({ a: a });
+    this.setProps({ ax: a });
     this.props.b(a);
   }
   esWatchState(oldData, newData) {
@@ -189,7 +189,7 @@ class R1 {
   getProps(a) {
     // alert('里面传出来了');
     console.log('被触发了！', a);
-    this.$setState({ a: a });
+    this.setState({ a: a });
   }
 }
 
@@ -268,7 +268,7 @@ class R2 {
   showAlert() {
     console.log('this.state.a', this.state.a);
     // alert('我错了 点下控制台看看吧');
-    // this.$setState(() => ({ a: 2 }));
+    // this.setState(() => ({ a: 2 }));
   }
   bindChange(a) {
     console.log('aaa', a);

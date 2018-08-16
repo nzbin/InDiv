@@ -152,7 +152,7 @@ export class CompileUtilForRepeat {
           utilVm._setValueByValue(watchData[index], exp, key, vals);
         }
       }
-      vm.$reRender();
+      // vm.$reRender();
     };
     node.addEventListener('input', func, false);
     (node as any).eventinput = func;
@@ -185,7 +185,7 @@ export class CompileUtilForRepeat {
         if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
         if (arg.indexOf(key) === 0 || arg.indexOf(`${key}.`) === 0) return argsList.push(utilVm._getVMRepeatVal(val, arg, key));
         if (this.repeatData) {
-          console.log('this.repeatDatathis.repeatData', this.repeatData);
+          // console.log('this.repeatDatathis.repeatData', this.repeatData);
           // $index in this
           Object.keys(this.repeatData).forEach(data => {
             if (arg.indexOf(data) === 0 || arg.indexOf(`${data}.`) === 0) return argsList.push(utilVm._getValueByValue(this.repeatData[data], arg, data));
@@ -308,7 +308,7 @@ export class CompileUtil {
       event.preventDefault();
       if (/(this.state.).*/.test(exp)) vm.state[val] = (event.target as HTMLInputElement).value;
       if (/(this.props.).*/.test(exp)) vm.props[val] = (event.target as HTMLInputElement).value;
-      vm.$reRender();
+      // vm.$reRender();
     };
     node.addEventListener('input', func, false);
     (node as any).eventinput = func;
@@ -458,7 +458,8 @@ export class CompileUtil {
       JSON.parse(node.eventTypes).forEach((eve: string) => (newElement as any)[`on${eve}`] = (node as any)[`event${eve}`]);
       newElement.eventTypes = JSON.parse(JSON.stringify(node.eventTypes));
     }
-    if (node.repeatData) newElement.repeatData = Object.assign({}, repeatData);
+    // if (node.repeatData) newElement.repeatData = Object.assign({}, repeatData);
+    if (node.repeatData) newElement.repeatData = repeatData;
     return newElement;
   }
 }

@@ -2,6 +2,7 @@ import { IComponent, ComponentList } from '../types';
 
 import Compile from '../Compile';
 import Watcher from '../Watcher';
+import KeyWatcher from '../KeyWatcher';
 import Utils from '../Utils';
 import { CompileUtil } from '../CompileUtils';
 import { factoryCreator } from '../Injectable';
@@ -42,8 +43,15 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     };
 
     vm.$watchData = function (): void {
-      if (this.props) (this as IComponent<State, Props, Vm>).propsWatcher = new Watcher((this as IComponent<State, Props, Vm>).props, (this as IComponent<State, Props, Vm>).esWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).$reRender.bind(this as IComponent<State, Props, Vm>));
-      (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, (this as IComponent<State, Props, Vm>).esWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).$reRender.bind(this as IComponent<State, Props, Vm>));
+      if (this.props) {
+        (this as IComponent<State, Props, Vm>).propsWatcher = new Watcher((this as IComponent<State, Props, Vm>).props, (this as IComponent<State, Props, Vm>).esWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).$reRender.bind(this as IComponent<State, Props, Vm>));
+      //  const a = new KeyWatcher((this as IComponent<State, Props, Vm>), 'props', (this as IComponent<State, Props, Vm>).esWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).$reRender.bind(this as IComponent<State, Props, Vm>));
+      }
+      if (this.state) {
+        (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, (this as IComponent<State, Props, Vm>).esWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).$reRender.bind(this as IComponent<State, Props, Vm>));
+      //  const a = new KeyWatcher((this as IComponent<State, Props, Vm>), 'state', (this as IComponent<State, Props, Vm>).esWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).$reRender.bind(this as IComponent<State, Props, Vm>));
+      }
+      console.log('(this as IComponent<State, Props, Vm>).state', this);
     };
 
     vm.$render = function () {

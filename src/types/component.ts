@@ -17,17 +17,17 @@ export interface IComponent<State = any, Props = any, Vm = any> extends ILifecyc
         [name: string]: Function;
     };
     $componentList?: ComponentList<IComponent<any, any, any>>[];
-    // stateWatcher?: IWatcher;
-    // propsWatcher?: IWatcher;
+    stateWatcher?: IWatcher;
+    propsWatcher?: IWatcher;
 
     esOnInit?(): void;
+    $watchData?(): void;
     esBeforeMount?(): void;
     esAfterMount?(): void;
     esOnDestory?(): void;
     esHasRender?(): void;
     esWatchState?(oldData?: any, newData?: any): void;
     esRouteChange?(lastRoute: string, newRoute: string): void;
-    $beforeInit?(): void;
     $render(): void;
     $reRender(): void;
     $mountComponent(dom: Element, isFirstRender?: boolean): void;

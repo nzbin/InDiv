@@ -403,48 +403,6 @@ class Container implements OnInit, AfterMount {
 
   public esAfterMount() {
     console.log('esAfterMount Container');
-    const aaa = JSON.parse(JSON.stringify(this.state.testArray));
-    // aaa[0] = {
-    //   name: '222',
-    //   sex: '男',
-    //   job: [
-    //     {
-    //       id: 1,
-    //       name: '程序员',
-    //     },
-    //     {
-    //       id: 2,
-    //       name: '码农',
-    //     },
-    //     {
-    //       id: 3,
-    //       name: '帅',
-    //     },
-    //   ],
-    // };
-    aaa[0].name = '222';
-    // this.state.testArray[0] = {
-    //   name: '222',
-    //   sex: '男',
-    //   job: [
-    //     {
-    //       id: 1,
-    //       name: '程序员',
-    //     },
-    //     {
-    //       id: 2,
-    //       name: '码农',
-    //     },
-    //     {
-    //       id: 3,
-    //       name: '帅',
-    //     },
-    //   ],
-    // };
-    // this.$setState({
-    //   testArray: aaa,
-    // });
-    console.log('his.state.testArray', this.state.testArray);
   }
 
   public go() {
@@ -453,6 +411,7 @@ class Container implements OnInit, AfterMount {
   public show(a: any, index?: string) {
     console.log('aaaa', a);
     console.log('$index', index);
+    console.log('testArray2', this.state.testArray2);
   }
 }
 

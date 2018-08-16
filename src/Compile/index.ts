@@ -59,6 +59,8 @@ class Compile {
       if (this.isElementNode(node)) {
         if (reg.test(text)) {
           const regText = RegExp.$1;
+          // console.log('regTextregText', regText);
+          // console.log('texttext', text);
           if (/(.*\{\{(this.).*\}\}.*)/g.test(text)) this.compileText(node, regText);
         }
         this.compile(node, fragment);
@@ -117,7 +119,7 @@ class Compile {
         if (arg === 'true' || arg === 'false') argsList.push(arg === 'true');
       });
       fn.apply(vm, argsList);
-      vm.$reRender();
+      // vm.$reRender();
     };
     if (eventType && fn) {
       (node as any)[`on${eventType}`] = func;

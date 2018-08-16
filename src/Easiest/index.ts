@@ -72,14 +72,13 @@ class Easiest {
     this.$renderComponent(BootstrapComponent, this.rootDom);
   }
 
-  // public $renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any> {
   public $renderComponent(BootstrapComponent: Function, renderDOM: Element): any {
     const component: any = factoryCreator(BootstrapComponent, this.$rootModule);
 
     component.$vm = this;
     component.$components = this.$rootModule.$components;
-    if (component.$beforeInit) component.$beforeInit();
     if (component.esOnInit) component.esOnInit();
+    if (component.$watchData) component.$watchData();
     if (!component.$template) {
       console.error('must decaler this.$template in $bootstrap()');
       return;
@@ -92,28 +91,14 @@ class Easiest {
       if (component.esAfterMount) component.esAfterMount();
       return component;
 
-      // return Promise.resolve(component);
-      // this.replaceDom(component, renderDOM).then(() => {
-      //   if (component.esAfterMount) component.esAfterMount();
-      // });
-      // return Promise.resolve(component);
-
     } else {
       console.error('renderBootstrap failed: template or rootDom is not exit');
-      // return Promise.reject();
       return false;
     }
   }
 
-  // public replaceDom(component: IComponent, renderDOM: Element): Promise<any> {
   public replaceDom(component: IComponent, renderDOM: Element): void {
     component.$renderDom = renderDOM;
-    // if (component.$render) {
-    //   component.$render();
-    //   return Promise.resolve();
-    // } else {
-    //   return Promise.reject();
-    // }
     component.$render();
   }
 }

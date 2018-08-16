@@ -185,6 +185,7 @@ export class CompileUtilForRepeat {
         if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
         if (arg.indexOf(key) === 0 || arg.indexOf(`${key}.`) === 0) return argsList.push(utilVm._getVMRepeatVal(val, arg, key));
         if (this.repeatData) {
+          console.log('this.repeatDatathis.repeatData', this.repeatData);
           // $index in this
           Object.keys(this.repeatData).forEach(data => {
             if (arg.indexOf(data) === 0 || arg.indexOf(`${data}.`) === 0) return argsList.push(utilVm._getValueByValue(this.repeatData[data], arg, data));
@@ -192,7 +193,7 @@ export class CompileUtilForRepeat {
         }
       });
       fn.apply(vm, argsList);
-      vm.$reRender();
+      // vm.$reRender();
     };
     if (eventType && fn) {
       (node as any)[`on${eventType}`] = func;
@@ -248,7 +249,7 @@ export class CompileUtil {
       // compile repeatNode's attributes
       switch (dir) {
         case 'repeat':
-          console.log('vmvmvmvm', vm);
+          // console.log('vmvmvmvm', vm);
           if (updaterFn) (updaterFn as Function).call(this, node, this._getVMRepeatVal(vm, exp), exp, vm);
           break;
       }
@@ -271,6 +272,8 @@ export class CompileUtil {
   }
 
   public templateUpdater(node: any, vm: any, exp: string): void {
+    // console.log('expexp', exp);
+    // console.log('nodenode', node);
     node.textContent = node.textContent.replace(/(\{\{.*\}\})/g, this._getVMVal(vm, exp));
   }
 

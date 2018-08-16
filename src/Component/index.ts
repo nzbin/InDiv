@@ -1,19 +1,18 @@
 import { IComponent, ComponentList } from '../types';
 
 import Compile from '../Compile';
-// import Watcher from '../Watcher';
+import Watcher from '../Watcher';
 import Utils from '../Utils';
 import { CompileUtil } from '../CompileUtils';
 import { factoryCreator } from '../Injectable';
-import { toImmutable } from '../Immutable';
 
 
-type TComponentOptions = {
+type TComponentOptions<State> = {
   template: string;
-  state?: any;
+  state?: State;
 };
 
-function Component<State = any, Props = any, Vm = any>(options: TComponentOptions): (_constructor: Function) => void {
+function Component<State = any, Props = any, Vm = any>(options: TComponentOptions<State>): (_constructor: Function) => void {
   return function (_constructor: Function): void {
     const vm: IComponent<State, Props, Vm> = _constructor.prototype;
     vm.$template = options.template;
@@ -42,21 +41,9 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       (this as IComponent<State, Props, Vm>).$vm.$esRouteObject = { path, query, params };
     };
 
-    vm.$beforeInit = function (): void {
-      if (this.props) {
-        for (const key in this.props) {
-          toImmutable<Props>(this.props[key]);
-        }
-        // (this as IComponent<State, Props, Vm>).propsWatcher = new Watcher((this as IComponent<State, Props, Vm>).props, (this as IComponent<State, Props, Vm>).esWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).$reRender.bind(this as IComponent<State, Props, Vm>));
-      }
-      if (this.state) {
-        for (const key in this.state) {
-          toImmutable<State>(this.state[key]);
-        }
-        // (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, (this as IComponent<State, Props, Vm>).esWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).$reRender.bind(this as IComponent<State, Props, Vm>));
-      }
-      // if (this.props) (this as IComponent<State, Props, Vm>).propsWatcher = new Watcher((this as IComponent<State, Props, Vm>).props, (this as IComponent<State, Props, Vm>).esWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).$reRender.bind(this as IComponent<State, Props, Vm>));
-      // (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, (this as IComponent<State, Props, Vm>).esWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).$reRender.bind(this as IComponent<State, Props, Vm>));
+    vm.$watchData = function (): void {
+      if (this.props) (this as IComponent<State, Props, Vm>).propsWatcher = new Watcher((this as IComponent<State, Props, Vm>).props, (this as IComponent<State, Props, Vm>).esWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).$reRender.bind(this as IComponent<State, Props, Vm>));
+      (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, (this as IComponent<State, Props, Vm>).esWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).$reRender.bind(this as IComponent<State, Props, Vm>));
     };
 
     vm.$render = function () {
@@ -98,8 +85,8 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
         }
         component.scope.$vm = (this as IComponent<State, Props, Vm>).$vm;
         component.scope.$components = (this as IComponent<State, Props, Vm>).$components;
-        if (component.scope.$beforeInit) component.scope.$beforeInit();
         if (component.scope.esOnInit && isFirstRender) component.scope.esOnInit();
+        if (component.scope.$watchData) component.scope.$watchData();
         if (component.scope.esBeforeMount) component.scope.esBeforeMount();
       });
     };

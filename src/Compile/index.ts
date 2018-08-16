@@ -119,7 +119,6 @@ class Compile {
         if (arg === 'true' || arg === 'false') argsList.push(arg === 'true');
       });
       fn.apply(vm, argsList);
-      // vm.$reRender();
     };
     if (eventType && fn) {
       (node as any)[`on${eventType}`] = func;

@@ -152,7 +152,7 @@ export class CompileUtilForRepeat {
           utilVm._setValueByValue(watchData[index], exp, key, vals);
         }
       }
-      // vm.$reRender();
+      vm.$reRender();
     };
     node.addEventListener('input', func, false);
     (node as any).eventinput = func;
@@ -193,7 +193,6 @@ export class CompileUtilForRepeat {
         }
       });
       fn.apply(vm, argsList);
-      // vm.$reRender();
     };
     if (eventType && fn) {
       (node as any)[`on${eventType}`] = func;
@@ -308,7 +307,7 @@ export class CompileUtil {
       event.preventDefault();
       if (/(this.state.).*/.test(exp)) vm.state[val] = (event.target as HTMLInputElement).value;
       if (/(this.props.).*/.test(exp)) vm.props[val] = (event.target as HTMLInputElement).value;
-      // vm.$reRender();
+      vm.$reRender();
     };
     node.addEventListener('input', func, false);
     (node as any).eventinput = func;

@@ -72,6 +72,7 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     esHasRender?(): void;
     esWatchState?(oldData?: any, newData?: any): void;
     esRouteChange?(lastRoute: string, newRoute: string): void;
+    esReceiveProps?(nextProps: any): void;
     $render(): void;
     $reRender(): void;
     $mountComponent(dom: Element, isFirstRender?: boolean): void;
@@ -299,4 +300,8 @@ export declare interface WatchState {
 
 export declare interface RouteChange {
     esRouteChange(lastRoute?: string, newRoute?: string): void;
+}
+
+export interface ReceiveProps {
+    esReceiveProps(nextProps: any): void;
 }

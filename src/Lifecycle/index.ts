@@ -25,3 +25,7 @@ export interface WatchState {
 export interface RouteChange {
   esRouteChange(lastRoute?: string, newRoute?: string): void;
 }
+
+export interface ReceiveProps {
+  esReceiveProps(nextProps: any): void;
+}

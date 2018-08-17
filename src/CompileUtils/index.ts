@@ -140,11 +140,11 @@ export class CompileUtilForRepeat {
         if ((event.target as HTMLInputElement).value === watchData) return;
         vm.state[val] = (event.target as HTMLInputElement).value;
       }
-      if (/(this.props.).*/.test(exp)) {
-        const val = exp.replace(/(this.state.)|(this.props)/, '');
-        if ((event.target as HTMLInputElement).value === watchData) return;
-        vm.props[val] = (event.target as HTMLInputElement).value;
-      }
+      // if (/(this.props.).*/.test(exp)) {
+      //   const val = exp.replace(/(this.state.)|(this.props)/, '');
+      //   if ((event.target as HTMLInputElement).value === watchData) return;
+      //   vm.props[val] = (event.target as HTMLInputElement).value;
+      // }
       if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
         if (typeof watchData[index] !== 'object') watchData[index] = (event.target as HTMLInputElement).value;
         if (typeof watchData[index] === 'object') {
@@ -153,7 +153,8 @@ export class CompileUtilForRepeat {
           utilVm._setValueByValue(watchData[index], exp, key, vals);
         }
       }
-      vm.$reRender();
+      console.log('repeatData', this.repeatData);
+      // vm.$reRender();
     };
     node.addEventListener('input', func, false);
     (node as any).eventinput = func;
@@ -180,7 +181,8 @@ export class CompileUtilForRepeat {
       args.forEach(arg => {
         if (arg === '') return false;
         if (arg === '$event') return argsList.push(event);
-        if (/(this.).*/g.test(arg) || /(this.state.).*/g.test(arg) || /(this.props.).*/g.test(arg)) return argsList.push(utilVm._getVMVal(vm, arg));
+        // if (/(this.).*/g.test(arg) || /(this.state.).*/g.test(arg) || /(this.props.).*/g.test(arg)) return argsList.push(utilVm._getVMVal(vm, arg));
+        if (/(this.state.).*/g.test(arg)) return argsList.push(utilVm._getVMVal(vm, arg));
         if (/\'.*\'/g.test(arg)) return argsList.push(arg.match(/\'(.*)\'/)[1]);
         if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
         if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
@@ -304,12 +306,13 @@ export class CompileUtil {
 
   public modelUpdater(node: Element, value: any, exp: string, vm: any): void {
     node.value = typeof value === 'undefined' ? '' : value;
-    const val = exp.replace(/(this.state.)|(this.props)/, '');
+    // const val = exp.replace(/(this.state.)|(this.props)/, '');
+    const val = exp.replace(/(this.state.)/, '');
     const func = (event: Event) => {
       event.preventDefault();
       if (/(this.state.).*/.test(exp)) vm.state[val] = (event.target as HTMLInputElement).value;
-      if (/(this.props.).*/.test(exp)) vm.props[val] = (event.target as HTMLInputElement).value;
-      vm.$reRender();
+      // if (/(this.props.).*/.test(exp)) vm.props[val] = (event.target as HTMLInputElement).value;
+      // vm.$reRender();
     };
     node.addEventListener('input', func, false);
     (node as any).eventinput = func;

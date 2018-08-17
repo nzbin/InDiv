@@ -67,3 +67,5 @@
 17. 2018-07-28 support for ts
 
 18. 2018-08-12 fix es-repeat, remove class `Component` `EsModule` `Service`, and add decorator `Component` `EsModule` `Service`
+
+19. 2018-08-17 remove watch this.props and only use state and function in `Component` for `Component: template`

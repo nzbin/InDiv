@@ -28,6 +28,7 @@ export interface IComponent<State = any, Props = any, Vm = any> extends ILifecyc
     esHasRender?(): void;
     esWatchState?(oldData?: any, newData?: any): void;
     esRouteChange?(lastRoute: string, newRoute: string): void;
+    esReceiveProps?(nextProps: Props): void;
     $render(): void;
     $reRender(): void;
     $mountComponent(dom: Element, isFirstRender?: boolean): void;

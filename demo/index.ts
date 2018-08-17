@@ -1,4 +1,4 @@
-import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, esHttp } from '../src';
+import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, esHttp } from '../src';
 // import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, esHttp } from '../build';
 
 @Service({
@@ -41,6 +41,7 @@ class HeroSearchService {
 @Component({
   state: {
     a: 'a',
+    b: null,
     d: [
       {
         z: 111111111111111,
@@ -54,13 +55,15 @@ class HeroSearchService {
   },
   template: (`
     <div>
-      <p>子路由的子组件::{{this.props.a}}</p>
-      <pp-childs ax={this.props.a}></pp-childs>
+      <p>子路由的子组件::{{this.state.b}}</p>
+      <pp-childs ax={this.state.b}></pp-childs>
     </div>
   `),
 })
 
-class RouteChild implements HasRender {
+class RouteChild implements OnInit, HasRender, ReceiveProps {
+  public setState: (newState: any) => void;
+  public state: any;
   public heroSearchService: HeroSearchService2;
   public props: any;
   constructor(
@@ -70,14 +73,34 @@ class RouteChild implements HasRender {
     this.heroSearchService2.test();
   }
 
+  public esOnInit() {
+    this.setState({
+      b: this.props.a,
+    });
+    // this.setState({
+    //   c: this.props.ax,
+    // });
+    console.log(555, 'PCChild esOnInit props11', this.props);
+    // this.props.b(3);
+  }
+
   public esHasRender() {
     console.log('RouteChild hasRender: this.props.a', this.props.a);
+  }
+
+  public esReceiveProps(nextProps: any) {
+    console.log(3333, nextProps);
+    this.state.b = nextProps.a;
+    // this.setState({
+    //   b: nextProps.a,
+    // });
   }
 }
 
 @Component({
   state: {
     a: 'a',
+    b: null,
     d: [
       {
         z: 111111111111111,
@@ -92,17 +115,53 @@ class RouteChild implements HasRender {
   template: (`
     <div>
     子组件的子组件<br/>
-      <p es-on:click="this.props.b(3)">PCChild props.ax:: {{this.props.ax}}</p>
+      <p es-on:click="this.sendProps(3)">PCChild props.ax:: {{this.state.b}}</p>
       <p es-repeat="let a in this.state.d">1232{{a.z}}</p>
     </div>
   `),
 })
-class PCChild implements HasRender {
+class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps {
   public props: any;
+  public state: any;
+  public setState: (newState: any) => void;
   constructor() {}
 
   public esHasRender() {
-    console.log('PCChild hasRender : this.props.ax', this.props.ax);
+    console.log('PCChild hasRender : this.props.ax', this.props, this.state);
+  }
+
+  public esOnInit() {
+    this.setState({
+      b: this.props.ax,
+    });
+    // this.setState({
+    //   c: this.props.ax,
+    // });
+    console.log(555, 'PCChild esOnInit props11', this.props);
+    // this.props.b(3);
+  }
+
+  public sendProps(i: number) {
+    // this.props.b(i);
+    // this.props.ax = 100;
+    console.log('this.props', this.props);
+  }
+
+  public esBeforeMount() {
+    console.log('PCChild esBeforeMount props11', this.props.ax);
+  }
+
+  public esAfterMount() {
+    console.log('PCChild esAfterMount props11', this.props.ax);
+  }
+
+  public esReceiveProps(nextProps: any) {
+    console.log(this.props.ax);
+    console.log(4444, nextProps);
+    this.state.b = nextProps.ax;
+    // this.setState({
+    //   b: nextProps.ax,
+    // });
   }
 }
 
@@ -124,24 +183,34 @@ class PCChild implements HasRender {
       },
     ],
     e: true,
+    ax: null,
   },
   template: (`
     <div>
       <p es-if="this.state.e" es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick(this.state.d)">你好： {{a.z}}</p>
       state.d: <input es-repeat="let a in this.state.d" es-model="a.z" />
-      <p es-on:click="this.sendProps(5)">props from component.state.a: {{this.props.ax}}</p>
+      <p es-on:click="this.sendProps(5)">props from component.state.a: {{this.state.ax}}</p>
     </div>
   `),
 })
-class PComponent implements OnInit, WatchState {
+class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, ReceiveProps {
   public setState: (newState: any) => void;
+  public state: any;
   public props: any;
-  private a: number;
 
   constructor() {}
 
   public esOnInit() {
-    console.log('props11', this.props);
+    console.log('esOnInit props11', this.props);
+    this.state.ax = this.props.ax;
+  }
+
+  public esBeforeMount() {
+    console.log('esBeforeMount props11', this.props);
+  }
+
+  public esAfterMount() {
+    console.log('esAfterMount props11', this.props);
   }
   public componentClick(a: any) {
     // alert('点击了组件');
@@ -164,6 +233,9 @@ class PComponent implements OnInit, WatchState {
   public esWatchState(oldData: string, newData: string) {
     console.log('oldData Component:', oldData);
     console.log('newData Component:', newData);
+  }
+  public esReceiveProps(nextProps: any) {
+    this.state.ax = nextProps.ax;
   }
 }
 
@@ -320,6 +392,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
 @Component({
   template: (`
     <div>
+      <p>{{this.state.a}}</p>
       <p es-on:click="this.go()">container: {{this.state.a}}</p>
       <input es-model="this.state.a" />
       <div es-repeat="let man in this.state.testArray">
@@ -380,6 +453,7 @@ class Container implements OnInit, AfterMount {
   public ss: HeroSearchService;
   public ss2: HeroSearchService1;
   public state: any;
+  public props: any;
   public $setLocation: (path: string, query?: any, params?: any) => void;
   public setState: (newState: any) => void;
 

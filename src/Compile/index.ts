@@ -113,7 +113,8 @@ class Compile {
       args.forEach(arg => {
         if (arg === '') return false;
         if (arg === '$event') argsList.push(event);
-        if (/(this.).*/g.test(arg) || /(this.state.).*/g.test(arg) || /(this.props.).*/g.test(arg)) argsList.push(new CompileUtil()._getVMVal(vm, arg));
+        // if (/(this.).*/g.test(arg) || /(this.state.).*/g.test(arg) || /(this.props.).*/g.test(arg)) argsList.push(new CompileUtil()._getVMVal(vm, arg));
+        if (/(this.).*/g.test(arg) || /(this.state.).*/g.test(arg)) argsList.push(new CompileUtil()._getVMVal(vm, arg));
         if (/\'.*\'/g.test(arg)) argsList.push(arg.match(/\'(.*)\'/)[1]);
         if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) argsList.push(Number(arg));
         if (arg === 'true' || arg === 'false') argsList.push(arg === 'true');

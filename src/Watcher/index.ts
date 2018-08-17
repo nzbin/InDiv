@@ -23,9 +23,7 @@ class Watcher {
     const vm = this;
     for (const key in data) {
       let val = data[key];
-      // if (!val || typeof val !== 'object') return;
-      // if (!val) return;
-      // vm.watchData(val);
+      vm.watchData(val);
       Object.defineProperty(data, key, {
         configurable: true,
         enumerable: true,
@@ -39,7 +37,7 @@ class Watcher {
           const newData: any = {};
           newData[key] = newVal;
           val = newVal;
-          // vm.watchData(val);
+          vm.watchData(val);
           if (vm.watcher) vm.watcher(oldData, newData);
           if (vm.render) vm.render();
         },

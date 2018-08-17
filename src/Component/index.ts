@@ -43,15 +43,8 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     };
 
     vm.$watchData = function (): void {
-      if (this.props) {
-        // (this as IComponent<State, Props, Vm>).propsWatcher = new Watcher((this as IComponent<State, Props, Vm>).props, (this as IComponent<State, Props, Vm>).esWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).$reRender.bind(this as IComponent<State, Props, Vm>));
-      //  const a = new KeyWatcher((this as IComponent<State, Props, Vm>), 'props', (this as IComponent<State, Props, Vm>).esWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).$reRender.bind(this as IComponent<State, Props, Vm>));
-      }
-      if (this.state) {
-        // (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, (this as IComponent<State, Props, Vm>).esWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).$reRender.bind(this as IComponent<State, Props, Vm>));
-      //  const a = new KeyWatcher((this as IComponent<State, Props, Vm>), 'state', (this as IComponent<State, Props, Vm>).esWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).$reRender.bind(this as IComponent<State, Props, Vm>));
-      }
-      console.log('(this as IComponent<State, Props, Vm>).state', this);
+      // if (this.props) (this as IComponent<State, Props, Vm>).propsWatcher = new Watcher((this as IComponent<State, Props, Vm>).props, (this as IComponent<State, Props, Vm>).esWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).$reRender.bind(this as IComponent<State, Props, Vm>));
+      if (this.state) (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, (this as IComponent<State, Props, Vm>).esWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).$reRender.bind(this as IComponent<State, Props, Vm>));
     };
 
     vm.$render = function () {
@@ -89,7 +82,10 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
         const saveComponent = saveStates.find(save => save.dom === component.dom);
         if (saveComponent) {
           component.scope = saveComponent.scope;
-          component.scope.props = component.props;
+          if (!this.utils.isEqual(component.scope, component.scope.props)) {
+            if (component.scope.esReceiveProps) component.scope.esReceiveProps(component.props);
+            component.scope.props = component.props;
+          }
         }
         component.scope.$vm = (this as IComponent<State, Props, Vm>).$vm;
         component.scope.$components = (this as IComponent<State, Props, Vm>).$components;

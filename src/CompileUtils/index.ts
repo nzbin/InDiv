@@ -110,6 +110,7 @@ export class CompileUtilForRepeat {
   }
 
   public textUpdater(node: Element, value: any): void {
+    if (node.tagName.toLocaleLowerCase() === 'input') return node.value = value;
     node.textContent = typeof value === 'undefined' ? '' : value;
   }
 
@@ -139,11 +140,11 @@ export class CompileUtilForRepeat {
         if ((event.target as HTMLInputElement).value === watchData) return;
         vm.state[val] = (event.target as HTMLInputElement).value;
       }
-      // if (/(this.props.).*/.test(exp)) {
-      //   const val = exp.replace(/(this.state.)|(this.props)/, '');
-      //   if ((event.target as HTMLInputElement).value === watchData) return;
-      //   vm.props[val] = (event.target as HTMLInputElement).value;
-      // }
+      if (/(this.props.).*/.test(exp)) {
+        const val = exp.replace(/(this.state.)|(this.props)/, '');
+        if ((event.target as HTMLInputElement).value === watchData) return;
+        vm.props[val] = (event.target as HTMLInputElement).value;
+      }
       if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
         if (typeof watchData[index] !== 'object') watchData[index] = (event.target as HTMLInputElement).value;
         if (typeof watchData[index] === 'object') {
@@ -200,7 +201,7 @@ export class CompileUtilForRepeat {
       if (node.eventTypes) {
         const eventlist = JSON.parse(node.eventTypes);
         eventlist.push(eventType);
-        node.eventTypes = eventlist;
+        node.eventTypes = JSON.stringify(eventlist);
       }
       if (!node.eventTypes) node.eventTypes = JSON.stringify([eventType]);
     }
@@ -277,6 +278,7 @@ export class CompileUtil {
   }
 
   public textUpdater(node: Element, value: any): void {
+    if (node.tagName.toLocaleLowerCase() === 'input') return node.value = value;
     node.textContent = typeof value === 'undefined' ? '' : value;
   }
 
@@ -306,7 +308,7 @@ export class CompileUtil {
     const func = (event: Event) => {
       event.preventDefault();
       if (/(this.state.).*/.test(exp)) vm.state[val] = (event.target as HTMLInputElement).value;
-      // if (/(this.props.).*/.test(exp)) vm.props[val] = (event.target as HTMLInputElement).value;
+      if (/(this.props.).*/.test(exp)) vm.props[val] = (event.target as HTMLInputElement).value;
       vm.$reRender();
     };
     node.addEventListener('input', func, false);
@@ -314,7 +316,7 @@ export class CompileUtil {
     if (node.eventTypes) {
       const eventlist = JSON.parse(node.eventTypes);
       eventlist.push('input');
-      node.eventTypes = eventlist;
+      node.eventTypes = JSON.stringify(eventlist);
     }
     if (!node.eventTypes) node.eventTypes = JSON.stringify(['input']);
   }

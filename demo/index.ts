@@ -325,7 +325,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
       <div es-repeat="let man in this.state.testArray">
         <div es-on:click="this.show(this.state.testArray2)">姓名：{{man.name}}</div>
         <div>性别：{{man.sex}}</div>
-        <input es-on:click="this.show(b, $index)" es-repeat="let b in this.state.testArray2" es-model="b" es-class="b" />
+        <input es-on:click="this.show(b, $index)" es-repeat="let b in this.state.testArray2" es-on:input="this.showInput($event, $index)" es-text="b" es-class="b" />
         <div class="fuck" es-repeat="let b in man.job">
           <input es-on:click="this.show(b.name, $index)" es-model="b.name" es-class="b.id" />
         </div>
@@ -409,6 +409,12 @@ class Container implements OnInit, AfterMount {
     console.log('aaaa', a);
     console.log('$index', index);
     console.log('testArray2', this.state.testArray2);
+  }
+  public showInput(event: any, index: number) {
+    console.log('aaaa', event.target.value);
+    const testArray2 = this.state.testArray2;
+    testArray2[index] = event.target.value;
+    // this.state.testArray2[index] = event.target.value;
   }
 }
 

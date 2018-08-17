@@ -135,7 +135,6 @@ class PCChild implements HasRender {
 })
 class PComponent implements OnInit, WatchState {
   public setState: (newState: any) => void;
-  public setProps: (newState: any) => void;
   public props: any;
   private a: number;
 
@@ -154,14 +153,12 @@ class PComponent implements OnInit, WatchState {
     console.log('aa', a);
   }
   public sendProps(ax: any) {
-    this.setProps({ ax: ax });
     this.props.b(ax);
     console.log('this', this);
   }
   public getProps(a: any) {
     alert('子组件里 里面传出来了');
     this.setState({ a: a });
-    this.setProps({ ax: a });
     this.props.b(a);
   }
   public esWatchState(oldData: string, newData: string) {

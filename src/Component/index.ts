@@ -147,6 +147,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
         if (_newState && _newState instanceof Object) {
           for (const key in _newState) {
             if ((this as IComponent<State, Props, Vm>).state.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).state[key] !== _newState[key]) (this as IComponent<State, Props, Vm>).state[key] = _newState[key];
+            if (!(this as IComponent<State, Props, Vm>).state.hasOwnProperty(key)) (this as IComponent<State, Props, Vm>).state[key] = _newState[key];
           }
           (this as IComponent<State, Props, Vm>).$reRender();
         }
@@ -154,28 +155,31 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       if (newState && newState instanceof Object) {
         for (const key in newState) {
           if ((this as IComponent<State, Props, Vm>).state.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).state[key] !== newState[key]) (this as IComponent<State, Props, Vm>).state[key] = newState[key];
+          if (!(this as IComponent<State, Props, Vm>).state.hasOwnProperty(key)) (this as IComponent<State, Props, Vm>).state[key] = newState[key];
         }
         (this as IComponent<State, Props, Vm>).$reRender();
       }
     };
 
-    vm.setProps = function (newProps: any): void {
-      if (newProps && (this as IComponent<State, Props, Vm>).utils.isFunction(newProps)) {
-        const _newProps = newProps();
-        if (_newProps && _newProps instanceof Object) {
-          for (const key in _newProps) {
-            if ((this as IComponent<State, Props, Vm>).props.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).props[key] !== _newProps[key]) (this as IComponent<State, Props, Vm>).props[key] = _newProps[key];
-          }
-          (this as IComponent<State, Props, Vm>).$reRender();
-        }
-      }
-      if (newProps && newProps instanceof Object) {
-        for (const key in newProps) {
-          if ((this as IComponent).props.hasOwnProperty(key) && (this as IComponent).props[key] !== newProps[key]) (this as IComponent).props[key] = newProps[key];
-        }
-        (this as IComponent<State, Props, Vm>).$reRender();
-      }
-    };
+    // vm.setProps = function (newProps: any): void {
+    //   if (newProps && (this as IComponent<State, Props, Vm>).utils.isFunction(newProps)) {
+    //     const _newProps = newProps();
+    //     if (_newProps && _newProps instanceof Object) {
+    //       for (const key in _newProps) {
+    //         if ((this as IComponent<State, Props, Vm>).props.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).props[key] !== _newProps[key]) (this as IComponent<State, Props, Vm>).props[key] = _newProps[key];
+    //         if ((this as IComponent<State, Props, Vm>).props.hasOwnProperty(key)) (this as IComponent<State, Props, Vm>).props[key] = _newProps[key];
+    //       }
+    //       (this as IComponent<State, Props, Vm>).$reRender();
+    //     }
+    //   }
+    //   if (newProps && newProps instanceof Object) {
+    //     for (const key in newProps) {
+    //       if ((this as IComponent).props.hasOwnProperty(key) && (this as IComponent).props[key] !== newProps[key]) (this as IComponent).props[key] = newProps[key];
+    //       if ((this as IComponent).props.hasOwnProperty(key)) (this as IComponent).props[key] = newProps[key];
+    //     }
+    //     (this as IComponent<State, Props, Vm>).$reRender();
+    //   }
+    // };
 
     vm.getPropsValue = function (valueList: any[], value: any): void {
       let val = value;

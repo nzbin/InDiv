@@ -139,11 +139,11 @@ export class CompileUtilForRepeat {
         if ((event.target as HTMLInputElement).value === watchData) return;
         vm.state[val] = (event.target as HTMLInputElement).value;
       }
-      if (/(this.props.).*/.test(exp)) {
-        const val = exp.replace(/(this.state.)|(this.props)/, '');
-        if ((event.target as HTMLInputElement).value === watchData) return;
-        vm.props[val] = (event.target as HTMLInputElement).value;
-      }
+      // if (/(this.props.).*/.test(exp)) {
+      //   const val = exp.replace(/(this.state.)|(this.props)/, '');
+      //   if ((event.target as HTMLInputElement).value === watchData) return;
+      //   vm.props[val] = (event.target as HTMLInputElement).value;
+      // }
       if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
         if (typeof watchData[index] !== 'object') watchData[index] = (event.target as HTMLInputElement).value;
         if (typeof watchData[index] === 'object') {
@@ -306,7 +306,7 @@ export class CompileUtil {
     const func = (event: Event) => {
       event.preventDefault();
       if (/(this.state.).*/.test(exp)) vm.state[val] = (event.target as HTMLInputElement).value;
-      if (/(this.props.).*/.test(exp)) vm.props[val] = (event.target as HTMLInputElement).value;
+      // if (/(this.props.).*/.test(exp)) vm.props[val] = (event.target as HTMLInputElement).value;
       vm.$reRender();
     };
     node.addEventListener('input', func, false);

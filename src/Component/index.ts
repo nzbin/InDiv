@@ -123,8 +123,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
                 let _prop = null;
                 // if (/^(this.).*/g.test(prop[1])) _prop = (this as IComponent<State, Props, Vm>).compileUtil._getVMVal(this as IComponent<State, Props, Vm>, prop[1]);
                 if (/^(state.).*/g.test(prop[1])) _prop = (this as IComponent<State, Props, Vm>).compileUtil._getVMVal(this as IComponent<State, Props, Vm>, prop[1]);
-                console.log(33333, key);
-                console.log(44444, _propsKeys);
+                if (/^(\@.).*/g.test(prop[1])) _prop = (this as IComponent<State, Props, Vm>).compileUtil._getVMVal(this as IComponent<State, Props, Vm>, prop[1].replace(/^(\@)/, ''));
                 if (_propsKeys.hasOwnProperty(key)) _prop = (this as IComponent<State, Props, Vm>).getPropsValue(valueList, _propsKeys[key]);
                 props[attrName] = (this as IComponent<State, Props, Vm>).buildProps(_prop);
               }

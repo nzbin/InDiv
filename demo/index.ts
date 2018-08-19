@@ -243,7 +243,7 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
 @Component({
   template: (`
     <div>
-      <pc-component ax="{state.a}" b="{getProps}"></pc-component>
+      <pc-component ax="{state.a}" b="{@getProps}"></pc-component>
       下面跟组件没关系<br/>
       <div es-if="state.f">
         ef

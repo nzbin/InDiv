@@ -55,8 +55,8 @@ class HeroSearchService {
   },
   template: (`
     <div>
-      <p>子路由的子组件::{{this.state.b}}</p>
-      <pp-childs ax={this.state.b}></pp-childs>
+      <p>子路由的子组件::{{state.b}}</p>
+      <pp-childs ax={state.b}></pp-childs>
     </div>
   `),
 })
@@ -115,8 +115,8 @@ class RouteChild implements OnInit, HasRender, ReceiveProps {
   template: (`
     <div>
     子组件的子组件<br/>
-      <p es-on:click="this.sendProps(3)">PCChild props.ax:: {{this.state.b}}</p>
-      <p es-repeat="let a in this.state.d">1232{{a.z}}</p>
+      <p es-on:click="@sendProps(3)">PCChild props.ax:: {{state.b}}</p>
+      <p es-repeat="let a in state.d">1232{{a.z}}</p>
     </div>
   `),
 })
@@ -187,9 +187,9 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps {
   },
   template: (`
     <div>
-      <p es-if="this.state.e" es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick(this.state.d)">你好： {{a.z}}</p>
-      state.d: <input es-repeat="let a in this.state.d" es-model="a.z" />
-      <p es-on:click="this.sendProps(5)">props from component.state.a: {{this.state.ax}}</p>
+      <p es-if="state.e" es-class="state.a" es-repeat="let a in state.d"  es-on:click="@componentClick(state.d)">你好： {{a.z}}</p>
+      state.d: <input es-repeat="let a in state.d" es-model="a.z" />
+      <p es-on:click="@sendProps(5)">props from component.state.a: {{state.ax}}</p>
     </div>
   `),
 })
@@ -243,14 +243,14 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
 @Component({
   template: (`
     <div>
-      <pc-component ax="{this.state.a}" b="{this.getProps}"></pc-component>
+      <pc-component ax="{state.a}" b="{getProps}"></pc-component>
       下面跟组件没关系<br/>
-      <div es-if="this.state.f">
+      <div es-if="state.f">
         ef
-        <input es-repeat="let a in this.state.e" es-model="a.z" />
-        <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.e" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
-        <p>111this.state.a：{{this.state.a}}</p>
-        <input es-model="this.state.a" />
+        <input es-repeat="let a in state.e" es-model="a.z" />
+        <p es-class="state.c" es-if="a.show" es-repeat="let a in state.e" es-text="a.z" es-on:click="t@showAlert(a.z)"></p>
+        <p>111this.state.a：{{state.a}}</p>
+        <input es-model="state.a" />
       </div>
       下面是子路由<br/>
       <router-render></router-render>
@@ -333,12 +333,12 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
 @Component({
   template: (`
     <div>
-      <p es-on:click="this.showLocation()">点击显示子路由跳转</p>
-      <input es-model="this.state.a"/>
+      <p es-on:click="@showLocation()">点击显示子路由跳转</p>
+      <input es-model="state.a"/>
       <br/>
-      <p es-on:click="this.showAlert()">点击显示this.state.a:{{this.state.a}}</p>
+      <p es-on:click="@showAlert()">点击显示this.state.a:{{state.a}}</p>
       子组件:<br/>
-      <route-child a="{this.state.a}"></route-child>
+      <route-child a="{state.a}"></route-child>
       <router-render></router-render>
     </div>
   `),

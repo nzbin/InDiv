@@ -179,7 +179,6 @@ export class CompileUtilForRepeat {
       // if (f === 'this') return;
       fn = fn[f];
     });
-    console.log(2222, node);
     const utilVm = this;
     const func = function(event: Event): any {
       const argsList: any[] = [];
@@ -386,7 +385,8 @@ export class CompileUtil {
           const exp = attr.value;
           const dir = attrName.substring(3);
           const repeatUtils = new CompileUtilForRepeat();
-          if (this.isDirective(attrName) && attrName !== 'es-repeat' && new RegExp(`(^${key})|(^this)`).test(exp)) {
+          // if (this.isDirective(attrName) && attrName !== 'es-repeat' && new RegExp(`(^${key})|(^this)`).test(exp)) {
+          if (this.isDirective(attrName) && attrName !== 'es-repeat' && new RegExp(`(^${key})|(^state)|(^@)`).test(exp)) {
             if (this.isEventDirective(dir)) {
               new CompileUtilForRepeat(node).eventHandler(child, vm, exp, dir, key, value);
             } else {
@@ -467,7 +467,6 @@ export class CompileUtil {
   }
 
   public cloneNode(node: Element, repeatData?: any): Node {
-    console.log(1111, node)
     const newElement = node.cloneNode(true);
     if (node.eventTypes) {
       JSON.parse(node.eventTypes).forEach((eve: string) => (newElement as any)[`on${eve}`] = (node as any)[`event${eve}`]);

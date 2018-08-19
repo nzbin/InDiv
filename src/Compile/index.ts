@@ -61,7 +61,8 @@ class Compile {
           const regText = RegExp.$1;
           // console.log('regTextregText', regText);
           // console.log('texttext', text);
-          if (/(.*\{\{(this.).*\}\}.*)/g.test(text)) this.compileText(node, regText);
+          // if (/(.*\{\{(this.).*\}\}.*)/g.test(text)) this.compileText(node, regText);
+          if (/(.*\{\{(state.).*\}\}.*)/g.test(text)) this.compileText(node, regText);
         }
         this.compile(node, fragment);
       }
@@ -101,11 +102,13 @@ class Compile {
 
   public eventHandler(node: Element, vm: any, exp: string, eventName: string): void {
     const eventType = eventName.split(':')[1];
-    const fnList = exp.replace(/\(.*\)/, '').split('.');
-    const args = exp.match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
+    // const fnList = exp.replace(/\(.*\)/, '').split('.');
+    const fnList = exp.replace(/^(\@)/, '').replace(/\(.*\)/, '').split('.');
+    const args = exp.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
+    // const args = exp.match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
     let fn = vm;
     fnList.forEach(f => {
-      if (f === 'this') return;
+      // if (f === 'this') return;
       fn = fn[f];
     });
     const func = function(event: Event): void {
@@ -114,7 +117,8 @@ class Compile {
         if (arg === '') return false;
         if (arg === '$event') argsList.push(event);
         // if (/(this.).*/g.test(arg) || /(this.state.).*/g.test(arg) || /(this.props.).*/g.test(arg)) argsList.push(new CompileUtil()._getVMVal(vm, arg));
-        if (/(this.).*/g.test(arg) || /(this.state.).*/g.test(arg)) argsList.push(new CompileUtil()._getVMVal(vm, arg));
+        // if (/(this.).*/g.test(arg) || /(this.state.).*/g.test(arg)) argsList.push(new CompileUtil()._getVMVal(vm, arg));
+        if (/(state.).*/g.test(arg)) argsList.push(new CompileUtil()._getVMVal(vm, arg));
         if (/\'.*\'/g.test(arg)) argsList.push(arg.match(/\'(.*)\'/)[1]);
         if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) argsList.push(Number(arg));
         if (arg === 'true' || arg === 'false') argsList.push(arg === 'true');

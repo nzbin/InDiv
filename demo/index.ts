@@ -392,15 +392,15 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
 @Component({
   template: (`
     <div>
-      <p>{{this.state.a}}</p>
-      <p es-on:click="this.go()">container: {{this.state.a}}</p>
-      <input es-model="this.state.a" />
-      <div es-repeat="let man in this.state.testArray">
-        <div es-on:click="this.show(this.state.testArray2)">姓名：{{man.name}}</div>
+      <p>{{state.a}}</p>
+      <p es-on:click="@go()">container: {{state.a}}</p>
+      <input es-model="state.a" />
+      <div es-repeat="let man in state.testArray">
+        <div es-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
         <div>性别：{{man.sex}}</div>
-        <input es-on:click="this.show(b, $index)" es-repeat="let b in this.state.testArray2" es-on:input="this.showInput($event, $index)" es-text="b" es-class="b" />
+        <input es-on:click="@show(b, $index)" es-repeat="let b in state.testArray2" es-on:input="@showInput($event, $index)" es-text="b" es-class="b" />
         <div class="fuck" es-repeat="let b in man.job">
-          <input es-on:click="this.show(b.name, $index)" es-model="b.name" es-class="b.id" />
+          <input es-on:click="@show(b, $index)" es-model="b.name" es-class="b.id" />
         </div>
       </div>
       <router-render></router-render>
@@ -488,6 +488,7 @@ class Container implements OnInit, AfterMount {
     console.log('aaaa', event.target.value);
     const testArray2 = this.state.testArray2;
     testArray2[index] = event.target.value;
+    console.log('this.state.testArray2', this.state.testArray2);
     // this.state.testArray2[index] = event.target.value;
   }
 }

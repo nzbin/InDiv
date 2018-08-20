@@ -303,6 +303,6 @@ export declare interface RouteChange {
     esRouteChange(lastRoute?: string, newRoute?: string): void;
 }
 
-export interface ReceiveProps {
+export declare interface ReceiveProps {
     esReceiveProps(nextProps: any): void;
 }

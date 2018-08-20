@@ -169,14 +169,14 @@ Now we support for typescript!
         },
         template: (`
           <div>
-            <p es-on:click="this.go()">container: {{this.state.a}}</p>
-            <input es-model="this.state.a" />
-            <div es-repeat="let man in this.state.testArray">
-              <div es-on:click="this.show(this.state.testArray2)">姓名：{{man.name}}</div>
+            <p es-on:click="@go()">container: {{state.a}}</p>
+            <input es-model="state.a" />
+            <div es-repeat="let man in state.testArray">
+              <div es-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
               <div>性别：{{man.sex}}</div>
-              <input es-on:click="this.show(b, $index)" es-repeat="let b in this.state.testArray2" es-model="b" es-class="b" />
+              <input es-on:click="@show(b, $index)" es-repeat="let b in state.testArray2" es-model="b" es-class="b" />
               <div class="fuck" es-repeat="let b in man.job">
-                <input es-on:click="this.show(b.name)" es-model="b.name" es-class="b.id" />
+                <input es-on:click="@show(b.name)" es-model="b.name" es-class="b.id" />
               </div>
             </div>
             <router-render></router-render>
@@ -245,14 +245,14 @@ Now we support for typescript!
       Component({
         template: (`
           <div>
-            <p es-on:click="this.go()">container: {{this.state.a}}</p>
-            <input es-model="this.state.a" />
-            <div es-repeat="let man in this.state.testArray">
-              <div es-on:click="this.show(this.state.testArray2)">姓名：{{man.name}}</div>
+            <p es-on:click="@go()">container: {{state.a}}</p>
+            <input es-model="state.a" />
+            <div es-repeat="let man in state.testArray">
+              <div es-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
               <div>性别：{{man.sex}}</div>
-              <input es-on:click="this.show(b, $index)" es-repeat="let b in this.state.testArray2" es-model="b" es-class="b" />
+              <input es-on:click="@show(b, $index)" es-repeat="let b in state.testArray2" es-model="b" es-class="b" />
               <div class="fuck" es-repeat="let b in man.job">
-                <input es-on:click="this.show(b.name)" es-model="b.name" es-class="b.id" />
+                <input es-on:click="@show(b.name)" es-model="b.name" es-class="b.id" />
               </div>
             </div>
             <router-render></router-render>
@@ -362,24 +362,24 @@ Now we support for typescript!
   - 规定：指令以 es-xxx 命名
   - now: es-text es-html es-model es-class es-repeat es-if es-on:Event
   - 事件指令, 如 es-on:click
-    - Text1: `this.$template = '<p es-text="this.state.b"></p>';`
-    - Text2: `this.$template = '<p>this.state.b是：{{this.state.b}}</p>';`
-    - HTML: `this.$template = '<p es-html="this.state.c"></p>';`
-    - Model for input: `this.$template = '<input es-model="this.state.c"/>';` **if input is a repeat DOM, and intem of Array is'nt an object, please use `$index`**
-    - Class: `this.$template = '<p  class="b" es-class="this.state.a"></p>';`
+    - Text1: `<p es-text="state.b"></p>;`
+    - Text2: `<p>this.state.b是：{{state.b}}</p>;`
+    - HTML: `<p es-html="state.c"></p>;`
+    - Model for input: `'<input es-model="state.c"/>';` **if input is a repeat DOM, and intem of Array is'nt an object, please use `$index`**
+    - Class: `<p  class="b" es-class="state.a"></p>';`
     - Directives: ues `es-on:event`
-      - `this.$template = '<p es-on:click="this.componentClick()"></p>';`
-    - Repeat: `this.$template = '<p  class="b" es-class="this.state.a" es-repeat="let a in this.state.b" es-if="a.f">{{a.z}}</p>';`
+      - `<p es-on:click="@componentClick()"></p>;`
+    - Repeat: `<p  class="b" es-class="state.a" es-repeat="let a in state.b" es-if="a.f">{{a.z}}</p>`
   - about function in Template Syntax
     - now you can send arguments in Function
     - arguments include:
       1. Event: `$event`
       2. String: `'xxx'`
       3. Number: `123`
-      4. Index: `$index`, you can only use this in **repeat DOM** : `<input es-on:click="this.show(b, $index)" es-repeat="let b in this.state.testArray2" es-model="b" es-class="b" />`
-      5. Variable: **`this.state.xxx` `this.props.xxx`**
+      4. Index: `$index`, you can only use this in **repeat DOM** : `<input es-on:click="this.show(b, $index)" es-repeat="let b in state.testArray2" es-model="b" es-class="b" />`
+      5. Variable: **`state.xxx`**
       6. Boolean: `true` `false`
-      7. For es-repeat: items like: `es-repeat="let a in this.state.b" es-if="a.f"`
+      7. For es-repeat: items like: `es-repeat="let a in state.b" es-if="a.f"`
 
 7. Data monitor: this.state && this.setState
 
@@ -513,14 +513,14 @@ Now we support for typescript!
         },
         template: (`
           <div>
-            <p es-on:click="this.go()">container: {{this.state.a}}</p>
-            <input es-model="this.state.a" />
-            <div es-repeat="let man in this.state.testArray">
-              <div es-on:click="this.show(this.state.testArray2)">姓名：{{man.name}}</div>
+            <p es-on:click="@go()">container: {{state.a}}</p>
+            <input es-model="state.a" />
+            <div es-repeat="let man in state.testArray">
+              <div es-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
               <div>性别：{{man.sex}}</div>
-              <input es-on:click="this.show(b, $index)" es-repeat="let b in this.state.testArray2" es-model="b" es-class="b" />
+              <input es-on:click="@show(b, $index)" es-repeat="let b in state.testArray2" es-model="b" es-class="b" />
               <div class="fuck" es-repeat="let b in man.job">
-                <input es-on:click="this.show(b.name)" es-model="b.name" es-class="b.id" />
+                <input es-on:click="@show(b.name)" es-model="b.name" es-class="b.id" />
               </div>
             </div>
             <router-render></router-render>
@@ -602,7 +602,7 @@ Now we support for typescript!
         },
         template: (`
           <div>
-            <p>1232{{this.state.a}}</p>
+            <p>1232{{state.a}}</p>
           </div>
         `),
       })(Container)

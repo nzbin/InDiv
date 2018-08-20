@@ -339,6 +339,7 @@ export class CompileUtil {
       // if (reg.test(text) && text.indexOf(`{{${key}`) >= 0 && !newElement.hasChildNodes()) {
       //   new CompileUtilForRepeat(this.$fragment).templateUpdater(newElement as Element, val, key, vm);
       // }
+      if (this.isTextNode((newElement as Element)) && reg.test(text)) new CompileUtilForRepeat(this.$fragment).templateUpdater(newElement as Element, val, key, vm);
 
       if (nodeAttrs) {
         Array.from(nodeAttrs).forEach(attr => {
@@ -355,12 +356,8 @@ export class CompileUtil {
         });
       }
 
-      if (this.isTextNode((newElement as Element)) && reg.test(text)) {
-        console.log(44444, newElement);
-        new CompileUtilForRepeat(this.$fragment).templateUpdater(newElement as Element, val, key, vm);
-      }
-
-      if (!this.isIfNode(node)) this.$fragment.appendChild(newElement);
+      // if (!this.isIfNode(node)) this.$fragment.appendChild(newElement);
+      if (!this.isIfNode(node)) this.$fragment.insertBefore(newElement, node);
       if (newElement.hasChildNodes()) this.repeatChildrenUpdater((newElement as Element), val, expFather, index, vm, value);
     });
   }
@@ -381,6 +378,7 @@ export class CompileUtil {
       // if (reg.test(text) && text.indexOf(`{{${key}`) >= 0 && !child.hasChildNodes()) {
       //   new CompileUtilForRepeat(node).templateUpdater(child, value, key, vm);
       // }
+      if (this.isTextNode((child as Element)) && reg.test(text)) new CompileUtilForRepeat(node).templateUpdater(child, value, key, vm);
       if (nodeAttrs) {
         Array.from(nodeAttrs).forEach(attr => {
           const attrName = attr.name;
@@ -400,10 +398,6 @@ export class CompileUtil {
             child.removeAttribute(attrName);
           }
         });
-      }
-      if (this.isTextNode((child as Element)) && reg.test(text)) {
-        console.log(333333, child);
-        new CompileUtilForRepeat(node).templateUpdater(child, value, key, vm);
       }
 
       if (child.hasChildNodes() && !this.isRepeatNode(child) && canShowByIf) this.repeatChildrenUpdater(child, value, expFather, index, vm, watchValue);

@@ -59,8 +59,6 @@ class Compile {
       if (this.isElementNode(node)) {
         if (reg.test(text)) {
           const regText = RegExp.$1;
-          // console.log('regTextregText', regText);
-          // console.log('texttext', text);
           // if (/(.*\{\{(this.).*\}\}.*)/g.test(text)) this.compileText(node, regText);
           if (/(.*\{\{(state.).*\}\}.*)/g.test(text)) this.compileText(node, regText);
         }

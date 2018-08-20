@@ -336,9 +336,10 @@ export class CompileUtil {
       const nodeAttrs = (newElement as Element).attributes;
       const text = newElement.textContent;
       const reg = /\{\{(.*)\}\}/g;
-      if (reg.test(text) && text.indexOf(`{{${key}`) >= 0 && !newElement.hasChildNodes()) {
-        new CompileUtilForRepeat(this.$fragment).templateUpdater(newElement as Element, val, key, vm);
-      }
+      // if (reg.test(text) && text.indexOf(`{{${key}`) >= 0 && !newElement.hasChildNodes()) {
+      //   new CompileUtilForRepeat(this.$fragment).templateUpdater(newElement as Element, val, key, vm);
+      // }
+
       if (nodeAttrs) {
         Array.from(nodeAttrs).forEach(attr => {
           const attrName = attr.name;
@@ -353,6 +354,12 @@ export class CompileUtil {
           }
         });
       }
+
+      if (this.isTextNode((newElement as Element)) && reg.test(text)) {
+        console.log(44444, newElement);
+        new CompileUtilForRepeat(this.$fragment).templateUpdater(newElement as Element, val, key, vm);
+      }
+
       if (!this.isIfNode(node)) this.$fragment.appendChild(newElement);
       if (newElement.hasChildNodes()) this.repeatChildrenUpdater((newElement as Element), val, expFather, index, vm, value);
     });
@@ -371,9 +378,9 @@ export class CompileUtil {
       const text = child.textContent;
       const reg = /\{\{(.*)\}\}/g;
       let canShowByIf = true;
-      if (reg.test(text) && text.indexOf(`{{${key}`) >= 0 && !child.hasChildNodes()) {
-        new CompileUtilForRepeat(node).templateUpdater(child, value, key, vm);
-      }
+      // if (reg.test(text) && text.indexOf(`{{${key}`) >= 0 && !child.hasChildNodes()) {
+      //   new CompileUtilForRepeat(node).templateUpdater(child, value, key, vm);
+      // }
       if (nodeAttrs) {
         Array.from(nodeAttrs).forEach(attr => {
           const attrName = attr.name;
@@ -393,6 +400,10 @@ export class CompileUtil {
             child.removeAttribute(attrName);
           }
         });
+      }
+      if (this.isTextNode((child as Element)) && reg.test(text)) {
+        console.log(333333, child);
+        new CompileUtilForRepeat(node).templateUpdater(child, value, key, vm);
       }
 
       if (child.hasChildNodes() && !this.isRepeatNode(child) && canShowByIf) this.repeatChildrenUpdater(child, value, expFather, index, vm, watchValue);
@@ -459,6 +470,10 @@ export class CompileUtil {
     const result = false;
     if (nodeAttrs) return !!(Array.from(nodeAttrs).find(attr => /^\{(.+)\}$/.test(attr.value)));
     return result;
+  }
+
+  public isTextNode(node: Element): boolean {
+    return node.nodeType === 3;
   }
 
   public cloneNode(node: Element, repeatData?: any): Node {

@@ -57,13 +57,22 @@ class Compile {
       const text = node.textContent;
       const reg = /\{\{(.*)\}\}/g;
       if (this.isElementNode(node)) {
-        if (reg.test(text)) {
-          const regText = RegExp.$1;
-          // if (/(.*\{\{(this.).*\}\}.*)/g.test(text)) this.compileText(node, regText);
-          if (/(.*\{\{(state.).*\}\}.*)/g.test(text)) this.compileText(node, regText);
-        }
+        // if (reg.test(text) && node.hasChildNodes() && node.childNodes.length === 1) {
+        // // if (reg.test(text)) {
+        //   const regText = RegExp.$1;
+        //   console.log(222222, node);
+        //   // if (/(.*\{\{(this.).*\}\}.*)/g.test(text)) this.compileText(node, regText);
+        //   if (/(.*\{\{(state.).*\}\}.*)/g.test(text)) this.compileText(node, regText);
+        // }
         this.compile(node, fragment);
       }
+
+      if (this.isTextNode(node) && reg.test(text)) {
+        const regText = RegExp.$1;
+        console.log(111111, regText, node);
+        if (/(.*\{\{(state.).*\}\}.*)/g.test(text)) this.compileText(node, regText);
+      }
+
       if (this.isRepeatNode(node) && fragment.contains(node)) {
         fragment.removeChild(node);
       } else {

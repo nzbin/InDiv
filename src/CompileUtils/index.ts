@@ -357,6 +357,7 @@ export class CompileUtil {
       }
 
       // if (!this.isIfNode(node)) this.$fragment.appendChild(newElement);
+      // first insert node before repeatnode, and remove repeatnode in Compile
       if (!this.isIfNode(node)) this.$fragment.insertBefore(newElement, node);
       if (newElement.hasChildNodes()) this.repeatChildrenUpdater((newElement as Element), val, expFather, index, vm, value);
     });
@@ -410,6 +411,7 @@ export class CompileUtil {
         if (restRepeat) {
           const newWatchData = restRepeat.value.split(' ')[3];
           // if (/^(this\.)/.test(newWatchData)) {
+          // first compile and then remove repeatNode
           if (/^(state\.)/.test(newWatchData)) {
             new CompileUtil(node).bind(child, vm, restRepeat.value, restRepeat.name.substring(3));
             if (node.contains(child)) node.removeChild(child);

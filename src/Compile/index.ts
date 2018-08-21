@@ -53,7 +53,7 @@ class Compile {
       if (node.hasChildNodes() && !this.isRepeatNode(node)) {
         this.recursiveDOM(node.childNodes, node);
       }
-
+      if (!this.isIfNode(node)) fragment.appendChild(node);
       const text = node.textContent;
       const reg = /\{\{(.*)\}\}/g;
       if (this.isElementNode(node)) {
@@ -73,10 +73,11 @@ class Compile {
         if (/(.*\{\{(state.).*\}\}.*)/g.test(text)) this.compileText(node, regText);
       }
 
+      // after compile repeatNode, remove repeatNode
       if (this.isRepeatNode(node) && fragment.contains(node)) {
         fragment.removeChild(node);
-      } else {
-        if (!this.isIfNode(node)) fragment.appendChild(node);
+      // } else {
+        // if (!this.isIfNode(node)) fragment.appendChild(node);
       }
     });
   }

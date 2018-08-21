@@ -392,7 +392,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
 @Component({
   template: (`
     <div>
-      <p>{{state.a}}</p>
+      <p es-if="state.a">{{state.a}}</p>
       <p es-on:click="@go()">container: {{state.a}}</p>
       <input es-model="state.a" />
       <div es-repeat="let man in state.testArray">

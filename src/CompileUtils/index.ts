@@ -414,11 +414,11 @@ export class CompileUtil {
           // first compile and then remove repeatNode
           if (/^(state\.)/.test(newWatchData)) {
             new CompileUtil(node).bind(child, vm, restRepeat.value, restRepeat.name.substring(3));
-            if (node.contains(child)) node.removeChild(child);
+            // if (node.contains(child)) node.removeChild(child);
           }
           if (new RegExp(`(^${key})`).test(newWatchData)) {
             new CompileUtil(node).repeatUpdater(child, this._getValueByValue(value, newWatchData, key), restRepeat.value, vm);
-            if (node.contains(child)) node.removeChild(child);
+            // if (node.contains(child)) node.removeChild(child);
           }
         }
       }

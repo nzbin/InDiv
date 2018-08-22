@@ -1,4 +1,4 @@
-import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, esHttp } from '../src';
+import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, esHttp, SetState, SetLocation, GetLocation } from '../src';
 // import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, esHttp } from '../build';
 
 @Service({
@@ -62,7 +62,7 @@ class HeroSearchService {
 })
 
 class RouteChild implements OnInit, HasRender, ReceiveProps {
-  public setState: (newState: any) => void;
+  public setState: SetState;
   public state: any;
   public heroSearchService: HeroSearchService2;
   public props: any;
@@ -114,7 +114,7 @@ class RouteChild implements OnInit, HasRender, ReceiveProps {
   },
   template: (`
     <div>
-    子组件的子组件<br/>
+      子组件的子组件<br/>
       <p nv-on:click="@sendProps(3)">PCChild props.ax:: {{state.b}}</p>
       <p nv-repeat="let a in state.d">1232{{a.z}}</p>
     </div>
@@ -123,7 +123,7 @@ class RouteChild implements OnInit, HasRender, ReceiveProps {
 class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps {
   public props: any;
   public state: any;
-  public setState: (newState: any) => void;
+  public setState: SetState;
   constructor() {}
 
   public esHasRender() {
@@ -194,7 +194,7 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps {
   `),
 })
 class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, ReceiveProps {
-  public setState: (newState: any) => void;
+  public setState: SetState;
   public state: any;
   public props: any;
 
@@ -235,6 +235,7 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
     console.log('newData Component:', newData);
   }
   public esReceiveProps(nextProps: any) {
+    console.log(1111111111111, nextProps);
     this.state.ax = nextProps.ax;
   }
 }
@@ -286,9 +287,9 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
 class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   public hSr: HeroSearchService;
   public utils: Utils;
-  public $getLocation: () => any;
-  public $setLocation: (path: string, query?: any, params?: any) => void;
-  public setState: (newState: any) => void;
+  public getLocation: GetLocation;
+  public setLocation: SetLocation;
+  public setState: SetState;
   public props: any;
 
   constructor(
@@ -319,8 +320,8 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
     console.log('newData Controller:', newData);
   }
   public showAlert(a: any) {
-    this.$setLocation('/R1/C1', { a: '1' });
-    console.log('this.$location', this.$getLocation());
+    this.setLocation('/R1/C1', { a: '1' });
+    console.log('this.$location', this.getLocation());
   }
   public getProps(a: any) {
     // alert('里面传出来了');
@@ -345,8 +346,8 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   state: { a: 1 },
 })
 class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
-  public $getLocation: () => any;
-  public $setLocation: (path: string, query?: any, params?: any) => void;
+  public getLocation: GetLocation;
+  public setLocation: SetLocation;
   public state: any;
 
   constructor(
@@ -356,7 +357,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
     console.log('this.heroSearchService1', this.heroSearchService1);
   }
   public esOnInit() {
-    console.log('this.$getLocation', this.$getLocation());
+    console.log('this.getLocation', this.getLocation());
   }
   public esBeforeMount() {
     // console.log('is esBeforeMount');
@@ -383,7 +384,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
     console.log('aaa', a);
   }
   public showLocation() {
-    this.$setLocation('/R1/C1/D1', { b: '1' });
+    this.setLocation('/R1/C1/D1', { b: '1' });
   }
 }
 
@@ -454,8 +455,8 @@ class Container implements OnInit, AfterMount {
   public ss2: HeroSearchService1;
   public state: any;
   public props: any;
-  public $setLocation: (path: string, query?: any, params?: any) => void;
-  public setState: (newState: any) => void;
+  public setLocation: SetLocation;
+  public setState: SetState;
 
   constructor(
     private hss: HeroSearchService,
@@ -477,7 +478,7 @@ class Container implements OnInit, AfterMount {
   }
 
   public go() {
-    this.$setLocation('/R1', { b: '1' });
+    this.setLocation('/R1', { b: '1' });
   }
   public show(a: any, index?: string) {
     console.log('aaaa', a);

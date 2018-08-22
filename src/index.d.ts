@@ -54,6 +54,8 @@ export interface IService { }
 export interface IComponent<State = any, Props = any, Vm = any> {
     state?: State | any;
     props?: Props | any;
+    utils: Utils;
+    compileUtil: CompileUtil;
     $renderDom?: Element;
     $vm?: Vm | any;
     $template?: string;
@@ -79,8 +81,8 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     $componentsConstructor(dom: Element): void;
     setState(newState: any): void;
     // setProps(newProps: any): void;
-    $getLocation(): any;
-    $setLocation(path: string, query?: any, params?: any): void;
+    getLocation(): any;
+    setLocation(path: string, query?: any, params?: any): void;
     getPropsValue(valueList: any[], value: any): void;
     buildProps(prop: any): any;
     buildComponentScope(ComponentClass: any, props: any, dom: Element): IComponent<any, any, any>;
@@ -305,4 +307,16 @@ export declare interface RouteChange {
 
 export declare interface ReceiveProps {
     esReceiveProps(nextProps: any): void;
+}
+
+export declare interface SetState {
+    (newState: any): void;
+}
+  
+export declare interface GetLocation {
+    (): any;
+}
+  
+export declare interface SetLocation {
+    (path: string, query?: any, params?: any): void;
 }

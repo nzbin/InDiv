@@ -2,7 +2,7 @@ import { IComponent, ComponentList } from '../types';
 
 import Compile from '../Compile';
 import Watcher from '../Watcher';
-import KeyWatcher from '../KeyWatcher';
+// import KeyWatcher from '../KeyWatcher';
 import Utils from '../Utils';
 import { CompileUtil } from '../CompileUtils';
 import { factoryCreator } from '../Injectable';
@@ -13,7 +13,7 @@ type TComponentOptions<State> = {
   state?: State;
 };
 
-function Component<State = any, Props = any, Vm = any>(options: TComponentOptions<State>): (_constructor: Function) => void {
+export function Component<State = any, Props = any, Vm = any>(options: TComponentOptions<State>): (_constructor: Function) => void {
   return function (_constructor: Function): void {
     const vm: IComponent<State, Props, Vm> = _constructor.prototype;
     vm.$template = options.template;
@@ -24,7 +24,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     vm.$components = {};
     vm.$componentList = [];
 
-    vm.$getLocation = function (): any {
+    vm.getLocation = function (): any {
       return {
         path: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.path,
         query: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.query,
@@ -32,7 +32,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       };
     };
 
-    vm.$setLocation = function (path: string, query?: any, params?: any): void {
+    vm.setLocation = function (path: string, query?: any, params?: any): void {
       const rootPath = (this as IComponent<State, Props, Vm>).$vm.$rootPath === '/' ? '' : (this as IComponent<State, Props, Vm>).$vm.$rootPath;
       history.pushState(
         { path, query, params },
@@ -206,4 +206,14 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
   };
 }
 
-export default Component;
+export interface SetState {
+  (newState: any): void;
+}
+
+export interface GetLocation {
+  (): any;
+}
+
+export interface SetLocation {
+  (path: string, query?: any, params?: any): void;
+}

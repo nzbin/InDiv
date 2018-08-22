@@ -1,5 +1,6 @@
 import { IWatcher } from './watcher';
-import { ILifecycle } from './lifecycle';
+import { ICompileUtil } from './compileUtils';
+import { IUtil } from './utils';
 
 export type ComponentList<C> = {
     dom: Element;
@@ -7,9 +8,23 @@ export type ComponentList<C> = {
     scope: C;
 };
 
-export interface IComponent<State = any, Props = any, Vm = any> extends ILifecycle<Vm> {
+export interface SetState {
+    (newState: any): void;
+}
+  
+export interface GetLocation {
+    (): any;
+}
+  
+export interface SetLocation {
+    (path: string, query?: any, params?: any): void;
+}
+
+export interface IComponent<State = any, Props = any, Vm = any> {
     state?: State | any;
     props?: Props | any;
+    utils: IUtil;
+    compileUtil: ICompileUtil;
     $renderDom?: Element;
     $vm?: Vm | any;
     $template?: string;
@@ -35,8 +50,8 @@ export interface IComponent<State = any, Props = any, Vm = any> extends ILifecyc
     $componentsConstructor(dom: Element): void;
     setState(newState: any): void;
     // setProps(newProps: any): void;
-    $getLocation(): any;
-    $setLocation(path: string, query?: any, params?: any): void;
+    getLocation(): any;
+    setLocation(path: string, query?: any, params?: any): void;
     getPropsValue(valueList: any[], value: any): void;
     buildProps(prop: any): any;
     buildComponentScope(ComponentClass: any, props: any, dom: Element): IComponent<any, any, any>;

@@ -41,8 +41,8 @@ Now we support for typescript!
   - `router.$init(routes);` can init Array routes
   - if u want to watch routes changes, plz use `router.$routeChange=(old.new) => {}`
 
-      1. use `this.$setLocation((path: String, query: Object, params: Object)` to go to Path or `location.href`
-      2. use `this.$getLocation()` to get location states
+      1. use `this.setLocation((path: String, query: Object, params: Object)` to go to Path or `location.href`
+      2. use `this.getLocation()` to get location states
       3. `Router` : `http://localhost:1234/R1`
 
   ``` typescript
@@ -115,7 +115,7 @@ Now we support for typescript!
   - create a `class`
   - use decorator `Component` in typescript or use function `Component` in javascript
   - `Component` accepts an object `template: string;state?: any;`
-  - **please use setState or setProps after lifecycle `constructor()`**
+  - **please use setState after lifecycle `constructor()`**
 
     1. typescript
 
@@ -186,7 +186,7 @@ Now we support for typescript!
       class Container implements OnInit, AfterMount {
         public ss: HeroSearchService;
         public state: any;
-        public $setLocation: (path: string, query?: any, params?: any) => void;
+        public setLocation: SetLocation;
 
         constructor(
           private hss: HeroSearchService,
@@ -205,7 +205,7 @@ Now we support for typescript!
         }
 
         public go() {
-          this.$setLocation('/R1', { b: '1' });
+          this.setLocation('/R1', { b: '1' });
         }
         public show(a: any, index?: string) {
           console.log('aaaa', a);
@@ -233,7 +233,7 @@ Now we support for typescript!
         }
 
         go() {
-          this.$setLocation('/R1', { b: '1' });
+          this.setLocation('/R1', { b: '1' });
         }
 
         show(a, index) {
@@ -305,7 +305,6 @@ Now we support for typescript!
 
   - ** `props: Object` can only be changed or used after lifecycle `constructor()` **
 
-  - `props: Object` can only be changed by action `this.setProps()` and `this.setProps()` is equal to `setState`
 
 5. EsModule
 
@@ -641,6 +640,7 @@ Now we support for typescript!
       esHasRender(): void;
       esWatchState(oldData?: any, newData?: any): void;
       esRouteChange(lastRoute?: string, newRoute?: string): void;
+      esReceiveProps(nextProps: any): void;
     ```
 
   - Router

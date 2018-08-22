@@ -5,7 +5,7 @@ export { OnInit, BeforeMount, AfterMount, OnDestory, HasRender, WatchState, Rout
 export { default as Watcher } from './Watcher';
 export { default as KeyWatcher } from './KeyWatcher';
 export { default as Compile } from './Compile';
-export { default as Component } from './Component';
+export { Component, SetState, SetLocation, GetLocation } from './Component';
 export { default as Router } from './Router';
 export { default as Easiest } from './Easiest';
 export { EsModule, factoryModule } from './EsModule';

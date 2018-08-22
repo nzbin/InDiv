@@ -45,14 +45,24 @@ class RouteChild {
     this.heroSearchService = heroSearchService2;
     this.heroSearchService.test();
   }
-
+  esOnInit() {
+    this.setState({
+      b: this.props.a,
+    });
+    console.log(555, 'PCChild esOnInit props11', this.props);
+  }
   esHasRender() {
     console.log('RouteChild: this.props.a', this.props.a);
+  }
+  esReceiveProps(nextProps) {
+    console.log(3333, nextProps);
+    this.state.b = nextProps.a;
   }
 }
 Component({
   state: {
     a: 'a',
+    b: null,
     d: [
       {
         z: 111111111111111,
@@ -66,21 +76,50 @@ Component({
   },
   template: (`
     <div>
-    子组件的子组件<br/>
-      <p nv-on:click="this.props.b(3)">PCChild props.a:: {{this.props.a}}</p>
-      <p nv-repeat="let a in this.state.d">1232{{a.z}}</p>
-    </div>
-  `),
+      <p>子路由的子组件::{{state.b}}</p>
+      <pp-childs ax={state.b}></pp-childs>
+    </div>`),
 })(RouteChild);
 
 class PCChild {
   esHasRender() {
     console.log('PCChild: this.props.ax', this.props.ax);
   }
+  esOnInit() {
+    this.setState({
+      b: this.props.ax,
+    });
+    // this.setState({
+    //   c: this.props.ax,
+    // });
+    console.log(555, 'PCChild esOnInit props11', this.props);
+    // this.props.b(3);
+  }
+
+  sendProps(i) {
+    // this.props.b(i);
+    // this.props.ax = 100;
+    console.log('this.props', this.props);
+  }
+
+  esBeforeMount() {
+    console.log('PCChild esBeforeMount props11', this.props.ax);
+  }
+
+  esAfterMount() {
+    console.log('PCChild esAfterMount props11', this.props.ax);
+  }
+
+  esReceiveProps(nextProps) {
+    console.log(this.props.ax);
+    console.log(4444, nextProps);
+    this.state.b = nextProps.ax;
+  }
 }
 Component({
   state: {
     a: 'a',
+    b: null,
     d: [
       {
         z: 111111111111111,
@@ -94,9 +133,9 @@ Component({
   },
   template: (`
     <div>
-    子组件的子组件<br/>
-      <p nv-on:click="this.props.b(3)">PCChild props.ax:: {{this.props.ax}}</p>
-      <p nv-repeat="let a in this.state.d">1232{{a.z}}</p>
+      子组件的子组件<br/>
+      <p nv-on:click="@sendProps(3)">PCChild props.ax:: {{state.b}}</p>
+      <p nv-repeat="let a in state.d">1232{{a.z}}</p>
     </div>
   `),
 })(PCChild);
@@ -105,12 +144,25 @@ class PComponent {
   esOnInit() {
     console.log('props11', this.props);
   }
-  componentClick(e) {
-    alert('点击了组件');
-    console.log('this.props.ax', this.props.ax);
-    this.setState({ b: 2 });
-    this.props.b(3);
-    this.a = 1;
+  esBeforeMount() {
+    console.log('esBeforeMount props11', this.props);
+  }
+
+  esAfterMount() {
+    console.log('esAfterMount props11', this.props);
+  }
+  esReceiveProps(nextProps) {
+    console.log(1111111111111, nextProps);
+    this.state.ax = nextProps.ax;
+  }
+  componentClick(a) {
+    // alert('点击了组件');
+    // console.log('this.props.ax', this.props.ax);
+    // this.setState({ b: 2 });
+    // // this.setProps({ ax: 5 });
+    // this.props.b(3);
+    // this.a = 1;
+    console.log('aa', a);
   }
   sendProps(ax) {
     this.props.b(ax);
@@ -140,13 +192,14 @@ Component({
       b: 'a',
     }],
     e: true,
+    ax: null,
   },
   template: (`
-    <div>
-      <p nv-if="this.state.e" nv-class="this.state.a" nv-repeat="let a in this.state.d"  nv-on:click="this.componentClick(this.state.d)">你好： {{a.z}}</p>
-      state.d: <input nv-repeat="let a in this.state.d" nv-model="a.z" />
-      <p nv-on:click="this.sendProps(5)">props from component.state.a: {{this.props.ax}}</p>
-    </div>
+  <div>
+    <p nv-if="state.e" nv-class="state.a" nv-repeat="let a in state.d"  nv-on:click="@componentClick(state.d)">你好： {{a.z}}</p>
+    state.d: <input nv-repeat="let a in state.d" nv-model="a.z" />
+    <p nv-on:click="@sendProps(5)">props from component.state.a: {{state.ax}}</p>
+  </div>
   `),
 })(PComponent);
 
@@ -180,8 +233,8 @@ class R1 {
     console.log('newData Controller:', newData);
   }
   showAlert(a) {
-    this.$setLocation('/R1/C1', { a: '1' });
-    console.log('this.$location', this.$getLocation());
+    this.setLocation('/R1/C1', { a: '1' });
+    console.log('this.$location', this.getLocation());
   }
   getProps(a) {
     // alert('里面传出来了');
@@ -192,19 +245,19 @@ class R1 {
 
 Component({
   template: (`
-    <div>
-      <pc-component ax="{this.state.a}" b="{this.getProps}"></pc-component>
-      下面跟组件没关系<br/>
-      <div nv-if="this.state.f">
-        ef
-        <input nv-repeat="let a in this.state.e" nv-model="a.z" />
-        <p nv-class="this.state.c" nv-if="a.show" nv-repeat="let a in this.state.e" nv-text="a.z" nv-on:click="this.showAlert(a.z)"></p>
-        <p>111this.state.a：{{this.state.a}}</p>
-        <input nv-model="this.state.a" />
-      </div>
-      下面是子路由<br/>
-      <router-render></router-render>
+  <div>
+    <pc-component ax="{state.a}" b="{@getProps}"></pc-component>
+    下面跟组件没关系<br/>
+    <div nv-if="state.f">
+      ef
+      <input nv-repeat="let a in state.e" nv-model="a.z" />
+      <p nv-class="state.c" nv-if="a.show" nv-repeat="let a in state.e" nv-text="a.z" nv-on:click="@showAlert(a.z)"></p>
+      <p>111this.state.a：{{state.a}}</p>
+      <input nv-model="state.a" />
     </div>
+    下面是子路由<br/>
+    <router-render></router-render>
+  </div>
     `),
   state: {
     a: 'a11',
@@ -244,7 +297,7 @@ class R2 {
     this.heroSearchService1.test();
   }
   esOnInit() {
-    console.log('this.$location222', this.$getLocation());
+    console.log('this.$location222', this.getLocation());
   }
   esBeforeMount() {
     // console.log('is esBeforeMount');
@@ -271,22 +324,20 @@ class R2 {
     console.log('aaa', a);
   }
   showLocation() {
-    this.$setLocation('/R1/C1/D1', { b: '1' });
-    // this.$location.go('/R1/C1/D1', { b: '1' });
-    // this.$location.go('/R1/C1/D1', { b: '1' });
-    // console.log('this.$location', this.$location.state());
+    this.setLocation('/R1/C1/D1', { b: '1' });
   }
 }
 Component({
   template: (`
-    <div>
-      <p nv-on:click="this.showLocation()">点击显示子路由跳转</p>
-      <input nv-model="this.state.a"/>
-      <br/>
-      <p nv-on:click="this.showAlert()">点击显示this.state.a:{{this.state.a}}</p>
-      子组件:<br/>
-      <route-child a="{this.state.a}"></route-child>
-    </div>
+  <div>
+    <p nv-on:click="@showLocation()">点击显示子路由跳转</p>
+    <input nv-model="state.a"/>
+    <br/>
+    <p nv-on:click="@showAlert()">点击显示this.state.a:{{state.a}}</p>
+    子组件:<br/>
+    <route-child a="{state.a}"></route-child>
+    <router-render></router-render>
+  </div>
   `),
   state: { a: 1 },
 })(R2);
@@ -310,30 +361,39 @@ class Container {
   }
 
   go() {
-    this.$setLocation('/R1', { b: '1' });
+    this.setLocation('/R1', { b: '1' });
   }
 
   show(a, index) {
     console.log('aaaa', a);
     console.log('index', index);
   }
+
+  showInput(event, index) {
+    console.log('aaaa', event.target.value);
+    const testArray2 = this.state.testArray2;
+    testArray2[index] = event.target.value;
+    console.log('this.state.testArray2', this.state.testArray2);
+    // this.state.testArray2[index] = event.target.value;
+  }
 }
 
 Component({
   template: (`
-    <div>
-      <p nv-on:click="this.go()">container: {{this.state.a}}</p>
-      <input nv-model="this.state.a" />
-      <div nv-repeat="let man in this.state.testArray">
-        <div nv-on:click="this.show(this.state.testArray2)">姓名：{{man.name}}</div>
-        <div>性别：{{man.sex}}</div>
-        <input nv-on:click="this.show(b, $index)" nv-repeat="let b in this.state.testArray2" nv-model="b" nv-class="b" />
-        <div class="fuck" nv-repeat="let b in man.job">
-          <input nv-on:click="this.show(b)" nv-model="b.name" nv-class="b.id" />
-        </div>
+  <div>
+    <p nv-if="state.a">{{state.a}}</p>
+    <p nv-on:click="@go()">container: {{state.a}}</p>
+    <input nv-model="state.a" />
+    <div nv-repeat="let man in state.testArray">
+      <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
+      <div>性别：{{man.sex}}</div>
+      <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
+      <div class="fuck" nv-repeat="let b in man.job">
+        <input nv-on:click="@show(b, $index)" nv-model="b.name" nv-class="b.id" />
       </div>
-      <router-render></router-render>
-    </div>`),
+    </div>
+    <router-render></router-render>
+  </div>`),
   state: {
     a: 1,
     testArray: [{

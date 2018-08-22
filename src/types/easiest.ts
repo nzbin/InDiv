@@ -1,5 +1,5 @@
 import { IComponent } from './component';
-import { IEsModule } from './esModule';
+import { INvModule } from './esModule';
 import { IService } from './service';
 import { IUtil } from './utils';
 
@@ -13,20 +13,20 @@ export type EsRouteObject = {
     params?: any;
 };
 
-export interface IEasiest {
-    modalList: IMiddleware<IEasiest>[];
+export interface IInDiv {
+    modalList: IMiddleware<IInDiv>[];
     utils: IUtil;
     rootDom: Element;
     $rootPath: string;
     $canRenderModule: boolean;
     $routeDOMKey: string;
-    $rootModule: IEsModule;
+    $rootModule: INvModule;
     $components: {
         [name: string]: Function;
     };
     $esRouteObject?: EsRouteObject;
 
-    use(modal: IMiddleware<IEasiest>): number;
+    use(modal: IMiddleware<IInDiv>): number;
     setRootPath(rootPath: string): void;
     bootstrapModule(Esmodule: Function): void;
     init(): void;

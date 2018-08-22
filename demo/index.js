@@ -1,4 +1,4 @@
-import { Easiest, Component, Router, Utils, EsModule, Service, esHttp } from '../build';
+import { InDiv, Component, Router, Utils, NvModule, Service, esHttp } from '../build';
 
 class HeroSearchService1 {
   constructor() {
@@ -437,7 +437,7 @@ Component({
 })(Container);
 
 class M2 {}
-EsModule({
+NvModule({
   components: {
     'R2': R2,
     'route-child': RouteChild,
@@ -453,7 +453,7 @@ EsModule({
 })(M2);
 
 class M1 {}
-EsModule({
+NvModule({
   imports: [
     M2,
   ],
@@ -523,8 +523,8 @@ router.esRouteChange = function (old, next) {
   console.log('esRouteChange 3', old, next);
 };
 
-const easiest = new Easiest();
+const inDiv = new InDiv();
 // easiest.bootstrapModule(M1);
-easiest.bootstrapModule(M1);
-easiest.use(router);
-easiest.init();
+inDiv.bootstrapModule(M1);
+inDiv.use(router);
+inDiv.init();

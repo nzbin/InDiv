@@ -60,12 +60,12 @@
 
 14. 2018-05-28 add `this.$componentList` in class `Component`
 
-15. 2018-07-10 add rewrite `Component`, discard `Controllor`, and add `EsModule`
+15. 2018-07-10 add rewrite `Component`, discard `Controllor`, and add `NvModule`
 
 16. 2018-07-14 finish singleton in `Service`
 
 17. 2018-07-28 support for ts
 
-18. 2018-08-12 fix es-repeat, remove class `Component` `EsModule` `Service`, and add decorator `Component` `EsModule` `Service`
+18. 2018-08-12 fix es-repeat, remove class `Component` `NvModule` `Service`, and add decorator `Component` `NvModule` `Service`
 
 19. 2018-08-17 remove watch this.props and only use state and function in `Component` for `Component: template`

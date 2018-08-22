@@ -15,12 +15,12 @@ Now we support for typescript!
   ```html
   <div id="root"></div>
   ```
-2. Create a Easiest:
+2. Create a InDiv:
 
-  1. use `bootstrapModule` to bootstrap a root module `EsModule`
+  1. use `bootstrapModule` to bootstrap a root module `NvModule`
 
   ```javascript
-  const easiest = new Easiest();
+  const easiest = new InDiv();
   easiest.bootstrapModule(M1);
   easiest.use(router); // if u are using a router
   easiest.init();
@@ -31,7 +31,7 @@ Now we support for typescript!
   - routes must an `Array` includes `Object`
 
       1. routes must incloude rootPath `'/'`
-      2. routes must set an component name like `component: 'R1'`， `R1` is declared in `EsModule` in `$declarations => this.$components`
+      2. routes must set an component name like `component: 'R1'`， `R1` is declared in `NvModule` in `$declarations => this.$components`
       3. routes can assign redirectTo and use `redirectTo: Path`
       4. routes can assign children and use `children: Array`
       5. routes can set a path like `path: '/:id'`
@@ -104,7 +104,7 @@ Now we support for typescript!
   router.routeChange = function (old, next) {
     console.log('esRouteChange', old, next);
   };
-  const easiest = new Easiest();
+  const easiest = new InDiv();
   easiest.bootstrapModule(M1);
   const routerIndex = easiest.use(router);
   easiest.init();
@@ -315,21 +315,21 @@ Now we support for typescript!
   - ** `props: Object` can only be changed or used after lifecycle `constructor()` **
 
 
-5. EsModule
+5. NvModule
 
-  - Easiest apps are modular and Easiest has its own modularity system called `EsModule`. An `EsModule` is a container for a cohesive block of code dedicated to an application domain, a workflow, or a closely related set of capabilities. It can contain components, service providers, and other code files whose scope is defined by the containing `EsModule`. It can import functionality that is exported from other `EsModule`, and export selected functionality for use by other `EsModule`.
+  - InDiv apps are modular and InDiv has its own modularity system called `NvModule`. An `NvModule` is a container for a cohesive block of code dedicated to an application domain, a workflow, or a closely related set of capabilities. It can contain components, service providers, and other code files whose scope is defined by the containing `NvModule`. It can import functionality that is exported from other `NvModule`, and export selected functionality for use by other `NvModule`.
 
   - u need to declare `imports?: Function[]` `components: {[name: string]: Function;}` `providers?: Function[]` `exports?: string[]` `bootstrap?: Function` in `options`
-  - `imports` imports other `EsModule` and respect it's `exports`
+  - `imports` imports other `NvModule` and respect it's `exports`
   - `components` declare `Components`. Key: name, Value: Components
   - `providers` declare `Service`
-  - `exports:` exports `Components` for other `EsModules`
+  - `exports:` exports `Components` for other `NvModules`
   - `bootstrap` declare `Component` for Module bootstrap only if u don't `Router`
 
     1. typescript
 
     ```typescript
-    @EsModule({
+    @NvModule({
       imports: [
         M2,
       ],
@@ -349,7 +349,7 @@ Now we support for typescript!
   
     ```javascript
     class M1 {}
-    EsModule({
+    NvModule({
       imports: [
         M2,
       ],
@@ -467,7 +467,7 @@ Now we support for typescript!
     3. http
 
       ```javascript
-      import { esHttp } from 'Easiest';
+      import { esHttp } from 'InDiv';
       const http = esHttp;
       http.get(url, params);
       http.delete(url, params);
@@ -482,11 +482,11 @@ Now we support for typescript!
     
     1. Use Typescript
 
-      - If u are using `Typescript` to build an app, u can easily use our Dependency Injection.Only use `@Injectable` before the `Class` which need to use other services, that which are declarated in `this.$providers` of `EsModule` or root module.
+      - If u are using `Typescript` to build an app, u can easily use our Dependency Injection.Only use `@Injectable` before the `Class` which need to use other services, that which are declarated in `this.$providers` of `NvModule` or root module.
       - Use `this.` names of constructor arguments to directly use `Service`.
 
       ```typescript
-      import { Injectable, Component, EsModule, Service, HasRender } from 'easiest';
+      import { Injectable, Component, NvModule, Service, HasRender } from 'easiest';
 
       @Service({
         isSingletonMode: true,
@@ -547,7 +547,7 @@ Now we support for typescript!
         public esHasRender() {}
       }
 
-      @EsModule({
+      @NvModule({
         imports: [
           M2,
         ],
@@ -616,7 +616,7 @@ Now we support for typescript!
       })(Container)
 
       class M1 {}
-      EsModule({
+      NvModule({
         imports: [
           M2,
         ],
@@ -632,7 +632,7 @@ Now we support for typescript!
 
 11. LifeCycle hooks which from the beginning to the end:
 
-  - EsModule
+  - NvModule
 
     ```typescript
       constructor()
@@ -660,7 +660,7 @@ Now we support for typescript!
 
 ## Architecture
 
-route => EsModule => component
+route => NvModule => component
 
 ## To do
 
@@ -668,7 +668,7 @@ route => EsModule => component
 - [x] 无需route渲染
 - [x] 子路由(2/2)
 - [X] 组件化(3/3)
-- [x] 模块化 + EsModule
+- [x] 模块化 + NvModule
 - [X] 双向绑定
 - [x] 公共类提取
 - [x] 数据劫持

@@ -1,5 +1,5 @@
-import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, esHttp, SetState, SetLocation, GetLocation } from '../src';
-// import { Easiest, Component, Router, Utils, EsModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, esHttp } from '../build';
+import { InDiv, Component, Router, Utils, NvModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, esHttp, SetState, SetLocation, GetLocation } from '../src';
+// import { InDiv, Component, Router, Utils, NvModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, esHttp } from '../build';
 
 @Service({
   isSingletonMode: true,
@@ -494,7 +494,7 @@ class Container implements OnInit, AfterMount {
   }
 }
 
-@EsModule({
+@NvModule({
   components: {
     'R2': R2,
     'route-child': RouteChild,
@@ -510,7 +510,7 @@ class Container implements OnInit, AfterMount {
 })
 class M2 {}
 
-@EsModule({
+@NvModule({
   imports: [
     M2,
   ],
@@ -583,7 +583,7 @@ router.routeChange = function (old: string, next: string) {
   console.log('esRouteChange', old, next);
 };
 
-const easiest = new Easiest();
-easiest.bootstrapModule(M1);
-easiest.use(router);
-easiest.init();
+const inDiv = new InDiv();
+inDiv.bootstrapModule(M1);
+inDiv.use(router);
+inDiv.init();

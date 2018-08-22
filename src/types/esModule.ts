@@ -1,7 +1,7 @@
 import { IService } from './service';
 import { IUtil } from './utils';
 
-export interface IEsModule {
+export interface INvModule {
   utils?: IUtil;
   $imports?: Function[];
   $components?: {

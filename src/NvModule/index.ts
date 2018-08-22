@@ -1,8 +1,8 @@
 import Utils from '../Utils';
 
-import { IEsModule } from '../types';
+import { INvModule } from '../types';
 
-type TEsModuleOptions = {
+type TNvModuleOptions = {
   imports?: Function[],
   components: {
     [name: string]: Function;
@@ -12,7 +12,7 @@ type TEsModuleOptions = {
   bootstrap?: Function,
 };
 
-export function EsModule(options: TEsModuleOptions): (_constructor: Function) => void {
+export function NvModule(options: TNvModuleOptions): (_constructor: Function) => void {
   return function (_constructor: Function): void {
     const vm = _constructor.prototype;
     vm.$exportList = {};
@@ -25,8 +25,8 @@ export function EsModule(options: TEsModuleOptions): (_constructor: Function) =>
     if (options.bootstrap) vm.bootstrap = options.bootstrap;
 
     vm.buildImports = function (): void {
-      if (!(this as IEsModule).$imports) return;
-      (this as IEsModule).$imports.forEach((ModuleImport: any) => {
+      if (!(this as INvModule).$imports) return;
+      (this as INvModule).$imports.forEach((ModuleImport: any) => {
         // const moduleImport = new ModuleImport();
         const moduleImport = factoryModule(ModuleImport);
         for (const name in moduleImport.$exportList) {
@@ -36,30 +36,30 @@ export function EsModule(options: TEsModuleOptions): (_constructor: Function) =>
     };
 
     vm.buildProviderList = function (): void {
-      if (!(this as IEsModule).$providers) return;
-      (this as IEsModule).$providers.forEach((service: any) => this.providerList.set(`${service.name.charAt(0).toUpperCase()}${service.name.slice(1)}`, service));
+      if (!(this as INvModule).$providers) return;
+      (this as INvModule).$providers.forEach((service: any) => this.providerList.set(`${service.name.charAt(0).toUpperCase()}${service.name.slice(1)}`, service));
     };
 
     vm.buildProviders4Services = function (): void {
       if (!this.$providers) return;
-      for (const name in (this as IEsModule).$providers) {
-        const service: any = (this as IEsModule).$providers[name];
+      for (const name in (this as INvModule).$providers) {
+        const service: any = (this as INvModule).$providers[name];
         if (service._injectedProviders) {
-          (this as IEsModule).providerList.forEach((value, key) => {
+          (this as INvModule).providerList.forEach((value, key) => {
             if (!service._injectedProviders.has(key)) service._injectedProviders.set(key, value);
           });
         } else {
-          service._injectedProviders = (this as IEsModule).providerList;
+          service._injectedProviders = (this as INvModule).providerList;
         }
       }
     };
 
     vm.buildProviders4Components = function (): void {
-      if (!(this as IEsModule).$providers) return;
-      for (const name in (this as IEsModule).$components) {
-        const component: any = (this as IEsModule).$components[name];
+      if (!(this as INvModule).$providers) return;
+      for (const name in (this as INvModule).$components) {
+        const component: any = (this as INvModule).$components[name];
         if (component._injectedProviders) {
-          (this as IEsModule).providerList.forEach((value, key) => {
+          (this as INvModule).providerList.forEach((value, key) => {
             if (!component._injectedProviders.has(key)) component._injectedProviders.set(key, value);
           });
         } else {
@@ -70,26 +70,26 @@ export function EsModule(options: TEsModuleOptions): (_constructor: Function) =>
 
     vm.buildComponents4Components = function (): void {
       if (!this.$components) return;
-      for (const name in (this as IEsModule).$components) {
-        const FindComponent: any = (this as IEsModule).$components[name];
+      for (const name in (this as INvModule).$components) {
+        const FindComponent: any = (this as INvModule).$components[name];
         if (FindComponent._injectedComponents) {
-          FindComponent._injectedComponents = Object.assign(FindComponent._injectedComponents, (this as IEsModule).$components);
+          FindComponent._injectedComponents = Object.assign(FindComponent._injectedComponents, (this as INvModule).$components);
         } else {
-          FindComponent._injectedComponents = (this as IEsModule).$components;
+          FindComponent._injectedComponents = (this as INvModule).$components;
         }
       }
     };
 
     vm.buildExports = function (): void {
-      if (!(this as IEsModule).$exports) return;
-      (this as IEsModule).$exports.forEach(ex => {
-        if ((this as IEsModule).$components[ex]) (this as IEsModule).$exportList[ex] = (this as IEsModule).$components[ex];
+      if (!(this as INvModule).$exports) return;
+      (this as INvModule).$exports.forEach(ex => {
+        if ((this as INvModule).$components[ex]) (this as INvModule).$exportList[ex] = (this as INvModule).$components[ex];
       });
     };
   };
 }
 
-export function factoryModule(EM: Function): IEsModule {
+export function factoryModule(EM: Function): INvModule {
   const em = new (EM as any)();
   em.buildImports();
   em.buildProviderList();
@@ -100,4 +100,4 @@ export function factoryModule(EM: Function): IEsModule {
   return em;
 }
 
-// export default EsModule;
+// export default NvModule;

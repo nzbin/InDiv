@@ -40,7 +40,7 @@ export type TServiceOptions = {
     isSingletonMode?: boolean;
 };
 
-export type TEsModuleOptions = {
+export type TNvModuleOptions = {
     imports?: Function[],
     components: {
         [name: string]: Function;
@@ -88,7 +88,7 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     buildComponentScope(ComponentClass: any, props: any, dom: Element): IComponent<any, any, any>;
 }
 
-export interface IEsModule {
+export interface INvModule {
     utils?: Utils;
     $imports?: Function[];
     $components?: {
@@ -211,20 +211,20 @@ export declare class Compile {
     isTextNode(node: Element): boolean;
 }
 
-export declare class Easiest {
-    modalList: IMiddleware<Easiest>[];
+export declare class InDiv {
+    modalList: IMiddleware<InDiv>[];
     utils: Utils;
     rootDom: Element;
     $rootPath: string;
     $canRenderModule: boolean;
     $routeDOMKey: string;
-    $rootModule: IEsModule;
+    $rootModule: INvModule;
     $components: {
         [name: string]: Function;
     };
     $esRouteObject?: EsRouteObject;
     constructor();
-    use(modal: IMiddleware<Easiest>): number;
+    use(modal: IMiddleware<InDiv>): number;
     setRootPath(rootPath: string): void;
     bootstrapModule(Esmodule: Function): void;
     init(): void;
@@ -244,11 +244,11 @@ export declare class Router {
     $rootPath: string;
     hasRenderComponentList: IComponent[];
     needRedirectPath: string;
-    $vm: Easiest;
+    $vm: InDiv;
     watcher: KeyWatcher;
     renderRouteList: string[];
     constructor();
-    bootstrap(vm: Easiest): void;
+    bootstrap(vm: InDiv): void;
     init(arr: TRouter[]): void;
     setRootPath(rootPath: string): void;
     routeChange(lastRoute?: string, nextRoute?: string): void;
@@ -269,9 +269,9 @@ export declare function factoryCreator(_constructor: Function, _module: any): an
 
 export declare function Component<State = any, Props = any, Vm = any>(options: TComponentOptions): (_constructor: Function) => void;
 
-export declare function EsModule(options: TEsModuleOptions): (_constructor: Function) => void;
+export declare function NvModule(options: TNvModuleOptions): (_constructor: Function) => void;
 
-export declare function factoryModule(EM: Function): IEsModule;
+export declare function factoryModule(EM: Function): INvModule;
 
 export declare function Service(options?: TServiceOptions): (_constructor: Function) => void;
 

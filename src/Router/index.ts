@@ -1,4 +1,4 @@
-import { TRouter, IEasiest, IComponent } from '../types';
+import { TRouter, IInDiv, IComponent } from '../types';
 
 import Utils from '../Utils';
 import KeyWatcher from '../KeyWatcher';
@@ -13,7 +13,7 @@ class Router {
   public $rootPath: string;
   public hasRenderComponentList: IComponent[];
   public needRedirectPath: string;
-  public $vm: IEasiest;
+  public $vm: IInDiv;
   public watcher: KeyWatcher;
   public renderRouteList: string[];
 
@@ -32,7 +32,7 @@ class Router {
     this.renderRouteList = [];
   }
 
-  public bootstrap(vm: IEasiest): void {
+  public bootstrap(vm: IInDiv): void {
     this.$vm = vm;
     this.$vm.setRootPath(this.$rootPath);
     this.$vm.$canRenderModule = false;

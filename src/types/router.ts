@@ -1,5 +1,5 @@
 import { IComponent } from './component';
-import { IEasiest } from './easiest';
+import { IInDiv } from './easiest';
 import { IUtil } from './utils';
 import { IKeyWatcher } from './keyWatcher';
 
@@ -21,11 +21,11 @@ export interface IRouter {
     $rootPath: string;
     hasRenderComponentList: IComponent[];
     needRedirectPath: string;
-    $vm: IEasiest;
+    $vm: IInDiv;
     watcher: IKeyWatcher;
     renderRouteList: string[];
 
-    bootstrap(vm: IEasiest): void;
+    bootstrap(vm: IInDiv): void;
     init(arr: TRouter[]): void;
     esRouteChange(lastRoute?: string, nextRoute?: string): void;
     redirectTo(redirectTo: string): void;

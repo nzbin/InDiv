@@ -1,17 +1,17 @@
-import { IMiddleware, IEsModule, EsRouteObject, IComponent } from '../types';
+import { IMiddleware, INvModule, EsRouteObject, IComponent } from '../types';
 
 import Utils from '../Utils';
 import { factoryCreator } from '../Injectable';
-import { factoryModule } from '../EsModule';
+import { factoryModule } from '../NvModule';
 
-class Easiest {
-  public modalList: IMiddleware<Easiest>[];
+class InDiv {
+  public modalList: IMiddleware<InDiv>[];
   public utils: Utils;
   public rootDom: Element;
   public $rootPath: string;
   public $canRenderModule: boolean;
   public $routeDOMKey: string;
-  public $rootModule: IEsModule;
+  public $rootModule: INvModule;
   public $components: {
     [name: string]: Function;
   };
@@ -31,7 +31,7 @@ class Easiest {
     this.$esRouteObject = null;
   }
 
-  public use(modal: IMiddleware<Easiest>): number {
+  public use(modal: IMiddleware<InDiv>): number {
     modal.bootstrap(this);
     this.modalList.push(modal);
     return this.modalList.findIndex(md => this.utils.isEqual(md, modal));
@@ -57,7 +57,7 @@ class Easiest {
 
   public init(): void {
     if (!this.$rootModule) {
-      console.error('must use bootstrapModule to declare a root EsModule before init');
+      console.error('must use bootstrapModule to declare a root NvModule before init');
       return;
     }
     if (this.$canRenderModule) this.renderModuleBootstrap();
@@ -103,4 +103,4 @@ class Easiest {
   }
 }
 
-export default Easiest;
+export default InDiv;

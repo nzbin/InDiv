@@ -169,14 +169,14 @@ Now we support for typescript!
         },
         template: (`
           <div>
-            <p es-on:click="@go()">container: {{state.a}}</p>
-            <input es-model="state.a" />
-            <div es-repeat="let man in state.testArray">
-              <div es-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
+            <p nv-on:click="@go()">container: {{state.a}}</p>
+            <input nv-model="state.a" />
+            <div nv-repeat="let man in state.testArray">
+              <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
               <div>性别：{{man.sex}}</div>
-              <input es-on:click="@show(b, $index)" es-repeat="let b in state.testArray2" es-model="b" es-class="b" />
-              <div class="fuck" es-repeat="let b in man.job">
-                <input es-on:click="@show(b.name)" es-model="b.name" es-class="b.id" />
+              <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-model="b" nv-class="b" />
+              <div class="fuck" nv-repeat="let b in man.job">
+                <input nv-on:click="@show(b.name)" nv-model="b.name" nv-class="b.id" />
               </div>
             </div>
             <router-render></router-render>
@@ -245,14 +245,14 @@ Now we support for typescript!
       Component({
         template: (`
           <div>
-            <p es-on:click="@go()">container: {{state.a}}</p>
-            <input es-model="state.a" />
-            <div es-repeat="let man in state.testArray">
-              <div es-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
+            <p nv-on:click="@go()">container: {{state.a}}</p>
+            <input nv-model="state.a" />
+            <div nv-repeat="let man in state.testArray">
+              <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
               <div>性别：{{man.sex}}</div>
-              <input es-on:click="@show(b, $index)" es-repeat="let b in state.testArray2" es-model="b" es-class="b" />
-              <div class="fuck" es-repeat="let b in man.job">
-                <input es-on:click="@show(b.name)" es-model="b.name" es-class="b.id" />
+              <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-model="b" nv-class="b" />
+              <div class="fuck" nv-repeat="let b in man.job">
+                <input nv-on:click="@show(b.name)" nv-model="b.name" nv-class="b.id" />
               </div>
             </div>
             <router-render></router-render>
@@ -359,27 +359,27 @@ Now we support for typescript!
 
 6. Template Syntax
 
-  - 规定：指令以 es-xxx 命名
-  - now: es-text es-html es-model es-class es-repeat es-if es-on:Event
-  - 事件指令, 如 es-on:click
-    - Text1: `<p es-text="state.b"></p>;`
+  - 规定：指令以 nv-xxx 命名
+  - now: nv-text nv-html nv-model nv-class nv-repeat nv-if nv-on:Event
+  - 事件指令, 如 nv-on:click
+    - Text1: `<p nv-text="state.b"></p>;`
     - Text2: `<p>this.state.b是：{{state.b}}</p>;`
-    - HTML: `<p es-html="state.c"></p>;`
-    - Model for input: `'<input es-model="state.c"/>';` **if input is a repeat DOM, and intem of Array is'nt an object, please use `$index`**
-    - Class: `<p  class="b" es-class="state.a"></p>';`
-    - Directives: ues `es-on:event`
-      - `<p es-on:click="@componentClick()"></p>;`
-    - Repeat: `<p  class="b" es-class="state.a" es-repeat="let a in state.b" es-if="a.f">{{a.z}}</p>`
+    - HTML: `<p nv-html="state.c"></p>;`
+    - Model for input: `'<input nv-model="state.c"/>';` **if input is a repeat DOM, and intem of Array is'nt an object, please use `$index`**
+    - Class: `<p  class="b" nv-class="state.a"></p>';`
+    - Directives: ues `nv-on:event`
+      - `<p nv-on:click="@componentClick()"></p>;`
+    - Repeat: `<p  class="b" nv-class="state.a" nv-repeat="let a in state.b" nv-if="a.f">{{a.z}}</p>`
   - about function in Template Syntax
     - now you can send arguments in Function
     - arguments include:
       1. Event: `$event`
       2. String: `'xxx'`
       3. Number: `123`
-      4. Index: `$index`, you can only use this in **repeat DOM** : `<input es-on:click="this.show(b, $index)" es-repeat="let b in state.testArray2" es-model="b" es-class="b" />`
+      4. Index: `$index`, you can only use this in **repeat DOM** : `<input nv-on:click="this.show(b, $index)" nv-repeat="let b in state.testArray2" nv-model="b" nv-class="b" />`
       5. Variable: **`state.xxx`**
       6. Boolean: `true` `false`
-      7. For es-repeat: items like: `es-repeat="let a in state.b" es-if="a.f"`
+      7. For nv-repeat: items like: `nv-repeat="let a in state.b" nv-if="a.f"`
 
 7. Data monitor: this.state && this.setState
 
@@ -513,14 +513,14 @@ Now we support for typescript!
         },
         template: (`
           <div>
-            <p es-on:click="@go()">container: {{state.a}}</p>
-            <input es-model="state.a" />
-            <div es-repeat="let man in state.testArray">
-              <div es-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
+            <p nv-on:click="@go()">container: {{state.a}}</p>
+            <input nv-model="state.a" />
+            <div nv-repeat="let man in state.testArray">
+              <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
               <div>性别：{{man.sex}}</div>
-              <input es-on:click="@show(b, $index)" es-repeat="let b in state.testArray2" es-model="b" es-class="b" />
-              <div class="fuck" es-repeat="let b in man.job">
-                <input es-on:click="@show(b.name)" es-model="b.name" es-class="b.id" />
+              <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-model="b" nv-class="b" />
+              <div class="fuck" nv-repeat="let b in man.job">
+                <input nv-on:click="@show(b.name)" nv-model="b.name" nv-class="b.id" />
               </div>
             </div>
             <router-render></router-render>
@@ -664,7 +664,7 @@ route => EsModule => component
 - [x] 公共类提取
 - [x] 数据劫持
 - [x] 双向绑定模板
-- [x] Template Syntax: es-text es-html es-model es-class es-repeat es-if(6/6)
+- [x] Template Syntax: nv-text nv-html nv-model nv-class nv-repeat nv-if(6/6)
 - [x] 组件props
 - [x] 组件渲染
 - [x] 组件中使用组件

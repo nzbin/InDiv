@@ -1,6 +1,6 @@
 {
-  "name": "easiest",
-  "version": "1.2.3",
+  "name": "indiv",
+  "version": "1.0.0",
   "description": "A web mvvm framework.一个Web mvvm库。",
   "main": "build/index.js",
   "types": "build/index.d.ts",

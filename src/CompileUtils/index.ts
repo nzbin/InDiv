@@ -344,7 +344,7 @@ export class CompileUtil {
       if (nodeAttrs) {
         Array.from(nodeAttrs).forEach(attr => {
           const attrName = attr.name;
-          if (this.isDirective(attrName) && attrName !== 'es-repeat') {
+          if (this.isDirective(attrName) && attrName !== 'nv-repeat') {
             const dir = attrName.substring(3);
             const exp = attr.value;
             if (this.isEventDirective(dir)) {
@@ -386,8 +386,8 @@ export class CompileUtil {
           const exp = attr.value;
           const dir = attrName.substring(3);
           const repeatUtils = new CompileUtilForRepeat();
-          // if (this.isDirective(attrName) && attrName !== 'es-repeat' && new RegExp(`(^${key})|(^this)`).test(exp)) {
-          if (this.isDirective(attrName) && attrName !== 'es-repeat' && new RegExp(`(^${key})|(^state)|(^@)`).test(exp)) {
+          // if (this.isDirective(attrName) && attrName !== 'nv-repeat' && new RegExp(`(^${key})|(^this)`).test(exp)) {
+          if (this.isDirective(attrName) && attrName !== 'nv-repeat' && new RegExp(`(^${key})|(^state)|(^@)`).test(exp)) {
             if (this.isEventDirective(dir)) {
               new CompileUtilForRepeat(node).eventHandler(child, vm, exp, dir, key, value);
             } else {
@@ -407,7 +407,7 @@ export class CompileUtil {
 
       const newAttrs = child.attributes;
       if (newAttrs && canShowByIf) {
-        const restRepeat = Array.from(newAttrs).find(attr => this.isDirective(attr.name) && attr.name === 'es-repeat');
+        const restRepeat = Array.from(newAttrs).find(attr => this.isDirective(attr.name) && attr.name === 'nv-repeat');
         if (restRepeat) {
           const newWatchData = restRepeat.value.split(' ')[3];
           // if (/^(this\.)/.test(newWatchData)) {
@@ -426,7 +426,7 @@ export class CompileUtil {
   }
 
   public isDirective(attr: string): boolean {
-    return attr.indexOf('es-') === 0;
+    return attr.indexOf('nv-') === 0;
   }
 
   public isEventDirective(event: string): boolean {
@@ -443,7 +443,7 @@ export class CompileUtil {
     if (nodeAttrs) {
       Array.from(nodeAttrs).forEach(attr => {
         const attrName = attr.name;
-        if (attrName === 'es-repeat') result = true;
+        if (attrName === 'nv-repeat') result = true;
       });
     }
     return result;
@@ -455,7 +455,7 @@ export class CompileUtil {
     if (nodeAttrs) {
       Array.from(nodeAttrs).forEach(attr => {
         const attrName = attr.name;
-        if (attrName === 'es-if') result = true;
+        if (attrName === 'nv-if') result = true;
       });
     }
     return result;

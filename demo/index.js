@@ -67,8 +67,8 @@ Component({
   template: (`
     <div>
     子组件的子组件<br/>
-      <p es-on:click="this.props.b(3)">PCChild props.a:: {{this.props.a}}</p>
-      <p es-repeat="let a in this.state.d">1232{{a.z}}</p>
+      <p nv-on:click="this.props.b(3)">PCChild props.a:: {{this.props.a}}</p>
+      <p nv-repeat="let a in this.state.d">1232{{a.z}}</p>
     </div>
   `),
 })(RouteChild);
@@ -95,8 +95,8 @@ Component({
   template: (`
     <div>
     子组件的子组件<br/>
-      <p es-on:click="this.props.b(3)">PCChild props.ax:: {{this.props.ax}}</p>
-      <p es-repeat="let a in this.state.d">1232{{a.z}}</p>
+      <p nv-on:click="this.props.b(3)">PCChild props.ax:: {{this.props.ax}}</p>
+      <p nv-repeat="let a in this.state.d">1232{{a.z}}</p>
     </div>
   `),
 })(PCChild);
@@ -143,9 +143,9 @@ Component({
   },
   template: (`
     <div>
-      <p es-if="this.state.e" es-class="this.state.a" es-repeat="let a in this.state.d"  es-on:click="this.componentClick(this.state.d)">你好： {{a.z}}</p>
-      state.d: <input es-repeat="let a in this.state.d" es-model="a.z" />
-      <p es-on:click="this.sendProps(5)">props from component.state.a: {{this.props.ax}}</p>
+      <p nv-if="this.state.e" nv-class="this.state.a" nv-repeat="let a in this.state.d"  nv-on:click="this.componentClick(this.state.d)">你好： {{a.z}}</p>
+      state.d: <input nv-repeat="let a in this.state.d" nv-model="a.z" />
+      <p nv-on:click="this.sendProps(5)">props from component.state.a: {{this.props.ax}}</p>
     </div>
   `),
 })(PComponent);
@@ -195,12 +195,12 @@ Component({
     <div>
       <pc-component ax="{this.state.a}" b="{this.getProps}"></pc-component>
       下面跟组件没关系<br/>
-      <div es-if="this.state.f">
+      <div nv-if="this.state.f">
         ef
-        <input es-repeat="let a in this.state.e" es-model="a.z" />
-        <p es-class="this.state.c" es-if="a.show" es-repeat="let a in this.state.e" es-text="a.z" es-on:click="this.showAlert(a.z)"></p>
+        <input nv-repeat="let a in this.state.e" nv-model="a.z" />
+        <p nv-class="this.state.c" nv-if="a.show" nv-repeat="let a in this.state.e" nv-text="a.z" nv-on:click="this.showAlert(a.z)"></p>
         <p>111this.state.a：{{this.state.a}}</p>
-        <input es-model="this.state.a" />
+        <input nv-model="this.state.a" />
       </div>
       下面是子路由<br/>
       <router-render></router-render>
@@ -280,10 +280,10 @@ class R2 {
 Component({
   template: (`
     <div>
-      <p es-on:click="this.showLocation()">点击显示子路由跳转</p>
-      <input es-model="this.state.a"/>
+      <p nv-on:click="this.showLocation()">点击显示子路由跳转</p>
+      <input nv-model="this.state.a"/>
       <br/>
-      <p es-on:click="this.showAlert()">点击显示this.state.a:{{this.state.a}}</p>
+      <p nv-on:click="this.showAlert()">点击显示this.state.a:{{this.state.a}}</p>
       子组件:<br/>
       <route-child a="{this.state.a}"></route-child>
     </div>
@@ -322,14 +322,14 @@ class Container {
 Component({
   template: (`
     <div>
-      <p es-on:click="this.go()">container: {{this.state.a}}</p>
-      <input es-model="this.state.a" />
-      <div es-repeat="let man in this.state.testArray">
-        <div es-on:click="this.show(this.state.testArray2)">姓名：{{man.name}}</div>
+      <p nv-on:click="this.go()">container: {{this.state.a}}</p>
+      <input nv-model="this.state.a" />
+      <div nv-repeat="let man in this.state.testArray">
+        <div nv-on:click="this.show(this.state.testArray2)">姓名：{{man.name}}</div>
         <div>性别：{{man.sex}}</div>
-        <input es-on:click="this.show(b, $index)" es-repeat="let b in this.state.testArray2" es-model="b" es-class="b" />
-        <div class="fuck" es-repeat="let b in man.job">
-          <input es-on:click="this.show(b)" es-model="b.name" es-class="b.id" />
+        <input nv-on:click="this.show(b, $index)" nv-repeat="let b in this.state.testArray2" nv-model="b" nv-class="b" />
+        <div class="fuck" nv-repeat="let b in man.job">
+          <input nv-on:click="this.show(b)" nv-model="b.name" nv-class="b.id" />
         </div>
       </div>
       <router-render></router-render>

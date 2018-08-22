@@ -146,7 +146,7 @@ class Compile {
   }
 
   public isDirective(attr: string): boolean {
-    return attr.indexOf('es-') === 0;
+    return attr.indexOf('nv-') === 0;
   }
 
   public isEventDirective(eventName: string): boolean {
@@ -164,7 +164,7 @@ class Compile {
     if (nodeAttrs) {
       Array.from(nodeAttrs).forEach(attr => {
         const attrName = attr.name;
-        if (attrName === 'es-repeat') result = true;
+        if (attrName === 'nv-repeat') result = true;
       });
     }
     return result;
@@ -176,7 +176,7 @@ class Compile {
     if (nodeAttrs) {
       Array.from(nodeAttrs).forEach(attr => {
         const attrName = attr.name;
-        if (attrName === 'es-if') result = true;
+        if (attrName === 'nv-if') result = true;
       });
     }
     return result;

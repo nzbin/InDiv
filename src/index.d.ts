@@ -22,7 +22,7 @@ export declare type ComponentList<C> = {
 };
 
 export interface IMiddleware<ES> {
-    $bootstrap(vm: ES): void;
+    bootstrap(vm: ES): void;
 }
 
 export type EsRouteObject = {
@@ -56,7 +56,7 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     props?: Props | any;
     utils: Utils;
     compileUtil: CompileUtil;
-    $renderDom?: Element;
+    renderDom?: Element;
     $vm?: Vm | any;
     $template?: string;
     $components?: {
@@ -67,7 +67,7 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     propsWatcher?: Watcher;
 
     esOnInit?(): void;
-    $watchData?(): void;
+    watchData?(): void;
     esBeforeMount?(): void;
     esAfterMount?(): void;
     esOnDestory?(): void;
@@ -75,10 +75,10 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     esWatchState?(oldData?: any, newData?: any): void;
     esRouteChange?(lastRoute: string, newRoute: string): void;
     esReceiveProps?(nextProps: any): void;
-    $render(): void;
-    $reRender(): void;
-    $mountComponent(dom: Element, isFirstRender?: boolean): void;
-    $componentsConstructor(dom: Element): void;
+    render(): void;
+    reRender(): void;
+    mountComponent(dom: Element, isFirstRender?: boolean): void;
+    componentsConstructor(dom: Element): void;
     setState(newState: any): void;
     // setProps(newProps: any): void;
     getLocation(): any;
@@ -100,13 +100,13 @@ export interface IEsModule {
         [name: string]: Function;
     };
     providerList?: Map<string, IService>;
-    $bootstrap?: Function;
-    $buildImports(): void;
-    $buildProviderList(): void
-    $buildProviders4Services(): void;
-    $buildProviders4Components(): void;
-    $buildComponents4Components(): void;
-    $buildExports(): void;
+    bootstrap?: Function;
+    buildImports(): void;
+    buildProviderList(): void
+    buildProviders4Services(): void;
+    buildProviders4Components(): void;
+    buildComponents4Components(): void;
+    buildExports(): void;
 }
 
 export declare class Watcher {
@@ -224,14 +224,14 @@ export declare class Easiest {
     };
     $esRouteObject?: EsRouteObject;
     constructor();
-    $use(modal: IMiddleware<Easiest>): number;
-    $setRootPath(rootPath: string): void;
-    $bootstrapModule(Esmodule: Function): void;
-    $init(): void;
-    $renderModuleBootstrap(): void;
-    // $renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any>;
+    use(modal: IMiddleware<Easiest>): number;
+    setRootPath(rootPath: string): void;
+    bootstrapModule(Esmodule: Function): void;
+    init(): void;
+    renderModuleBootstrap(): void;
+    // renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any>;
     // replaceDom(component: IComponent, renderDOM: Element): Promise<any>;
-    $renderComponent(BootstrapComponent: Function, renderDOM: Element): any;
+    renderComponent(BootstrapComponent: Function, renderDOM: Element): any;
     replaceDom(component: IComponent, renderDOM: Element): void;
 }
 export declare class Router {
@@ -248,10 +248,10 @@ export declare class Router {
     watcher: KeyWatcher;
     renderRouteList: string[];
     constructor();
-    $bootstrap(vm: Easiest): void;
-    $init(arr: TRouter[]): void;
-    $setRootPath(rootPath: string): void;
-    $routeChange(lastRoute?: string, nextRoute?: string): void;
+    bootstrap(vm: Easiest): void;
+    init(arr: TRouter[]): void;
+    setRootPath(rootPath: string): void;
+    routeChange(lastRoute?: string, nextRoute?: string): void;
     redirectTo(redirectTo: string): void;
     refresh(): void;
     distributeRoutes(): void;
@@ -274,8 +274,6 @@ export declare function EsModule(options: TEsModuleOptions): (_constructor: Func
 export declare function factoryModule(EM: Function): IEsModule;
 
 export declare function Service(options?: TServiceOptions): (_constructor: Function) => void;
-
-export declare function toImmutabletoImmutable<T = any>(data: T): void;
 
 export declare interface OnInit {
     esOnInit(): void;

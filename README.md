@@ -17,13 +17,13 @@ Now we support for typescript!
   ```
 2. Create a Easiest:
 
-  1. use `$bootstrapModule` to bootstrap a root module `EsModule`
+  1. use `bootstrapModule` to bootstrap a root module `EsModule`
 
   ```javascript
   const easiest = new Easiest();
-  easiest.$bootstrapModule(M1);
-  easiest.$use(router); // if u are using a router
-  easiest.$init();
+  easiest.bootstrapModule(M1);
+  easiest.use(router); // if u are using a router
+  easiest.init();
   ```
 
 3. Create a router:
@@ -36,10 +36,10 @@ Now we support for typescript!
       4. routes can assign children and use `children: Array`
       5. routes can set a path like `path: '/:id'`
 
-  - if u are using `Router`, u must need to `router.$setRootPath('/RootPath')` to set an root path.
-  - `router.$routeChange = (old, next)` can listen route change
-  - `router.$init(routes);` can init Array routes
-  - if u want to watch routes changes, plz use `router.$routeChange=(old.new) => {}`
+  - if u are using `Router`, u must need to `router.setRootPath('/RootPath')` to set an root path.
+  - `router.routeChange = (old, next)` can listen route change
+  - `router.init(routes);` can init Array routes
+  - if u want to watch routes changes, plz use `router.routeChange=(old.new) => {}`
 
       1. use `this.setLocation((path: String, query: Object, params: Object)` to go to Path or `location.href`
       2. use `this.getLocation()` to get location states
@@ -99,15 +99,15 @@ Now we support for typescript!
     ],
     },
   ];
-  router.$setRootPath('/demo'); // so routes:Array => `/` is `/demo`
-  router.$init(routes);
-  router.$routeChange = function (old, next) {
+  router.setRootPath('/demo'); // so routes:Array => `/` is `/demo`
+  router.init(routes);
+  router.routeChange = function (old, next) {
     console.log('esRouteChange', old, next);
   };
   const easiest = new Easiest();
-  easiest.$bootstrapModule(M1);
-  const routerIndex = easiest.$use(router);
-  easiest.$init();
+  easiest.bootstrapModule(M1);
+  const routerIndex = easiest.use(router);
+  easiest.init();
   ```
 
 4. Create a Component:
@@ -655,7 +655,7 @@ Now we support for typescript!
   - Router
 
     ```typescript
-    $routeChange((lastRoute?: string, newRoute?: string): void;
+    routeChange((lastRoute?: string, newRoute?: string): void;
     ```
 
 ## Architecture

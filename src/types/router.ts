@@ -25,8 +25,8 @@ export interface IRouter {
     watcher: IKeyWatcher;
     renderRouteList: string[];
 
-    $bootstrap(vm: IEasiest): void;
-    $init(arr: TRouter[]): void;
+    bootstrap(vm: IEasiest): void;
+    init(arr: TRouter[]): void;
     esRouteChange(lastRoute?: string, nextRoute?: string): void;
     redirectTo(redirectTo: string): void;
     refresh(): void;

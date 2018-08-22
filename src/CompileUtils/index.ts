@@ -155,7 +155,7 @@ export class CompileUtilForRepeat {
           utilVm._setValueByValue(watchData[index], exp, key, vals);
         }
       }
-      // vm.$reRender();
+      // vm.reRender();
     };
     node.addEventListener('input', func, false);
     (node as any).eventinput = func;
@@ -314,7 +314,7 @@ export class CompileUtil {
       // if (/(this.state.).*/.test(exp)) vm.state[val] = (event.target as HTMLInputElement).value;
       if (/(state.).*/.test(exp)) vm.state[val] = (event.target as HTMLInputElement).value;
       // if (/(this.props.).*/.test(exp)) vm.props[val] = (event.target as HTMLInputElement).value;
-      // vm.$reRender();
+      // vm.reRender();
     };
     node.addEventListener('input', func, false);
     (node as any).eventinput = func;

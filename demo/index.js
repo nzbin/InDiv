@@ -516,15 +516,15 @@ const routes = [
     ],
   },
 ];
-router.$setRootPath('/demo');
-// router.$setRootPath('/');
-router.$init(routes);
+router.setRootPath('/demo');
+// router.setRootPath('/');
+router.init(routes);
 router.esRouteChange = function (old, next) {
   console.log('esRouteChange 3', old, next);
 };
 
 const easiest = new Easiest();
-// easiest.$bootstrapModule(M1);
-easiest.$bootstrapModule(M1);
-easiest.$use(router);
-easiest.$init();
+// easiest.bootstrapModule(M1);
+easiest.bootstrapModule(M1);
+easiest.use(router);
+easiest.init();

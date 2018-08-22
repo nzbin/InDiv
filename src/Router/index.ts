@@ -32,9 +32,9 @@ class Router {
     this.renderRouteList = [];
   }
 
-  public $bootstrap(vm: IEasiest): void {
+  public bootstrap(vm: IEasiest): void {
     this.$vm = vm;
-    this.$vm.$setRootPath(this.$rootPath);
+    this.$vm.setRootPath(this.$rootPath);
     this.$vm.$canRenderModule = false;
     this.$vm.$routeDOMKey = 'router-render';
     window.addEventListener('load', this.refresh.bind(this), false);
@@ -53,7 +53,7 @@ class Router {
     }, false);
   }
 
-  public $init(arr: TRouter[]): void {
+  public init(arr: TRouter[]): void {
     if (arr && arr instanceof Array) {
       const rootDom = document.querySelector('#root');
       this.rootDom = rootDom || null;
@@ -64,7 +64,7 @@ class Router {
     }
   }
 
-  public $setRootPath(rootPath: string): void {
+  public setRootPath(rootPath: string): void {
     if (rootPath && typeof rootPath === 'string') {
       this.$rootPath = rootPath;
     } else {
@@ -72,7 +72,7 @@ class Router {
     }
   }
 
-  public $routeChange(lastRoute?: string, nextRoute?: string): void {}
+  public routeChange(lastRoute?: string, nextRoute?: string): void { }
 
   public redirectTo(redirectTo: string): void {
     const rootPath = this.$rootPath === '/' ? '' : this.$rootPath;
@@ -114,7 +114,7 @@ class Router {
       // first render
       this.generalDistributeRoutes();
     }
-    this.$routeChange(this.lastRoute, this.currentUrl);
+    this.routeChange(this.lastRoute, this.currentUrl);
     this.lastRoute = this.currentUrl;
     if (this.needRedirectPath) {
       this.redirectTo(this.needRedirectPath);
@@ -319,7 +319,7 @@ class Router {
 
   // public instantiateComponent(FindComponent: Function, renderDom: Element): Promise<any> {
   public instantiateComponent(FindComponent: Function, renderDom: Element): any {
-    return this.$vm.$renderComponent(FindComponent, renderDom);
+    return this.$vm.renderComponent(FindComponent, renderDom);
   }
 }
 

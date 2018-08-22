@@ -155,6 +155,9 @@ function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]):
 }
 
 /**
+ * 
+ * renderVnode 对比完render node
+ * 
  * REMOVETAG: 0, 替换dom: 0
  * ADDTAG: 1, 增加dom: 1
  * REMOVETAG: 2, 增加dom: 2

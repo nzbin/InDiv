@@ -31,13 +31,13 @@ class Easiest {
     this.$esRouteObject = null;
   }
 
-  public $use(modal: IMiddleware<Easiest>): number {
-    modal.$bootstrap(this);
+  public use(modal: IMiddleware<Easiest>): number {
+    modal.bootstrap(this);
     this.modalList.push(modal);
     return this.modalList.findIndex(md => this.utils.isEqual(md, modal));
   }
 
-  public $setRootPath(rootPath: string): void {
+  public setRootPath(rootPath: string): void {
     if (rootPath && typeof rootPath === 'string') {
       this.$rootPath = rootPath;
     } else {
@@ -45,7 +45,7 @@ class Easiest {
     }
   }
 
-  public $bootstrapModule(Esmodule: Function): void {
+  public bootstrapModule(Esmodule: Function): void {
     if (!Esmodule) {
       console.error('must send a root module');
       return;
@@ -55,32 +55,32 @@ class Easiest {
     this.$components = Object.assign({}, this.$rootModule.$components);
   }
 
-  public $init(): void {
+  public init(): void {
     if (!this.$rootModule) {
-      console.error('must use $bootstrapModule to declare a root EsModule before $init');
+      console.error('must use bootstrapModule to declare a root EsModule before init');
       return;
     }
-    if (this.$canRenderModule) this.$renderModuleBootstrap();
+    if (this.$canRenderModule) this.renderModuleBootstrap();
   }
 
-  public $renderModuleBootstrap(): void {
-    if (!this.$rootModule.$bootstrap) {
-      console.error('need $bootstrap for render Module Bootstrap');
+  public renderModuleBootstrap(): void {
+    if (!this.$rootModule.bootstrap) {
+      console.error('need bootstrap for render Module Bootstrap');
       return;
     }
-    const BootstrapComponent = this.$rootModule.$bootstrap;
-    this.$renderComponent(BootstrapComponent, this.rootDom);
+    const BootstrapComponent = this.$rootModule.bootstrap;
+    this.renderComponent(BootstrapComponent, this.rootDom);
   }
 
-  public $renderComponent(BootstrapComponent: Function, renderDOM: Element): any {
+  public renderComponent(BootstrapComponent: Function, renderDOM: Element): any {
     const component: any = factoryCreator(BootstrapComponent, this.$rootModule);
 
     component.$vm = this;
     component.$components = this.$rootModule.$components;
     if (component.esOnInit) component.esOnInit();
-    if (component.$watchData) component.$watchData();
+    if (component.watchData) component.watchData();
     if (!component.$template) {
-      console.error('must decaler this.$template in $bootstrap()');
+      console.error('must decaler this.$template in bootstrap()');
       return;
     }
     const template = component.$template;
@@ -98,8 +98,8 @@ class Easiest {
   }
 
   public replaceDom(component: IComponent, renderDOM: Element): void {
-    component.$renderDom = renderDOM;
-    component.$render();
+    component.renderDom = renderDOM;
+    component.render();
   }
 }
 

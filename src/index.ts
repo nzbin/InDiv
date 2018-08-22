@@ -11,6 +11,5 @@ export { default as Easiest } from './Easiest';
 export { EsModule, factoryModule } from './EsModule';
 export { default as Service } from './Service';
 export { default as esHttp } from './Http';
-export { toImmutable } from './Immutable';
 
 export { Injectable, injector, factoryCreator } from './Injectable';

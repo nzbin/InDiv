@@ -13,13 +13,13 @@ export interface IEsModule {
     [name: string]: Function;
   };
   providerList?: Map<string, IService>;
-  $bootstrap?: Function;
+  bootstrap?: Function;
 
   // $declarations?(): void;
-  $buildImports?(): void;
-  $buildProviderList(): void;
-  $buildProviders4Services(): void;
-  $buildProviders4Components?(): void;
-  $buildComponents4Components?(): void;
-  $buildExports?(): void;
+  buildImports?(): void;
+  buildProviderList(): void;
+  buildProviders4Services(): void;
+  buildProviders4Components?(): void;
+  buildComponents4Components?(): void;
+  buildExports?(): void;
 }

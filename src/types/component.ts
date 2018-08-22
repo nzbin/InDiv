@@ -25,7 +25,7 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     props?: Props | any;
     utils: IUtil;
     compileUtil: ICompileUtil;
-    $renderDom?: Element;
+    renderDom?: Element;
     $vm?: Vm | any;
     $template?: string;
     $components?: {
@@ -36,7 +36,7 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     propsWatcher?: IWatcher;
 
     esOnInit?(): void;
-    $watchData?(): void;
+    watchData?(): void;
     esBeforeMount?(): void;
     esAfterMount?(): void;
     esOnDestory?(): void;
@@ -44,10 +44,10 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     esWatchState?(oldData?: any, newData?: any): void;
     esRouteChange?(lastRoute: string, newRoute: string): void;
     esReceiveProps?(nextProps: Props): void;
-    $render(): void;
-    $reRender(): void;
-    $mountComponent(dom: Element, isFirstRender?: boolean): void;
-    $componentsConstructor(dom: Element): void;
+    render(): void;
+    reRender(): void;
+    mountComponent(dom: Element, isFirstRender?: boolean): void;
+    componentsConstructor(dom: Element): void;
     setState(newState: any): void;
     // setProps(newProps: any): void;
     getLocation(): any;

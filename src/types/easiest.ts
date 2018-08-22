@@ -4,7 +4,7 @@ import { IService } from './service';
 import { IUtil } from './utils';
 
 export interface IMiddleware<ES> {
-    $bootstrap(vm: ES): void;
+    bootstrap(vm: ES): void;
 }
 
 export type EsRouteObject = {
@@ -26,13 +26,13 @@ export interface IEasiest {
     };
     $esRouteObject?: EsRouteObject;
 
-    $use(modal: IMiddleware<IEasiest>): number;
-    $setRootPath(rootPath: string): void;
-    $bootstrapModule(Esmodule: Function): void;
-    $init(): void;
-    $renderModuleBootstrap(): void;
-    // $renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any>;
-    $renderComponent(BootstrapComponent: Function, renderDOM: Element): any;
+    use(modal: IMiddleware<IEasiest>): number;
+    setRootPath(rootPath: string): void;
+    bootstrapModule(Esmodule: Function): void;
+    init(): void;
+    renderModuleBootstrap(): void;
+    // renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any>;
+    renderComponent(BootstrapComponent: Function, renderDOM: Element): any;
     replaceDom(component: IComponent, renderDOM: Element): void;
     // replaceDom(component: IComponent, renderDOM: Element): Promise<any>;
 }

@@ -50,10 +50,11 @@ class Compile {
 
   public recursiveDOM(childNodes: NodeListOf<Node & ChildNode>, fragment: DocumentFragment | Element): void {
     Array.from(childNodes).forEach((node: Element) => {
-      if (node.hasChildNodes() && !this.isRepeatNode(node)) {
-        this.recursiveDOM(node.childNodes, node);
-      }
+
+      if (node.hasChildNodes() && !this.isRepeatNode(node)) this.recursiveDOM(node.childNodes, node);
+
       if (!this.isIfNode(node)) fragment.appendChild(node);
+
       const text = node.textContent;
       const reg = /\{\{(.*)\}\}/g;
       if (this.isElementNode(node)) {

@@ -114,7 +114,16 @@ Now we support for typescript!
 
   - create a `class`
   - use decorator `Component` in typescript or use function `Component` in javascript
-  - `Component` accepts an object `template: string;state?: any;`
+  - Component types:
+
+    ```typescript
+    Component: {
+      template: string;
+      state?: any;
+    }
+    ```
+  
+  - template only accepts `state.XXX` from this.state, and event only accepts `@eventHandler` from method which commes from this
   - **please use setState after lifecycle `constructor()`**
 
     1. typescript

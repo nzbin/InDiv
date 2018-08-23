@@ -397,6 +397,24 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   }
 }
 
+@Component({
+  selector: 'test-component',
+  template: (`
+    <div>
+      <p>测试repeat组件: {{state.man}}</p>
+    </div>`),
+})
+class TestComponent implements OnInit {
+  public state: any;
+  public props: any;
+
+  public nvOnInit() {
+    this.state = {
+      man: this.props.man,
+    };
+  }
+}
+
 
 @Injectable
 @Component({
@@ -407,6 +425,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
       <p nv-on:click="@go()">container: {{state.a}}</p>
       <input nv-model="state.a" />
       <div nv-repeat="let man in state.testArray">
+        <test-component man="{man.name}"></test-component>
         <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
         <div>性别：{{man.sex}}</div>
         <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
@@ -536,6 +555,7 @@ class M2 {}
   components: [
     Container,
     PComponent,
+    TestComponent,
     R1,
   ],
   // components: {

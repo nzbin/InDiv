@@ -1,5 +1,5 @@
-import { InDiv, Component, Router, Utils, NvModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, esHttp, SetState, SetLocation, GetLocation } from '../src';
-// import { InDiv, Component, Router, Utils, NvModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, esHttp, SetState, SetLocation, GetLocation } from '../build';
+import { InDiv, Component, Router, Utils, NvModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, nvHttp, SetState, SetLocation, GetLocation } from '../src';
+// import { InDiv, Component, Router, Utils, NvModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, nvHttp, SetState, SetLocation, GetLocation } from '../build';
 
 @Service({
   isSingletonMode: true,
@@ -78,22 +78,22 @@ class RouteChild implements OnInit, HasRender, ReceiveProps {
     this.heroSearchService2.test();
   }
 
-  public esOnInit() {
+  public nvOnInit() {
     this.setState({
       b: this.props.a,
     });
     // this.setState({
     //   c: this.props.ax,
     // });
-    console.log(555, 'PCChild esOnInit props11', this.props);
+    console.log(555, 'PCChild nvOnInit props11', this.props);
     // this.props.b(3);
   }
 
-  public esHasRender() {
+  public nvHasRender() {
     console.log('RouteChild hasRender: this.props.a', this.props.a);
   }
 
-  public esReceiveProps(nextProps: any) {
+  public nvReceiveProps(nextProps: any) {
     console.log(3333, nextProps);
     this.state.b = nextProps.a;
     // this.setState({
@@ -132,18 +132,18 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps {
   public setState: SetState;
   constructor() {}
 
-  public esHasRender() {
+  public nvHasRender() {
     console.log('PCChild hasRender : this.props.ax', this.props, this.state);
   }
 
-  public esOnInit() {
+  public nvOnInit() {
     this.setState({
       b: this.props.ax,
     });
     // this.setState({
     //   c: this.props.ax,
     // });
-    console.log(555, 'PCChild esOnInit props11', this.props);
+    console.log(555, 'PCChild nvOnInit props11', this.props);
     // this.props.b(3);
   }
 
@@ -153,15 +153,15 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps {
     console.log('this.props', this.props);
   }
 
-  public esBeforeMount() {
-    console.log('PCChild esBeforeMount props11', this.props.ax);
+  public nvBeforeMount() {
+    console.log('PCChild nvBeforeMount props11', this.props.ax);
   }
 
-  public esAfterMount() {
-    console.log('PCChild esAfterMount props11', this.props.ax);
+  public nvAfterMount() {
+    console.log('PCChild nvAfterMount props11', this.props.ax);
   }
 
-  public esReceiveProps(nextProps: any) {
+  public nvReceiveProps(nextProps: any) {
     console.log(this.props.ax);
     console.log(4444, nextProps);
     this.state.b = nextProps.ax;
@@ -207,17 +207,17 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
 
   constructor() {}
 
-  public esOnInit() {
-    console.log('esOnInit props11', this.props);
+  public nvOnInit() {
+    console.log('nvOnInit props11', this.props);
     this.state.ax = this.props.ax;
   }
 
-  public esBeforeMount() {
-    console.log('esBeforeMount props11', this.props);
+  public nvBeforeMount() {
+    console.log('nvBeforeMount props11', this.props);
   }
 
-  public esAfterMount() {
-    console.log('esAfterMount props11', this.props);
+  public nvAfterMount() {
+    console.log('nvAfterMount props11', this.props);
   }
   public componentClick(a: any) {
     // alert('点击了组件');
@@ -237,11 +237,11 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
     this.setState({ a: a });
     this.props.b(a);
   }
-  public esWatchState(oldData: string, newData: string) {
+  public nvWatchState(oldData: string, newData: string) {
     console.log('oldData Component:', oldData);
     console.log('newData Component:', newData);
   }
-  public esReceiveProps(nextProps: any) {
+  public nvReceiveProps(nextProps: any) {
     console.log(1111111111111, nextProps);
     this.state.ax = nextProps.ax;
   }
@@ -306,24 +306,24 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
     this.heroSearchService.test();
   }
 
-  public esOnInit() {
+  public nvOnInit() {
     this.utils.setCookie('tutor', {
       name: 'gerry',
       github: 'https://github.com/DimaLiLongJi',
     }, { expires: 7 });
   }
-  public esBeforeMount() {
+  public nvBeforeMount() {
     const cookie = this.utils.getCookie('tutor');
     console.log('cookie is', cookie);
-    console.log('is esBeforeMount');
+    console.log('is nvBeforeMount');
   }
-  public esAfterMount() {
-    // console.log('is esAfterMount');
+  public nvAfterMount() {
+    // console.log('is nvAfterMount');
   }
-  public esRouteChange(lastRoute: string, newRoute: string) {
-    console.log('R1 is esRouteChange', lastRoute, newRoute);
+  public nvRouteChange(lastRoute: string, newRoute: string) {
+    console.log('R1 is nvRouteChange', lastRoute, newRoute);
   }
-  public esWatchState(oldData: any, newData: any) {
+  public nvWatchState(oldData: any, newData: any) {
     console.log('oldData Controller:', oldData);
     console.log('newData Controller:', newData);
   }
@@ -365,22 +365,22 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
     this.heroSearchService1.test();
     console.log('this.heroSearchService1', this.heroSearchService1);
   }
-  public esOnInit() {
+  public nvOnInit() {
     console.log('this.getLocation', this.getLocation());
   }
-  public esBeforeMount() {
-    // console.log('is esBeforeMount');
+  public nvBeforeMount() {
+    // console.log('is nvBeforeMount');
   }
-  public esAfterMount() {
-    // console.log('is esAfterMount');
+  public nvAfterMount() {
+    // console.log('is nvAfterMount');
   }
-  public esHasRender() {
+  public nvHasRender() {
     console.log('！！father: this.state.a', this.state.a);
   }
-  public esRouteChange(lastRoute: string, newRoute: string) {
-    console.log('R2 is esRouteChange', lastRoute, newRoute);
+  public nvRouteChange(lastRoute: string, newRoute: string) {
+    console.log('R2 is nvRouteChange', lastRoute, newRoute);
   }
-  public esWatchState(oldData: any, newData: any) {
+  public nvWatchState(oldData: any, newData: any) {
     console.log('oldData Controller:', oldData);
     console.log('newData Controller:', newData);
   }
@@ -474,17 +474,17 @@ class Container implements OnInit, AfterMount {
   ) {
     this.hss.test();
     // console.log(this.state);
-    console.log('esHttp', esHttp);
+    console.log(' nvHttp', nvHttp);
     // console.log('hss', this.hss);
     // console.log('hss2', this.hss2);
   }
 
-  public esOnInit() {
-    console.log('esOnInit Container');
+  public nvOnInit() {
+    console.log('nvOnInit Container');
   }
 
-  public esAfterMount() {
-    console.log('esAfterMount Container');
+  public nvAfterMount() {
+    console.log('nvAfterMount Container');
   }
 
   public go() {
@@ -604,7 +604,7 @@ router.setRootPath('/demo');
 // router.setRootPath('/');
 router.init(routes);
 router.routeChange = function (old: string, next: string) {
-  console.log('esRouteChange', old, next);
+  console.log('nvRouteChange', old, next);
 };
 
 const inDiv = new InDiv();

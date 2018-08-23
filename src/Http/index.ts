@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const esHttp = {
+const nvHttp = {
   get: function(url: string, params?: any): Promise<any> {
     return new Promise((resolve, reject) => {
       const pms = params ? { params } : null;
@@ -65,4 +65,4 @@ const esHttp = {
 
 };
 
-export default esHttp;
+export default nvHttp;

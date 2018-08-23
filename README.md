@@ -102,7 +102,7 @@ Now we support for typescript!
   router.setRootPath('/demo'); // so routes:Array => `/` is `/demo`
   router.init(routes);
   router.routeChange = function (old, next) {
-    console.log('esRouteChange', old, next);
+    console.log('nvRouteChange', old, next);
   };
   const easiest = new InDiv();
   easiest.bootstrapModule(M1);
@@ -127,7 +127,7 @@ Now we support for typescript!
   - `selector` is your component tag name for HTML and used in template.
   - `template` only accepts `state.XXX` from this.state, and event only accepts `@eventHandler` from method which commes from this
   - `state` you can set an initial state for component
-  - **please use `setState` after lifecycle `constructor()` and `esOnInit`**, so you can change or set value for `this.state` without `setState` in lifecycle `constructor()` and `esOnInit`
+  - **please use `setState` after lifecycle `constructor()` and `nvOnInit`**, so you can change or set value for `this.state` without `setState` in lifecycle `constructor()` and `nvOnInit`
 
     1. typescript
 
@@ -209,12 +209,12 @@ Now we support for typescript!
           console.log(this.state);
         }
 
-        public esOnInit() {
-          console.log('esOnInit Container');
+        public nvOnInit() {
+          console.log('nvOnInit Container');
         }
 
-        public esAfterMount() {
-          console.log('esAfterMount Container');
+        public nvAfterMount() {
+          console.log('nvAfterMount Container');
         }
 
         public go() {
@@ -230,7 +230,7 @@ Now we support for typescript!
     2. javascript
 
       - to use function `Component` declare `template` and `state`
-      - to use lifecycle `esOnInit esBeforeMount esAfterMount esOnDestory esHasRender esWatchState esRouteChange` in Class
+      - to use lifecycle `nvOnInit nvBeforeMount nvAfterMount nvOnDestory nvHasRender nvWatchState nvRouteChange` in Class
       - to use `constructor`'s arguments of `Component` for inject `Service`, and arguments must be lowercase lette of initials lette  of Service class name. For example, you want to inject a service  class `HeroService`, you must write argument in `constructor` with `heroService`
 
       ```javascript
@@ -241,8 +241,8 @@ Now we support for typescript!
           this.ss = heroSearchService;
           this.ss.test();
         }
-        esOnInit() {
-          console.log('esOnInit Container');
+        nvOnInit() {
+          console.log('nvOnInit Container');
         }
 
         go() {
@@ -407,7 +407,7 @@ Now we support for typescript!
   - use `this.state: Object` and `this.setState(parmars: Function || Object)`
   - if u have some variable, u can set `this.state` in `constructor(){}`
   - if u want to change State, plz use `this.setState`, parmars can be `Object` or `Function` which must return an `Object`
-  - and u can recive this change in life cycle `esWatchState(oldData, newData)`
+  - and u can recive this change in life cycle `nvWatchState(oldData, newData)`
 
 8. `Watcher` and `KeyWatcher`
 
@@ -480,8 +480,8 @@ Now we support for typescript!
     3. http
 
       ```javascript
-      import { esHttp } from 'InDiv';
-      const http = esHttp;
+      import { nvHttp } from 'InDiv';
+      const http = nvHttp;
       http.get(url, params);
       http.delete(url, params);
       http.post(url, params);
@@ -558,7 +558,7 @@ Now we support for typescript!
           this.hsrS.test();
         }
 
-        public esHasRender() {}
+        public nvHasRender() {}
       }
 
       @NvModule({
@@ -657,14 +657,14 @@ Now we support for typescript!
 
     ```typescript
       constructor()
-      esOnInit(): void;
-      esBeforeMount(): void;
-      esAfterMount(): void;
-      esOnDestory(): void;
-      esHasRender(): void;
-      esWatchState(oldData?: any, newData?: any): void;
-      esRouteChange(lastRoute?: string, newRoute?: string): void;
-      esReceiveProps(nextProps: any): void;
+      nvOnInit(): void;
+      nvBeforeMount(): void;
+      nvAfterMount(): void;
+      nvOnDestory(): void;
+      nvHasRender(): void;
+      nvWatchState(oldData?: any, newData?: any): void;
+      nvRouteChange(lastRoute?: string, newRoute?: string): void;
+      nvReceiveProps(nextProps: any): void;
     ```
 
   - Router

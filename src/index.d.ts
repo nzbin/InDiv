@@ -65,15 +65,15 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     stateWatcher?: Watcher;
     // propsWatcher?: Watcher;
 
-    esOnInit?(): void;
+    nvOnInit?(): void;
     watchData?(): void;
-    esBeforeMount?(): void;
-    esAfterMount?(): void;
-    esOnDestory?(): void;
-    esHasRender?(): void;
-    esWatchState?(oldData?: any, newData?: any): void;
-    esRouteChange?(lastRoute: string, newRoute: string): void;
-    esReceiveProps?(nextProps: any): void;
+    nvBeforeMount?(): void;
+    nvAfterMount?(): void;
+    nvOnDestory?(): void;
+    nvHasRender?(): void;
+    nvWatchState?(oldData?: any, newData?: any): void;
+    nvRouteChange?(lastRoute: string, newRoute: string): void;
+    nvReceiveProps?(nextProps: any): void;
     render(): void;
     reRender(): void;
     mountComponent(dom: Element, isFirstRender?: boolean): void;
@@ -132,7 +132,7 @@ export declare class Utils {
     formatInnerHTML(inner: string): string;
 }
 
-export declare const esHttp: {
+export declare const nvHttp: {
     get(url: string, params?: any): Promise<any>;
     delete(url: string, params?: any): Promise<any>;
     post(url: string, params?: any): Promise<any>;
@@ -278,35 +278,35 @@ export declare function factoryModule(EM: Function): INvModule;
 export declare function Service(options?: TServiceOptions): (_constructor: Function) => void;
 
 export declare interface OnInit {
-    esOnInit(): void;
+    nvOnInit(): void;
 }
 
 export declare interface BeforeMount {
-    esBeforeMount(): void;
+    nvBeforeMount(): void;
 }
 
 export declare interface AfterMount {
-    esAfterMount(): void;
+    nvAfterMount(): void;
 }
 
 export declare interface OnDestory {
-    esOnDestory(): void;
+    nvOnDestory(): void;
 }
 
 export declare interface HasRender {
-    esHasRender(): void;
+    nvHasRender(): void;
 }
 
 export declare interface WatchState {
-    esWatchState(oldData?: any, newData?: any): void;
+    nvWatchState(oldData?: any, newData?: any): void;
 }
 
 export declare interface RouteChange {
-    esRouteChange(lastRoute?: string, newRoute?: string): void;
+    nvRouteChange(lastRoute?: string, newRoute?: string): void;
 }
 
 export declare interface ReceiveProps {
-    esReceiveProps(nextProps: any): void;
+    nvReceiveProps(nextProps: any): void;
 }
 
 export declare interface SetState {

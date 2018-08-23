@@ -79,7 +79,7 @@ class InDiv {
 
     component.$vm = this;
     component.$components = this.$rootModule.$components;
-    if (component.esOnInit) component.esOnInit();
+    if (component.nvOnInit) component.nvOnInit();
     if (component.watchData) component.watchData();
     if (!component.$template) {
       console.error('must decaler this.$template in bootstrap()');
@@ -87,10 +87,10 @@ class InDiv {
     }
     const template = component.$template;
     if (template && typeof template === 'string' && renderDOM) {
-      if (component.esBeforeMount) component.esBeforeMount();
+      if (component.nvBeforeMount) component.nvBeforeMount();
 
       this.replaceDom(component, renderDOM);
-      if (component.esAfterMount) component.esAfterMount();
+      if (component.nvAfterMount) component.nvAfterMount();
       return component;
 
     } else {

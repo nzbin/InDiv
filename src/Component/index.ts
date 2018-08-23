@@ -46,8 +46,8 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
     };
 
     vm.watchData = function (): void {
-      // if (this.props) (this as IComponent<State, Props, Vm>).propsWatcher = new Watcher((this as IComponent<State, Props, Vm>).props, (this as IComponent<State, Props, Vm>).esWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).reRender.bind(this as IComponent<State, Props, Vm>));
-      if (this.state) (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, (this as IComponent<State, Props, Vm>).esWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).reRender.bind(this as IComponent<State, Props, Vm>));
+      // if (this.props) (this as IComponent<State, Props, Vm>).propsWatcher = new Watcher((this as IComponent<State, Props, Vm>).props, (this as IComponent<State, Props, Vm>).nvWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).reRender.bind(this as IComponent<State, Props, Vm>));
+      if (this.state) (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, (this as IComponent<State, Props, Vm>).nvWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).reRender.bind(this as IComponent<State, Props, Vm>));
     };
 
     vm.render = function () {
@@ -56,12 +56,12 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
       (this as IComponent<State, Props, Vm>).mountComponent(dom, true);
       (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
         if (component.scope.render) component.scope.render();
-        if (component.scope.esAfterMount) component.scope.esAfterMount();
+        if (component.scope.nvAfterMount) component.scope.nvAfterMount();
       });
-      if (this.esHasRender) this.esHasRender();
+      if (this.nvHasRender) this.nvHasRender();
     };
 
-    vm.esWatchState = (oldData?: any, newData?: any) => { };
+    vm.nvWatchState = (oldData?: any, newData?: any) => { };
 
     vm.reRender = function (): void {
       const dom = (this as IComponent<State, Props, Vm>).renderDom;
@@ -70,9 +70,9 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
       (this as IComponent<State, Props, Vm>).mountComponent(dom, false);
       (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
         if (component.scope.render) component.scope.reRender();
-        if (component.scope.esAfterMount) component.scope.esAfterMount();
+        if (component.scope.nvAfterMount) component.scope.nvAfterMount();
       });
-      if ((this as IComponent<State, Props, Vm>).esHasRender) (this as IComponent<State, Props, Vm>).esHasRender();
+      if ((this as IComponent<State, Props, Vm>).nvHasRender) (this as IComponent<State, Props, Vm>).nvHasRender();
     };
 
     vm.mountComponent = function (dom: Element, isFirstRender?: boolean): void {
@@ -86,15 +86,15 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
         if (saveComponent) {
           component.scope = saveComponent.scope;
           if (!this.utils.isEqual(component.scope, component.scope.props)) {
-            if (component.scope.esReceiveProps) component.scope.esReceiveProps(component.props);
+            if (component.scope.nvReceiveProps) component.scope.nvReceiveProps(component.props);
             component.scope.props = component.props;
           }
         }
         component.scope.$vm = (this as IComponent<State, Props, Vm>).$vm;
         component.scope.$components = (this as IComponent<State, Props, Vm>).$components;
-        if (component.scope.esOnInit && isFirstRender) component.scope.esOnInit();
+        if (component.scope.nvOnInit && isFirstRender) component.scope.nvOnInit();
         if (component.scope.watchData) component.scope.watchData();
-        if (component.scope.esBeforeMount) component.scope.esBeforeMount();
+        if (component.scope.nvBeforeMount) component.scope.nvBeforeMount();
       });
     };
 

@@ -124,9 +124,6 @@ export function factoryModule(NM: Function): INvModule {
   nm.buildProviders4Services();
   nm.buildComponents4Components();
   nm.buildProviders4Components();
-
-  console.log(11111, nm.$components);
-  console.log(22222, nm.$exports);
   // em.buildExports();
   return nm;
 }

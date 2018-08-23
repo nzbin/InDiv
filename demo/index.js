@@ -1,4 +1,4 @@
-import { InDiv, Component, Router, Utils, NvModule, Service, esHttp } from '../build';
+import { InDiv, Component, Router, Utils, NvModule, Service, nvHttp } from '../build';
 
 class HeroSearchService1 {
   constructor() {
@@ -45,16 +45,16 @@ class RouteChild {
     this.heroSearchService = heroSearchService2;
     this.heroSearchService.test();
   }
-  esOnInit() {
+  nvOnInit() {
     this.setState({
       b: this.props.a,
     });
-    console.log(555, 'PCChild esOnInit props11', this.props);
+    console.log(555, 'PCChild nvOnInit props11', this.props);
   }
-  esHasRender() {
+  nvHasRender() {
     console.log('RouteChild: this.props.a', this.props.a);
   }
-  esReceiveProps(nextProps) {
+  nvReceiveProps(nextProps) {
     console.log(3333, nextProps);
     this.state.b = nextProps.a;
   }
@@ -83,17 +83,17 @@ Component({
 })(RouteChild);
 
 class PCChild {
-  esHasRender() {
+  nvHasRender() {
     console.log('PCChild: this.props.ax', this.props.ax);
   }
-  esOnInit() {
+  nvOnInit() {
     this.setState({
       b: this.props.ax,
     });
     // this.setState({
     //   c: this.props.ax,
     // });
-    console.log(555, 'PCChild esOnInit props11', this.props);
+    console.log(555, 'PCChild nvOnInit props11', this.props);
     // this.props.b(3);
   }
 
@@ -103,15 +103,15 @@ class PCChild {
     console.log('this.props', this.props);
   }
 
-  esBeforeMount() {
-    console.log('PCChild esBeforeMount props11', this.props.ax);
+  nvBeforeMount() {
+    console.log('PCChild nvBeforeMount props11', this.props.ax);
   }
 
-  esAfterMount() {
-    console.log('PCChild esAfterMount props11', this.props.ax);
+  nvAfterMount() {
+    console.log('PCChild nvAfterMount props11', this.props.ax);
   }
 
-  esReceiveProps(nextProps) {
+  nvReceiveProps(nextProps) {
     console.log(this.props.ax);
     console.log(4444, nextProps);
     this.state.b = nextProps.ax;
@@ -143,17 +143,17 @@ Component({
 })(PCChild);
 
 class PComponent {
-  esOnInit() {
+  nvOnInit() {
     console.log('props11', this.props);
   }
-  esBeforeMount() {
-    console.log('esBeforeMount props11', this.props);
+  nvBeforeMount() {
+    console.log('nvBeforeMount props11', this.props);
   }
 
-  esAfterMount() {
-    console.log('esAfterMount props11', this.props);
+  nvAfterMount() {
+    console.log('nvAfterMount props11', this.props);
   }
-  esReceiveProps(nextProps) {
+  nvReceiveProps(nextProps) {
     console.log(1111111111111, nextProps);
     this.state.ax = nextProps.ax;
   }
@@ -175,7 +175,7 @@ class PComponent {
     this.setState({ a: a });
     this.props.b(a);
   }
-  esWatchState(oldData, newData) {
+  nvWatchState(oldData, newData) {
     console.log('oldData Component:', oldData);
     console.log('newData Component:', newData);
   }
@@ -214,24 +214,24 @@ class R1 {
     this.utils = new Utils();
   }
 
-  esOnInit() {
+  nvOnInit() {
     this.utils.setCookie('tutor', {
       name: 'gerry',
       github: 'https://github.com/DimaLiLongJi',
     }, { expires: 7 });
   }
-  esBeforeMount() {
+  nvBeforeMount() {
     const cookie = this.utils.getCookie('tutor');
     console.log('cookie is', cookie);
-    console.log('is esBeforeMount');
+    console.log('is nvBeforeMount');
   }
-  esAfterMount() {
-    // console.log('is esAfterMount');
+  nvAfterMount() {
+    // console.log('is nvAfterMount');
   }
-  esRouteChange(lastRoute, newRoute) {
-    console.log('R1 is esRouteChange', lastRoute, newRoute);
+  nvRouteChange(lastRoute, newRoute) {
+    console.log('R1 is nvRouteChange', lastRoute, newRoute);
   }
-  esWatchState(oldData, newData) {
+  nvWatchState(oldData, newData) {
     console.log('oldData Controller:', oldData);
     console.log('newData Controller:', newData);
   }
@@ -300,22 +300,22 @@ class R2 {
     this.heroSearchService1 = heroSearchService1;
     this.heroSearchService1.test();
   }
-  esOnInit() {
+  nvOnInit() {
     console.log('this.$location222', this.getLocation());
   }
-  esBeforeMount() {
-    // console.log('is esBeforeMount');
+  nvBeforeMount() {
+    // console.log('is nvBeforeMount');
   }
-  esAfterMount() {
-    // console.log('is esAfterMount');
+  nvAfterMount() {
+    // console.log('is nvAfterMount');
   }
-  esHasRender() {
+  nvHasRender() {
     console.log('！！father: this.state.a', this.state.a);
   }
-  esRouteChange(lastRoute, newRoute) {
-    console.log('R2 is esRouteChange', lastRoute, newRoute);
+  nvRouteChange(lastRoute, newRoute) {
+    console.log('R2 is nvRouteChange', lastRoute, newRoute);
   }
-  esWatchState(oldData, newData) {
+  nvWatchState(oldData, newData) {
     console.log('oldData Controller:', oldData);
     console.log('newData Controller:', newData);
   }
@@ -356,13 +356,13 @@ class Container {
     this.ss = heroSearchService;
     this.ss.test();
     console.log('heroSearchService1', heroSearchService1);
-    console.log('esHttp', esHttp);
+    console.log('nvHttp', nvHttp);
   }
-  esOnInit() {
-    console.log('esOnInit Container');
+  nvOnInit() {
+    console.log('nvOnInit Container');
   }
 
-  esAfterMount() {
+  nvAfterMount() {
   }
 
   go() {
@@ -539,8 +539,8 @@ const routes = [
 router.setRootPath('/demo');
 // router.setRootPath('/');
 router.init(routes);
-router.esRouteChange = function (old, next) {
-  console.log('esRouteChange 3', old, next);
+router.nvRouteChange = function (old, next) {
+  console.log('nvRouteChange 3', old, next);
 };
 
 const inDiv = new InDiv();

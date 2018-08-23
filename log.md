@@ -4,7 +4,7 @@
   - add route and Life cycle
 
 2. 2018-04-29 add watcher
-  - add new life cycle: `esWatchState` and `$beforeInit`
+  - add new life cycle: `nvWatchState` and `$beforeInit`
   - add new class: `Controller`
   - add watcher for state in `Controller` and `Component`
 
@@ -14,7 +14,7 @@
 
 4. 2018-05-01 optimize `Controller` and `Component`
   - add new class `Lifecycle`
-  - add new life cycle: `esRouteChange` in class `Router`
+  - add new life cycle: `nvRouteChange` in class `Router`
   - optimize `Controller` and `Component`
   - fix lifecycle of class `Component`
 
@@ -24,7 +24,7 @@
   - optimize `Controller` and `Component`, update `props` in `Component`
   - update the declaration of `Component` in `Controller`
   - add new function `setProps` for update `props` in `Component`
-  - add new lifecycle `esHasRender` for update `props` in `Component` and `Controller`
+  - add new lifecycle `nvHasRender` for update `props` in `Component` and `Controller`
 
 6. 2018-05-03/04 optimize
   - add new class `Utils`
@@ -39,16 +39,16 @@
     watchSomething(oldData, newData) {}
     ```
 
-8. 2018-05-03/04 add Template Syntax : `es-repeat="let x in this.state.xxx"`
+8. 2018-05-03/04 add Template Syntax : `nv-repeat="let x in this.state.xxx"`
 
-9. 2018-05-11 strengthen `es-repeat` and function in Template Syntax
+9. 2018-05-11 strengthen `nv-repeat` and function in Template Syntax
 
-10. 2018-05-18 fix `es-repeat`
+10. 2018-05-18 fix `nv-repeat`
   - template must be parceled by a father Dom in class `Controller`
-  - fix es-repeat can't be compiled exactly
+  - fix nv-repeat can't be compiled exactly
 
-11. 2018-05-19 add `es-if`
-  - add `es-if`
+11. 2018-05-19 add `nv-if`
+  - add `nv-if`
   - fix `setProp` and `setState`, now u can set `false`, `0`
 
 12. 2018-05-26 add `Router` and `RouterHash` and `KeyWatcher`
@@ -66,6 +66,6 @@
 
 17. 2018-07-28 support for ts
 
-18. 2018-08-12 fix es-repeat, remove class `Component` `NvModule` `Service`, and add decorator `Component` `NvModule` `Service`
+18. 2018-08-12 fix nv-repeat, remove class `Component` `NvModule` `Service`, and add decorator `Component` `NvModule` `Service`
 
 19. 2018-08-17 remove watch this.props and only use state and function in `Component` for `Component: template`

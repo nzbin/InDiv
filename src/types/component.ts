@@ -36,15 +36,15 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     stateWatcher?: IWatcher;
     // propsWatcher?: IWatcher;
 
-    esOnInit?(): void;
+    nvOnInit?(): void;
     watchData?(): void;
-    esBeforeMount?(): void;
-    esAfterMount?(): void;
-    esOnDestory?(): void;
-    esHasRender?(): void;
-    esWatchState?(oldData?: any, newData?: any): void;
-    esRouteChange?(lastRoute: string, newRoute: string): void;
-    esReceiveProps?(nextProps: Props): void;
+    nvBeforeMount?(): void;
+    nvAfterMount?(): void;
+    nvOnDestory?(): void;
+    nvHasRender?(): void;
+    nvWatchState?(oldData?: any, newData?: any): void;
+    nvRouteChange?(lastRoute: string, newRoute: string): void;
+    nvReceiveProps?(nextProps: Props): void;
     render(): void;
     reRender(): void;
     mountComponent(dom: Element, isFirstRender?: boolean): void;

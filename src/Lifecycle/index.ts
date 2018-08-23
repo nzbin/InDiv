@@ -1,31 +1,31 @@
 export interface OnInit {
-  esOnInit(): void;
+  nvOnInit(): void;
 }
 
 export interface BeforeMount {
-  esBeforeMount(): void;
+  nvBeforeMount(): void;
 }
 
 export interface AfterMount {
-  esAfterMount(): void;
+  nvAfterMount(): void;
 }
 
 export interface OnDestory {
-  esOnDestory(): void;
+  nvOnDestory(): void;
 }
 
 export interface HasRender {
-  esHasRender(): void;
+  nvHasRender(): void;
 }
 
 export interface WatchState {
-  esWatchState(oldData?: any, newData?: any): void;
+  nvWatchState(oldData?: any, newData?: any): void;
 }
 
 export interface RouteChange {
-  esRouteChange(lastRoute?: string, newRoute?: string): void;
+  nvRouteChange(lastRoute?: string, newRoute?: string): void;
 }
 
 export interface ReceiveProps {
-  esReceiveProps(nextProps: any): void;
+  nvReceiveProps(nextProps: any): void;
 }

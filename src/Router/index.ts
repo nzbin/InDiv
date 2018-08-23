@@ -151,7 +151,7 @@ class Router {
 
       if (path !== lastRouteList[index]) {
         const willRemoveComponent = this.hasRenderComponentList[index];
-        if (willRemoveComponent && willRemoveComponent.esOnDestory) willRemoveComponent.esOnDestory();
+        if (willRemoveComponent && willRemoveComponent.nvOnDestory) willRemoveComponent.nvOnDestory();
         const needRenderRoute = this.routesList[index];
         if (!needRenderRoute) {
           console.error('route error: wrong route instantiation in insertRenderRoutes:', this.currentUrl);
@@ -160,8 +160,8 @@ class Router {
 
         // if (needRenderRoute.redirectTo && /^\/.*/.test(needRenderRoute.redirectTo) && (index + 1) === this.renderRouteList.length) {
         //   this.hasRenderComponentList.forEach((c, i) => {
-        //     if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
-        //     if (i > index && c.esOnDestory) c.esOnDestory();
+        //     if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
+        //     if (i > index && c.nvOnDestory) c.nvOnDestory();
         //   });
         //   this.hasRenderComponentList.length = index;
         //   this.needRedirectPath = needRenderRoute.redirectTo;
@@ -172,8 +172,8 @@ class Router {
         const needRenderComponent = this.$vm.$components.find((component: any) => component.$selector === needRenderRoute.component);
         const renderDom = document.querySelectorAll('router-render')[index - 1];
         this.hasRenderComponentList.forEach((c, i) => {
-          if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
-          if (i > index && c.esOnDestory) c.esOnDestory();
+          if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
+          if (i > index && c.nvOnDestory) c.nvOnDestory();
         });
         this.hasRenderComponentList.length = index;
         // this.instantiateComponent(needRenderComponent, renderDom).then(component => {
@@ -190,8 +190,8 @@ class Router {
 
         if (needRenderRoute.redirectTo && /^\/.*/.test(needRenderRoute.redirectTo) && (index + 1) === this.renderRouteList.length) {
           this.hasRenderComponentList.forEach((c, i) => {
-            if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
-            if (i > index && c.esOnDestory) c.esOnDestory();
+            if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
+            if (i > index && c.nvOnDestory) c.nvOnDestory();
           });
           this.hasRenderComponentList.length = index;
           this.needRedirectPath = needRenderRoute.redirectTo;
@@ -202,8 +202,8 @@ class Router {
       if (index === (this.renderRouteList.length - 1) && index < (lastRouteList.length - 1)) {
         const renderDom = document.querySelectorAll('router-render')[index];
         this.hasRenderComponentList.forEach((c, i) => {
-          if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
-          if (i > index && c.esOnDestory) c.esOnDestory();
+          if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
+          if (i > index && c.nvOnDestory) c.nvOnDestory();
         });
         if (renderDom && renderDom.hasChildNodes()) renderDom.removeChild(renderDom.childNodes[0]);
         this.hasRenderComponentList.length = index;
@@ -211,8 +211,8 @@ class Router {
         const needRenderRoute = this.routesList[index];
         if (needRenderRoute.redirectTo && /^\/.*/.test(needRenderRoute.redirectTo) && (index + 1) === this.renderRouteList.length) {
           this.hasRenderComponentList.forEach((c, i) => {
-            if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
-            if (i > index && c.esOnDestory) c.esOnDestory();
+            if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
+            if (i > index && c.nvOnDestory) c.nvOnDestory();
           });
           this.hasRenderComponentList.length = index;
           this.needRedirectPath = needRenderRoute.redirectTo;
@@ -254,8 +254,8 @@ class Router {
         if (component) this.hasRenderComponentList[index] = component;
 
         this.hasRenderComponentList.forEach((c, i) => {
-          if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
-          if (i > index && c.esOnDestory) c.esOnDestory();
+          if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
+          if (i > index && c.nvOnDestory) c.nvOnDestory();
         });
 
         if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo) && (index + 1) === this.renderRouteList.length) {
@@ -276,8 +276,8 @@ class Router {
 
         // if (route.redirectTo && /^\/.*/.test(route.redirectTo) && (index + 1) === this.renderRouteList.length) {
         //   this.hasRenderComponentList.forEach((c, i) => {
-        //     if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
-        //     if (i > index && c.esOnDestory) c.esOnDestory();
+        //     if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
+        //     if (i > index && c.nvOnDestory) c.nvOnDestory();
         //   });
         //   this.needRedirectPath = route.redirectTo;
         //   this.hasRenderComponentList.length = index;
@@ -298,7 +298,7 @@ class Router {
         const renderDom = document.querySelectorAll('router-render')[index - 1];
         this.routesList.push(route);
         this.hasRenderComponentList.forEach((c) => {
-          if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
+          if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
         });
 
         // this.instantiateComponent(FindComponent, renderDom)
@@ -312,8 +312,8 @@ class Router {
         }
         if (route.redirectTo && /^\/.*/.test(route.redirectTo) && (index + 1) === this.renderRouteList.length) {
           this.hasRenderComponentList.forEach((c, i) => {
-            if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
-            if (i > index && c.esOnDestory) c.esOnDestory();
+            if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
+            if (i > index && c.nvOnDestory) c.nvOnDestory();
           });
           this.needRedirectPath = route.redirectTo;
           this.hasRenderComponentList.length = index;

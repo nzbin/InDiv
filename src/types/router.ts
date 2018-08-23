@@ -27,7 +27,7 @@ export interface IRouter {
 
     bootstrap(vm: IInDiv): void;
     init(arr: TRouter[]): void;
-    esRouteChange(lastRoute?: string, nextRoute?: string): void;
+    nvRouteChange(lastRoute?: string, nextRoute?: string): void;
     redirectTo(redirectTo: string): void;
     refresh(): void;
     distributeRoutes(): void;

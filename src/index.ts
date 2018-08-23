@@ -10,6 +10,6 @@ export { default as Router } from './Router';
 export { default as InDiv } from './InDiv';
 export { NvModule, factoryModule } from './NvModule';
 export { default as Service } from './Service';
-export { default as esHttp } from './Http';
+export { default as nvHttp } from './Http';
 
 export { Injectable, injector, factoryCreator } from './Injectable';

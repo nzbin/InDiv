@@ -60,6 +60,7 @@ class RouteChild {
   }
 }
 Component({
+  selector: 'route-child',
   state: {
     a: 'a',
     b: null,
@@ -117,6 +118,7 @@ class PCChild {
   }
 }
 Component({
+  selector: 'pp-childs',
   state: {
     a: 'a',
     b: null,
@@ -180,6 +182,7 @@ class PComponent {
 }
 
 Component({
+  selector: 'pc-component',
   state: {
     a: 'a子组件',
     b: 100,
@@ -244,6 +247,7 @@ class R1 {
 }
 
 Component({
+  selector: 'R1',
   template: (`
   <div>
     <pc-component ax="{state.a}" b="{@getProps}"></pc-component>
@@ -328,6 +332,7 @@ class R2 {
   }
 }
 Component({
+  selector: 'R2',
   template: (`
   <div>
     <p nv-on:click="@showLocation()">点击显示子路由跳转</p>
@@ -379,6 +384,7 @@ class Container {
 }
 
 Component({
+  selector: 'container-wrap',
   template: (`
   <div>
     <p nv-if="state.a">{{state.a}}</p>
@@ -438,18 +444,27 @@ Component({
 
 class M2 {}
 NvModule({
-  components: {
-    'R2': R2,
-    'route-child': RouteChild,
-    'pp-childs': PCChild,
-  },
+  components: [
+    R2,
+    RouteChild,
+    PCChild,
+  ],
+  // components: {
+  //   'R2': R2,
+  //   'route-child': RouteChild,
+  //   'pp-childs': PCChild,
+  // },
   providers: [
     HeroSearchService2,
   ],
   exports: [
-    'R2',
-    'route-child',
+    R2,
+    RouteChild,
   ],
+  // exports: [
+  //   'R2',
+  //   'route-child',
+  // ],
 })(M2);
 
 class M1 {}
@@ -457,11 +472,16 @@ NvModule({
   imports: [
     M2,
   ],
-  components: {
-    'container-wrap': Container,
-    'pc-component': PComponent,
-    'R1': R1,
-  },
+  components: [
+    Container,
+    PComponent,
+    R1,
+  ],
+  // components: {
+  //   'container-wrap': Container,
+  //   'pc-component': PComponent,
+  //   'R1': R1,
+  // },
   providers: [
     HeroSearchService,
     HeroSearchService1,

@@ -22,7 +22,7 @@ export declare type ComponentList<C> = {
 };
 
 export interface IMiddleware<ES> {
-    $bootstrap(vm: ES): void;
+    bootstrap(vm: ES): void;
 }
 
 export type EsRouteObject = {
@@ -40,13 +40,11 @@ export type TServiceOptions = {
     isSingletonMode?: boolean;
 };
 
-export type TEsModuleOptions = {
+export type TNvModuleOptions = {
     imports?: Function[],
-    components: {
-        [name: string]: Function;
-    },
+    components: Function[],
     providers?: Function[],
-    exports?: string[],
+    exports?: Function[],
     bootstrap?: Function,
 };
 export interface IService { }
@@ -56,18 +54,19 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     props?: Props | any;
     utils: Utils;
     compileUtil: CompileUtil;
-    $renderDom?: Element;
+    renderDom?: Element;
     $vm?: Vm | any;
     $template?: string;
-    $components?: {
-        [name: string]: Function;
-    };
+    $components?: Function[];
+    // $components?: {
+    //     [name: string]: Function;
+    // };
     $componentList?: ComponentList<IComponent<any, any, any>>[];
     stateWatcher?: Watcher;
-    propsWatcher?: Watcher;
+    // propsWatcher?: Watcher;
 
     esOnInit?(): void;
-    $watchData?(): void;
+    watchData?(): void;
     esBeforeMount?(): void;
     esAfterMount?(): void;
     esOnDestory?(): void;
@@ -75,10 +74,10 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     esWatchState?(oldData?: any, newData?: any): void;
     esRouteChange?(lastRoute: string, newRoute: string): void;
     esReceiveProps?(nextProps: any): void;
-    $render(): void;
-    $reRender(): void;
-    $mountComponent(dom: Element, isFirstRender?: boolean): void;
-    $componentsConstructor(dom: Element): void;
+    render(): void;
+    reRender(): void;
+    mountComponent(dom: Element, isFirstRender?: boolean): void;
+    componentsConstructor(dom: Element): void;
     setState(newState: any): void;
     // setProps(newProps: any): void;
     getLocation(): any;
@@ -88,25 +87,27 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     buildComponentScope(ComponentClass: any, props: any, dom: Element): IComponent<any, any, any>;
 }
 
-export interface IEsModule {
+export interface INvModule {
     utils?: Utils;
     $imports?: Function[];
-    $components?: {
-        [name: string]: Function;
-    };
+    $components?: Function[];
+    // $components?: {
+    //     [name: string]: Function;
+    // };
     $providers?: Function[];
-    $exports?: string[];
-    $exportList?: {
-        [name: string]: Function;
-    };
+    // $exports?: string[];
+    $exports?: Function[];
+    // $exportList?: {
+    //     [name: string]: Function;
+    // };
     providerList?: Map<string, IService>;
-    $bootstrap?: Function;
-    $buildImports(): void;
-    $buildProviderList(): void
-    $buildProviders4Services(): void;
-    $buildProviders4Components(): void;
-    $buildComponents4Components(): void;
-    $buildExports(): void;
+    bootstrap?: Function;
+    buildImports(): void;
+    buildProviderList(): void
+    buildProviders4Services(): void;
+    buildProviders4Components(): void;
+    buildComponents4Components(): void;
+    buildExports(): void;
 }
 
 export declare class Watcher {
@@ -211,27 +212,28 @@ export declare class Compile {
     isTextNode(node: Element): boolean;
 }
 
-export declare class Easiest {
-    modalList: IMiddleware<Easiest>[];
+export declare class InDiv {
+    modalList: IMiddleware<InDiv>[];
     utils: Utils;
     rootDom: Element;
     $rootPath: string;
     $canRenderModule: boolean;
     $routeDOMKey: string;
-    $rootModule: IEsModule;
-    $components: {
-        [name: string]: Function;
-    };
+    $rootModule: INvModule;
+    // $components: {
+    //     [name: string]: Function;
+    // };
+    $components: Function[];
     $esRouteObject?: EsRouteObject;
     constructor();
-    $use(modal: IMiddleware<Easiest>): number;
-    $setRootPath(rootPath: string): void;
-    $bootstrapModule(Esmodule: Function): void;
-    $init(): void;
-    $renderModuleBootstrap(): void;
-    // $renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any>;
+    use(modal: IMiddleware<InDiv>): number;
+    setRootPath(rootPath: string): void;
+    bootstrapModule(Esmodule: Function): void;
+    init(): void;
+    renderModuleBootstrap(): void;
+    // renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any>;
     // replaceDom(component: IComponent, renderDOM: Element): Promise<any>;
-    $renderComponent(BootstrapComponent: Function, renderDOM: Element): any;
+    renderComponent(BootstrapComponent: Function, renderDOM: Element): any;
     replaceDom(component: IComponent, renderDOM: Element): void;
 }
 export declare class Router {
@@ -244,14 +246,14 @@ export declare class Router {
     $rootPath: string;
     hasRenderComponentList: IComponent[];
     needRedirectPath: string;
-    $vm: Easiest;
+    $vm: InDiv;
     watcher: KeyWatcher;
     renderRouteList: string[];
     constructor();
-    $bootstrap(vm: Easiest): void;
-    $init(arr: TRouter[]): void;
-    $setRootPath(rootPath: string): void;
-    $routeChange(lastRoute?: string, nextRoute?: string): void;
+    bootstrap(vm: InDiv): void;
+    init(arr: TRouter[]): void;
+    setRootPath(rootPath: string): void;
+    routeChange(lastRoute?: string, nextRoute?: string): void;
     redirectTo(redirectTo: string): void;
     refresh(): void;
     distributeRoutes(): void;
@@ -269,13 +271,11 @@ export declare function factoryCreator(_constructor: Function, _module: any): an
 
 export declare function Component<State = any, Props = any, Vm = any>(options: TComponentOptions): (_constructor: Function) => void;
 
-export declare function EsModule(options: TEsModuleOptions): (_constructor: Function) => void;
+export declare function NvModule(options: TNvModuleOptions): (_constructor: Function) => void;
 
-export declare function factoryModule(EM: Function): IEsModule;
+export declare function factoryModule(EM: Function): INvModule;
 
 export declare function Service(options?: TServiceOptions): (_constructor: Function) => void;
-
-export declare function toImmutabletoImmutable<T = any>(data: T): void;
 
 export declare interface OnInit {
     esOnInit(): void;

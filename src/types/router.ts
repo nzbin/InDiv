@@ -1,5 +1,5 @@
 import { IComponent } from './component';
-import { IInDiv } from './easiest';
+import { IInDiv } from './indiv';
 import { IUtil } from './utils';
 import { IKeyWatcher } from './keyWatcher';
 

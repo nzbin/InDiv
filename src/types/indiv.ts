@@ -1,6 +1,6 @@
 import { IComponent } from './component';
-import { INvModule } from './esModule';
-import { IService } from './service';
+import { INvModule } from './nvModule';
+// import { IService } from './service';
 import { IUtil } from './utils';
 
 export interface IMiddleware<ES> {
@@ -21,9 +21,10 @@ export interface IInDiv {
     $canRenderModule: boolean;
     $routeDOMKey: string;
     $rootModule: INvModule;
-    $components: {
-        [name: string]: Function;
-    };
+    // $components: {
+    //     [name: string]: Function;
+    // };
+    $components: Function[];
     $esRouteObject?: EsRouteObject;
 
     use(modal: IMiddleware<IInDiv>): number;

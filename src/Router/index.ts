@@ -168,7 +168,8 @@ class Router {
         //   return;
         // }
 
-        const needRenderComponent = this.$vm.$components[needRenderRoute.component];
+        // const needRenderComponent = this.$vm.$components[needRenderRoute.component];
+        const needRenderComponent = this.$vm.$components.find((component: any) => component.$selector === needRenderRoute.component);
         const renderDom = document.querySelectorAll('router-render')[index - 1];
         this.hasRenderComponentList.forEach((c, i) => {
           if (c.esRouteChange) c.esRouteChange(this.lastRoute, this.currentUrl);
@@ -232,8 +233,10 @@ class Router {
         }
 
         let FindComponent = null;
-        if (this.$vm.$rootModule.$components[rootRoute.component]) {
-          FindComponent = this.$vm.$components[rootRoute.component];
+        if (this.$vm.$rootModule.$components.find((component: any) => component.$selector === rootRoute.component)) {
+          FindComponent = this.$vm.$rootModule.$components.find((component: any) => component.$selector === rootRoute.component);
+        // if (this.$vm.$rootModule.$components[rootRoute.component]) {
+        //   FindComponent = this.$vm.$components[rootRoute.component];
         } else {
           console.error(`route error: path ${rootRoute.path} is undefined`);
           return;
@@ -282,9 +285,12 @@ class Router {
         // }
 
         let FindComponent = null;
-        if (this.$vm.$rootModule.$components[route.component]) {
-          FindComponent = this.$vm.$components[route.component];
+        if (this.$vm.$rootModule.$components.find((component: any) => component.$selector === route.component)) {
+          FindComponent = this.$vm.$rootModule.$components.find((component: any) => component.$selector === route.component);
         }
+        // if (this.$vm.$rootModule.$components[route.component]) {
+        //   FindComponent = this.$vm.$components[route.component];
+        // }
         if (!route.component && !route.redirectTo) {
           console.error(`route error: path ${route.path} need a component which has children path or need a  redirectTo which has't children path`);
           return;

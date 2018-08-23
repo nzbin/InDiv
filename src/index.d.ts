@@ -42,11 +42,9 @@ export type TServiceOptions = {
 
 export type TNvModuleOptions = {
     imports?: Function[],
-    components: {
-        [name: string]: Function;
-    },
+    components: Function[],
     providers?: Function[],
-    exports?: string[],
+    exports?: Function[],
     bootstrap?: Function,
 };
 export interface IService { }
@@ -59,12 +57,13 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     renderDom?: Element;
     $vm?: Vm | any;
     $template?: string;
-    $components?: {
-        [name: string]: Function;
-    };
+    $components?: Function[];
+    // $components?: {
+    //     [name: string]: Function;
+    // };
     $componentList?: ComponentList<IComponent<any, any, any>>[];
     stateWatcher?: Watcher;
-    propsWatcher?: Watcher;
+    // propsWatcher?: Watcher;
 
     esOnInit?(): void;
     watchData?(): void;
@@ -91,14 +90,16 @@ export interface IComponent<State = any, Props = any, Vm = any> {
 export interface INvModule {
     utils?: Utils;
     $imports?: Function[];
-    $components?: {
-        [name: string]: Function;
-    };
+    $components?: Function[];
+    // $components?: {
+    //     [name: string]: Function;
+    // };
     $providers?: Function[];
-    $exports?: string[];
-    $exportList?: {
-        [name: string]: Function;
-    };
+    // $exports?: string[];
+    $exports?: Function[];
+    // $exportList?: {
+    //     [name: string]: Function;
+    // };
     providerList?: Map<string, IService>;
     bootstrap?: Function;
     buildImports(): void;
@@ -219,9 +220,10 @@ export declare class InDiv {
     $canRenderModule: boolean;
     $routeDOMKey: string;
     $rootModule: INvModule;
-    $components: {
-        [name: string]: Function;
-    };
+    // $components: {
+    //     [name: string]: Function;
+    // };
+    $components: Function[];
     $esRouteObject?: EsRouteObject;
     constructor();
     use(modal: IMiddleware<InDiv>): number;

@@ -9,19 +9,22 @@ import { factoryCreator } from '../Injectable';
 
 
 type TComponentOptions<State> = {
+  selector: string;
   template: string;
   state?: State;
 };
 
 export function Component<State = any, Props = any, Vm = any>(options: TComponentOptions<State>): (_constructor: Function) => void {
   return function (_constructor: Function): void {
+    (_constructor as any).$selector = options.selector;
     const vm: IComponent<State, Props, Vm> = _constructor.prototype;
     vm.$template = options.template;
     vm.state = options.state;
 
     vm.utils = new Utils();
     vm.compileUtil = new CompileUtil();
-    vm.$components = {};
+    // vm.$components = {};
+    vm.$components = [];
     vm.$componentList = [];
 
     vm.getLocation = function (): any {
@@ -98,10 +101,15 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
     vm.componentsConstructor = function (dom: Element): void {
       (this as IComponent<State, Props, Vm>).$componentList = [];
       const routerRenderDom = dom.querySelectorAll((this as IComponent<State, Props, Vm>).$vm.$routeDOMKey)[0];
-      for (const name in ((this as IComponent<State, Props, Vm>).constructor as any)._injectedComponents) {
-        (this as IComponent<State, Props, Vm>).$components[name] = ((this as IComponent<State, Props, Vm>).constructor as any)._injectedComponents[name];
-      }
-      for (const name in (this as IComponent<State, Props, Vm>).$components) {
+      ((this as IComponent<State, Props, Vm>).constructor as any)._injectedComponents.forEach((injectedComponent: any) => {
+        if (!(this as IComponent<State, Props, Vm>).$components.find((component: any) => component.$selector === injectedComponent.$selector)) (this as IComponent<State, Props, Vm>).$components.push(injectedComponent);
+      });
+      // for (const name in ((this as IComponent<State, Props, Vm>).constructor as any)._injectedComponents) {
+      //   (this as IComponent<State, Props, Vm>).$components[name] = ((this as IComponent<State, Props, Vm>).constructor as any)._injectedComponents[name];
+      // }
+      // for (const name in (this as IComponent<State, Props, Vm>).$components) {
+      for (let i = 0; i <= (this as IComponent<State, Props, Vm>).$components.length - 1 ; i ++) {
+        const name = (((this as IComponent<State, Props, Vm>).$components[i]) as any).$selector;
         const tags = dom.getElementsByTagName(name);
         Array.from(tags).forEach(node => {
           //  protect component in <router-render>
@@ -111,10 +119,10 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
           if (nodeAttrs) {
             const attrList = Array.from(nodeAttrs);
             const _propsKeys: any = {};
-            attrList.forEach(attr => {
+            attrList.forEach((attr: any) => {
               if (/^\_prop\-(.+)/.test(attr.name)) _propsKeys[attr.name.replace('_prop-', '')] = JSON.parse(attr.value);
             });
-            attrList.forEach(attr => {
+            attrList.forEach((attr: any) => {
               const attrName = attr.name;
               const prop = /^\{(.+)\}$/.exec(attr.value);
               if (prop) {
@@ -133,7 +141,8 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
           (this as IComponent<State, Props, Vm>).$componentList.push({
             dom: node,
             props,
-            scope: (this as IComponent<State, Props, Vm>).buildComponentScope((this as IComponent<State, Props, Vm>).$components[name], props, node),
+            scope: (this as IComponent<State, Props, Vm>).buildComponentScope((this as IComponent<State, Props, Vm>).$components[i], props, node),
+            // scope: (this as IComponent<State, Props, Vm>).buildComponentScope((this as IComponent<State, Props, Vm>).$components[name], props, node),
           });
         });
       }

@@ -28,12 +28,13 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     renderDom?: Element;
     $vm?: Vm | any;
     $template?: string;
-    $components?: {
-        [name: string]: Function;
-    };
+    $components?: Function[];
+    // $components?: {
+    //     [name: string]: Function;
+    // };
     $componentList?: ComponentList<IComponent<any, any, any>>[];
     stateWatcher?: IWatcher;
-    propsWatcher?: IWatcher;
+    // propsWatcher?: IWatcher;
 
     esOnInit?(): void;
     watchData?(): void;

@@ -1,5 +1,5 @@
 import { InDiv, Component, Router, Utils, NvModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, esHttp, SetState, SetLocation, GetLocation } from '../src';
-// import { InDiv, Component, Router, Utils, NvModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, esHttp } from '../build';
+// import { InDiv, Component, Router, Utils, NvModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, esHttp, SetState, SetLocation, GetLocation } from '../build';
 
 @Service({
   isSingletonMode: true,
@@ -37,8 +37,13 @@ class HeroSearchService {
   }
 }
 
+
+interface Props {
+  a: number;
+}
 // @Injectable
 @Component({
+  selector: 'route-child',
   state: {
     a: 'a',
     b: null,
@@ -65,7 +70,7 @@ class RouteChild implements OnInit, HasRender, ReceiveProps {
   public setState: SetState;
   public state: any;
   public heroSearchService: HeroSearchService2;
-  public props: any;
+  public props: Readonly<Props>;
   constructor(
     private heroSearchService2: HeroSearchService2,
   ) {
@@ -98,6 +103,7 @@ class RouteChild implements OnInit, HasRender, ReceiveProps {
 }
 
 @Component({
+  selector: 'pp-childs',
   state: {
     a: 'a',
     b: null,
@@ -168,6 +174,7 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps {
 
 @Injectable
 @Component({
+  selector: 'pc-component',
   state: {
     a: 'a子组件',
     b: 100,
@@ -242,6 +249,7 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
 
 @Injectable
 @Component({
+  selector: 'R1',
   template: (`
     <div>
       <pc-component ax="{state.a}" b="{@getProps}"></pc-component>
@@ -249,7 +257,7 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
       <div nv-if="state.f">
         ef
         <input nv-repeat="let a in state.e" nv-model="a.z" />
-        <p nv-class="state.c" nv-if="a.show" nv-repeat="let a in state.e" nv-text="a.z" nv-on:click="t@showAlert(a.z)"></p>
+        <p nv-class="state.c" nv-if="a.show" nv-repeat="let a in state.e" nv-text="a.z" nv-on:click="@showAlert(a.z)"></p>
         <p>111this.state.a：{{state.a}}</p>
         <input nv-model="state.a" />
       </div>
@@ -332,6 +340,7 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
 
 @Injectable
 @Component({
+  selector: 'R2',
   template: (`
     <div>
       <p nv-on:click="@showLocation()">点击显示子路由跳转</p>
@@ -391,6 +400,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
 
 @Injectable
 @Component({
+  selector: 'container-wrap',
   template: (`
     <div>
       <p nv-if="state.a">{{state.a}}</p>
@@ -495,18 +505,27 @@ class Container implements OnInit, AfterMount {
 }
 
 @NvModule({
-  components: {
-    'R2': R2,
-    'route-child': RouteChild,
-    'pp-childs': PCChild,
-  },
+  components: [
+    R2,
+    RouteChild,
+    PCChild,
+  ],
+  // components: {
+  //   'R2': R2,
+  //   'route-child': RouteChild,
+  //   'pp-childs': PCChild,
+  // },
   providers: [
     HeroSearchService2,
   ],
   exports: [
-    'R2',
-    'route-child',
+    R2,
+    RouteChild,
   ],
+  // exports: [
+  //   'R2',
+  //   'route-child',
+  // ],
 })
 class M2 {}
 
@@ -514,11 +533,16 @@ class M2 {}
   imports: [
     M2,
   ],
-  components: {
-    'container-wrap': Container,
-    'pc-component': PComponent,
-    'R1': R1,
-  },
+  components: [
+    Container,
+    PComponent,
+    R1,
+  ],
+  // components: {
+  //   'container-wrap': Container,
+  //   'pc-component': PComponent,
+  //   'R1': R1,
+  // },
   providers: [
     HeroSearchService,
     HeroSearchService1,

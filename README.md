@@ -117,14 +117,17 @@ Now we support for typescript!
   - Component types:
 
     ```typescript
-    Component: {
+    type TComponentOptions<State> = {
+      selector: string;
       template: string;
-      state?: any;
-    }
+      state?: State;
+    };
     ```
   
-  - template only accepts `state.XXX` from this.state, and event only accepts `@eventHandler` from method which commes from this
-  - **please use setState after lifecycle `constructor()`**
+  - `selector` is your component tag name for HTML and used in template.
+  - `template` only accepts `state.XXX` from this.state, and event only accepts `@eventHandler` from method which commes from this
+  - `state` you can set an initial state for component
+  - **please use `setState` after lifecycle `constructor()` and `esOnInit`**, so you can change or set value for `this.state` without `setState` in lifecycle `constructor()` and `esOnInit`
 
     1. typescript
 
@@ -135,6 +138,7 @@ Now we support for typescript!
       ```typescript
       @Injectable
       @Component({
+        selector: 'container-wrap',
         state: {
           a: 1,
           testArray: [
@@ -252,6 +256,7 @@ Now we support for typescript!
       }
 
       Component({
+        selector: 'container-wrap',
         template: (`
           <div>
             <p nv-on:click="@go()">container: {{state.a}}</p>
@@ -319,9 +324,9 @@ Now we support for typescript!
 
   - InDiv apps are modular and InDiv has its own modularity system called `NvModule`. An `NvModule` is a container for a cohesive block of code dedicated to an application domain, a workflow, or a closely related set of capabilities. It can contain components, service providers, and other code files whose scope is defined by the containing `NvModule`. It can import functionality that is exported from other `NvModule`, and export selected functionality for use by other `NvModule`.
 
-  - u need to declare `imports?: Function[]` `components: {[name: string]: Function;}` `providers?: Function[]` `exports?: string[]` `bootstrap?: Function` in `options`
+  - u need to declare `imports?: Function[]` `components: Function[]` `providers?: Function[]` `exports?: Function[]` `bootstrap?: Function` in `options`
   - `imports` imports other `NvModule` and respect it's `exports`
-  - `components` declare `Components`. Key: name, Value: Components
+  - `components` declare `Components`
   - `providers` declare `Service`
   - `exports:` exports `Components` for other `NvModules`
   - `bootstrap` declare `Component` for Module bootstrap only if u don't `Router`
@@ -333,19 +338,23 @@ Now we support for typescript!
       imports: [
         M2,
       ],
-      components: {
-        'container-wrap': Container,
-        'pc-component': PComponent,
-        'R1': R1,
-      },
+      components: [
+        Container,
+        PComponent,
+        R1,
+      ],
       providers: [
         HeroSearchService,
         HeroSearchService1,
       ],
+      exports: [
+        Container,
+        PComponent,
+      ]
     })
     class M1 {}
     ```
-    2. javascript
+    1. javascript
   
     ```javascript
     class M1 {}
@@ -353,15 +362,19 @@ Now we support for typescript!
       imports: [
         M2,
       ],
-      components: {
-        'container-wrap': Container,
-        'pc-component': PComponent,
-        'R1': R1,
-      },
+      components: [
+        Container,
+        PComponent,
+        R1,
+      ],
       providers: [
         HeroSearchService,
         HeroSearchService1,
       ],
+      exports: [
+        Container,
+        PComponent,
+      ]
     })(M1);
     ```
 
@@ -516,6 +529,7 @@ Now we support for typescript!
 
       @Injectable
       @Component({
+        selector: 'pc-child',
         state: {
           a: 'a',
         },
@@ -551,9 +565,9 @@ Now we support for typescript!
         imports: [
           M2,
         ],
-        components: {
-          'container-wrap': PCChild,
-        },
+        components: [
+          PCChild,
+        ],
         providers: [
           HeroSearchService,
           HeroSearchService1,
@@ -605,6 +619,7 @@ Now we support for typescript!
       }
 
       Component({
+        selector: 'container-wrap',
         state: {
           a: 'a',
         },
@@ -620,9 +635,9 @@ Now we support for typescript!
         imports: [
           M2,
         ],
-        components: {
-          'container-wrap': Container,
-        },
+        components: [
+          Container,
+        ],
         providers: [
           HeroSearchService,
           HeroSearchService1,

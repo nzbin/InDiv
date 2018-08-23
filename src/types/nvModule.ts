@@ -4,14 +4,16 @@ import { IUtil } from './utils';
 export interface INvModule {
   utils?: IUtil;
   $imports?: Function[];
-  $components?: {
-    [name: string]: Function;
-  };
+  $components?: Function[];
+  // $components?: {
+  //   [name: string]: Function;
+  // };
   $providers?: Function[];
-  $exports?: string[];
-  $exportList?: {
-    [name: string]: Function;
-  };
+  // $exports?: string[];
+  $exports?: Function[];
+  // $exportList?: {
+  //   [name: string]: Function;
+  // };
   providerList?: Map<string, IService>;
   bootstrap?: Function;
 

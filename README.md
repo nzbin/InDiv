@@ -128,6 +128,7 @@ Now we support for typescript!
   - `template` only accepts `state.XXX` from this.state, and event only accepts `@eventHandler` from method which commes from this
   - `state` you can set an initial state for component
   - **please use `setState` after lifecycle `constructor()` and `nvOnInit`**, so you can change or set value for `this.state` without `setState` in lifecycle `constructor()` and `nvOnInit`
+  - after `Class`'s `constructor()`, u can use `this.props` in any lifecycle
 
     1. typescript
 

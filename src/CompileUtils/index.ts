@@ -478,9 +478,8 @@ export class CompileUtil {
       JSON.parse(node.eventTypes).forEach((eve: string) => (newElement as any)[`on${eve}`] = (node as any)[`event${eve}`]);
       newElement.eventTypes = JSON.parse(JSON.stringify(node.eventTypes));
     }
-    // if (node.repeatData) newElement.repeatData = Object.assign({}, repeatData);
-    // if (node.repeatData) newElement.repeatData = repeatData;
-    if (repeatData) newElement.repeatData = repeatData;
+    // if (repeatData) newElement.repeatData = repeatData;
+    if (repeatData) newElement.repeatData = Object.assign({}, repeatData);
     return newElement;
   }
 }

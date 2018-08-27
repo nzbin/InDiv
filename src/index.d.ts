@@ -15,7 +15,7 @@ export type TRouter = {
     children?: TRouter[];
 };
 
-export declare type ComponentList<C> = {
+export type ComponentList<C> = {
     dom: Element;
     props: any;
     scope: C;
@@ -32,8 +32,8 @@ export type EsRouteObject = {
 }
 
 export type TComponentOptions = {
+    selector: string;
     template: string;
-    state?: any;
 };
 
 export type TServiceOptions = {

@@ -44,6 +44,20 @@ class RouteChild {
   constructor(heroSearchService2) {
     this.heroSearchService = heroSearchService2;
     this.heroSearchService.test();
+    this.state = {
+      a: 'a',
+      b: null,
+      d: [
+        {
+          z: 111111111111111,
+          b: 'a',
+        },
+        {
+          z: 33333333333333,
+          b: 'a',
+        },
+      ],
+    };
   }
   nvOnInit() {
     this.setState({
@@ -61,20 +75,6 @@ class RouteChild {
 }
 Component({
   selector: 'route-child',
-  state: {
-    a: 'a',
-    b: null,
-    d: [
-      {
-        z: 111111111111111,
-        b: 'a',
-      },
-      {
-        z: 33333333333333,
-        b: 'a',
-      },
-    ],
-  },
   template: (`
     <div>
       <p>子路由的子组件::{{state.b}}</p>
@@ -83,6 +83,22 @@ Component({
 })(RouteChild);
 
 class PCChild {
+  constructor() {
+    this.state = {
+      a: 'a',
+      b: null,
+      d: [
+        {
+          z: 111111111111111,
+          b: 'a',
+        },
+        {
+          z: 33333333333333,
+          b: 'a',
+        },
+      ],
+    };
+  }
   nvHasRender() {
     console.log('PCChild: this.props.ax', this.props.ax);
   }
@@ -119,20 +135,6 @@ class PCChild {
 }
 Component({
   selector: 'pp-childs',
-  state: {
-    a: 'a',
-    b: null,
-    d: [
-      {
-        z: 111111111111111,
-        b: 'a',
-      },
-      {
-        z: 33333333333333,
-        b: 'a',
-      },
-    ],
-  },
   template: (`
     <div>
       子组件的子组件<br/>
@@ -144,6 +146,23 @@ Component({
 
 class PComponent {
   nvOnInit() {
+    this.state = {
+      a: 'a子组件',
+      b: 100,
+      c: '<p>1111</p>',
+      d: [
+        {
+          z: 111111111111111,
+          b: 'a',
+        },
+        {
+          z: 33333333333333,
+          b: 'a',
+        },
+      ],
+      e: true,
+      ax: this.props.ax,
+    };
     console.log('props11', this.props);
   }
   nvBeforeMount() {
@@ -183,27 +202,12 @@ class PComponent {
 
 Component({
   selector: 'pc-component',
-  state: {
-    a: 'a子组件',
-    b: 100,
-    c: '<p>1111</p>',
-    d: [{
-      z: 111111111111111,
-      b: 'a',
-    }, {
-      z: 33333333333333,
-      b: 'a',
-    }],
-    e: true,
-    ax: null,
-  },
   template: (`
-  <div>
-    <p nv-if="state.e" nv-class="state.a" nv-repeat="let a in state.d"  nv-on:click="@componentClick(state.d)">你好： {{a.z}}</p>
-    state.d: <input nv-repeat="let a in state.d" nv-model="a.z" />
-    <p nv-on:click="@sendProps(5)">props from component.state.a: {{state.ax}}</p>
-  </div>
-  `),
+    <div>
+      <p nv-if="state.e" nv-class="state.a" nv-repeat="let a in state.d"  nv-on:click="@componentClick(state.d)">你好： {{a.z}}</p>
+      state.d: <input nv-repeat="let a in state.d" nv-model="a.z" />
+      <p nv-on:click="@sendProps(5)">props from component.state.a: {{state.ax}}</p>
+    </div>`),
 })(PComponent);
 
 
@@ -212,6 +216,32 @@ class R1 {
     this.heroSearchService = heroSearchService;
     this.heroSearchService.test();
     this.utils = new Utils();
+    this.state = {
+      a: 'a11',
+      b: 2,
+      d: [{
+        z: 111111111111111,
+        b: 'a',
+        show: true,
+      },
+          {
+        z: 33333333333333,
+        b: 'a',
+        show: true,
+      }],
+      c: 'c',
+      e: [{
+        z: 232323,
+        b: 'a',
+        show: true,
+      },
+          {
+        z: 1111,
+        b: 'a',
+        show: false,
+      }],
+      f: true,
+    };
   }
 
   nvOnInit() {
@@ -263,32 +293,6 @@ Component({
     <router-render></router-render>
   </div>
     `),
-  state: {
-    a: 'a11',
-    b: 2,
-    d: [{
-      z: 111111111111111,
-      b: 'a',
-      show: true,
-    },
-    {
-      z: 33333333333333,
-      b: 'a',
-      show: true,
-    }],
-    c: 'c',
-    e: [{
-      z: 232323,
-      b: 'a',
-      show: true,
-    },
-    {
-      z: 1111,
-      b: 'a',
-      show: false,
-    }],
-    f: true,
-  },
 })(R1);
 
 
@@ -299,6 +303,7 @@ class R2 {
   ) {
     this.heroSearchService1 = heroSearchService1;
     this.heroSearchService1.test();
+    this.state = { a: 1 };
   }
   nvOnInit() {
     console.log('this.$location222', this.getLocation());
@@ -344,8 +349,22 @@ Component({
     <router-render></router-render>
   </div>
   `),
-  state: { a: 1 },
 })(R2);
+
+class TestComponent {
+  nvOnInit() {
+    this.state = {
+      man: this.props.man,
+    };
+  }
+}
+Component({
+  selector: 'test-component',
+  template: (`
+    <div>
+      <p>测试repeat组件: {{state.man}}</p>
+    </div>`),
+})(TestComponent);
 
 
 class Container {
@@ -357,6 +376,48 @@ class Container {
     this.ss.test();
     console.log('heroSearchService1', heroSearchService1);
     console.log('nvHttp', nvHttp);
+    this.state = {
+      a: 1,
+      testArray: [
+        {
+          name: '李龙吉',
+          sex: '男',
+          job: [
+            {
+              id: 1,
+              name: '程序员',
+            },
+            {
+              id: 2,
+              name: '码农',
+            },
+            {
+              id: 3,
+              name: '帅',
+            },
+          ],
+        },
+        {
+          name: '邱宝环',
+          sex: '女',
+          // job: ['老师', '英语老师', '美1'],
+          job: [
+            {
+              id: 1,
+              name: '老师',
+            },
+            {
+              id: 2,
+              name: '英语老师',
+            },
+            {
+              id: 3,
+              name: '美',
+            },
+          ],
+        }],
+      testArray2: ['程序员3', '码农3', '帅3'],
+    };
   }
   nvOnInit() {
     console.log('nvOnInit Container');
@@ -386,60 +447,21 @@ class Container {
 Component({
   selector: 'container-wrap',
   template: (`
-  <div>
-    <p nv-if="state.a">{{state.a}}</p>
-    <p nv-on:click="@go()">container: {{state.a}}</p>
-    <input nv-model="state.a" />
-    <div nv-repeat="let man in state.testArray">
-      <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
-      <div>性别：{{man.sex}}</div>
-      <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
-      <div class="fuck" nv-repeat="let b in man.job">
-        <input nv-on:click="@show(b, $index)" nv-model="b.name" nv-class="b.id" />
+    <div>
+      <p nv-if="state.a">{{state.a}}</p>
+      <p nv-on:click="@go()">container: {{state.a}}</p>
+      <input nv-model="state.a" />
+      <div nv-repeat="let man in state.testArray">
+        <test-component man="{man.name}"></test-component>
+        <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
+        <div>性别：{{man.sex}}</div>
+        <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
+        <div class="fuck" nv-repeat="let b in man.job">
+          <input nv-on:click="@show(b, $index)" nv-model="b.name" nv-class="b.id" />
+        </div>
       </div>
-    </div>
-    <router-render></router-render>
-  </div>`),
-  state: {
-    a: 1,
-    testArray: [{
-      name: '李龙吉',
-      sex: '男',
-      job: [{
-        id: 1,
-        name: '程序员',
-      },
-      {
-        id: 2,
-        name: '码农',
-      },
-      {
-        id: 3,
-        name: '帅',
-      },
-      ],
-    },
-    {
-      name: '邱宝环',
-      sex: '女',
-      // job: ['老师', '英语老师', '美1'],
-      job: [{
-        id: 1,
-        name: '老师',
-      },
-      {
-        id: 2,
-        name: '英语老师',
-      },
-      {
-        id: 3,
-        name: '美',
-      },
-      ],
-    },
-    ],
-    testArray2: ['程序员3', '码农3', '帅3'],
-  },
+      <router-render></router-render>
+    </div>`),
 })(Container);
 
 class M2 {}
@@ -449,11 +471,6 @@ NvModule({
     RouteChild,
     PCChild,
   ],
-  // components: {
-  //   'R2': R2,
-  //   'route-child': RouteChild,
-  //   'pp-childs': PCChild,
-  // },
   providers: [
     HeroSearchService2,
   ],
@@ -461,10 +478,6 @@ NvModule({
     R2,
     RouteChild,
   ],
-  // exports: [
-  //   'R2',
-  //   'route-child',
-  // ],
 })(M2);
 
 class M1 {}
@@ -475,13 +488,9 @@ NvModule({
   components: [
     Container,
     PComponent,
+    TestComponent,
     R1,
   ],
-  // components: {
-  //   'container-wrap': Container,
-  //   'pc-component': PComponent,
-  //   'R1': R1,
-  // },
   providers: [
     HeroSearchService,
     HeroSearchService1,

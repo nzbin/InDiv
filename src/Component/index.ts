@@ -11,7 +11,6 @@ import { factoryCreator } from '../Injectable';
 type TComponentOptions<State> = {
   selector: string;
   template: string;
-  state?: State;
 };
 
 export function Component<State = any, Props = any, Vm = any>(options: TComponentOptions<State>): (_constructor: Function) => void {
@@ -19,7 +18,6 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
     (_constructor as any).$selector = options.selector;
     const vm: IComponent<State, Props, Vm> = _constructor.prototype;
     vm.$template = options.template;
-    vm.state = options.state;
 
     vm.utils = new Utils();
     vm.compileUtil = new CompileUtil();
@@ -55,9 +53,7 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
       const compile = new Compile(dom, this as IComponent<State, Props, Vm>);
       (this as IComponent<State, Props, Vm>).mountComponent(dom, true);
       (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
-        // console.log(3333, 'state', component.scope.renderDom, component.scope.state.codes);
         if (component.scope.render) component.scope.render();
-        // console.log(4444, 'props', component.scope.state.codes);
         if (component.scope.nvAfterMount) component.scope.nvAfterMount();
       });
       if (this.nvHasRender) this.nvHasRender();
@@ -92,7 +88,6 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
             component.scope.props = component.props;
           }
         }
-        // console.log(111111, component.scope.renderDom, component.scope.state.codes);
         component.scope.$vm = (this as IComponent<State, Props, Vm>).$vm;
         component.scope.$components = (this as IComponent<State, Props, Vm>).$components;
         if (component.scope.nvOnInit && isFirstRender) component.scope.nvOnInit();
@@ -115,7 +110,6 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
         const name = (((this as IComponent<State, Props, Vm>).$components[i]) as any).$selector;
         const tags = dom.getElementsByTagName(name);
         Array.from(tags).forEach(node => {
-          console.log(1111111111111, node);
           //  protect component in <router-render>
           if (routerRenderDom && routerRenderDom.contains(node)) return;
           const nodeAttrs = node.attributes;
@@ -211,7 +205,6 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
 
     vm.buildComponentScope = function (ComponentClass: Function, props: any, dom: Element): IComponent<State, Props, Vm> {
       const _component = factoryCreator(ComponentClass, (this as IComponent<State, Props, Vm>).$vm.$rootModule);
-      console.log(3333, _component);
       _component.props = props;
       _component.renderDom = dom;
       _component.$components = (this as IComponent<State, Props, Vm>).$components;

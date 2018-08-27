@@ -44,20 +44,6 @@ interface Props {
 // @Injectable
 @Component({
   selector: 'route-child',
-  state: {
-    a: 'a',
-    b: null,
-    d: [
-      {
-        z: 111111111111111,
-        b: 'a',
-      },
-      {
-        z: 33333333333333,
-        b: 'a',
-      },
-    ],
-  },
   template: (`
     <div>
       <p>子路由的子组件::{{state.b}}</p>
@@ -76,15 +62,30 @@ class RouteChild implements OnInit, HasRender, ReceiveProps {
   ) {
     console.log('fuck this.heroSearchService2', this.heroSearchService2);
     this.heroSearchService2.test();
+    this.state = {
+      a: 'a',
+      b: null,
+      d: [
+        {
+          z: 111111111111111,
+          b: 'a',
+        },
+        {
+          z: 33333333333333,
+          b: 'a',
+        },
+      ],
+    };
   }
 
   public nvOnInit() {
-    this.setState({
-      b: this.props.a,
-    });
+    // this.setState({
+    //   b: this.props.a,
+    // });
     // this.setState({
     //   c: this.props.ax,
     // });
+    this.state.b = this.props.a;
     console.log(555, 'PCChild nvOnInit props11', this.props);
     // this.props.b(3);
   }
@@ -104,20 +105,6 @@ class RouteChild implements OnInit, HasRender, ReceiveProps {
 
 @Component({
   selector: 'pp-childs',
-  state: {
-    a: 'a',
-    b: null,
-    d: [
-      {
-        z: 111111111111111,
-        b: 'a',
-      },
-      {
-        z: 33333333333333,
-        b: 'a',
-      },
-    ],
-  },
   template: (`
     <div>
       子组件的子组件<br/>
@@ -130,7 +117,22 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps {
   public props: any;
   public state: any;
   public setState: SetState;
-  constructor() {}
+  constructor() {
+    this.state = {
+      a: 'a',
+      b: null,
+      d: [
+        {
+          z: 111111111111111,
+          b: 'a',
+        },
+        {
+          z: 33333333333333,
+          b: 'a',
+        },
+      ],
+    };
+  }
 
   public nvHasRender() {
     console.log('PCChild hasRender : this.props.ax', this.props, this.state);
@@ -175,23 +177,6 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps {
 @Injectable
 @Component({
   selector: 'pc-component',
-  state: {
-    a: 'a子组件',
-    b: 100,
-    c: '<p>1111</p>',
-    d: [
-      {
-        z: 111111111111111,
-        b: 'a',
-      },
-      {
-        z: 33333333333333,
-        b: 'a',
-      },
-    ],
-    e: true,
-    ax: null,
-  },
   template: (`
     <div>
       <p nv-if="state.e" nv-class="state.a" nv-repeat="let a in state.d"  nv-on:click="@componentClick(state.d)">你好： {{a.z}}</p>
@@ -208,8 +193,24 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
   constructor() {}
 
   public nvOnInit() {
+    this.state = {
+      a: 'a子组件',
+      b: 100,
+      c: '<p>1111</p>',
+      d: [
+        {
+          z: 111111111111111,
+          b: 'a',
+        },
+        {
+          z: 33333333333333,
+          b: 'a',
+        },
+      ],
+      e: true,
+      ax: this.props.ax,
+    };
     console.log('nvOnInit props11', this.props);
-    this.state.ax = this.props.ax;
   }
 
   public nvBeforeMount() {
@@ -265,32 +266,6 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
       <router-render></router-render>
     </div>
     `),
-  state: {
-    a: 'a11',
-    b: 2,
-    d: [{
-      z: 111111111111111,
-      b: 'a',
-      show: true,
-    },
-        {
-      z: 33333333333333,
-      b: 'a',
-      show: true,
-    }],
-    c: 'c',
-    e: [{
-      z: 232323,
-      b: 'a',
-      show: true,
-    },
-        {
-      z: 1111,
-      b: 'a',
-      show: false,
-    }],
-    f: true,
-  },
 })
 class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   public hSr: HeroSearchService;
@@ -299,11 +274,38 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   public setLocation: SetLocation;
   public setState: SetState;
   public props: any;
+  public state: any;
 
   constructor(
     private heroSearchService: HeroSearchService,
   ) {
     this.heroSearchService.test();
+    this.state = {
+      a: 'a11',
+      b: 2,
+      d: [{
+        z: 111111111111111,
+        b: 'a',
+        show: true,
+      },
+          {
+        z: 33333333333333,
+        b: 'a',
+        show: true,
+      }],
+      c: 'c',
+      e: [{
+        z: 232323,
+        b: 'a',
+        show: true,
+      },
+          {
+        z: 1111,
+        b: 'a',
+        show: false,
+      }],
+      f: true,
+    };
   }
 
   public nvOnInit() {
@@ -352,7 +354,6 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
       <router-render></router-render>
     </div>
   `),
-  state: { a: 1 },
 })
 class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   public getLocation: GetLocation;
@@ -364,6 +365,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   ) {
     this.heroSearchService1.test();
     console.log('this.heroSearchService1', this.heroSearchService1);
+    this.state = { a: 1 };
   }
   public nvOnInit() {
     console.log('this.getLocation', this.getLocation());
@@ -435,48 +437,6 @@ class TestComponent implements OnInit {
       </div>
       <router-render></router-render>
     </div>`),
-  state: {
-    a: 1,
-    testArray: [
-      {
-        name: '李龙吉',
-        sex: '男',
-        job: [
-          {
-            id: 1,
-            name: '程序员',
-          },
-          {
-            id: 2,
-            name: '码农',
-          },
-          {
-            id: 3,
-            name: '帅',
-          },
-        ],
-      },
-      {
-        name: '邱宝环',
-        sex: '女',
-        // job: ['老师', '英语老师', '美1'],
-        job: [
-          {
-            id: 1,
-            name: '老师',
-          },
-          {
-            id: 2,
-            name: '英语老师',
-          },
-          {
-            id: 3,
-            name: '美',
-          },
-        ],
-      }],
-    testArray2: ['程序员3', '码农3', '帅3'],
-  },
 })
 
 class Container implements OnInit, AfterMount {
@@ -496,6 +456,48 @@ class Container implements OnInit, AfterMount {
     console.log(' nvHttp', nvHttp);
     // console.log('hss', this.hss);
     // console.log('hss2', this.hss2);
+    this.state = {
+      a: 1,
+      testArray: [
+        {
+          name: '李龙吉',
+          sex: '男',
+          job: [
+            {
+              id: 1,
+              name: '程序员',
+            },
+            {
+              id: 2,
+              name: '码农',
+            },
+            {
+              id: 3,
+              name: '帅',
+            },
+          ],
+        },
+        {
+          name: '邱宝环',
+          sex: '女',
+          // job: ['老师', '英语老师', '美1'],
+          job: [
+            {
+              id: 1,
+              name: '老师',
+            },
+            {
+              id: 2,
+              name: '英语老师',
+            },
+            {
+              id: 3,
+              name: '美',
+            },
+          ],
+        }],
+      testArray2: ['程序员3', '码农3', '帅3'],
+    };
   }
 
   public nvOnInit() {
@@ -529,11 +531,6 @@ class Container implements OnInit, AfterMount {
     RouteChild,
     PCChild,
   ],
-  // components: {
-  //   'R2': R2,
-  //   'route-child': RouteChild,
-  //   'pp-childs': PCChild,
-  // },
   providers: [
     HeroSearchService2,
   ],
@@ -541,10 +538,6 @@ class Container implements OnInit, AfterMount {
     R2,
     RouteChild,
   ],
-  // exports: [
-  //   'R2',
-  //   'route-child',
-  // ],
 })
 class M2 {}
 
@@ -558,11 +551,6 @@ class M2 {}
     TestComponent,
     R1,
   ],
-  // components: {
-  //   'container-wrap': Container,
-  //   'pc-component': PComponent,
-  //   'R1': R1,
-  // },
   providers: [
     HeroSearchService,
     HeroSearchService1,

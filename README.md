@@ -656,6 +656,10 @@ Now we support for typescript!
 
   - Components
 
+    - You can initialize state in life cycle hooks `constructor nvOnInit`, after that u must use `setState` add listener for additional attributes on state
+    - After `constructor` u can get this.props and use it
+    - On `nvReceiveProps` u can receive new props with argument `nextProps` and use old props with `this.props`
+
     ```typescript
       constructor()
       nvOnInit(): void;

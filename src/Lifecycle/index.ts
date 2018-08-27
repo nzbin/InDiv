@@ -29,3 +29,9 @@ export interface RouteChange {
 export interface ReceiveProps {
   nvReceiveProps(nextProps: any): void;
 }
+
+export type SetState = <S>(newState: { [key: string]: S }) => void;
+
+export type GetLocation = () => any;
+
+export type SetLocation = <Q, P>(path: string, query?: Q, params?: P) => void;

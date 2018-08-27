@@ -665,8 +665,8 @@ Now we support for typescript!
       nvOnInit(): void;
       nvBeforeMount(): void;
       nvAfterMount(): void;
-      nvOnDestory(): void;
       nvHasRender(): void;
+      nvOnDestory(): void;
       nvWatchState(oldData?: any, newData?: any): void;
       nvRouteChange(lastRoute?: string, newRoute?: string): void;
       nvReceiveProps(nextProps: any): void;

@@ -277,6 +277,7 @@ export declare function factoryModule(EM: Function): INvModule;
 
 export declare function Service(options?: TServiceOptions): (_constructor: Function) => void;
 
+// life cycle hooks
 export declare interface OnInit {
     nvOnInit(): void;
 }
@@ -309,14 +310,9 @@ export declare interface ReceiveProps {
     nvReceiveProps(nextProps: any): void;
 }
 
-export declare interface SetState {
-    (newState: any): void;
-}
-  
-export declare interface GetLocation {
-    (): any;
-}
-  
-export declare interface SetLocation {
-    (path: string, query?: any, params?: any): void;
-}
+// component functions
+export declare type SetState = <S>(newState: { [key: string]: S }) => void;
+
+export declare type GetLocation = () => any;
+
+export declare type SetLocation = <Q, P>(path: string, query?: Q, params?: P) => void;

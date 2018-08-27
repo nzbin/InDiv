@@ -8,18 +8,6 @@ export type ComponentList<C> = {
     scope: C;
 };
 
-export interface SetState {
-    (newState: any): void;
-}
-  
-export interface GetLocation {
-    (): any;
-}
-  
-export interface SetLocation {
-    (path: string, query?: any, params?: any): void;
-}
-
 export interface IComponent<State = any, Props = any, Vm = any> {
     state?: State | any;
     props?: Props | any;
@@ -34,7 +22,6 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     // };
     $componentList?: ComponentList<IComponent<any, any, any>>[];
     stateWatcher?: IWatcher;
-    // propsWatcher?: IWatcher;
 
     nvOnInit?(): void;
     watchData?(): void;
@@ -50,7 +37,6 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     mountComponent(dom: Element, isFirstRender?: boolean): void;
     componentsConstructor(dom: Element): void;
     setState(newState: any): void;
-    // setProps(newProps: any): void;
     getLocation(): any;
     setLocation(path: string, query?: any, params?: any): void;
     getPropsValue(valueList: any[], value: any): void;

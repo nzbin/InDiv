@@ -2,18 +2,17 @@ import { IComponent, ComponentList } from '../types';
 
 import Compile from '../Compile';
 import Watcher from '../Watcher';
-// import KeyWatcher from '../KeyWatcher';
 import Utils from '../Utils';
 import { CompileUtil } from '../CompileUtils';
 import { factoryCreator } from '../Injectable';
 
 
-type TComponentOptions<State> = {
+type TComponentOptions = {
   selector: string;
   template: string;
 };
 
-export function Component<State = any, Props = any, Vm = any>(options: TComponentOptions<State>): (_constructor: Function) => void {
+function Component<State = any, Props = any, Vm = any>(options: TComponentOptions): (_constructor: Function) => void {
   return function (_constructor: Function): void {
     (_constructor as any).$selector = options.selector;
     const vm: IComponent<State, Props, Vm> = _constructor.prototype;
@@ -213,14 +212,4 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
   };
 }
 
-export interface SetState {
-  (newState: any): void;
-}
-
-export interface GetLocation {
-  (): any;
-}
-
-export interface SetLocation {
-  (path: string, query?: any, params?: any): void;
-}
+export default Component;

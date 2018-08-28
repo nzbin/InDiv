@@ -119,8 +119,7 @@ export class CompileUtilForRepeat {
   }
 
   public ifUpdater(node: Element, value: any): void {
-    console.log(9999, node, value);
-    // if (value) this.$fragment.appendChild(node);
+    if (!value && this.$fragment.contains(node)) this.$fragment.removeChild(node);
   }
 
   public classUpdater(node: Element, value: any, oldValue: any): void {
@@ -290,11 +289,12 @@ export class CompileUtil {
   }
 
   public ifUpdater(node: Element, value: any): void {
-    if (!value && this.$fragment.contains(node)) {
-      this.$fragment.removeChild(node);
-    } else {
-      this.$fragment.appendChild(node);
-    }
+    if (!value && this.$fragment.contains(node)) this.$fragment.removeChild(node);
+    // if (!value && this.$fragment.contains(node)) {
+    //   this.$fragment.removeChild(node);
+    // } else {
+    //   this.$fragment.appendChild(node);
+    // }
   }
 
   public classUpdater(node: Element, value: any, oldValue: any): void {
@@ -340,8 +340,10 @@ export class CompileUtil {
       // if (reg.test(text) && text.indexOf(`{{${key}`) >= 0 && !newElement.hasChildNodes()) {
       //   new CompileUtilForRepeat(this.$fragment).templateUpdater(newElement as Element, val, key, vm);
       // }
-      if (this.isTextNode((newElement as Element)) && reg.test(text)) new CompileUtilForRepeat(this.$fragment).templateUpdater(newElement as Element, val, key, vm);
+      this.$fragment.insertBefore(newElement, node);
 
+      if (this.isTextNode((newElement as Element)) && reg.test(text)) new CompileUtilForRepeat(this.$fragment).templateUpdater(newElement as Element, val, key, vm);
+      
       if (nodeAttrs) {
         Array.from(nodeAttrs).forEach(attr => {
           const attrName = attr.name;
@@ -359,8 +361,9 @@ export class CompileUtil {
 
       // if (!this.isIfNode(node)) this.$fragment.appendChild(newElement);
       // first insert node before repeatnode, and remove repeatnode in Compile
-      if (!this.isIfNode(node)) this.$fragment.insertBefore(newElement, node);
-      if (newElement.hasChildNodes()) this.repeatChildrenUpdater((newElement as Element), val, expFather, index, vm, value);
+      // if (!this.isIfNode(node)) this.$fragment.insertBefore(newElement, node);
+      // this.$fragment.insertBefore(newElement, node);
+      if (newElement.hasChildNodes() && this.$fragment.contains(newElement)) this.repeatChildrenUpdater((newElement as Element), val, expFather, index, vm, value);
     });
   }
 
@@ -376,8 +379,10 @@ export class CompileUtil {
       const nodeAttrs = child.attributes;
       const text = child.textContent;
       const reg = /\{\{(.*)\}\}/g;
-      let canShowByIf = true;
-      const repeatUtils = new CompileUtilForRepeat();
+
+      // let canShowByIf = true;
+      // const repeatUtils = new CompileUtilForRepeat();
+
       // if (reg.test(text) && text.indexOf(`{{${key}`) >= 0 && !child.hasChildNodes()) {
       //   new CompileUtilForRepeat(node).templateUpdater(child, value, key, vm);
       // }
@@ -395,20 +400,22 @@ export class CompileUtil {
             } else {
               new CompileUtilForRepeat(node).bind(child, value, key, dir, exp, index, vm, watchValue);
             }
-            if (dir === 'if' && new RegExp(`(^${key})`).test(exp)) canShowByIf = repeatUtils._getVMRepeatVal(value, exp, key);
+            // if (dir === 'if' && new RegExp(`(^${key})`).test(exp)) canShowByIf = repeatUtils._getVMRepeatVal(value, exp, key);
             // if (dir === 'if' && /^(this\.)/.test(exp)) canShowByIf = repeatUtils._getVMVal(vm, exp);
-            if (dir === 'if' && /^(state\.)/.test(exp)) canShowByIf = repeatUtils._getVMVal(vm, exp);
+            // if (dir === 'if' && /^(state\.)/.test(exp)) canShowByIf = repeatUtils._getVMVal(vm, exp);
             child.removeAttribute(attrName);
           }
         });
       }
 
-      if (child.hasChildNodes() && !this.isRepeatNode(child) && canShowByIf) this.repeatChildrenUpdater(child, value, expFather, index, vm, watchValue);
+      // if (child.hasChildNodes() && !this.isRepeatNode(child) && canShowByIf) this.repeatChildrenUpdater(child, value, expFather, index, vm, watchValue);
+      if (child.hasChildNodes() && !this.isRepeatNode(child) && node.contains(child)) this.repeatChildrenUpdater(child, value, expFather, index, vm, watchValue);
 
-      if (!canShowByIf && node.contains(child)) node.removeChild(child);
+      // if (!canShowByIf && node.contains(child)) node.removeChild(child);
 
       const newAttrs = child.attributes;
-      if (newAttrs && canShowByIf) {
+      // if (newAttrs && canShowByIf) {
+      if (newAttrs && node.contains(child)) {
         const restRepeat = Array.from(newAttrs).find(attr => this.isDirective(attr.name) && attr.name === 'nv-repeat');
         if (restRepeat) {
           const newWatchData = restRepeat.value.split(' ')[3];

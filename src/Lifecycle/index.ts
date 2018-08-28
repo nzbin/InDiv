@@ -32,6 +32,10 @@ export interface ReceiveProps {
 
 export type SetState = <S>(newState: { [key: string]: S }) => void;
 
-export type GetLocation = () => any;
+export type GetLocation = () => {
+  path: string;
+  query?: any;
+  params?: any;
+};
 
-export type SetLocation = <Q, P>(path: string, query?: Q, params?: P) => void;
+export type SetLocation = <Q = any, P = any>(path: string, query?: Q, params?: P) => void;

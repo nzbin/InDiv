@@ -119,7 +119,8 @@ export class CompileUtilForRepeat {
   }
 
   public ifUpdater(node: Element, value: any): void {
-    if (value) this.$fragment.appendChild(node);
+    console.log(9999, node, value);
+    // if (value) this.$fragment.appendChild(node);
   }
 
   public classUpdater(node: Element, value: any, oldValue: any): void {
@@ -376,6 +377,7 @@ export class CompileUtil {
       const text = child.textContent;
       const reg = /\{\{(.*)\}\}/g;
       let canShowByIf = true;
+      const repeatUtils = new CompileUtilForRepeat();
       // if (reg.test(text) && text.indexOf(`{{${key}`) >= 0 && !child.hasChildNodes()) {
       //   new CompileUtilForRepeat(node).templateUpdater(child, value, key, vm);
       // }
@@ -385,7 +387,7 @@ export class CompileUtil {
           const attrName = attr.name;
           const exp = attr.value;
           const dir = attrName.substring(3);
-          const repeatUtils = new CompileUtilForRepeat();
+          // const repeatUtils = new CompileUtilForRepeat();
           // if (this.isDirective(attrName) && attrName !== 'nv-repeat' && new RegExp(`(^${key})|(^this)`).test(exp)) {
           if (this.isDirective(attrName) && attrName !== 'nv-repeat' && new RegExp(`(^${key})|(^state)|(^@)`).test(exp)) {
             if (this.isEventDirective(dir)) {

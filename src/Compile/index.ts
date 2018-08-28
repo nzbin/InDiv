@@ -53,7 +53,8 @@ class Compile {
 
       if (node.hasChildNodes() && !this.isRepeatNode(node)) this.recursiveDOM(node.childNodes, node);
 
-      if (!this.isIfNode(node)) fragment.appendChild(node);
+      // if (!this.isIfNode(node)) fragment.appendChild(node);
+      if (!this.isIfNode(node) && !this.isRepeatNode(node)) fragment.appendChild(node);
 
       const text = node.textContent;
       const reg = /\{\{(.*)\}\}/g;

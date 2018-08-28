@@ -37,8 +37,12 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     mountComponent(dom: Element, isFirstRender?: boolean): void;
     componentsConstructor(dom: Element): void;
     setState(newState: any): void;
-    getLocation(): any;
-    setLocation(path: string, query?: any, params?: any): void;
+    getLocation(): {
+        path: string;
+        query?: any;
+        params?: any;
+      };
+    setLocation<Q = any, P = any>(path: string, query?: Q, params?: P): void;
     getPropsValue(valueList: any[], value: any): void;
     buildProps(prop: any): any;
     buildComponentScope(ComponentClass: any, props: any, dom: Element): IComponent<any, any, any>;

@@ -3,15 +3,15 @@ import Utils from '../Utils';
 import { INvModule } from '../types';
 
 type TNvModuleOptions = {
-  imports?: Function[],
+  imports?: Function[];
   // components: {
   //   [name: string]: Function;
   // },
-  components: Function[],
-  providers?: Function[],
+  components: Function[];
+  providers?: Function[];
   // exports?: string[],
-  exports?: Function[],
-  bootstrap?: Function,
+  exports?: Function[];
+  bootstrap?: Function;
 };
 
 export function NvModule(options: TNvModuleOptions): (_constructor: Function) => void {

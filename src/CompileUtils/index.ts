@@ -362,7 +362,6 @@ export class CompileUtil {
       // if (!this.isIfNode(node)) this.$fragment.appendChild(newElement);
       // first insert node before repeatnode, and remove repeatnode in Compile
       // if (!this.isIfNode(node)) this.$fragment.insertBefore(newElement, node);
-      // this.$fragment.insertBefore(newElement, node);
       if (newElement.hasChildNodes() && this.$fragment.contains(newElement)) this.repeatChildrenUpdater((newElement as Element), val, expFather, index, vm, value);
     });
   }

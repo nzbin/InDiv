@@ -41,11 +41,11 @@ export type TServiceOptions = {
 };
 
 export type TNvModuleOptions = {
-    imports?: Function[],
-    components: Function[],
-    providers?: Function[],
-    exports?: Function[],
-    bootstrap?: Function,
+    imports?: Function[];
+    components: Function[];
+    providers?: Function[];
+    exports?: Function[];
+    bootstrap?: Function;
 };
 export interface IService { }
 

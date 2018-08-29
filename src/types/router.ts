@@ -1,4 +1,4 @@
-import { IComponent } from './component';
+import { IComponent, ComponentList } from './component';
 import { IInDiv } from './indiv';
 import { IUtil } from './utils';
 import { IKeyWatcher } from './keyWatcher';
@@ -33,6 +33,7 @@ export interface IRouter {
     distributeRoutes(): void;
     insertRenderRoutes(): void;
     generalDistributeRoutes(): void;
+    emitComponentEvent(componentList: ComponentList<IComponent>[], event: string): void;
     // instantiateComponent(FindComponent: Function, renderDom: Element): Promise<any>;
     instantiateComponent(FindComponent: Function, renderDom: Element): any;
 }

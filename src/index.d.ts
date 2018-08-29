@@ -56,14 +56,15 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     compileUtil: CompileUtil;
     renderDom?: Element;
     $vm?: Vm | any;
+    stateWatcher?: Watcher;
+
     $template?: string;
     $components?: Function[];
-    // $components?: {
-    //     [name: string]: Function;
-    // };
     $componentList?: ComponentList<IComponent<any, any, any>>[];
-    stateWatcher?: Watcher;
-    // propsWatcher?: Watcher;
+
+    setState?: SetState;
+    getLocation?: GetLocation;
+    setLocation?: SetLocation;
 
     nvOnInit?(): void;
     watchData?(): void;
@@ -73,19 +74,11 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     nvHasRender?(): void;
     nvWatchState?(oldData?: any, newData?: any): void;
     nvRouteChange?(lastRoute: string, newRoute: string): void;
-    nvReceiveProps?(nextProps: any): void;
+    nvReceiveProps?(nextProps: Props): void;
     render(): void;
     reRender(): void;
     mountComponent(dom: Element, isFirstRender?: boolean): void;
     componentsConstructor(dom: Element): void;
-    setState(newState: any): void;
-    // setProps(newProps: any): void;
-    getLocation(): {
-        path: string;
-        query?: any;
-        params?: any;
-      };
-      setLocation<Q = any, P = any>(path: string, query?: Q, params?: P): void;
     getPropsValue(valueList: any[], value: any): void;
     buildProps(prop: any): any;
     buildComponentScope(ComponentClass: any, props: any, dom: Element): IComponent<any, any, any>;
@@ -263,6 +256,7 @@ export declare class Router {
     distributeRoutes(): void;
     insertRenderRoutes(): void;
     generalDistributeRoutes(): void;
+    emitComponentEvent(componentList: ComponentList<IComponent>[], event: string): void;
     // instantiateComponent(FindComponent: Function, renderDom: Element): Promise<any>;
     instantiateComponent(FindComponent: Function, renderDom: Element): any;
 }

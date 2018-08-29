@@ -8,6 +8,16 @@ export type ComponentList<C> = {
     scope: C;
 };
 
+export type SetState = <S>(newState: { [key: string]: S }) => void;
+
+export type GetLocation = () => {
+  path: string;
+  query?: any;
+  params?: any;
+};
+
+export type SetLocation = <Q = any, P = any>(path: string, query?: Q, params?: P) => void;
+
 export interface IComponent<State = any, Props = any, Vm = any> {
     state?: State | any;
     props?: Props | any;
@@ -15,13 +25,15 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     compileUtil: ICompileUtil;
     renderDom?: Element;
     $vm?: Vm | any;
+    stateWatcher?: IWatcher;
+
     $template?: string;
     $components?: Function[];
-    // $components?: {
-    //     [name: string]: Function;
-    // };
     $componentList?: ComponentList<IComponent<any, any, any>>[];
-    stateWatcher?: IWatcher;
+
+    setState?: SetState;
+    getLocation?: GetLocation;
+    setLocation?: SetLocation;
 
     nvOnInit?(): void;
     watchData?(): void;
@@ -36,13 +48,6 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     reRender(): void;
     mountComponent(dom: Element, isFirstRender?: boolean): void;
     componentsConstructor(dom: Element): void;
-    setState(newState: any): void;
-    getLocation(): {
-        path: string;
-        query?: any;
-        params?: any;
-      };
-    setLocation<Q = any, P = any>(path: string, query?: Q, params?: P): void;
     getPropsValue(valueList: any[], value: any): void;
     buildProps(prop: any): any;
     buildComponentScope(ComponentClass: any, props: any, dom: Element): IComponent<any, any, any>;

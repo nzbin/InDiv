@@ -101,7 +101,7 @@ Now we support for typescript!
   ];
   router.setRootPath('/demo'); // so routes:Array => `/` is `/demo`
   router.init(routes);
-  router.routeChange = function (old, next) {
+  router.routeChange = (old, next) => {
     console.log('nvRouteChange', old, next);
   };
   const easiest = new InDiv();

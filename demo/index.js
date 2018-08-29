@@ -548,8 +548,8 @@ const routes = [
 router.setRootPath('/demo');
 // router.setRootPath('/');
 router.init(routes);
-router.nvRouteChange = function (old, next) {
-  console.log('nvRouteChange 3', old, next);
+router.routeChange = (old, next) => {
+  console.log('routeChange', old, next);
 };
 
 const inDiv = new InDiv();

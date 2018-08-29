@@ -611,7 +611,7 @@ const routes = [
 router.setRootPath('/demo');
 // router.setRootPath('/');
 router.init(routes);
-router.routeChange = function (old: string, next: string) {
+router.routeChange = (old: string, next: string) => {
   console.log('nvRouteChange', old, next);
 };
 

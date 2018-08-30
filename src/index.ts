@@ -18,7 +18,7 @@ export { default as Watcher } from './Watcher';
 export { default as KeyWatcher } from './KeyWatcher';
 export { default as Compile } from './Compile';
 export { default as Component } from './Component';
-export { default as Router } from './Router';
+export { Router, TRouter } from './Router';
 export { default as InDiv } from './InDiv';
 export { NvModule, factoryModule } from './NvModule';
 export { default as Service } from './Service';

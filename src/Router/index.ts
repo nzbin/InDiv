@@ -3,7 +3,9 @@ import { TRouter, IInDiv, IComponent, ComponentList } from '../types';
 import Utils from '../Utils';
 import KeyWatcher from '../KeyWatcher';
 
-class Router {
+export { TRouter } from '../types';
+
+export class Router {
   public routes: TRouter[];
   public routesList: TRouter[];
   public currentUrl: string;
@@ -332,6 +334,7 @@ class Router {
   
   public routerChangeEvent(index: number): void {
     this.hasRenderComponentList.forEach((c, i) => {
+      if (!c) return;
       if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
       this.emitComponentEvent(c.$componentList, 'nvRouteChange');
       if (i >= index + 1) {
@@ -345,13 +348,15 @@ class Router {
   public emitComponentEvent(componentList: ComponentList<IComponent>[], event: string): void {
     if (event === 'nvRouteChange') {
       componentList.forEach(component => {
-        if (component && component.scope && component.scope.nvRouteChange) component.scope.nvRouteChange(this.lastRoute, this.currentUrl);
+        if (!component || !component.scope) return;
+        if (component.scope.nvRouteChange) component.scope.nvRouteChange(this.lastRoute, this.currentUrl);
         this.emitComponentEvent(component.scope.$componentList, event);
       });
     }
     if (event === 'nvOnDestory') {
       componentList.forEach(component => {
-        if (component && component.scope && component.scope.nvOnDestory) component.scope.nvOnDestory();
+        if (!component || !component.scope) return;
+        if (component.scope.nvOnDestory) component.scope.nvOnDestory();
         this.emitComponentEvent(component.scope.$componentList, event);
       });
     }
@@ -362,4 +367,4 @@ class Router {
   }
 }
 
-export default Router;
+// export default Router;

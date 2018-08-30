@@ -44,7 +44,10 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
 
     vm.watchData = function (): void {
       // if (this.props) (this as IComponent<State, Props, Vm>).propsWatcher = new Watcher((this as IComponent<State, Props, Vm>).props, (this as IComponent<State, Props, Vm>).nvWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).reRender.bind(this as IComponent<State, Props, Vm>));
-      if (this.state) (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, (this as IComponent<State, Props, Vm>).nvWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).reRender.bind(this as IComponent<State, Props, Vm>));
+      if (this.state) {
+        if ((this as IComponent<State, Props, Vm>).nvWatchState) (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, (this as IComponent<State, Props, Vm>).nvWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).reRender.bind(this as IComponent<State, Props, Vm>));
+        if (!(this as IComponent<State, Props, Vm>).nvWatchState) (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, null, (this as IComponent<State, Props, Vm>).reRender.bind(this as IComponent<State, Props, Vm>));
+      }
     };
 
     vm.render = function () {
@@ -57,8 +60,6 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       });
       if (this.nvHasRender) this.nvHasRender();
     };
-
-    vm.nvWatchState = (oldData?: any, newData?: any) => { };
 
     vm.reRender = function (): void {
       const dom = (this as IComponent<State, Props, Vm>).renderDom;

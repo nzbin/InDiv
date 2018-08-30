@@ -256,8 +256,8 @@ export declare class Router {
     distributeRoutes(): void;
     insertRenderRoutes(): void;
     generalDistributeRoutes(): void;
+    routerChangeEvent(index: number): void;
     emitComponentEvent(componentList: ComponentList<IComponent>[], event: string): void;
-    // instantiateComponent(FindComponent: Function, renderDom: Element): Promise<any>;
     instantiateComponent(FindComponent: Function, renderDom: Element): any;
 }
 

@@ -27,13 +27,14 @@ export interface IRouter {
 
     bootstrap(vm: IInDiv): void;
     init(arr: TRouter[]): void;
-    nvRouteChange(lastRoute?: string, nextRoute?: string): void;
+    setRootPath(rootPath: string): void;
+    routeChange(lastRoute?: string, nextRoute?: string): void;
     redirectTo(redirectTo: string): void;
     refresh(): void;
     distributeRoutes(): void;
     insertRenderRoutes(): void;
     generalDistributeRoutes(): void;
+    routerChangeEvent(index: number): void;
     emitComponentEvent(componentList: ComponentList<IComponent>[], event: string): void;
-    // instantiateComponent(FindComponent: Function, renderDom: Element): Promise<any>;
     instantiateComponent(FindComponent: Function, renderDom: Element): any;
 }

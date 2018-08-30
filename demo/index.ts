@@ -28,6 +28,7 @@ class HeroSearchService {
   constructor(
     private heroSearchService1: HeroSearchService1,
   ) {
+    console.log('检查 是否相等', heroSearchService1 === this.heroSearchService1);
     console.log('测试 ts 依赖注入', this.heroSearchService1);
     this.heroSearchService1.test();
   }

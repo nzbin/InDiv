@@ -151,7 +151,10 @@ class Router {
 
       if (path !== lastRouteList[index]) {
         const willRemoveComponent = this.hasRenderComponentList[index];
-        if (willRemoveComponent && willRemoveComponent.nvOnDestory) willRemoveComponent.nvOnDestory();
+        // if (willRemoveComponent) {
+        //   if (willRemoveComponent.nvOnDestory) willRemoveComponent.nvOnDestory();
+        //   this.emitComponentEvent(willRemoveComponent.$componentList, 'nvOnDestory');
+        // }
         const needRenderRoute = this.routesList[index];
         if (!needRenderRoute) {
           console.error('route error: wrong route instantiation in insertRenderRoutes:', this.currentUrl);
@@ -160,15 +163,6 @@ class Router {
 
         const needRenderComponent = this.$vm.$components.find((component: any) => component.$selector === needRenderRoute.component);
         const renderDom = document.querySelectorAll('router-render')[index - 1];
-        this.hasRenderComponentList.forEach((c, i) => {
-          if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
-          this.emitComponentEvent(c.$componentList, 'nvRouteChange');
-          if (i > index) {
-            if (c.nvOnDestory) c.nvOnDestory();
-            this.emitComponentEvent(c.$componentList, 'nvOnDestory');
-          }
-        });
-        this.hasRenderComponentList.length = index;
 
         if (!needRenderRoute.component && !needRenderRoute.redirectTo) {
           console.error(`route error: path ${needRenderRoute.path} need a component which has children path or need a  redirectTo which has't children path`);
@@ -176,19 +170,33 @@ class Router {
         }
         if (needRenderComponent) {
           const component = this.instantiateComponent(needRenderComponent, renderDom);
-          if (component) this.hasRenderComponentList[index] = component;
+          // if (component) this.hasRenderComponentList.push(component);
+          if (component) {
+            this.hasRenderComponentList[index + 1] = this.hasRenderComponentList[index];
+            this.hasRenderComponentList[index] = component;
+          }
+          
+          // this.hasRenderComponentList.forEach((c, i) => {
+          //   if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
+          //   this.emitComponentEvent(c.$componentList, 'nvRouteChange');
+          //   if (i > index) {
+          //     if (c.nvOnDestory) c.nvOnDestory();
+          //     this.emitComponentEvent(c.$componentList, 'nvOnDestory');
+          //   }
+          // });
+          this.routerChangeEvent(index);
+
+          // this.hasRenderComponentList.length = index + 1;
         }
 
         if (needRenderRoute.redirectTo && /^\/.*/.test(needRenderRoute.redirectTo) && (index + 1) === this.renderRouteList.length) {
-          this.hasRenderComponentList.forEach((c, i) => {
-            if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
-            this.emitComponentEvent(c.$componentList, 'nvRouteChange');
-            if (i > index) {
-              if (c.nvOnDestory) c.nvOnDestory();
-              this.emitComponentEvent(c.$componentList, 'nvOnDestory');
-            }
-          });
-          this.hasRenderComponentList.length = index;
+          // this.hasRenderComponentList.forEach((c, i) => {
+          //   if (i > index) {
+          //     if (c.nvOnDestory) c.nvOnDestory();
+          //     this.emitComponentEvent(c.$componentList, 'nvOnDestory');
+          //   }
+          // });
+          // this.hasRenderComponentList.length = index + 1;
           this.needRedirectPath = needRenderRoute.redirectTo;
           return;
         }
@@ -196,28 +204,28 @@ class Router {
 
       if (index === (this.renderRouteList.length - 1) && index < (lastRouteList.length - 1)) {
         const renderDom = document.querySelectorAll('router-render')[index];
-        this.hasRenderComponentList.forEach((c, i) => {
-          if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
-          this.emitComponentEvent(c.$componentList, 'nvRouteChange');
-          if (i > index) {
-            if (c.nvOnDestory) c.nvOnDestory();
-            this.emitComponentEvent(c.$componentList, 'nvOnDestory');
-          }
-        });
+        // this.hasRenderComponentList.forEach((c, i) => {
+        //   if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
+        //   this.emitComponentEvent(c.$componentList, 'nvRouteChange');
+        //   if (i > index) {
+        //     if (c.nvOnDestory) c.nvOnDestory();
+        //     this.emitComponentEvent(c.$componentList, 'nvOnDestory');
+        //   }
+        // });
+        this.routerChangeEvent(index);
+
         if (renderDom && renderDom.hasChildNodes()) renderDom.removeChild(renderDom.childNodes[0]);
-        this.hasRenderComponentList.length = index;
+        // this.hasRenderComponentList.length = index + 1;
 
         const needRenderRoute = this.routesList[index];
         if (needRenderRoute.redirectTo && /^\/.*/.test(needRenderRoute.redirectTo) && (index + 1) === this.renderRouteList.length) {
-          this.hasRenderComponentList.forEach((c, i) => {
-            if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
-            this.emitComponentEvent(c.$componentList, 'nvRouteChange');
-            if (i > index) {
-              if (c.nvOnDestory) c.nvOnDestory();
-              this.emitComponentEvent(c.$componentList, 'nvOnDestory');
-            }
-          });
-          this.hasRenderComponentList.length = index;
+          // this.hasRenderComponentList.forEach((c, i) => {
+          //   if (i > index) {
+          //     if (c.nvOnDestory) c.nvOnDestory();
+          //     this.emitComponentEvent(c.$componentList, 'nvOnDestory');
+          //   }
+          // });
+          // this.hasRenderComponentList.length = index + 1;
           this.needRedirectPath = needRenderRoute.redirectTo;
           return;
         }
@@ -247,20 +255,24 @@ class Router {
         this.routesList.push(rootRoute);
 
         const component = this.instantiateComponent(FindComponent, rootDom);
-        if (component) this.hasRenderComponentList[index] = component;
+        if (component) this.hasRenderComponentList.push(component);
 
-        this.hasRenderComponentList.forEach((c, i) => {
-          if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
-          this.emitComponentEvent(c.$componentList, 'nvRouteChange');
-          if (i > index) {
-            if (c.nvOnDestory) c.nvOnDestory();
-            this.emitComponentEvent(c.$componentList, 'nvOnDestory');
-          }
-        });
+        if (index === this.renderRouteList.length - 1) {
+          // this.hasRenderComponentList.forEach((c, i) => {
+          //   if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
+          //   this.emitComponentEvent(c.$componentList, 'nvRouteChange');
+          //   if (i > index) {
+          //     if (c.nvOnDestory) c.nvOnDestory();
+          //     this.emitComponentEvent(c.$componentList, 'nvOnDestory');
+          //   }
+          // });
+          this.routerChangeEvent(index);
+        }
 
         if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo) && (index + 1) === this.renderRouteList.length) {
           this.needRedirectPath = rootRoute.redirectTo;
-          this.hasRenderComponentList.length = index;
+          this.renderRouteList.push(rootRoute.redirectTo);
+          // this.hasRenderComponentList.length = index + 1;
           return;
         }
       } else {
@@ -285,46 +297,66 @@ class Router {
         }
         const renderDom = document.querySelectorAll('router-render')[index - 1];
         this.routesList.push(route);
-        this.hasRenderComponentList.forEach((c) => {
-          if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
-          this.emitComponentEvent(c.$componentList, 'nvRouteChange');
-        });
 
         if (FindComponent) {
           const component = this.instantiateComponent(FindComponent, renderDom);
-          if (component) this.hasRenderComponentList[index] = component;
+          if (component) this.hasRenderComponentList.push(component);
         }
+
+        if (index === this.renderRouteList.length - 1) {
+          // this.hasRenderComponentList.forEach((c, i) => {
+          //   if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
+          //   this.emitComponentEvent(c.$componentList, 'nvRouteChange');
+          //   if (i > index) {
+          //     if (c.nvOnDestory) c.nvOnDestory();
+          //     this.emitComponentEvent(c.$componentList, 'nvOnDestory');
+          //   }
+          // });
+          this.routerChangeEvent(index);
+        }
+
         if (route.redirectTo && /^\/.*/.test(route.redirectTo) && (index + 1) === this.renderRouteList.length) {
-          this.hasRenderComponentList.forEach((c, i) => {
-            if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
-            this.emitComponentEvent(c.$componentList, 'nvRouteChange');
-            if (i > index) {
-              if (c.nvOnDestory) c.nvOnDestory();
-              this.emitComponentEvent(c.$componentList, 'nvOnDestory');
-            }
-          });
+          // this.hasRenderComponentList.forEach((c, i) => {
+            // if (i > index) {
+            //   if (c.nvOnDestory) c.nvOnDestory();
+            //   this.emitComponentEvent(c.$componentList, 'nvOnDestory');
+            // }
+          // });
           this.needRedirectPath = route.redirectTo;
-          this.hasRenderComponentList.length = index;
+          // this.hasRenderComponentList.length = index + 1;
           return;
         }
       }
     }
   }
+  
+  public routerChangeEvent(index: number): void {
+    this.hasRenderComponentList.forEach((c, i) => {
+      if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
+      this.emitComponentEvent(c.$componentList, 'nvRouteChange');
+      if (i >= index + 1) {
+        if (c.nvOnDestory) c.nvOnDestory();
+        this.emitComponentEvent(c.$componentList, 'nvOnDestory');
+      }
+    });
+    this.hasRenderComponentList.length = index + 1;
+  }
 
   public emitComponentEvent(componentList: ComponentList<IComponent>[], event: string): void {
     if (event === 'nvRouteChange') {
       componentList.forEach(component => {
-        if (component.scope.nvRouteChange) component.scope.nvRouteChange(this.lastRoute, this.currentUrl);
+        if (component && component.scope && component.scope.nvRouteChange) component.scope.nvRouteChange(this.lastRoute, this.currentUrl);
+        this.emitComponentEvent(component.scope.$componentList, event);
       });
     }
     if (event === 'nvOnDestory') {
       componentList.forEach(component => {
-        if (component.scope.nvOnDestory) component.scope.nvOnDestory();
+        if (component && component.scope && component.scope.nvOnDestory) component.scope.nvOnDestory();
+        this.emitComponentEvent(component.scope.$componentList, event);
       });
     }
   }
 
-  // public instantiateComponent(FindComponent: Function, renderDom: Element): Promise<any> {
   public instantiateComponent(FindComponent: Function, renderDom: Element): any {
     return this.$vm.renderComponent(FindComponent, renderDom);
   }

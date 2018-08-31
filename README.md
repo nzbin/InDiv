@@ -3,6 +3,8 @@
 A minimal web mvvm framework.一个小Web mvvm库。
 Now we support for typescript!
 
+[中文](https://dimalilongji.github.io/easiest-doc)
+
 ## demo
   - `npm run start`
   - `npm run start-js`

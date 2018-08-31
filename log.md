@@ -69,3 +69,5 @@
 18. 2018-08-12 fix nv-repeat, remove class `Component` `NvModule` `Service`, and add decorator `Component` `NvModule` `Service`
 
 19. 2018-08-17 remove watch this.props and only use state and function in `Component` for `Component: template`
+
+20. 2018-08-31 rename to InDiv

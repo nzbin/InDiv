@@ -32,13 +32,14 @@ class Watcher {
         },
         set(newVal: any) {
           if (vm.utils.isEqual(newVal, val)) return;
-          const oldData: any = {};
-          oldData[key] = val;
+          const oldData = JSON.parse(JSON.stringify(vm.data));
           const newData: any = {};
           newData[key] = newVal;
           val = newVal;
           vm.watchData(val);
-          if (vm.watcher) vm.watcher(oldData, newData);
+          if (vm.watcher) {
+            vm.watcher(oldData, vm.data);
+          }
           if (vm.render) vm.render();
         },
       });

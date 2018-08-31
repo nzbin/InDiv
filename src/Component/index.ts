@@ -20,7 +20,6 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
 
     vm.utils = new Utils();
     vm.compileUtil = new CompileUtil();
-    // vm.$components = {};
     vm.$components = [];
     vm.$componentList = [];
 
@@ -43,7 +42,6 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     };
 
     vm.watchData = function (): void {
-      // if (this.props) (this as IComponent<State, Props, Vm>).propsWatcher = new Watcher((this as IComponent<State, Props, Vm>).props, (this as IComponent<State, Props, Vm>).nvWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).reRender.bind(this as IComponent<State, Props, Vm>));
       if (this.state) {
         if ((this as IComponent<State, Props, Vm>).nvWatchState) (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, (this as IComponent<State, Props, Vm>).nvWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).reRender.bind(this as IComponent<State, Props, Vm>));
         if (!(this as IComponent<State, Props, Vm>).nvWatchState) (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, null, (this as IComponent<State, Props, Vm>).reRender.bind(this as IComponent<State, Props, Vm>));
@@ -102,10 +100,6 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       ((this as IComponent<State, Props, Vm>).constructor as any)._injectedComponents.forEach((injectedComponent: any) => {
         if (!(this as IComponent<State, Props, Vm>).$components.find((component: any) => component.$selector === injectedComponent.$selector)) (this as IComponent<State, Props, Vm>).$components.push(injectedComponent);
       });
-      // for (const name in ((this as IComponent<State, Props, Vm>).constructor as any)._injectedComponents) {
-      //   (this as IComponent<State, Props, Vm>).$components[name] = ((this as IComponent<State, Props, Vm>).constructor as any)._injectedComponents[name];
-      // }
-      // for (const name in (this as IComponent<State, Props, Vm>).$components) {
       for (let i = 0; i <= (this as IComponent<State, Props, Vm>).$components.length - 1 ; i ++) {
         const name = (((this as IComponent<State, Props, Vm>).$components[i]) as any).$selector;
         const tags = dom.getElementsByTagName(name);
@@ -127,7 +121,6 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
                 const valueList = prop[1].split('.');
                 const key = valueList[0];
                 let _prop = null;
-                // if (/^(this.).*/g.test(prop[1])) _prop = (this as IComponent<State, Props, Vm>).compileUtil._getVMVal(this as IComponent<State, Props, Vm>, prop[1]);
                 if (/^(state.).*/g.test(prop[1])) _prop = (this as IComponent<State, Props, Vm>).compileUtil._getVMVal(this as IComponent<State, Props, Vm>, prop[1]);
                 if (/^(\@.).*/g.test(prop[1])) _prop = (this as IComponent<State, Props, Vm>).compileUtil._getVMVal(this as IComponent<State, Props, Vm>, prop[1].replace(/^(\@)/, ''));
                 if (_propsKeys.hasOwnProperty(key)) _prop = (this as IComponent<State, Props, Vm>).getPropsValue(valueList, _propsKeys[key]);
@@ -140,7 +133,6 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
             dom: node,
             props,
             scope: (this as IComponent<State, Props, Vm>).buildComponentScope((this as IComponent<State, Props, Vm>).$components[i], props, node),
-            // scope: (this as IComponent<State, Props, Vm>).buildComponentScope((this as IComponent<State, Props, Vm>).$components[name], props, node),
           });
         });
       }
@@ -165,26 +157,6 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
         (this as IComponent<State, Props, Vm>).reRender();
       }
     };
-
-    // vm.setProps = function (newProps: any): void {
-    //   if (newProps && (this as IComponent<State, Props, Vm>).utils.isFunction(newProps)) {
-    //     const _newProps = newProps();
-    //     if (_newProps && _newProps instanceof Object) {
-    //       for (const key in _newProps) {
-    //         if ((this as IComponent<State, Props, Vm>).props.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).props[key] !== _newProps[key]) (this as IComponent<State, Props, Vm>).props[key] = _newProps[key];
-    //         if ((this as IComponent<State, Props, Vm>).props.hasOwnProperty(key)) (this as IComponent<State, Props, Vm>).props[key] = _newProps[key];
-    //       }
-    //       (this as IComponent<State, Props, Vm>).reRender();
-    //     }
-    //   }
-    //   if (newProps && newProps instanceof Object) {
-    //     for (const key in newProps) {
-    //       if ((this as IComponent).props.hasOwnProperty(key) && (this as IComponent).props[key] !== newProps[key]) (this as IComponent).props[key] = newProps[key];
-    //       if ((this as IComponent).props.hasOwnProperty(key)) (this as IComponent).props[key] = newProps[key];
-    //     }
-    //     (this as IComponent<State, Props, Vm>).reRender();
-    //   }
-    // };
 
     vm.getPropsValue = function (valueList: any[], value: any): void {
       let val = value;

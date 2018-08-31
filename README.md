@@ -408,7 +408,7 @@ Now we support for typescript!
   - use `this.state: Object` and `this.setState(parmars: Function || Object)`
   - if u have some variable, u can set `this.state` in `constructor(){}`
   - if u want to change State, plz use `this.setState`, parmars can be `Object` or `Function` which must return an `Object`
-  - and u can recive this change in life cycle `nvWatchState(oldData, newData)`
+  - and u can recive this change in life cycle `nvWatchState(oldData, newData)`, but we need to use a deep clone for `this.state`, so please minimize the use of life cycle `WatchState`
 
 8. `Watcher` and `KeyWatcher`
 

@@ -63,7 +63,6 @@ class Compile {
         // if (reg.test(text) && node.hasChildNodes() && node.childNodes.length === 1) {
         // // if (reg.test(text)) {
         //   const regText = RegExp.$1;
-        //   console.log(222222, node);
         //   // if (/(.*\{\{(this.).*\}\}.*)/g.test(text)) this.compileText(node, regText);
         //   if (/(.*\{\{(state.).*\}\}.*)/g.test(text)) this.compileText(node, regText);
         // }

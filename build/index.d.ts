@@ -15,7 +15,7 @@ export type TRouter = {
     children?: TRouter[];
 };
 
-export declare type ComponentList<C> = {
+export type ComponentList<C> = {
     dom: Element;
     props: any;
     scope: C;
@@ -32,8 +32,8 @@ export type EsRouteObject = {
 }
 
 export type TComponentOptions = {
+    selector: string;
     template: string;
-    state?: any;
 };
 
 export type TServiceOptions = {
@@ -41,11 +41,11 @@ export type TServiceOptions = {
 };
 
 export type TNvModuleOptions = {
-    imports?: Function[],
-    components: Function[],
-    providers?: Function[],
-    exports?: Function[],
-    bootstrap?: Function,
+    imports?: Function[];
+    components: Function[];
+    providers?: Function[];
+    exports?: Function[];
+    bootstrap?: Function;
 };
 export interface IService { }
 
@@ -56,14 +56,15 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     compileUtil: CompileUtil;
     renderDom?: Element;
     $vm?: Vm | any;
+    stateWatcher?: Watcher;
+
     $template?: string;
     $components?: Function[];
-    // $components?: {
-    //     [name: string]: Function;
-    // };
     $componentList?: ComponentList<IComponent<any, any, any>>[];
-    stateWatcher?: Watcher;
-    // propsWatcher?: Watcher;
+
+    setState?: SetState;
+    getLocation?: GetLocation;
+    setLocation?: SetLocation;
 
     nvOnInit?(): void;
     watchData?(): void;
@@ -73,15 +74,11 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     nvHasRender?(): void;
     nvWatchState?(oldData?: any, newData?: any): void;
     nvRouteChange?(lastRoute: string, newRoute: string): void;
-    nvReceiveProps?(nextProps: any): void;
+    nvReceiveProps?(nextProps: Props): void;
     render(): void;
     reRender(): void;
     mountComponent(dom: Element, isFirstRender?: boolean): void;
     componentsConstructor(dom: Element): void;
-    setState(newState: any): void;
-    // setProps(newProps: any): void;
-    getLocation(): any;
-    setLocation(path: string, query?: any, params?: any): void;
     getPropsValue(valueList: any[], value: any): void;
     buildProps(prop: any): any;
     buildComponentScope(ComponentClass: any, props: any, dom: Element): IComponent<any, any, any>;
@@ -91,15 +88,8 @@ export interface INvModule {
     utils?: Utils;
     $imports?: Function[];
     $components?: Function[];
-    // $components?: {
-    //     [name: string]: Function;
-    // };
     $providers?: Function[];
-    // $exports?: string[];
     $exports?: Function[];
-    // $exportList?: {
-    //     [name: string]: Function;
-    // };
     providerList?: Map<string, IService>;
     bootstrap?: Function;
     buildImports(): void;
@@ -133,11 +123,11 @@ export declare class Utils {
 }
 
 export declare const nvHttp: {
-    get(url: string, params?: any): Promise<any>;
-    delete(url: string, params?: any): Promise<any>;
-    post(url: string, params?: any): Promise<any>;
-    put(url: string, params?: any): Promise<any>;
-    patch(url: string, params?: any): Promise<any>;
+    get?<P = any, R = any>(url: string, params?: P): Promise<R>;
+    delete?<P = any, R = any>(url: string, params?: P): Promise<R>;
+    post?<P = any, R = any>(url: string, params?: P): Promise<R>;
+    put?<P = any, R = any>(url: string, params?: P): Promise<R>;
+    patch?<P = any, R = any>(url: string, params?: P): Promise<R>;
 }
 
 export declare class KeyWatcher {
@@ -157,7 +147,7 @@ export declare class CompileUtilForRepeat {
     _setValueByValue(vm: any, exp: string, key: string, setValue: any): any;
     _getVMVal(vm: any, exp: string): any;
     _getVMRepeatVal(val: any, exp: string, key: string): any;
-    bind(node: Element, val?: any, key?: string, dir?: string, exp?: string, index?: number, vm?: any, watchValue?: any): void;
+    bind(node: Element, key?: string, dir?: string, exp?: string, index?: number, vm?: any, watchValue?: any): void;
     templateUpdater(node: Element, val?: any, key?: string, vm?: any): void;
     textUpdater(node: Element, value: any): void;
     htmlUpdater(node: Element, value: any): void;
@@ -220,9 +210,6 @@ export declare class InDiv {
     $canRenderModule: boolean;
     $routeDOMKey: string;
     $rootModule: INvModule;
-    // $components: {
-    //     [name: string]: Function;
-    // };
     $components: Function[];
     $esRouteObject?: EsRouteObject;
     constructor();
@@ -231,8 +218,6 @@ export declare class InDiv {
     bootstrapModule(Esmodule: Function): void;
     init(): void;
     renderModuleBootstrap(): void;
-    // renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any>;
-    // replaceDom(component: IComponent, renderDOM: Element): Promise<any>;
     renderComponent(BootstrapComponent: Function, renderDOM: Element): any;
     replaceDom(component: IComponent, renderDOM: Element): void;
 }
@@ -259,7 +244,8 @@ export declare class Router {
     distributeRoutes(): void;
     insertRenderRoutes(): void;
     generalDistributeRoutes(): void;
-    // instantiateComponent(FindComponent: Function, renderDom: Element): Promise<any>;
+    routerChangeEvent(index: number): void;
+    emitComponentEvent(componentList: ComponentList<IComponent>[], event: string): void;
     instantiateComponent(FindComponent: Function, renderDom: Element): any;
 }
 
@@ -277,6 +263,7 @@ export declare function factoryModule(EM: Function): INvModule;
 
 export declare function Service(options?: TServiceOptions): (_constructor: Function) => void;
 
+// life cycle hooks
 export declare interface OnInit {
     nvOnInit(): void;
 }
@@ -309,14 +296,9 @@ export declare interface ReceiveProps {
     nvReceiveProps(nextProps: any): void;
 }
 
-export declare interface SetState {
-    (newState: any): void;
-}
-  
-export declare interface GetLocation {
-    (): any;
-}
-  
-export declare interface SetLocation {
-    (path: string, query?: any, params?: any): void;
-}
+// component functions
+export declare type SetState = <S>(newState: { [key: string]: S }) => void;
+
+export declare type GetLocation = () => any;
+
+export declare type SetLocation = <Q, P>(path: string, query?: Q, params?: P) => void;

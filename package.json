@@ -11,17 +11,13 @@
     "mvvm",
     "model",
     "view",
-    "Class",
     "component",
     "front-end",
     "router",
     "DOM",
     "render",
     "framework",
-    "mvc",
-    "OOP",
     "Virtual DOM",
-    "service",
     "Dependency Injection"
   ],
   "scripts": {
@@ -54,7 +50,7 @@
     "nodemon": "^1.17.5",
     "parcel-bundler": "^1.8.1",
     "tslint": "^5.11.0",
-    "typescript": "^2.9.2"
+    "typescript": "^3.0.1"
   },
   "dependencies": {
     "axios": "^0.18.0",

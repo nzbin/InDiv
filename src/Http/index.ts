@@ -1,63 +1,63 @@
 import axios from 'axios';
 
 const nvHttp = {
-  get: function(url: string, params?: any): Promise<any> {
+  get: function<P = any, R = any>(url: string, params?: P): Promise<R> {
     return new Promise((resolve, reject) => {
       const pms = params ? { params } : null;
       axios.get(url, pms)
-        .then((res: any) => {
+        .then(res => {
           resolve(res.data);
         })
-        .catch((e: any) => {
+        .catch(e => {
           reject(e.response.data);
         });
     });
   },
 
-  delete: function(url: string, params?: any): Promise<any> {
+  delete: function<P = any, R = any>(url: string, params?: P): Promise<R> {
     return new Promise((resolve, reject) => {
       const pms = params ? { params } : null;
       axios.delete(url, pms)
-        .then((res: any) => {
+        .then(res => {
           resolve(res.data);
         })
-        .catch((e: any) => {
+        .catch(e => {
           reject(e.response.data);
         });
     });
   },
 
-  post: function(url: string, params?: any): Promise<any> {
+  post: function<P = any, R = any>(url: string, params?: P): Promise<R> {
     return new Promise((resolve, reject) => {
       axios.post(url, params)
-        .then((res: any) => {
+        .then(res => {
           resolve(res.data);
         })
-        .catch((e: any) => {
+        .catch(e => {
           reject(e.response.data);
         });
     });
   },
 
-  put: function(url: string, params?: any): Promise<any> {
+  put: function<P = any, R = any>(url: string, params?: P): Promise<R> {
     return new Promise((resolve, reject) => {
       axios.put(url, params)
-        .then((res: any) => {
+        .then(res => {
           resolve(res.data);
         })
-        .catch((e: any) => {
+        .catch(e => {
           reject(e.response.data);
         });
     });
   },
 
-  patch: function(url: string, params?: any): Promise<any> {
+  patch: function<P = any, R = any>(url: string, params?: P): Promise<R> {
     return new Promise((resolve, reject) => {
       axios.patch(url, params)
-        .then((res: any) => {
+        .then(res => {
           resolve(res.data);
         })
-        .catch((e: any) => {
+        .catch(e => {
           reject(e.response.data);
         });
     });
@@ -66,3 +66,4 @@ const nvHttp = {
 };
 
 export default nvHttp;
+

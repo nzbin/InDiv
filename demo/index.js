@@ -553,7 +553,6 @@ router.routeChange = (old, next) => {
 };
 
 const inDiv = new InDiv();
-// easiest.bootstrapModule(M1);
 inDiv.bootstrapModule(M1);
 inDiv.use(router);
 inDiv.init();

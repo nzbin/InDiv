@@ -1,9 +1,9 @@
-# easiest
+# indiv
 
 A minimal web mvvm framework.一个小Web mvvm库。
 Now we support for typescript!
 
-[中文](https://dimalilongji.github.io/easiest-doc)
+[中文](https://dimalilongji.github.io/indiv-doc)
 
 ## demo
   - `npm run start`
@@ -22,10 +22,10 @@ Now we support for typescript!
   1. use `bootstrapModule` to bootstrap a root module `NvModule`
 
   ```javascript
-  const easiest = new InDiv();
-  easiest.bootstrapModule(M1);
-  easiest.use(router); // if u are using a router
-  easiest.init();
+  const indiv = new InDiv();
+  indiv.bootstrapModule(M1);
+  indiv.use(router); // if u are using a router
+  indiv.init();
   ```
 
 3. Create a router:
@@ -106,10 +106,10 @@ Now we support for typescript!
   router.routeChange = (old, next) => {
     console.log('nvRouteChange', old, next);
   };
-  const easiest = new InDiv();
-  easiest.bootstrapModule(M1);
-  const routerIndex = easiest.use(router);
-  easiest.init();
+  const indiv = new InDiv();
+  indiv.bootstrapModule(M1);
+  const routerIndex = indiv.use(router);
+  indiv.init();
   ```
 
 4. Create a Component:
@@ -502,7 +502,7 @@ Now we support for typescript!
       - Use `this.` names of constructor arguments to directly use `Service`.
 
       ```typescript
-      import { Injectable, Component, NvModule, Service, HasRender } from 'easiest';
+      import { Injectable, Component, NvModule, Service, HasRender } from 'indiv';
 
       @Service({
         isSingletonMode: true,

@@ -28,14 +28,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DimaLiLongJi/easiest.git"
+    "url": "git+https://github.com/DimaLiLongJi/InDiv.git"
   },
   "author": "DimaLiLongJi",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/DimaLiLongJi/easiest/issues"
+    "url": "https://github.com/DimaLiLongJi/InDiv/issues"
   },
-  "homepage": "https://github.com/DimaLiLongJi/easiest#readme",
+  "homepage": "https://github.com/DimaLiLongJi/InDiv#readme",
   "devDependencies": {
     "babel-eslint": "^8.2.0",
     "ejs": "^2.6.1",

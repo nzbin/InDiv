@@ -182,7 +182,7 @@ function renderVnode(patchList: IPatchList[]): void {
         (patch.node as Element).setAttribute((patch.newValue as TAttributes).name, (patch.newValue as TAttributes).value);
         break;
       case 4:
-        (patch.node as Element).removeAttribute((patch.newValue as TAttributes).name);
+        (patch.node as Element).removeAttribute((patch.oldValue as TAttributes).name);
         break;
       case 5:
         patch.node.nodeValue = (patch.newValue as string);

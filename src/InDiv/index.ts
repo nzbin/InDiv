@@ -13,9 +13,6 @@ class InDiv {
   public $routeDOMKey: string;
   public $rootModule: INvModule;
   public $components: Function[];
-  // public $components: {
-  //   [name: string]: Function;
-  // };
   public $esRouteObject?: EsRouteObject;
 
 
@@ -53,7 +50,6 @@ class InDiv {
     }
 
     this.$rootModule = factoryModule(Esmodule);
-    // this.$components = Object.assign({}, this.$rootModule.$components);
     this.$components = [...this.$rootModule.$components];
   }
 

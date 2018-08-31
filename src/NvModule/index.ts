@@ -4,12 +4,8 @@ import { INvModule } from '../types';
 
 type TNvModuleOptions = {
   imports?: Function[];
-  // components: {
-  //   [name: string]: Function;
-  // },
   components: Function[];
   providers?: Function[];
-  // exports?: string[],
   exports?: Function[];
   bootstrap?: Function;
 };
@@ -17,7 +13,6 @@ type TNvModuleOptions = {
 export function NvModule(options: TNvModuleOptions): (_constructor: Function) => void {
   return function (_constructor: Function): void {
     const vm = _constructor.prototype as INvModule;
-    // vm.$exportList = {};
     vm.providerList = new Map();
     vm.utils = new Utils();
     if (options.imports) vm.$imports = options.imports;
@@ -29,11 +24,7 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
     vm.buildImports = function (): void {
       if (!(this as INvModule).$imports) return;
       (this as INvModule).$imports.forEach((ModuleImport: any) => {
-        // const moduleImport = new ModuleImport();
         const moduleImport = factoryModule(ModuleImport);
-        // for (const name in moduleImport.$exportList) {
-        //   this.$components[name] = moduleImport.$exportList[name];
-        // }
         for (let i = 0; i <= moduleImport.$exports.length - 1; i++) {
           const importComponent = moduleImport.$exports[i];
           if (!this.$components.find((component: any) => component.$selector === (importComponent as any).$selector)) {
@@ -74,28 +65,10 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
           component._injectedProviders = this.providerList;
         }
       }
-      // for (const name in (this as INvModule).$components) {
-      //   const component: any = (this as INvModule).$components[name];
-      //   if (component._injectedProviders) {
-      //     (this as INvModule).providerList.forEach((value, key) => {
-      //       if (!component._injectedProviders.has(key)) component._injectedProviders.set(key, value);
-      //     });
-      //   } else {
-      //     component._injectedProviders = this.providerList;
-      //   }
-      // }
     };
 
     vm.buildComponents4Components = function (): void {
       if (!this.$components) return;
-      // for (const name in (this as INvModule).$components) {
-      //   const FindComponent: any = (this as INvModule).$components[name];
-      //   if (FindComponent._injectedComponents) {
-      //     FindComponent._injectedComponents = Object.assign(FindComponent._injectedComponents, (this as INvModule).$components);
-      //   } else {
-      //     FindComponent._injectedComponents = (this as INvModule).$components;
-      //   }
-      // }
       for (let i = 0; i <= this.$components.length - 1; i++) {
         const FindComponent: any = (this as INvModule).$components[i];
         if (FindComponent._injectedComponents) {
@@ -107,13 +80,6 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
         }
       }
     };
-
-    // vm.buildExports = function (): void {
-    //   if (!(this as INvModule).$exports) return;
-    //   (this as INvModule).$exports.forEach(ex => {
-    //     if ((this as INvModule).$components[ex]) (this as INvModule).$exportList[ex] = (this as INvModule).$components[ex];
-    //   });
-    // };
   };
 }
 
@@ -124,8 +90,5 @@ export function factoryModule(NM: Function): INvModule {
   nm.buildProviders4Services();
   nm.buildComponents4Components();
   nm.buildProviders4Components();
-  // em.buildExports();
   return nm;
 }
-
-// export default NvModule;

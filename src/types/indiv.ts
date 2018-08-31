@@ -1,6 +1,5 @@
 import { IComponent } from './component';
 import { INvModule } from './nvModule';
-// import { IService } from './service';
 import { IUtil } from './utils';
 
 export interface IMiddleware<ES> {
@@ -21,9 +20,6 @@ export interface IInDiv {
     $canRenderModule: boolean;
     $routeDOMKey: string;
     $rootModule: INvModule;
-    // $components: {
-    //     [name: string]: Function;
-    // };
     $components: Function[];
     $esRouteObject?: EsRouteObject;
 
@@ -32,8 +28,6 @@ export interface IInDiv {
     bootstrapModule(Esmodule: Function): void;
     init(): void;
     renderModuleBootstrap(): void;
-    // renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any>;
     renderComponent(BootstrapComponent: Function, renderDOM: Element): any;
     replaceDom(component: IComponent, renderDOM: Element): void;
-    // replaceDom(component: IComponent, renderDOM: Element): Promise<any>;
 }

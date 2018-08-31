@@ -5,7 +5,7 @@ export interface ICompileUtilForRepeat {
     _setValueByValue(vm: any, exp: string, key: string, setValue: any): any;
     _getVMVal(vm: any, exp: string): any;
     _getVMRepeatVal(val: any, exp: string, key: string): any;
-    bind(node: Element, val?: any, key?: string, dir?: string, exp?: string, index?: number, vm?: any, watchValue?: any): void;
+    bind(node: Element, key?: string, dir?: string, exp?: string, index?: number, vm?: any, watchValue?: any): void;
     templateUpdater(node: Element, val?: any, key?: string, vm?: any): void;
     textUpdater(node: Element, value: any): void;
     htmlUpdater(node: Element, value: any): void;

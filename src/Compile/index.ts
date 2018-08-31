@@ -54,18 +54,10 @@ class Compile {
       if (node.hasChildNodes() && !this.isRepeatNode(node)) this.recursiveDOM(node.childNodes, node);
 
       fragment.appendChild(node);
-      // if (!this.isIfNode(node)) fragment.appendChild(node);
-      // if (!this.isIfNode(node) && !this.isRepeatNode(node)) fragment.appendChild(node);
 
       const text = node.textContent;
       const reg = /\{\{(.*)\}\}/g;
       if (this.isElementNode(node)) {
-        // if (reg.test(text) && node.hasChildNodes() && node.childNodes.length === 1) {
-        // // if (reg.test(text)) {
-        //   const regText = RegExp.$1;
-        //   // if (/(.*\{\{(this.).*\}\}.*)/g.test(text)) this.compileText(node, regText);
-        //   if (/(.*\{\{(state.).*\}\}.*)/g.test(text)) this.compileText(node, regText);
-        // }
         this.compile(node, fragment);
       }
 
@@ -75,11 +67,7 @@ class Compile {
       }
 
       // after compile repeatNode, remove repeatNode
-      if (this.isRepeatNode(node) && fragment.contains(node)) {
-        fragment.removeChild(node);
-      // } else {
-        // if (!this.isIfNode(node)) fragment.appendChild(node);
-      }
+      if (this.isRepeatNode(node) && fragment.contains(node)) fragment.removeChild(node);
     });
   }
 
@@ -111,26 +99,24 @@ class Compile {
 
   public eventHandler(node: Element, vm: any, exp: string, eventName: string): void {
     const eventType = eventName.split(':')[1];
-    // const fnList = exp.replace(/\(.*\)/, '').split('.');
+
     const fnList = exp.replace(/^(\@)/, '').replace(/\(.*\)/, '').split('.');
     const args = exp.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
-    // const args = exp.match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
+
     let fn = vm;
     fnList.forEach(f => {
-      // if (f === 'this') return;
       fn = fn[f];
     });
     const func = function(event: Event): void {
       const argsList: any[] = [];
       args.forEach(arg => {
         if (arg === '') return false;
-        if (arg === '$event') argsList.push(event);
-        // if (/(this.).*/g.test(arg) || /(this.state.).*/g.test(arg) || /(this.props.).*/g.test(arg)) argsList.push(new CompileUtil()._getVMVal(vm, arg));
-        // if (/(this.).*/g.test(arg) || /(this.state.).*/g.test(arg)) argsList.push(new CompileUtil()._getVMVal(vm, arg));
-        if (/(state.).*/g.test(arg)) argsList.push(new CompileUtil()._getVMVal(vm, arg));
-        if (/\'.*\'/g.test(arg)) argsList.push(arg.match(/\'(.*)\'/)[1]);
-        if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) argsList.push(Number(arg));
-        if (arg === 'true' || arg === 'false') argsList.push(arg === 'true');
+        if (arg === '$event') return argsList.push(event);
+        if (arg === '$element') return argsList.push(node);
+        if (/(state.).*/g.test(arg)) return argsList.push(new CompileUtil()._getVMVal(vm, arg));
+        if (/\'.*\'/g.test(arg)) return argsList.push(arg.match(/\'(.*)\'/)[1]);
+        if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
+        if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
       });
       fn.apply(vm, argsList);
     };

@@ -88,15 +88,8 @@ export interface INvModule {
     utils?: Utils;
     $imports?: Function[];
     $components?: Function[];
-    // $components?: {
-    //     [name: string]: Function;
-    // };
     $providers?: Function[];
-    // $exports?: string[];
     $exports?: Function[];
-    // $exportList?: {
-    //     [name: string]: Function;
-    // };
     providerList?: Map<string, IService>;
     bootstrap?: Function;
     buildImports(): void;
@@ -154,7 +147,7 @@ export declare class CompileUtilForRepeat {
     _setValueByValue(vm: any, exp: string, key: string, setValue: any): any;
     _getVMVal(vm: any, exp: string): any;
     _getVMRepeatVal(val: any, exp: string, key: string): any;
-    bind(node: Element, val?: any, key?: string, dir?: string, exp?: string, index?: number, vm?: any, watchValue?: any): void;
+    bind(node: Element, key?: string, dir?: string, exp?: string, index?: number, vm?: any, watchValue?: any): void;
     templateUpdater(node: Element, val?: any, key?: string, vm?: any): void;
     textUpdater(node: Element, value: any): void;
     htmlUpdater(node: Element, value: any): void;
@@ -217,9 +210,6 @@ export declare class InDiv {
     $canRenderModule: boolean;
     $routeDOMKey: string;
     $rootModule: INvModule;
-    // $components: {
-    //     [name: string]: Function;
-    // };
     $components: Function[];
     $esRouteObject?: EsRouteObject;
     constructor();
@@ -228,8 +218,6 @@ export declare class InDiv {
     bootstrapModule(Esmodule: Function): void;
     init(): void;
     renderModuleBootstrap(): void;
-    // renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<any>;
-    // replaceDom(component: IComponent, renderDOM: Element): Promise<any>;
     renderComponent(BootstrapComponent: Function, renderDOM: Element): any;
     replaceDom(component: IComponent, renderDOM: Element): void;
 }

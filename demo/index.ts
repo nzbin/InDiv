@@ -110,7 +110,7 @@ class RouteChild implements OnInit, HasRender, ReceiveProps {
     <div>
       子组件的子组件<br/>
       <p nv-on:click="@sendProps(3)">PCChild props.ax:: {{state.b}}</p>
-      <p nv-repeat="let a in state.d">1232{{a.z}}</p>
+      <p nv-repeat="let a in state.d">state.d {{a.z}}</p>
     </div>
   `),
 })
@@ -124,11 +124,11 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps {
       b: null,
       d: [
         {
-          z: 111111111111111,
+          z: 101111,
           b: 'a',
         },
         {
-          z: 33333333333333,
+          z: 103333,
           b: 'a',
         },
       ],
@@ -168,9 +168,9 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps {
     console.log(this.props.ax);
     console.log(4444, nextProps);
     this.state.b = nextProps.ax;
-    // this.setState({
-    //   b: nextProps.ax,
-    // });
+    this.setState({
+      b: nextProps.ax,
+    });
   }
 }
 

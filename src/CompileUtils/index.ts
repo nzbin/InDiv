@@ -70,7 +70,6 @@ export class CompileUtilForRepeat {
     const repeatValue = (node.repeatData)[key];
     let value;
     if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
-      // value = this._getVMRepeatVal(val, exp, key);
       value = this._getVMRepeatVal(repeatValue, exp, key);
     } else {
       value = this._getVMVal(vm, exp);
@@ -83,7 +82,6 @@ export class CompileUtilForRepeat {
       watchData = this._getVMVal(vm, exp);
     }
 
-    // if (!node.hasChildNodes()) this.templateUpdater(node, val, key, vm);
     if (!node.hasChildNodes()) this.templateUpdater(node, repeatValue, key, vm);
 
     const updaterFn: any = this[`${dir}Updater`];

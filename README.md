@@ -4,6 +4,7 @@ A minimal web mvvm framework.一个小Web mvvm库。
 Now we support for typescript!
 
 [中文](https://dimalilongji.github.io/indiv-doc)
+[npm](https://www.npmjs.com/package/indiv)
 
 ## demo
   - `npm run start`

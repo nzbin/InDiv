@@ -129,6 +129,10 @@ class Utils {
     inner = inner.replace(/^[^\S\n]+/gm, '');
     return inner;
   }
+
+  public isBrowser(): boolean {
+    return typeof window !== 'undefined' && typeof window.document !== 'undefined';
+  }
 }
 
 export default Utils;

@@ -9,4 +9,5 @@ export interface IUtil {
     isEqual(a: any, b: any, aStack?: any[], bStack?: any[]): boolean;
     deepIsEqual(a: any, b: any, aStack?: any[], bStack?: any[]): boolean;
     formatInnerHTML(inner: string): string;
+    isBrowser(): boolean;
 }

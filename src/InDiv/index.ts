@@ -20,6 +20,8 @@ class InDiv {
     this.modalList = [];
     this.utils = new Utils();
 
+    if (!this.utils.isBrowser()) return;
+
     this.rootDom = document.querySelector('#root');
     this.$rootPath = '/';
     this.$canRenderModule = true;
@@ -54,6 +56,8 @@ class InDiv {
   }
 
   public init(): void {
+    if (!this.utils.isBrowser()) return;
+
     if (!this.$rootModule) {
       console.error('must use bootstrapModule to declare a root NvModule before init');
       return;

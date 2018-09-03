@@ -39,6 +39,8 @@ export class Router {
     this.$vm.setRootPath(this.$rootPath);
     this.$vm.$canRenderModule = false;
     this.$vm.$routeDOMKey = 'router-render';
+
+    if (!this.utils.isBrowser()) return;
     window.addEventListener('load', this.refresh.bind(this), false);
     window.addEventListener('popstate', (e) => {
       let path;
@@ -56,6 +58,8 @@ export class Router {
   }
 
   public init(arr: TRouter[]): void {
+    if (!this.utils.isBrowser()) return;
+
     if (arr && arr instanceof Array) {
       const rootDom = document.querySelector('#root');
       this.rootDom = rootDom || null;

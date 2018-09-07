@@ -18,6 +18,7 @@ export class Router {
   public $vm: IInDiv;
   public watcher: KeyWatcher;
   public renderRouteList: string[];
+  public routeChange?: (lastRoute?: string, nextRoute?: string) => void;
 
   constructor() {
     this.routes = [];
@@ -42,7 +43,7 @@ export class Router {
 
     if (!this.utils.isBrowser()) return;
     window.addEventListener('load', this.refresh.bind(this), false);
-    window.addEventListener('popstate', (e) => {
+    window.addEventListener('popstate', () => {
       let path;
       if (this.$rootPath === '/') {
         path = location.pathname || '/';
@@ -78,7 +79,6 @@ export class Router {
     }
   }
 
-  public routeChange(lastRoute?: string, nextRoute?: string): void { }
 
   public redirectTo(redirectTo: string): void {
     const rootPath = this.$rootPath === '/' ? '' : this.$rootPath;
@@ -120,7 +120,7 @@ export class Router {
       // first render
       this.generalDistributeRoutes();
     }
-    this.routeChange(this.lastRoute, this.currentUrl);
+    if (this.routeChange) this.routeChange(this.lastRoute, this.currentUrl);
     this.lastRoute = this.currentUrl;
     if (this.needRedirectPath) {
       this.redirectTo(this.needRedirectPath);

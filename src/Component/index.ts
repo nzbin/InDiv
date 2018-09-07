@@ -24,6 +24,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     vm.$componentList = [];
 
     vm.getLocation = function (): any {
+      if (!this.utils.isBrowser()) return {};
       return {
         path: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.path,
         query: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.query,
@@ -32,6 +33,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     };
 
     vm.setLocation = function (path: string, query?: any, params?: any): void {
+      if (!this.utils.isBrowser()) return;
       const rootPath = (this as IComponent<State, Props, Vm>).$vm.$rootPath === '/' ? '' : (this as IComponent<State, Props, Vm>).$vm.$rootPath;
       history.pushState(
         { path, query, params },
@@ -106,14 +108,18 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
         Array.from(tags).forEach(node => {
           //  protect component in <router-render>
           if (routerRenderDom && routerRenderDom.contains(node)) return;
+
           const nodeAttrs = node.attributes;
           const props: any = {};
+
           if (nodeAttrs) {
             const attrList = Array.from(nodeAttrs);
             const _propsKeys: any = {};
+
             attrList.forEach((attr: any) => {
               if (/^\_prop\-(.+)/.test(attr.name)) _propsKeys[attr.name.replace('_prop-', '')] = JSON.parse(attr.value);
             });
+
             attrList.forEach((attr: any) => {
               const attrName = attr.name;
               const prop = /^\{(.+)\}$/.exec(attr.value);

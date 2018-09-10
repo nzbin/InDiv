@@ -28,7 +28,6 @@ class KeyWatcher {
       },
       set(newVal: any) {
         if (vm.utils.isEqual(newVal, val)) return;
-        if (newVal === val) return;
         const oldData: any = {};
         oldData[key] = val;
         const newData: any = {};

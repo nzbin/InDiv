@@ -23,24 +23,30 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     vm.$components = [];
     vm.$componentList = [];
 
-    vm.getLocation = function (): any {
+    vm.getLocation = function (): {
+      path?: string;
+      query?: any;
+      params?: any;
+      data?: any;
+    } {
       if (!this.utils.isBrowser()) return {};
       return {
         path: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.path,
         query: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.query,
         params: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.params,
+        data: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.data,
       };
     };
 
-    vm.setLocation = function (path: string, query?: any, params?: any): void {
+    vm.setLocation = function (path: string, query?: any, data?: any, title?: string): void {
       if (!this.utils.isBrowser()) return;
       const rootPath = (this as IComponent<State, Props, Vm>).$vm.$rootPath === '/' ? '' : (this as IComponent<State, Props, Vm>).$vm.$rootPath;
       history.pushState(
-        { path, query, params },
-        null,
+        { path, query, data },
+        title,
         `${rootPath}${path}${(this as IComponent<State, Props, Vm>).utils.buildQuery(query)}`,
       );
-      (this as IComponent<State, Props, Vm>).$vm.$esRouteObject = { path, query, params };
+      (this as IComponent<State, Props, Vm>).$vm.$esRouteObject = { path, query, data };
     };
 
     vm.watchData = function (): void {

@@ -29,6 +29,7 @@ export type EsRouteObject = {
     path: string;
     query?: any;
     params?: any;
+    data?: any;
 }
 
 export type TComponentOptions = {
@@ -300,6 +301,11 @@ export declare interface ReceiveProps {
 // component functions
 export declare type SetState = <S>(newState: { [key: string]: S }) => void;
 
-export declare type GetLocation = () => any;
+export declare type GetLocation = () => {
+    path?: string;
+    query?: any;
+    params?: any;
+    data?: any;
+};
 
-export declare type SetLocation = <Q, P>(path: string, query?: Q, params?: P) => void;
+export declare type SetLocation = <Q, P>(path: string, query?: Q, params?: P, title?: string) => void;

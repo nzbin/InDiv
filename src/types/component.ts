@@ -11,12 +11,13 @@ export type ComponentList<C> = {
 export type SetState = <S>(newState: { [key: string]: S }) => void;
 
 export type GetLocation = () => {
-  path: string;
+  path?: string;
   query?: any;
   params?: any;
+  data?: any;
 };
 
-export type SetLocation = <Q = any, P = any>(path: string, query?: Q, params?: P) => void;
+export type SetLocation = <Q = any, P = any>(path: string, query?: Q, params?: P, title?: string) => void;
 
 export interface IComponent<State = any, Props = any, Vm = any> {
     state?: State | any;

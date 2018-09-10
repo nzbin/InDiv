@@ -10,6 +10,7 @@ export type EsRouteObject = {
     path: string;
     query?: any;
     params?: any;
+    data?: any;
 };
 
 export interface IInDiv {

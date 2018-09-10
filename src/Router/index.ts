@@ -53,7 +53,7 @@ export class Router {
       this.$vm.$esRouteObject = {
         path,
         query: {},
-        params: {},
+        data: {},
       };
     }, false);
   }
@@ -86,7 +86,7 @@ export class Router {
     this.$vm.$esRouteObject = {
       path: redirectTo || '/',
       query: {},
-      params: {},
+      data: {},
     };
   }
 
@@ -101,7 +101,7 @@ export class Router {
       this.$vm.$esRouteObject = {
         path,
         query: {},
-        params: {},
+        data: {},
       };
       this.watcher = new KeyWatcher(this.$vm, '$esRouteObject', this.refresh.bind(this));
     }
@@ -255,6 +255,14 @@ export class Router {
           console.error(`route error: path ${route.path} need a component which has children path or need a  redirectTo which has't children path`);
           return;
         }
+
+        if (/^\/\:.+/.test(route.path)) {
+           const key = route.path.split('/:')[1];
+           console.log(4444, this.$vm.$esRouteObject);
+           this.$vm.$esRouteObject.params = {};
+           this.$vm.$esRouteObject.params[key] = path;
+        }
+
         const renderDom = document.querySelectorAll('router-render')[index - 1];
         this.routesList.push(route);
 

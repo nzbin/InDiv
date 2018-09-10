@@ -314,6 +314,7 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
       name: 'gerry',
       github: 'https://github.com/DimaLiLongJi',
     }, { expires: 7 });
+    console.log('R1 nvOnInit', this.getLocation());
   }
   public nvBeforeMount() {
     const cookie = this.utils.getCookie('tutor');
@@ -446,6 +447,7 @@ class Container implements OnInit, AfterMount {
   public state: any;
   public props: any;
   public setLocation: SetLocation;
+  public getLocation: GetLocation;
   public setState: SetState;
 
   constructor(
@@ -503,6 +505,7 @@ class Container implements OnInit, AfterMount {
 
   public nvOnInit() {
     console.log('nvOnInit Container');
+    console.log('R1 nvOnInit', this.getLocation());
   }
 
   public nvAfterMount() {

@@ -166,14 +166,19 @@ export class CompileUtilForRepeat {
     const text = node.textContent;
     const reg = /\{\{(.*)\}\}/g;
     if (reg.test(text)) {
-      const exp = RegExp.$1;
-      let value;
-      if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
-        value = this._getVMRepeatVal(val, exp, key);
-      } else {
-        value = this._getVMVal(vm, exp);
+      const textList = text.match(/(\{\{[^\{\}]+?\}\})/g);
+      if (textList && textList.length > 0) {
+        for (let i = 0; i < textList.length; i++) {
+          const exp = textList[i].replace('{{', '').replace('}}', '');
+          let value;
+          if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
+            value = this._getVMRepeatVal(val, exp, key);
+          } else {
+            value = this._getVMVal(vm, exp);
+        }
+          node.textContent = node.textContent.replace(textList[i], value);
+        }
       }
-      node.textContent = node.textContent.replace(/(\{\{.*\}\})/g, value);
     }
   }
 
@@ -443,7 +448,7 @@ export class CompileUtil {
    * @memberof CompileUtil
    */
   public templateUpdater(node: any, vm: any, exp: string): void {
-    node.textContent = node.textContent.replace(/(\{\{.*\}\})/g, this._getVMVal(vm, exp));
+    node.textContent = node.textContent.replace(exp, this._getVMVal(vm, exp.replace('{{', '').replace('}}', '')));
   }
 
   /**

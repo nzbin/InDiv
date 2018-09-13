@@ -439,7 +439,8 @@ class TestComponent implements OnInit {
         </div>
       </div>
       <router-render></router-render>
-    </div>`),
+    </div>
+  `),
 })
 
 class Container implements OnInit, AfterMount {
@@ -462,6 +463,7 @@ class Container implements OnInit, AfterMount {
     // console.log('hss2', this.hss2);
     this.state = {
       a: 1,
+      b: 3,
       testArray: [
         {
           name: '李龙吉',

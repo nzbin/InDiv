@@ -12,6 +12,17 @@ type TComponentOptions = {
   template: string;
 };
 
+/**
+ * Decorator @Component
+ * 
+ * to decorate an InDiv component
+ *
+ * @template State
+ * @template Props
+ * @template Vm
+ * @param {TComponentOptions} options
+ * @returns {(_constructor: Function) => void}
+ */
 function Component<State = any, Props = any, Vm = any>(options: TComponentOptions): (_constructor: Function) => void {
   return function (_constructor: Function): void {
     (_constructor as any).$selector = options.selector;
@@ -33,7 +44,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       return {
         path: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.path,
         query: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.query,
-        params: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.params,
+        params: (this as IComponent<State, Props, Vm>).$vm.$esRouteParmasObject,
         data: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.data,
       };
     };

@@ -2,6 +2,14 @@ type TServiceOptions = {
   isSingletonMode?: boolean;
 };
 
+/**
+ * Decorator @Service
+ * 
+ * to decorate an InDiv Service
+ *
+ * @param {TServiceOptions} [options]
+ * @returns {(_constructor: Function) => void}
+ */
 function Service(options?: TServiceOptions): (_constructor: Function) => void {
   return function (_constructor: Function): void {
     if (options && options.isSingletonMode) (_constructor as any).isSingletonMode = options.isSingletonMode;

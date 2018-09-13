@@ -34,8 +34,12 @@ export type SetState = <S>(newState: { [key: string]: S }) => void;
 
 export type GetLocation = () => {
   path?: string;
-  query?: any;
-  params?: any;
+  query?: {
+    [props: string]: any;
+  };
+  params?: {
+    [props: string]: any;
+  };
   data?: any;
 };
 

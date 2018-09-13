@@ -398,6 +398,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   }
   public showLocation() {
     this.setLocation('/R1/C1/D1', { b: '1' });
+    // this.setLocation('/R2/2', { b: '1' });
   }
 }
 
@@ -583,7 +584,7 @@ const routes = [
               {
                 path: '/D1',
                 // component: 'R2',
-                redirectTo: '/R2',
+                redirectTo: '/R2/2',
               },
             ],
           },

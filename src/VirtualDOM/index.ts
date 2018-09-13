@@ -1,5 +1,10 @@
 import { IVnode, TAttributes, IPatchList, IVirtualDOM  } from '../types';
 
+/**
+ * Vnode
+ *
+ * @class Vnode
+ */
 class Vnode {
   public tagName?: string;
   public node?: DocumentFragment | Element;
@@ -9,6 +14,11 @@ class Vnode {
   public childNodes?: IVnode[] | any[];
   public type?: string;
 
+  /**
+   * Creates an instance of Vnode.
+   * @param {IVnode} info
+   * @memberof Vnode
+   */
   constructor(info: IVnode) {
     this.tagName = info.tagName;
     this.node = info.node;
@@ -20,6 +30,12 @@ class Vnode {
   }
 }
 
+/**
+ * bind nodeType and return type
+ *
+ * @param {Node} node
+ * @returns {string}
+ */
 function bindNodeType(node: Node): string {
   if (node.nodeType === 1) return 'element';
   if (node.nodeType === 3) return 'text';
@@ -27,6 +43,12 @@ function bindNodeType(node: Node): string {
   return '';
 }
 
+/**
+ * bind node attributes and return TAttributes
+ *
+ * @param {(DocumentFragment | Element)} node
+ * @returns {TAttributes[]}
+ */
 function bindAttributes(node: DocumentFragment | Element): TAttributes[] {
   const nodeAttrs: NamedNodeMap = (node as Element).attributes;
   const attributes: TAttributes[] = [];
@@ -41,6 +63,12 @@ function bindAttributes(node: DocumentFragment | Element): TAttributes[] {
   return attributes;
 }
 
+/**
+ * parse node to VNode
+ *
+ * @param {(DocumentFragment | Element)} node
+ * @returns {IVnode}
+ */
 function parseToVnode(node: DocumentFragment | Element): IVnode {
   const childNodes: IVnode[] = [];
   if (node.childNodes) {
@@ -59,6 +87,16 @@ function parseToVnode(node: DocumentFragment | Element): IVnode {
   });
 }
 
+/**
+ * diff attributes for diff VNode
+ * 
+ * type: 3 setAttribute
+ * type: 4 removeAttribute
+ *
+ * @param {IVnode} oldVnode
+ * @param {IVnode} newVnode
+ * @param {IPatchList[]} patchList
+ */
 function diffAttributes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
   newVnode.attributes.forEach((attr) => {
     const oldVnodeAttr = oldVnode.attributes.find(at => at.name === attr.name);
@@ -83,6 +121,16 @@ function diffAttributes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
   });
 }
 
+/**
+ * diff nodeValue for diff VNode
+ * 
+ * type:5 change text for node
+ *
+ * @param {IVnode} oldVnode
+ * @param {IVnode} newVnode
+ * @param {IPatchList[]} patchList
+ * @returns {void}
+ */
 function diffNodeValue(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
   if (!oldVnode.nodeValue || !newVnode.nodeValue) return;
   if (oldVnode.nodeValue !== newVnode.nodeValue) {
@@ -95,6 +143,15 @@ function diffNodeValue(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList
   }
 }
 
+/**
+ * diff tagName for diff VNode
+ * 
+ * type: 0 replaceChild
+ *
+ * @param {IVnode} oldVnode
+ * @param {IVnode} newVnode
+ * @param {IPatchList[]} patchList
+ */
 function diffTagName(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
   if (oldVnode.tagName !== newVnode.tagName) {
     patchList.push({
@@ -106,6 +163,16 @@ function diffTagName(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]
   }
 }
 
+/**
+ * diff childNodes for diff VNode
+ * 
+ * type: 1 appendChild
+ * type: 2 removeChild
+ *
+ * @param {IVnode} newVnode
+ * @param {IVnode} oldVnode
+ * @param {IPatchList[]} patchList
+ */
 function diffChildNodes(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchList[]): void {
   if (newVnode.childNodes.length > 0) {
     (newVnode.childNodes as IVnode[]).forEach((nChild, index) => {
@@ -133,6 +200,14 @@ function diffChildNodes(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchLis
   }
 }
 
+/**
+ * diff two Vnode
+ *
+ * @param {IVnode} oldVnode
+ * @param {IVnode} newVnode
+ * @param {IPatchList[]} patchList
+ * @returns {void}
+ */
 function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
   if (!patchList) {
     console.error('patchList can not be null, diffVnode must need an Array');
@@ -155,7 +230,6 @@ function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]):
 }
 
 /**
- * 
  * renderVnode 对比完render node
  * 
  * REMOVETAG: 0, 替换dom: 0

@@ -4,19 +4,30 @@ import VirtualDOM from '../VirtualDOM';
 import Utils from '../Utils';
 import { CompileUtil } from '../CompileUtils';
 
+/**
+ * main compiler
+ *
+ * @class Compile
+ */
 class Compile {
   public utils: Utils;
   public $vm: any;
   public $el: Element;
   public $fragment: DocumentFragment;
 
-  // removeDOM
+  /**
+   * Creates an instance of Compile.
+   * @param {(string | Element)} el
+   * @param {*} vm
+   * @param {Element} [routerRenderDom]
+   * @memberof Compile
+   */
   constructor(el: string | Element, vm: any, routerRenderDom?: Element) {
     this.utils = new Utils();
     this.$vm = vm;
     this.$el = this.isElementNode(el) ? el as Element : document.querySelector(el as string);
     if (this.$el) {
-      this.$fragment = this.node2Fragment(this.$el);
+      this.$fragment = this.node2Fragment();
       this.init();
       if (routerRenderDom) {
         // replace routeDom
@@ -36,11 +47,22 @@ class Compile {
       patchList = null;
     }
   }
-
+  
+  /**
+   * init compile
+   *
+   * @memberof Compile
+   */
   public init(): void {
     this.compileElement(this.$fragment);
   }
 
+  /**
+   * compile element
+   *
+   * @param {DocumentFragment} fragment
+   * @memberof Compile
+   */
   public compileElement(fragment: DocumentFragment): void {
     const elementCreated = document.createElement('div');
     elementCreated.innerHTML = this.utils.formatInnerHTML(this.$vm.$template);
@@ -48,6 +70,13 @@ class Compile {
     this.recursiveDOM(childNodes, fragment);
   }
 
+  /**
+   * recursive DOM for New State
+   *
+   * @param {(NodeListOf<Node & ChildNode>)} childNodes
+   * @param {(DocumentFragment | Element)} fragment
+   * @memberof Compile
+   */
   public recursiveDOM(childNodes: NodeListOf<Node & ChildNode>, fragment: DocumentFragment | Element): void {
     Array.from(childNodes).forEach((node: Element) => {
 
@@ -71,6 +100,13 @@ class Compile {
     });
   }
 
+  /**
+   * compile string to DOM
+   *
+   * @param {Element} node
+   * @param {(DocumentFragment | Element)} fragment
+   * @memberof Compile
+   */
   public compile(node: Element, fragment: DocumentFragment | Element): void {
     const nodeAttrs = node.attributes;
     if (nodeAttrs) {
@@ -89,14 +125,36 @@ class Compile {
     }
   }
 
-  public node2Fragment(el: Element): DocumentFragment {
+  /**
+   * create document fragment
+   *
+   * @returns {DocumentFragment}
+   * @memberof Compile
+   */
+  public node2Fragment(): DocumentFragment {
     return document.createDocumentFragment();
   }
-
+    
+  /**
+   * compile text and use CompileUtil templateUpdater
+   *
+   * @param {Element} node
+   * @param {string} exp
+   * @memberof Compile
+   */
   public compileText(node: Element, exp: string): void {
     new CompileUtil(this.$fragment).templateUpdater(node, this.$vm, exp);
   }
 
+  /**
+   * compile event and build eventType in DOM
+   *
+   * @param {Element} node
+   * @param {*} vm
+   * @param {string} exp
+   * @param {string} eventName
+   * @memberof Compile
+   */
   public eventHandler(node: Element, vm: any, exp: string, eventName: string): void {
     const eventType = eventName.split(':')[1];
 
@@ -132,19 +190,47 @@ class Compile {
     }
   }
 
+  /**
+   * judge attribute is nv directive or not
+   *
+   * @param {string} attr
+   * @returns {boolean}
+   * @memberof Compile
+   */
   public isDirective(attr: string): boolean {
     return attr.indexOf('nv-') === 0;
   }
 
+  /**
+   * judge attribute is nv event directive or not
+   *
+   * @param {string} eventName
+   * @returns {boolean}
+   * @memberof Compile
+   */
   public isEventDirective(eventName: string): boolean {
     return eventName.indexOf('on') === 0;
   }
 
+  /**
+   * judge DOM is a element node or not
+   *
+   * @param {(Element | string)} node
+   * @returns {boolean}
+   * @memberof Compile
+   */
   public isElementNode(node: Element | string): boolean {
     if (typeof node === 'string') return false;
     return node.nodeType === 1;
   }
 
+  /**
+   * judge DOM is nv-repeat dom or not
+   *
+   * @param {Element} node
+   * @returns {boolean}
+   * @memberof Compile
+   */
   public isRepeatNode(node: Element): boolean {
     const nodeAttrs = node.attributes;
     let result = false;
@@ -157,6 +243,13 @@ class Compile {
     return result;
   }
 
+  /**
+   * judge DOM is nv-if dom or not
+   *
+   * @param {Element} node
+   * @returns {boolean}
+   * @memberof Compile
+   */
   public isIfNode(node: Element): boolean {
     const nodeAttrs = node.attributes;
     let result = false;
@@ -169,6 +262,13 @@ class Compile {
     return result;
   }
 
+  /**
+   * judge DOM is text node or not
+   *
+   * @param {Element} node
+   * @returns {boolean}
+   * @memberof Compile
+   */
   public isTextNode(node: Element): boolean {
     return node.nodeType === 3;
   }

@@ -1,11 +1,29 @@
 import { TFnWatcher, TFnRender } from '../types';
 import Utils from '../Utils';
+
+/**
+ * Watcher for InDiv
+ *
+ * @class Watcher
+ */
 class Watcher {
   public data: any;
   public watcher: TFnWatcher;
   public render: TFnRender;
   public utils: Utils;
 
+  /**
+   * Creates an instance of Watcher.
+   * 
+   * data: watched data
+   * watcher: function for data change
+   * render: InDiv render
+   * 
+   * @param {*} data
+   * @param {TFnWatcher} [watcher]
+   * @param {TFnRender} [render]
+   * @memberof Watcher
+   */
   constructor(
     data: any,
     watcher?: TFnWatcher,

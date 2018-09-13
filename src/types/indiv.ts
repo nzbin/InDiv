@@ -8,8 +8,9 @@ export interface IMiddleware<ES> {
 
 export type EsRouteObject = {
     path: string;
-    query?: any;
-    params?: any;
+    query?: {
+        [props: string]: any;
+    };
     data?: any;
 };
 
@@ -23,6 +24,9 @@ export interface IInDiv {
     $rootModule: INvModule;
     $components: Function[];
     $esRouteObject?: EsRouteObject;
+    $esRouteParmasObject?: {
+        [props: string]: any;
+    };
 
     use(modal: IMiddleware<IInDiv>): number;
     setRootPath(rootPath: string): void;

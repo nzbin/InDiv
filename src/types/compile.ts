@@ -10,7 +10,7 @@ export interface ICompile {
     compileElement(fragment: DocumentFragment): void;
     recursiveDOM(childNodes: NodeListOf<Node & ChildNode>, fragment: DocumentFragment | Element): void;
     compile(node: Element, fragment: DocumentFragment | Element): void;
-    node2Fragment(el: Element): DocumentFragment;
+    node2Fragment(): DocumentFragment;
     compileText(node: Element, exp: string): void;
     eventHandler(node: Element, vm: any, exp: string, eventName: string): void;
     isDirective(attr: string): boolean;

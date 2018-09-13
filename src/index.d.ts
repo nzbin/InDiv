@@ -27,8 +27,9 @@ export interface IMiddleware<ES> {
 
 export type EsRouteObject = {
     path: string;
-    query?: any;
-    params?: any;
+    query?: {
+        [props: string]: any;
+    };
     data?: any;
 }
 
@@ -193,7 +194,7 @@ export declare class Compile {
     compileElement(fragment: DocumentFragment): void;
     recursiveDOM(childNodes: NodeListOf<Node & ChildNode>, fragment: DocumentFragment | Element): void;
     compile(node: Element, fragment: DocumentFragment | Element): void;
-    node2Fragment(el: Element): DocumentFragment;
+    node2Fragment(): DocumentFragment;
     compileText(node: Element, exp: string): void;
     eventHandler(node: Element, vm: any, exp: string, eventName: string): void;
     isDirective(attr: string): boolean;
@@ -214,6 +215,9 @@ export declare class InDiv {
     $rootModule: INvModule;
     $components: Function[];
     $esRouteObject?: EsRouteObject;
+    $esRouteParmasObject?: {
+        [props: string]: any;
+    };
     constructor();
     use(modal: IMiddleware<InDiv>): number;
     setRootPath(rootPath: string): void;
@@ -303,8 +307,12 @@ export declare type SetState = <S>(newState: { [key: string]: S }) => void;
 
 export declare type GetLocation = () => {
     path?: string;
-    query?: any;
-    params?: any;
+    query?: {
+        [props: string]: any;
+    };
+    params?: {
+        [props: string]: any;
+    };
     data?: any;
 };
 

@@ -100,7 +100,9 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
         const saveComponent = saveStates.find(save => save.dom === component.dom);
         if (saveComponent) {
           component.scope = saveComponent.scope;
-          if (!this.utils.isEqual(component.scope, component.scope.props)) {
+          // old props: component.scope.props
+          // new props: component.props
+          if (!this.utils.isEqual(component.scope.props, component.props)) {
             if (component.scope.nvReceiveProps) component.scope.nvReceiveProps(component.props);
             component.scope.props = component.props;
           }
@@ -139,6 +141,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
 
             attrList.forEach((attr: any) => {
               const attrName = attr.name;
+              if ((/^\_prop\-(.+)/.test(attr.name))) return;
               const prop = /^\{(.+)\}$/.exec(attr.value);
               if (prop) {
                 const valueList = prop[1].split('.');

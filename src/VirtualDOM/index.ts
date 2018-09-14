@@ -135,7 +135,6 @@ function diffAttributes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
  * @returns {void}
  */
 function diffNodeValue(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
-  if (!oldVnode.nodeValue || !newVnode.nodeValue) return;
   if (oldVnode.nodeValue !== newVnode.nodeValue) {
     patchList.push({
       type: 5,
@@ -212,7 +211,6 @@ function diffChildNodes(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchLis
  * @returns {void}
  */
 function diffInputValue(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchList[]): void {
-  if (!oldVnode.value || !newVnode.value) return;
   if (oldVnode.value !== newVnode.value) {
     patchList.push({
       type: 6,
@@ -259,7 +257,7 @@ function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]):
  * 
  * REMOVETAG: 0, 替换dom: 0
  * ADDTAG: 1, 增加dom: 1
- * REMOVETAG: 2, 增加dom: 2
+ * REMOVETAG: 2, 移除dom: 2
  * ADDATTRIBUTES: 3, 增加属性: 3
  * REPLACEATTRIBUTES: 4, 移除属性: 4
  * TEXT: 5, 更改文字: 5

@@ -437,7 +437,7 @@ class TestComponent implements OnInit {
   // `),
   template: (`
     <div>
-      <p nv-on:click="@changeInput()">{{state.a}}</p>
+      <p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>
       <p nv-on:click="@go()">container: {{state.a}}</p>
       <input nv-model="state.a" />
       <div nv-repeat="let man in state.testArray">

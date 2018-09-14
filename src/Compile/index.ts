@@ -35,9 +35,12 @@ class Compile {
         newRouterRenderDom.parentNode.replaceChild(routerRenderDom, newRouterRenderDom);
       }
       let oldVnode = VirtualDOM.parseToVnode(this.$el);
+      // console.log(1111111, oldVnode);
       let newVnode = VirtualDOM.parseToVnode(this.$fragment);
+      // console.log(222222, newVnode);
       let patchList: IPatchList[] = [];
       VirtualDOM.diffVnode(oldVnode, newVnode, patchList);
+      // console.log(33333, patchList);
       VirtualDOM.renderVnode(patchList);
 
       this.utils = null;

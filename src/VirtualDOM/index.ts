@@ -13,6 +13,7 @@ class Vnode {
   public nodeValue?: string | null;
   public childNodes?: IVnode[] | any[];
   public type?: string;
+  public value?: string | number;
 
   /**
    * Creates an instance of Vnode.
@@ -27,6 +28,7 @@ class Vnode {
     this.childNodes = info.childNodes;
     this.nodeValue = info.nodeValue;
     this.type = info.type;
+    this.value = info.value;
   }
 }
 
@@ -84,6 +86,7 @@ function parseToVnode(node: DocumentFragment | Element): IVnode {
     childNodes,
     nodeValue: node.nodeValue,
     type: bindNodeType(node),
+    value: (node as Element).value,
   });
 }
 
@@ -201,6 +204,26 @@ function diffChildNodes(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchLis
 }
 
 /**
+ * diff value of input, textarea, select for diff VNode 
+ *
+ * @param {IVnode} newVnode
+ * @param {IVnode} oldVnode
+ * @param {IPatchList[]} patchList
+ * @returns {void}
+ */
+function diffInputValue(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchList[]): void {
+  if (!oldVnode.value || !newVnode.value) return;
+  if (oldVnode.value !== newVnode.value) {
+    patchList.push({
+      type: 6,
+      node: oldVnode.node,
+      newValue: newVnode.value,
+      oldValue: oldVnode.value,
+    });
+  }
+}
+
+/**
  * diff two Vnode
  *
  * @param {IVnode} oldVnode
@@ -219,7 +242,8 @@ function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]):
     return;
   }
 
-  if (newVnode.node.isEqualNode(oldVnode.node)) return;
+  if (newVnode.node.isEqualNode(oldVnode.node) && oldVnode.tagName !== 'INPUT' && oldVnode.tagName !== 'TEXTAREA textarea' && oldVnode.tagName !== 'INPUT') return;
+
   if (oldVnode.tagName !== newVnode.tagName) {
     diffTagName(oldVnode, newVnode, patchList);
     return;
@@ -227,6 +251,7 @@ function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]):
   diffAttributes(oldVnode, newVnode, patchList);
   diffNodeValue(oldVnode, newVnode, patchList);
   diffChildNodes(newVnode, oldVnode, patchList);
+  if (oldVnode.tagName === 'INPUT' || oldVnode.tagName === 'TEXTAREA textarea' || oldVnode.tagName === 'INPUT') diffInputValue(newVnode, oldVnode, patchList);
 }
 
 /**
@@ -238,6 +263,8 @@ function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]):
  * ADDATTRIBUTES: 3, 增加属性: 3
  * REPLACEATTRIBUTES: 4, 移除属性: 4
  * TEXT: 5, 更改文字: 5
+ * value: 6, 更改 input textarea select value 的值: 5
+ * 
  * @param [] patchList
  */
 function renderVnode(patchList: IPatchList[]): void {
@@ -260,6 +287,9 @@ function renderVnode(patchList: IPatchList[]): void {
         break;
       case 5:
         patch.node.nodeValue = (patch.newValue as string);
+        break;
+      case 6:
+        (patch.node as Element).value = patch.newValue;
         break;
     }
   });

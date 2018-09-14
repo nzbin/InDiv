@@ -50,14 +50,16 @@ class Watcher {
         },
         set(newVal: any) {
           if (vm.utils.isEqual(newVal, val)) return;
-          const oldData = JSON.parse(JSON.stringify(vm.data));
-          const newData: any = {};
-          newData[key] = newVal;
+
+          // for watcher method
+          if (vm.watcher) {
+            const newData = JSON.parse(JSON.stringify(vm.data));
+            newData[key] = newVal;
+            vm.watcher(newData);
+          }
+
           val = newVal;
           vm.watchData(val);
-          if (vm.watcher) {
-            vm.watcher(oldData, vm.data);
-          }
           if (vm.render) vm.render();
         },
       });

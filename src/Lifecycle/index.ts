@@ -19,7 +19,7 @@ export interface HasRender {
 }
 
 export interface WatchState {
-  nvWatchState(oldData?: any, newData?: any): void;
+  nvWatchState(newData?: any): void;
 }
 
 export interface RouteChange {

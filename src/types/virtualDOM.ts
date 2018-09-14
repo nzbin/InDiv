@@ -6,6 +6,7 @@ export interface IVnode {
     nodeValue?: string | null;
     childNodes?: IVnode[] | any[];
     type?: string;
+    value?: string | number;
 }
 
 export type TAttributes = {
@@ -19,8 +20,8 @@ export interface IPatchList {
     parentNode?: Node;
     newNode?: DocumentFragment | Element;
     oldVnode?: DocumentFragment | Element;
-    newValue?: TAttributes | string;
-    oldValue?: TAttributes | string;
+    newValue?: TAttributes | string | number;
+    oldValue?: TAttributes | string | number;
 }
 
 export interface IParseToVnode {

@@ -46,7 +46,7 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     nvAfterMount?(): void;
     nvOnDestory?(): void;
     nvHasRender?(): void;
-    nvWatchState?(oldData?: any, newData?: any): void;
+    nvWatchState?(newData?: any): void;
     nvRouteChange?(lastRoute: string, newRoute: string): void;
     nvReceiveProps?(nextProps: Props): void;
     render(): void;

@@ -194,8 +194,9 @@ class PComponent {
     this.setState({ a: a });
     this.props.b(a);
   }
-  nvWatchState(oldData, newData) {
-    console.log('oldData Component:', oldData);
+  // nvWatchState(oldData, newData) {
+  nvWatchState(newData) {
+    // console.log('oldData Component:', oldData);
     console.log('newData Component:', newData);
   }
 }
@@ -261,8 +262,9 @@ class R1 {
   nvRouteChange(lastRoute, newRoute) {
     console.log('R1 is nvRouteChange', lastRoute, newRoute);
   }
-  nvWatchState(oldData, newData) {
-    console.log('oldData Controller:', oldData);
+  // nvWatchState(oldData, newData) {
+  nvWatchState(newData) {
+    // console.log('oldData Controller:', oldData);
     console.log('newData Controller:', newData);
   }
   showAlert(a) {
@@ -320,8 +322,9 @@ class R2 {
   nvRouteChange(lastRoute, newRoute) {
     console.log('R2 is nvRouteChange', lastRoute, newRoute);
   }
-  nvWatchState(oldData, newData) {
-    console.log('oldData Controller:', oldData);
+  // nvWatchState(oldData, newData) {
+  nvWatchState(newData) {
+    // console.log('oldData Controller:', oldData);
     console.log('newData Controller:', newData);
   }
   showAlert() {
@@ -442,13 +445,25 @@ class Container {
     console.log('this.state.testArray2', this.state.testArray2);
     // this.state.testArray2[index] = event.target.value;
   }
+
+  changeInput() {
+    this.state.a = 4;
+  }
 }
 
 Component({
   selector: 'container-wrap',
+  // template: (`
+  //   <div>
+  //     <p nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>
+  //     <p nv-on:click="@go()">container: {{state.a}}</p>
+  //     <input nv-model="state.a" />
+  //     <router-render></router-render>
+  //   </div>
+  // `),
   template: (`
     <div>
-      <p nv-if="state.a">{{state.a}}</p>
+      <p nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>
       <p nv-on:click="@go()">container: {{state.a}}</p>
       <input nv-model="state.a" />
       <div nv-repeat="let man in state.testArray">
@@ -461,7 +476,8 @@ Component({
         </div>
       </div>
       <router-render></router-render>
-    </div>`),
+    </div>
+  `),
 })(Container);
 
 class M2 {}

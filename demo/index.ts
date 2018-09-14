@@ -239,8 +239,9 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
     this.setState({ a: a });
     this.props.b(a);
   }
-  public nvWatchState(oldData: string, newData: string) {
-    console.log('oldData Component:', oldData);
+  // public nvWatchState(oldData: string, newData: string) {
+  public nvWatchState(newData: string) {
+    // console.log('oldData Component:', oldData);
     console.log('newData Component:', newData);
   }
   public nvReceiveProps(nextProps: any) {
@@ -327,8 +328,9 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   public nvRouteChange(lastRoute: string, newRoute: string) {
     console.log('R1 is nvRouteChange', lastRoute, newRoute);
   }
-  public nvWatchState(oldData: any, newData: any) {
-    console.log('oldData Controller:', oldData);
+  // public nvWatchState(oldData: any, newData: any) {
+  public nvWatchState(newData: any) {
+    // console.log('oldData Controller:', oldData);
     console.log('newData Controller:', newData);
   }
   public showAlert(a: any) {
@@ -384,8 +386,9 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   public nvRouteChange(lastRoute: string, newRoute: string) {
     console.log('R2 is nvRouteChange', lastRoute, newRoute);
   }
-  public nvWatchState(oldData: any, newData: any) {
-    console.log('oldData Controller:', oldData);
+  // public nvWatchState(oldData: any, newData: any) {
+  public nvWatchState(newData: any) {
+    // console.log('oldData Controller:', oldData);
     console.log('newData Controller:', newData);
   }
   public showAlert() {
@@ -424,26 +427,34 @@ class TestComponent implements OnInit {
 @Injectable
 @Component({
   selector: 'container-wrap',
+  // template: (`
+  //   <div>
+  //     <p nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>
+  //     <p nv-on:click="@go()">container: {{state.a}}</p>
+  //     <input nv-model="state.a" />
+  //     <router-render></router-render>
+  //   </div>
+  // `),
   template: (`
     <div>
-      <p nv-if="state.a">{{state.a}}</p>
+      <p nv-on:click="@changeInput()">{{state.a}}</p>
       <p nv-on:click="@go()">container: {{state.a}}</p>
       <input nv-model="state.a" />
       <div nv-repeat="let man in state.testArray">
-        <test-component man="{man.name}"></test-component>
-        <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
-        <div>性别：{{man.sex}}</div>
-        <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
-        <div class="fuck" nv-repeat="let b in man.job">
-          <input nv-on:click="@show(b, $index)" nv-model="b.name" nv-class="b.id" />
-        </div>
+          <test-component man="{man.name}"></test-component>
+          <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
+          <div>性别：{{man.sex}}</div>
+          <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
+          <div class="fuck" nv-repeat="let b in man.job">
+            <input nv-on:click="@show(b, $index)" nv-model="b.name" nv-class="b.id" />
+          </div>
       </div>
       <router-render></router-render>
     </div>
   `),
 })
 
-class Container implements OnInit, AfterMount {
+class Container implements OnInit, AfterMount, WatchState {
   public ss: HeroSearchService;
   public ss2: HeroSearchService1;
   public state: any;
@@ -529,6 +540,14 @@ class Container implements OnInit, AfterMount {
     testArray2[index] = event.target.value;
     console.log('this.state.testArray2', this.state.testArray2);
     // this.state.testArray2[index] = event.target.value;
+  }
+
+  public nvWatchState(newData: any) {
+    console.log('newData Controller:', newData);
+  }
+
+  public changeInput() {
+    this.state.a = 4;
   }
 }
 

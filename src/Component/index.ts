@@ -141,7 +141,10 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
 
             attrList.forEach((attr: any) => {
               const attrName = attr.name;
-              if ((/^\_prop\-(.+)/.test(attr.name))) return;
+              if ((/^\_prop\-(.+)/.test(attr.name))) {
+                node.removeAttribute(attrName);
+                return;
+              }
               const prop = /^\{(.+)\}$/.exec(attr.value);
               if (prop) {
                 const valueList = prop[1].split('.');

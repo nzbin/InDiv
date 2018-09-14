@@ -215,7 +215,9 @@ export class CompileUtilForRepeat {
    * @memberof CompileUtilForRepeat
    */
   public ifUpdater(node: Element, value: any): void {
-    if (!value && this.$fragment.contains(node)) this.$fragment.removeChild(node);
+    // if (!value && this.$fragment.contains(node)) this.$fragment.removeChild(node);
+    // if (!value && this.$fragment.contains(node)) node.setAttribute('if_node', 'true');
+    if (!value && this.$fragment.contains(node)) (node as HTMLElement).style.display = 'none';
   }
 
   /**
@@ -484,7 +486,8 @@ export class CompileUtil {
    * @memberof CompileUtil
    */
   public ifUpdater(node: Element, value: any): void {
-    if (!value && this.$fragment.contains(node)) this.$fragment.removeChild(node);
+    // if (!value && this.$fragment.contains(node)) this.$fragment.removeChild(node);
+    if (!value && this.$fragment.contains(node)) (node as HTMLElement).style.display = 'none';
   }
 
   /**

@@ -14,6 +14,7 @@ class Vnode {
   public childNodes?: IVnode[] | any[];
   public type?: string;
   public value?: string | number;
+  // public checked?: boolean;
 
   /**
    * Creates an instance of Vnode.
@@ -29,8 +30,13 @@ class Vnode {
     this.nodeValue = info.nodeValue;
     this.type = info.type;
     this.value = info.value;
+    // this.checked = false;
   }
 }
+
+// function isEqualNode(oldVnode, oldVnode) {
+
+// }
 
 /**
  * bind nodeType and return type
@@ -200,6 +206,48 @@ function diffChildNodes(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchLis
       }
     });
   }
+
+  // if (oldVnode.childNodes.length > 0) {
+  //   (oldVnode.childNodes as IVnode[]).forEach((oChild, index) => {
+  //     const sameNChild = (newVnode.childNodes as IVnode[]).find(nchild => nchild.node.isEqualNode(oChild.node));
+  //     if (sameNChild) {
+  //       const sameNewIndex = (newVnode.childNodes as IVnode[]).findIndex(nchild => nchild.node.isSameNode(sameNChild.node));
+  //       if (sameNewIndex === index) {
+  //         sameNChild.checked = true;
+  //         return;
+  //       }
+  //       if (sameNewIndex !== index) {
+  //         patchList.push({
+  //           type: 0,
+  //           newNode: oChild.node,
+  //           insertNode: sameNewIndex === newVnode.childNodes.length - 1 ? null : newVnode.childNodes[sameNewIndex + 1].node,
+  //           parentNode: oldVnode.node,
+  //         });
+  //         sameNChild.checked = true;
+  //       }
+  //     } 
+  //     if (!sameNChild) {
+  //       patchList.push({
+  //         type: 2,
+  //         node: oChild.node,
+  //         parentNode: oldVnode.node,
+  //       });
+  //     }
+  //   });
+  // }
+
+  // if (newVnode.childNodes.length > 0) {
+  //   (newVnode.childNodes as IVnode[]).forEach((nChild, index) => {
+  //     if (!nChild.checked) {
+  //       patchList.push({
+  //         type: 1,
+  //         newNode: nChild.node,
+  //         parentNode: oldVnode.node,
+  //         insertNode: index === newVnode.childNodes.length - 1 ? null : newVnode.childNodes[index + 1].node,
+  //       });
+  //     }
+  //   });
+  // }
 }
 
 /**
@@ -270,6 +318,17 @@ function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]):
 function renderVnode(patchList: IPatchList[]): void {
   patchList.forEach(patch => {
     switch (patch.type) {
+      // case 0:
+      //   if (patch.insertNode) patch.parentNode.insertBefore(patch.newNode, patch.insertNode);
+      //   if (!patch.insertNode) patch.parentNode.appendChild(patch.newNode);
+      //   break;
+      // case 1:
+      //   if (patch.insertNode) patch.parentNode.insertBefore(patch.newNode, patch.insertNode);
+      //   if (!patch.insertNode) patch.parentNode.appendChild(patch.newNode);
+      //   break;
+      // case 2:
+      //   patch.parentNode.removeChild(patch.node);
+      //   break;
       case 0:
         patch.parentNode.replaceChild(patch.newNode, patch.oldVnode);
         break;

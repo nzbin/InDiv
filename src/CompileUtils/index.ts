@@ -26,6 +26,7 @@ export class CompileUtilForRepeat {
 
   /**
    * Creates an instance of CompileUtilForRepeat.
+   * 
    * @param {(Element | DocumentFragment)} [fragment]
    * @memberof CompileUtilForRepeat
    */

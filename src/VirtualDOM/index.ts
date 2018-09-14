@@ -203,7 +203,9 @@ function diffChildNodes(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchLis
 }
 
 /**
- * diff value of input, textarea, select for diff VNode 
+ * diff value of input, textarea, select for diff VNode
+ * 
+ * type: 6 change value of from input
  *
  * @param {IVnode} newVnode
  * @param {IVnode} oldVnode
@@ -261,7 +263,7 @@ function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]):
  * ADDATTRIBUTES: 3, 增加属性: 3
  * REPLACEATTRIBUTES: 4, 移除属性: 4
  * TEXT: 5, 更改文字: 5
- * value: 6, 更改 input textarea select value 的值: 5
+ * value: 6, 更改 input textarea select value 的值: 6
  * 
  * @param [] patchList
  */

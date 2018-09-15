@@ -17,6 +17,10 @@ export type TRouter = {
 
 export type ComponentList<C> = {
     dom: Element;
+    // dom: {
+    //     tagName: string,
+    //     index: number,
+    // };
     props: any;
     scope: C;
 };

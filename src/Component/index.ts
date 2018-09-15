@@ -98,7 +98,9 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       (this as IComponent<State, Props, Vm>).componentsConstructor(dom);
       (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
         const saveComponent = saveStates.find(save => save.dom === component.dom);
+        // const saveComponent = saveStates.find(save => save.dom.tagName === component.dom.tagName && save.dom.index === component.dom.index);
         if (saveComponent) {
+          // saveComponent.scope.renderDom = component.scope.renderDom;
           component.scope = saveComponent.scope;
           // old props: component.scope.props
           // new props: component.props
@@ -110,6 +112,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
         component.scope.$vm = (this as IComponent<State, Props, Vm>).$vm;
         component.scope.$components = (this as IComponent<State, Props, Vm>).$components;
         if (component.scope.nvOnInit && isFirstRender) component.scope.nvOnInit();
+        // if (component.scope.nvOnInit && !saveComponent) component.scope.nvOnInit();
         if (component.scope.watchData) component.scope.watchData();
         if (component.scope.nvBeforeMount) component.scope.nvBeforeMount();
       });
@@ -124,7 +127,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       for (let i = 0; i <= (this as IComponent<State, Props, Vm>).$components.length - 1 ; i ++) {
         const name = (((this as IComponent<State, Props, Vm>).$components[i]) as any).$selector;
         const tags = dom.getElementsByTagName(name);
-        Array.from(tags).forEach(node => {
+        Array.from(tags).forEach((node, index) => {
           //  protect component in <router-render>
           if (routerRenderDom && routerRenderDom.contains(node)) return;
 
@@ -153,6 +156,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
                 if (/^(state.).*/g.test(prop[1])) _prop = (this as IComponent<State, Props, Vm>).compileUtil._getVMVal(this as IComponent<State, Props, Vm>, prop[1]);
                 if (/^(\@.).*/g.test(prop[1])) _prop = (this as IComponent<State, Props, Vm>).compileUtil._getVMVal(this as IComponent<State, Props, Vm>, prop[1].replace(/^(\@)/, ''));
                 if (_propsKeys.hasOwnProperty(key)) _prop = (this as IComponent<State, Props, Vm>).getPropsValue(valueList, _propsKeys[key]);
+                if (node.repeatData[key]) _prop = (this as IComponent<State, Props, Vm>).compileUtil._getValueByValue(node.repeatData[key], prop[1], key);
                 props[attrName] = (this as IComponent<State, Props, Vm>).buildProps(_prop);
               }
               node.removeAttribute(attrName);
@@ -160,6 +164,10 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
           }
           (this as IComponent<State, Props, Vm>).$componentList.push({
             dom: node,
+            // dom: {
+            //   tagName: name,
+            //   index,
+            // },
             props,
             scope: (this as IComponent<State, Props, Vm>).buildComponentScope((this as IComponent<State, Props, Vm>).$components[i], props, node),
           });

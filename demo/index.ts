@@ -442,18 +442,27 @@ class TestComponent implements OnInit {
       <p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>
       <p nv-on:click="@go()">container: {{state.a}}</p>
       <input nv-model="state.a" />
-      <div nv-repeat="let man in state.testArray">
-          <test-component man="{man.name}"></test-component>
-          <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
-          <div>性别：{{man.sex}}</div>
-          <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
-          <div class="fuck" nv-repeat="let b in man.job">
-            <input nv-on:click="@show(b, $index)" nv-model="b.name" nv-class="b.id" />
-          </div>
-      </div>
+      <test-component nv-repeat="let man in state.testArray" man="{man.name}"></test-component>
       <router-render></router-render>
     </div>
   `),
+  // template: (`
+  //   <div>
+  //     <p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>
+  //     <p nv-on:click="@go()">container: {{state.a}}</p>
+  //     <input nv-model="state.a" />
+  //     <div nv-repeat="let man in state.testArray">
+  //         <test-component man="{man.name}"></test-component>
+  //         <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
+  //         <div>性别：{{man.sex}}</div>
+  //         <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
+  //         <div class="fuck" nv-repeat="let b in man.job">
+  //           <input nv-on:click="@show(b, $index)" nv-model="b.name" nv-class="b.id" />
+  //         </div>
+  //     </div>
+  //     <router-render></router-render>
+  //   </div>
+  // `),
 })
 
 class Container implements OnInit, AfterMount, WatchState {
@@ -549,7 +558,64 @@ class Container implements OnInit, AfterMount, WatchState {
   }
 
   public changeInput() {
-    this.state.a = 4;
+    // this.state.a = 4;
+    this.setState({
+      testArray: [
+        {
+          name: '李龙吉',
+          sex: '男',
+          job: [
+            {
+              id: 1,
+              name: '程序员',
+            },
+            {
+              id: 2,
+              name: '码农',
+            },
+            {
+              id: 3,
+              name: '帅',
+            },
+          ],
+        },
+        {
+          name: '李龙吉2',
+          sex: '男2',
+          job: [
+            {
+              id: 1,
+              name: '程序员2',
+            },
+            {
+              id: 2,
+              name: '码农2',
+            },
+            {
+              id: 3,
+              name: '帅2',
+            },
+          ],
+        },
+        {
+          name: '邱宝环',
+          sex: '女',
+          job: [
+            {
+              id: 1,
+              name: '老师',
+            },
+            {
+              id: 2,
+              name: '英语老师',
+            },
+            {
+              id: 3,
+              name: '美',
+            },
+          ],
+        }],
+    });
   }
 }
 

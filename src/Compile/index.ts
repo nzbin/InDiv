@@ -34,14 +34,14 @@ class Compile {
         const newRouterRenderDom = this.$fragment.querySelectorAll(this.$vm.$vm.$routeDOMKey)[0];
         newRouterRenderDom.parentNode.replaceChild(routerRenderDom, newRouterRenderDom);
       }
-      console.log(3011111, this.$el);
+
       let oldVnode = VirtualDOM.parseToVnode(this.$el);
-      console.log(6666, oldVnode);
+      // console.log(6666, oldVnode);
       let newVnode = VirtualDOM.parseToVnode(this.$fragment);
-      console.log(7777, newVnode);
+      // console.log(7777, newVnode);
       let patchList: IPatchList[] = [];
       VirtualDOM.diffVnode(oldVnode, newVnode, patchList);
-      console.log(8888, patchList);
+      // console.log(8888, patchList);
       VirtualDOM.renderVnode(patchList);
 
       this.utils = null;

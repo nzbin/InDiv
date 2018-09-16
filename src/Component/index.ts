@@ -83,11 +83,11 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       const routerRenderDom = dom.querySelectorAll((this as IComponent<State, Props, Vm>).$vm.$routeDOMKey)[0];
       const compile = new Compile(dom, (this as IComponent<State, Props, Vm>), routerRenderDom);
       (this as IComponent<State, Props, Vm>).mountComponent(dom, false);
-      // (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
-      //   if (component.scope.render) component.scope.reRender();
-      //   if (component.scope.nvAfterMount) component.scope.nvAfterMount();
-      // });
-      // if ((this as IComponent<State, Props, Vm>).nvHasRender) (this as IComponent<State, Props, Vm>).nvHasRender();
+      (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
+        if (component.scope.render) component.scope.reRender();
+        if (component.scope.nvAfterMount) component.scope.nvAfterMount();
+      });
+      if ((this as IComponent<State, Props, Vm>).nvHasRender) (this as IComponent<State, Props, Vm>).nvHasRender();
     };
 
     vm.mountComponent = function (dom: Element, isFirstRender?: boolean): void {
@@ -97,10 +97,19 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       });
       (this as IComponent<State, Props, Vm>).componentsConstructor(dom);
       (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
-        const saveComponent = saveStates.find(save => save.dom === component.dom);
+        // const saveComponent = saveStates.find(save => save.dom === component.dom);
+        const saveComponent = saveStates.find(save => {
+          if (save.dom.key !== null) {
+            return save.dom.tagName === component.dom.tagName && save.dom.key === component.dom.key;
+          }
+          if (save.dom.key === null) {
+            return save.dom.tagName === component.dom.tagName && save.dom.index === component.dom.index;
+          }
+        });
         // const saveComponent = saveStates.find(save => save.dom.tagName === component.dom.tagName && save.dom.index === component.dom.index);
         if (saveComponent) {
-          // saveComponent.scope.renderDom = component.scope.renderDom;
+          console.log(11111111111111, saveComponent);
+          saveComponent.scope.renderDom = component.scope.renderDom;
           component.scope = saveComponent.scope;
           // old props: component.scope.props
           // new props: component.props
@@ -112,6 +121,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
         component.scope.$vm = (this as IComponent<State, Props, Vm>).$vm;
         component.scope.$components = (this as IComponent<State, Props, Vm>).$components;
         // if (component.scope.nvOnInit && isFirstRender) component.scope.nvOnInit();
+        // if (component.scope.nvOnInit && !saveComponent) component.scope.nvOnInit();
         if (component.scope.nvOnInit && !saveComponent) component.scope.nvOnInit();
         if (component.scope.watchData) component.scope.watchData();
         if (component.scope.nvBeforeMount) component.scope.nvBeforeMount();
@@ -156,18 +166,20 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
                 if (/^(state.).*/g.test(prop[1])) _prop = (this as IComponent<State, Props, Vm>).compileUtil._getVMVal(this as IComponent<State, Props, Vm>, prop[1]);
                 if (/^(\@.).*/g.test(prop[1])) _prop = (this as IComponent<State, Props, Vm>).compileUtil._getVMVal(this as IComponent<State, Props, Vm>, prop[1].replace(/^(\@)/, ''));
                 if (_propsKeys.hasOwnProperty(key)) _prop = (this as IComponent<State, Props, Vm>).getPropsValue(valueList, _propsKeys[key]);
-                if (node.repeatData[key]) _prop = (this as IComponent<State, Props, Vm>).compileUtil._getValueByValue(node.repeatData[key], prop[1], key);
+                if (node.repeatData && node.repeatData[key] !== null) _prop = (this as IComponent<State, Props, Vm>).compileUtil._getValueByValue(node.repeatData[key], prop[1], key);
                 props[attrName] = (this as IComponent<State, Props, Vm>).buildProps(_prop);
               }
-              node.removeAttribute(attrName);
+              if (attr.name !== 'indiv_repeat_key')  node.removeAttribute(attrName);
             });
           }
+          console.log(222222222222222222, node, node.repeatData, props);
           (this as IComponent<State, Props, Vm>).$componentList.push({
-            dom: node,
-            // dom: {
-            //   tagName: name,
-            //   index,
-            // },
+            // dom: node,
+            dom: {
+              tagName: name,
+              index,
+              key: node.getAttribute('indiv_repeat_key') ? node.getAttribute('indiv_repeat_key') : null,
+            },
             props,
             scope: (this as IComponent<State, Props, Vm>).buildComponentScope((this as IComponent<State, Props, Vm>).$components[i], props, node),
           });

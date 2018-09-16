@@ -443,7 +443,7 @@ class TestComponent implements OnInit {
       <p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>
       <p nv-on:click="@go()">container: {{state.a}}</p>
       <input nv-model="state.a" />
-      <p nv-repeat="let man in state.testArray" nv-key="man.name">{{man.name}}</p>
+      <test-component nv-repeat="let man in state.testArray" nv-key="man.name" man="{man.name}"></test-component>
       <router-render></router-render>
     </div>
   `),

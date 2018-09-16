@@ -3,11 +3,12 @@ import { ICompileUtil } from './compileUtils';
 import { IUtil } from './utils';
 
 export type ComponentList<C> = {
-    dom: Element;
-    // dom: {
-    //   tagName: string,
-    //   index: number,
-    // };
+    // dom: Element;
+    dom: {
+      tagName: string;
+      index: number;
+      key?: any;
+    };
     props: any;
     scope: C;
 };

@@ -215,8 +215,8 @@ export class CompileUtilForRepeat {
    * @memberof CompileUtilForRepeat
    */
   public ifUpdater(node: Element, value: any): void {
-    if (!value && this.$fragment.contains(node)) this.$fragment.removeChild(node);
-    // if (!value && this.$fragment.contains(node)) (node as HTMLElement).style.display = 'none';
+    // if (!value && this.$fragment.contains(node)) this.$fragment.removeChild(node);
+    if (!value && this.$fragment.contains(node)) (node as HTMLElement).style.display = 'none';
   }
 
   /**
@@ -280,7 +280,7 @@ export class CompileUtilForRepeat {
 
   public keyUpdater(node: Element, value: any): void {
     node.setAttribute('indiv_repeat_key', value);
-    console.log(44444444, node.getAttribute('indiv_repeat_key'));
+    console.log('indiv_repeat_key', node, value, node.repeatData);
   }
 
   /**
@@ -491,8 +491,8 @@ export class CompileUtil {
    * @memberof CompileUtil
    */
   public ifUpdater(node: Element, value: any): void {
-    if (!value && this.$fragment.contains(node)) this.$fragment.removeChild(node);
-    // if (!value && this.$fragment.contains(node)) (node as HTMLElement).style.display = 'none';
+    // if (!value && this.$fragment.contains(node)) this.$fragment.removeChild(node);
+    if (!value && this.$fragment.contains(node)) (node as HTMLElement).style.display = 'none';
   }
 
   /**

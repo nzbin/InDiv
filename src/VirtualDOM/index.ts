@@ -14,7 +14,8 @@ class Vnode {
   public childNodes?: IVnode[] | any[];
   public type?: string;
   public value?: string | number;
-  // public checked?: boolean;
+  public checked?: boolean;
+  public key?: any;
 
   /**
    * Creates an instance of Vnode.
@@ -30,7 +31,8 @@ class Vnode {
     this.nodeValue = info.nodeValue;
     this.type = info.type;
     this.value = info.value;
-    // this.checked = false;
+    this.checked = false;
+    this.key = info.key;
   }
 }
 
@@ -93,6 +95,7 @@ function parseToVnode(node: DocumentFragment | Element): IVnode {
     nodeValue: node.nodeValue,
     type: bindNodeType(node),
     value: (node as Element).value,
+    key: node.nodeType === 1 ? (node as Element).getAttribute('indiv_repeat_key') : null,
   });
 }
 
@@ -182,30 +185,30 @@ function diffTagName(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]
  * @param {IPatchList[]} patchList
  */
 function diffChildNodes(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchList[]): void {
-  if (newVnode.childNodes.length > 0) {
-    (newVnode.childNodes as IVnode[]).forEach((nChild, index) => {
-      if (!oldVnode.childNodes[index]) {
-        patchList.push({
-          type: 1,
-          newNode: nChild.node,
-          parentNode: oldVnode.node,
-        });
-      } else {
-        diffVnode(oldVnode.childNodes[index], nChild, patchList);
-      }
-    });
-  }
-  if (oldVnode.childNodes.length > 0) {
-    (oldVnode.childNodes as IVnode[]).forEach((oChild, index) => {
-      if (!newVnode.childNodes[index]) {
-        patchList.push({
-          type: 2,
-          node: oChild.node,
-          parentNode: oldVnode.node,
-        });
-      }
-    });
-  }
+  // if (newVnode.childNodes.length > 0) {
+  //   (newVnode.childNodes as IVnode[]).forEach((nChild, index) => {
+  //     if (!oldVnode.childNodes[index]) {
+  //       patchList.push({
+  //         type: 1,
+  //         newNode: nChild.node,
+  //         parentNode: oldVnode.node,
+  //       });
+  //     } else {
+  //       diffVnode(oldVnode.childNodes[index], nChild, patchList);
+  //     }
+  //   });
+  // }
+  // if (oldVnode.childNodes.length > 0) {
+  //   (oldVnode.childNodes as IVnode[]).forEach((oChild, index) => {
+  //     if (!newVnode.childNodes[index]) {
+  //       patchList.push({
+  //         type: 2,
+  //         node: oChild.node,
+  //         parentNode: oldVnode.node,
+  //       });
+  //     }
+  //   });
+  // }
 
   // if (oldVnode.childNodes.length > 0) {
   //   (oldVnode.childNodes as IVnode[]).forEach((oChild, index) => {
@@ -236,16 +239,132 @@ function diffChildNodes(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchLis
   //   });
   // }
 
-  // if (newVnode.childNodes.length > 0) {
-  //   (newVnode.childNodes as IVnode[]).forEach((nChild, index) => {
-  //     if (!nChild.checked) {
-  //       patchList.push({
-  //         type: 1,
-  //         newNode: nChild.node,
-  //         parentNode: oldVnode.node,
-  //         insertNode: index === newVnode.childNodes.length - 1 ? null : newVnode.childNodes[index + 1].node,
-  //       });
+  if (newVnode.childNodes.length > 0) {
+    (newVnode.childNodes as IVnode[]).forEach((nChild, index) => {
+      if (nChild.checked || !nChild.key) return;
+      if (nChild.key) {
+      const sameOChild = (oldVnode.childNodes as IVnode[]).find(ochild => ochild.tagName === nChild.tagName && ochild.key === nChild.key);
+
+      if (sameOChild) {
+        const sameOldIndex = (oldVnode.childNodes as IVnode[]).findIndex(ochild => ochild.node.isSameNode(sameOChild.node));
+        // console.log('11oChildoChildoChild', oChild, newVnode.childNodes[sameNewIndex + 1].node, index);
+        if (sameOldIndex !== index) {
+          patchList.push({
+            type: 0,
+            newNode:  sameOChild.node,
+            oldVnode: oldVnode.childNodes[sameOldIndex].node,
+            parentNode: oldVnode.parentNode,
+          });
+        }
+        sameOChild.checked = true;
+        nChild.checked = true;
+        diffVnode(sameOChild, nChild, patchList);
+      }
+
+      if (!sameOChild) {
+        if (!oldVnode.childNodes[index]) {
+          patchList.push({
+            type: 1,
+            newNode: nChild.node,
+            parentNode: oldVnode.node,
+          });
+        }
+        if (!oldVnode.childNodes[index]) {
+          patchList.push({
+            type: 0,
+            newNode:  nChild.node,
+            oldVnode: oldVnode.childNodes[index].node,
+            parentNode: oldVnode.parentNode,
+          });
+        }
+        nChild.checked = true;
+        }
+      }
+    });
+  }
+
+  // if (oldVnode.childNodes.length > 0) {
+  //   (oldVnode.childNodes as IVnode[]).forEach((oChild, index) => {
+  //     if (oChild.checked || !oChild.key) return;
+  //     // if (oChild.key || oChild.key === 0 || oChild.key === '' || oChild.key === false) {
+  //     // if (oChild.key) {
+  //     const sameNChild = (newVnode.childNodes as IVnode[]).find(nchild => nchild.tagName === oChild.tagName && nchild.key === oChild.key);
+  //     if (sameNChild) {
+  //       const sameNewIndex = (newVnode.childNodes as IVnode[]).findIndex(nchild => nchild.node.isSameNode(sameNChild.node));
+  //       console.log('11oChildoChildoChild', oChild, newVnode.childNodes[sameNewIndex + 1].node, index);
+  //       if (sameNewIndex !== index) {
+  //         // patchList.push({
+  //         //   type: 2,
+  //         //   node: oChild.node,
+  //         //   parentNode: oldVnode.node,
+  //         // });
+  //         // patchList.push({
+  //         //   type: 0,
+  //         //   newNode: oChild.node,
+  //         //   insertNode: sameNewIndex === newVnode.childNodes.length - 1 ? null : newVnode.childNodes[sameNewIndex + 1].node,
+  //         //   parentNode: oldVnode.node,
+  //         // });
+  //         patchList.push({
+  //           type: 0,
+  //           newNode:  oChild.node,
+  //           oldVnode: oldVnode.childNodes[sameNewIndex].node,
+  //           parentNode: oldVnode.parentNode,
+  //         });
+  //       }
+  //       sameNChild.checked = true;
+  //       oChild.checked = true;
+  //       diffVnode(oChild, sameNChild, patchList);
+  //     } 
+  //     if (!sameNChild) {
+  //         patchList.push({
+  //           type: 2,
+  //           node: oChild.node,
+  //           parentNode: oldVnode.node,
+  //         });
+  //         oChild.checked = true;
+  //       // }
   //     }
+  //   });
+  //   (oldVnode.childNodes as IVnode[]).forEach((oChild, index) => {
+  //     if (oChild.checked || oChild.key) return;
+  //     // console.log(2999999888, oChild);
+  //     if (!newVnode.childNodes[index] || newVnode.childNodes[index].checked) {
+  //         patchList.push({
+  //           type: 2,
+  //           node: oChild.node,
+  //           parentNode: oldVnode.node,
+  //         });
+  //         oChild.checked = true;
+  //         return;
+  //     }
+  //     console.log('22oChildoChildoChild', oChild, newVnode.childNodes[index]);
+  //     newVnode.childNodes[index].checked = true;
+  //     oChild.checked = true;
+  //     diffVnode(oChild, newVnode.childNodes[index], patchList);
+  //   });
+  // }
+
+  // if (newVnode.childNodes.length > 0) {
+  //   console.log(888888888877, newVnode);
+  //   (newVnode.childNodes as IVnode[]).forEach((nChild, index) => {
+  //     console.log(1111111111, newVnode);
+  //     if (nChild.checked) return;
+  //     console.log(333333333, nChild.node);
+  //     // patchList.push({
+  //     //   type: 1,
+  //     //   newNode: nChild.node,
+  //     //   parentNode: oldVnode.node,
+  //     //   insertOldNode: oldVnode.childNodes[index + 1] ? null : oldVnode.childNodes[index + 1].node,
+  //     //   insertNewNode: newVnode.childNodes[index + 1] ? null : newVnode.childNodes[index + 1].node,
+  //     //   // insertNode: index === newVnode.childNodes.length - 1 ? null : newVnode.childNodes[index + 1].node,
+  //     // });
+  //     patchList.push({
+  //       type: 1,
+  //       newNode: nChild.node,
+  //       parentNode: oldVnode.node,
+  //     });
+  //     console.log(22888888888877, newVnode);
+  //     nChild.checked = true;
   //   });
   // }
 }
@@ -298,8 +417,10 @@ function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]):
   }
   diffAttributes(oldVnode, newVnode, patchList);
   diffNodeValue(oldVnode, newVnode, patchList);
-  diffChildNodes(newVnode, oldVnode, patchList);
+  // diffChildNodes(newVnode, oldVnode, patchList);
   if (oldVnode.tagName === 'INPUT' || oldVnode.tagName === 'TEXTAREA textarea' || oldVnode.tagName === 'INPUT') diffInputValue(newVnode, oldVnode, patchList);
+  console.log(1888888888877, newVnode, oldVnode);
+  diffChildNodes(newVnode, oldVnode, patchList);
 }
 
 /**
@@ -322,22 +443,30 @@ function renderVnode(patchList: IPatchList[]): void {
       //   if (patch.insertNode) patch.parentNode.insertBefore(patch.newNode, patch.insertNode);
       //   if (!patch.insertNode) patch.parentNode.appendChild(patch.newNode);
       //   break;
-      // case 1:
-      //   if (patch.insertNode) patch.parentNode.insertBefore(patch.newNode, patch.insertNode);
-      //   if (!patch.insertNode) patch.parentNode.appendChild(patch.newNode);
-      //   break;
-      // case 2:
-      //   patch.parentNode.removeChild(patch.node);
-      //   break;
       case 0:
-        patch.parentNode.replaceChild(patch.newNode, patch.oldVnode);
+        if (patch.parentNode.contains(patch.oldVnode))  patch.parentNode.replaceChild(patch.newNode, patch.oldVnode);
+        // patch.parentNode.replaceChild(patch.newNode, patch.oldVnode);
         break;
       case 1:
         patch.parentNode.appendChild(patch.newNode);
+        // if (patch.insertNode) patch.parentNode.insertBefore(patch.newNode, patch.insertNode);
+        // if (!patch.insertNode) patch.parentNode.appendChild(patch.newNode);
+        // if (!patch.insertOldNode && !patch.insertNewNode) patch.parentNode.appendChild(patch.newNode);
+        // if (patch.insertOldNode) patch.parentNode.insertBefore(patch.newNode, patch.insertOldNode);
+        // if (!patch.insertNewNode)patch.parentNode.insertBefore(patch.newNode, patch.insertNewNode);
         break;
       case 2:
         patch.parentNode.removeChild(patch.node);
         break;
+      // case 0:
+      //   patch.parentNode.replaceChild(patch.newNode, patch.oldVnode);
+      //   break;
+      // case 1:
+      //   patch.parentNode.appendChild(patch.newNode);
+      //   break;
+      // case 2:
+      //   patch.parentNode.removeChild(patch.node);
+      //   break;
       case 3:
         (patch.node as Element).setAttribute((patch.newValue as TAttributes).name, (patch.newValue as TAttributes).value);
         break;

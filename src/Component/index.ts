@@ -83,11 +83,11 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       const routerRenderDom = dom.querySelectorAll((this as IComponent<State, Props, Vm>).$vm.$routeDOMKey)[0];
       const compile = new Compile(dom, (this as IComponent<State, Props, Vm>), routerRenderDom);
       (this as IComponent<State, Props, Vm>).mountComponent(dom, false);
-      (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
-        if (component.scope.render) component.scope.reRender();
-        if (component.scope.nvAfterMount) component.scope.nvAfterMount();
-      });
-      if ((this as IComponent<State, Props, Vm>).nvHasRender) (this as IComponent<State, Props, Vm>).nvHasRender();
+      // (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
+      //   if (component.scope.render) component.scope.reRender();
+      //   if (component.scope.nvAfterMount) component.scope.nvAfterMount();
+      // });
+      // if ((this as IComponent<State, Props, Vm>).nvHasRender) (this as IComponent<State, Props, Vm>).nvHasRender();
     };
 
     vm.mountComponent = function (dom: Element, isFirstRender?: boolean): void {
@@ -111,8 +111,8 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
         }
         component.scope.$vm = (this as IComponent<State, Props, Vm>).$vm;
         component.scope.$components = (this as IComponent<State, Props, Vm>).$components;
-        if (component.scope.nvOnInit && isFirstRender) component.scope.nvOnInit();
-        // if (component.scope.nvOnInit && !saveComponent) component.scope.nvOnInit();
+        // if (component.scope.nvOnInit && isFirstRender) component.scope.nvOnInit();
+        if (component.scope.nvOnInit && !saveComponent) component.scope.nvOnInit();
         if (component.scope.watchData) component.scope.watchData();
         if (component.scope.nvBeforeMount) component.scope.nvBeforeMount();
       });

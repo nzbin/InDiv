@@ -7,7 +7,8 @@ export interface IVnode {
     childNodes?: IVnode[] | any[];
     type?: string;
     value?: string | number;
-    // checked?: boolean;
+    checked?: boolean;
+    key?: any;
 }
 
 export type TAttributes = {
@@ -22,6 +23,8 @@ export interface IPatchList {
     newNode?: DocumentFragment | Element;
     oldVnode?: DocumentFragment | Element;
     // insertNode?: DocumentFragment | Element;
+    insertNewNode?: DocumentFragment | Element;
+    insertOldNode?: DocumentFragment | Element;
     newValue?: TAttributes | string | number;
     oldValue?: TAttributes | string | number;
 }

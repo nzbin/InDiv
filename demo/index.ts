@@ -435,6 +435,7 @@ class TestComponent implements OnInit {
   //     <router-render></router-render>
   //   </div>
   // `),
+  // <test-component nv-repeat="let man in state.testArray" man="{man.name}" nv-key="man.name"></test-component>
 
   // key nv-if="state.a"
   template: (`
@@ -442,7 +443,7 @@ class TestComponent implements OnInit {
       <p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>
       <p nv-on:click="@go()">container: {{state.a}}</p>
       <input nv-model="state.a" />
-      <test-component nv-repeat="let man in state.testArray" man="{man.name}"></test-component>
+      <p nv-repeat="let man in state.testArray" nv-key="man.name">{{man.name}}</p>
       <router-render></router-render>
     </div>
   `),

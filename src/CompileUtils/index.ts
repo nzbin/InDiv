@@ -277,6 +277,12 @@ export class CompileUtilForRepeat {
     if (!node.eventTypes) node.eventTypes = JSON.stringify(['input']);
   }
 
+
+  public keyUpdater(node: Element, value: any): void {
+    node.setAttribute('indiv_repeat_key', value);
+    console.log(44444444, node.getAttribute('indiv_repeat_key'));
+  }
+
   /**
    * compile event and build eventType in DOM
    *

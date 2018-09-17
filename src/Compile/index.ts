@@ -36,12 +36,9 @@ class Compile {
       }
 
       let oldVnode = VirtualDOM.parseToVnode(this.$el);
-      // console.log(6666, oldVnode);
       let newVnode = VirtualDOM.parseToVnode(this.$fragment);
-      // console.log(7777, newVnode);
       let patchList: IPatchList[] = [];
       VirtualDOM.diffVnode(oldVnode, newVnode, patchList);
-      // console.log(8888, patchList);
       VirtualDOM.renderVnode(patchList);
 
       this.utils = null;

@@ -24,6 +24,7 @@ class KeyWatcher {
   public watchData(data: any, key: string): void {
     if (!data || typeof data !== 'object' || !data[key]) return;
     const vm = this;
+    console.log(222222222, this);
     let val = data[key];
     Object.defineProperty(data, key, {
       configurable: true,
@@ -33,12 +34,9 @@ class KeyWatcher {
       },
       set(newVal: any) {
         if (vm.utils.isEqual(newVal, val)) return;
-        const oldData: any = {};
-        oldData[key] = val;
-        const newData: any = {};
-        newData[key] = newVal;
+
         val = newVal;
-        if (vm.watcher) vm.watcher(oldData, newData);
+        if (vm.watcher) vm.watcher(newVal);
       },
     });
   }

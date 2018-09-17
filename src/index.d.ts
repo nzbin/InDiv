@@ -1,4 +1,4 @@
-export type TFnWatcher = (oldData: any, newData: any) => void;
+export type TFnWatcher = (newData?: any) => void;
 
 export type TFnRender = () => void;
 
@@ -16,7 +16,6 @@ export type TRouter = {
 };
 
 export type ComponentList<C> = {
-    // dom: Element;
     dom: {
         tagName: string;
         index: number;
@@ -118,6 +117,7 @@ export declare class Watcher {
 
 export declare class Utils {
     constructor();
+    toString: () => string;
     setCookie(name: string, value: any, options?: any): void;
     getCookie(name: string): any;
     removeCookie(name: string): boolean;
@@ -232,6 +232,7 @@ export declare class InDiv {
     renderComponent(BootstrapComponent: Function, renderDOM: Element): any;
     replaceDom(component: IComponent, renderDOM: Element): void;
 }
+
 export declare class Router {
     routes: TRouter[];
     routesList: TRouter[];

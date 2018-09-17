@@ -34,10 +34,6 @@ class Vnode {
   }
 }
 
-// function isEqualNode(oldVnode, oldVnode) {
-
-// }
-
 /**
  * bind nodeType and return type
  *

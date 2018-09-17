@@ -385,16 +385,26 @@ Now we support for typescript!
 6. Template Syntax
 
   - 规定：指令以 nv-xxx 命名
-  - now: nv-text nv-html nv-model nv-class nv-repeat nv-if nv-on:Event
+  - now: nv-text nv-html nv-model nv-class nv-repeat nv-key nv-if nv-on:Event
   - 事件指令, 如 nv-on:click
     - Text1: `<p nv-text="state.b"></p>;`
     - Text2: `<p>this.state.b是：{{state.b}}</p>;`
     - HTML: `<p nv-html="state.c"></p>;`
     - Model for input: `'<input nv-model="state.c"/>';` **if input is a repeat DOM, and intem of Array is'nt an object, please use `$index`**
-    - Class: `<p  class="b" nv-class="state.a"></p>';`
+    - Class: `<p class="b" nv-class="state.a"></p>';`
     - Directives: ues `nv-on:event`
       - `<p nv-on:click="@componentClick()"></p>;`
+    - If: 
+      - Now `nv-if` will not remove this DOM, and will change DOM's display to `none`.
+      - Because continually change DOM structure will lead the waste of performance, so we change remove DOM to hide DOM in version:1.1.0
+      - `<p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>` 
     - Repeat: `<p  class="b" nv-class="state.a" nv-repeat="let a in state.b" nv-if="a.f">{{a.z}}</p>`
+    - Key: 
+      - If u are repeating an `Component`, please use `nv-key` with `nv-repeat`.
+      - `nv-key` is a key for InDiv to mark repeat `Component`, and it must be an unique value.
+      - If u are not use `nv-key`, InDiv will render this with a new `Component`, and `state` in `Component` will be reset.
+      - `<test-component nv-repeat="let man in state.testArray" nv-key="man.id" man="{man.name}"></test-component>`
+
   - about function in Template Syntax
     - now you can send arguments in Function
     - arguments include:
@@ -420,18 +430,18 @@ Now we support for typescript!
     1. `Watcher`
       - Watcher expects two arguments: `data, watcher`
       - data is an Object
-      - watcher is a function which has two arguments: `oldData, newData`
+      - watcher is a function which has an arguments: `newData`
         ```javascript
-        new Watcher(this.object, (oldData, newData) => {})
+        new Watcher(this.object, (newData) => {})
         ```
 
     2. `KeyWatcher`
       - Watcher expects there arguments: `data, key, watcher`
       - data: `Object`
       - key is a key in Object and type is `String`
-      - watcher is a function which has two arguments: `oldData, newData`
+      - watcher is a function which has an arguments: `newData`
         ```javascript
-        new KeyWatcher(this.object, key,(oldData, newData) => {})
+        new KeyWatcher(this.object, key, (newData) => {})
         ```
 9. Service
 
@@ -681,6 +691,13 @@ Now we support for typescript!
     routeChange((lastRoute?: string, newRoute?: string): void;
     ```
 
+12. Server Side Render
+    
+    - `npm install @InDiv/ssr-render` and use nodeJS
+    - export your InDiv instance and routes
+    - use `renderToString(url: string, routes: TRouter[], inDiv: InDiv): string`, render your app to string with `request.url`, `InDiv instance` and `routes`
+    - at last render string to your template
+
 ## Architecture
 
 route => NvModule => component
@@ -696,14 +713,15 @@ route => NvModule => component
 - [x] 公共类提取
 - [x] 数据劫持
 - [x] 双向绑定模板
-- [x] Template Syntax: nv-text nv-html nv-model nv-class nv-repeat nv-if(6/6)
+- [x] Template Syntax: nv-text nv-html nv-model nv-class nv-repeat nv-if nv-key(7/7)
 - [x] 组件props
 - [x] 组件渲染
 - [x] 组件中使用组件
 - [x] 改用 history的pushState
 - [x] 监听路由变化动态渲染(2/2)
-- [x] Virtual DOM
+- [x] Virtual DOM 优化
 - [x] Service
 - [x] Route bug
 - [x] ts (强类型赛高)
 - [x] DI
+- [x] SSR 服务端渲染

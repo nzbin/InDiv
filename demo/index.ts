@@ -409,7 +409,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   selector: 'test-component',
   template: (`
     <div>
-      <p>测试repeat组件: {{state.man}}</p>
+      <p nv-on:click="@click()">测试repeat组件: {{state.man}}</p>
     </div>`),
 })
 class TestComponent implements OnInit {
@@ -420,6 +420,10 @@ class TestComponent implements OnInit {
     this.state = {
       man: this.props.man,
     };
+  }
+
+  public click() {
+    this.state.man = 'fuck!';
   }
 }
 
@@ -443,6 +447,7 @@ class TestComponent implements OnInit {
       <p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>
       <p nv-on:click="@go()">container: {{state.a}}</p>
       <input nv-model="state.a" />
+      <p nv-repeat="let man in state.testArray" nv-key="man.name">{{man.name}}</p>
       <test-component nv-repeat="let man in state.testArray" nv-key="man.name" man="{man.name}"></test-component>
       <router-render></router-render>
     </div>

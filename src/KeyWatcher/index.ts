@@ -24,7 +24,6 @@ class KeyWatcher {
   public watchData(data: any, key: string): void {
     if (!data || typeof data !== 'object' || !data[key]) return;
     const vm = this;
-    console.log(222222222, this);
     let val = data[key];
     Object.defineProperty(data, key, {
       configurable: true,

@@ -97,7 +97,9 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       });
       (this as IComponent<State, Props, Vm>).componentsConstructor(dom);
       (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
+        // find Component from cache
         const saveComponent = saveStates.find(save => {
+          if (save.dom.remove) return;
           if (save.dom.key !== null) {
             return save.dom.tagName === component.dom.tagName && save.dom.key === component.dom.key;
           }
@@ -165,15 +167,20 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
                 if (node.repeatData && node.repeatData[key] !== null) _prop = (this as IComponent<State, Props, Vm>).compileUtil._getValueByValue(node.repeatData[key], prop[1], key);
                 props[attrName] = (this as IComponent<State, Props, Vm>).buildProps(_prop);
               }
-              if (attr.name !== 'indiv_repeat_key')  node.removeAttribute(attrName);
+
+              // can't remove style
+              if (attr.name !== 'indiv_repeat_key' && attr.name !== 'indiv_should_remove' && attr.name !== 'style')  node.removeAttribute(attrName);
             });
           }
+
+          if (node.indiv_should_remove) return;
 
           (this as IComponent<State, Props, Vm>).$componentList.push({
             dom: {
               tagName: name,
               index,
               key: node.getAttribute('indiv_repeat_key') ? node.getAttribute('indiv_repeat_key') : null,
+              remove: node.indiv_should_remove ? node.indiv_should_remove : null,
             },
             props,
             scope: (this as IComponent<State, Props, Vm>).buildComponentScope((this as IComponent<State, Props, Vm>).$components[i], props, node),

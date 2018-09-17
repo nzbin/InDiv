@@ -1,5 +1,7 @@
+import Utils from '../Utils';
 import { IVnode, TAttributes, IPatchList, IVirtualDOM  } from '../types';
 
+const utils = new Utils();
 /**
  * Vnode
  *
@@ -15,6 +17,7 @@ class Vnode {
   public type?: string;
   public value?: string | number;
   public repeatData?: any;
+  public shouldRemove?: boolean;
 
   /**
    * Creates an instance of Vnode.
@@ -31,6 +34,7 @@ class Vnode {
     this.type = info.type;
     this.value = info.value;
     this.repeatData = info.repeatData;
+    this.shouldRemove = info.shouldRemove;
   }
 }
 
@@ -90,6 +94,7 @@ function parseToVnode(node: DocumentFragment | Element): IVnode {
     type: bindNodeType(node),
     value: (node as Element).value,
     repeatData: node.repeatData ? node.repeatData : null,
+    shouldRemove: node.indiv_should_remove ? node.indiv_should_remove : null,
   });
 }
 
@@ -237,11 +242,30 @@ function diffInputValue(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchLis
  * @returns {void}
  */
 function diffRepeatData(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchList[]): void {
-  if (oldVnode.repeatData !== newVnode.repeatData) {
+  if (utils.isEqual(oldVnode.repeatData, newVnode.repeatData)) {
     patchList.push({
       type: 7,
       node: oldVnode.node,
-      newRepeatData: newVnode.repeatData,
+      newValue: newVnode.repeatData,
+    });
+  }
+}
+
+/**
+ * diff indiv_should_remove of repeat node
+ * 
+ * type: 8 change indiv_should_remove of from node
+ *
+ * @param {IVnode} newVnode
+ * @param {IVnode} oldVnode
+ * @param {IPatchList[]} patchList
+ */
+function diffIfShow(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchList[]) {
+  if (oldVnode.shouldRemove !== newVnode.shouldRemove) {
+    patchList.push({
+      type: 8,
+      node: oldVnode.node,
+      newValue: newVnode.shouldRemove,
     });
   }
 }
@@ -265,8 +289,6 @@ function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]):
     return;
   }
 
-  if (newVnode.node.isEqualNode(oldVnode.node) && oldVnode.tagName !== 'INPUT' && oldVnode.tagName !== 'TEXTAREA textarea' && oldVnode.tagName !== 'INPUT') return;
-
   if (oldVnode.tagName !== newVnode.tagName) {
     diffTagName(oldVnode, newVnode, patchList);
     return;
@@ -275,6 +297,7 @@ function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]):
   diffNodeValue(oldVnode, newVnode, patchList);
   if (oldVnode.tagName === 'INPUT' || oldVnode.tagName === 'TEXTAREA textarea' || oldVnode.tagName === 'INPUT') diffInputValue(newVnode, oldVnode, patchList);
   diffRepeatData(newVnode, oldVnode, patchList);
+  diffIfShow(newVnode, oldVnode, patchList);
   diffChildNodes(newVnode, oldVnode, patchList);
 }
 
@@ -289,6 +312,7 @@ function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]):
  * TEXT: 5, 更改文字: 5
  * value: 6, 更改 input textarea select value 的值: 6
  * value: 7, 更改 node 的 repeatData: 7, render过来的的被复制的值
+ * value: 8, 更改 node 的 show: 7, nv-if 更改的值
  * 
  * @param [] patchList
  */
@@ -317,7 +341,10 @@ function renderVnode(patchList: IPatchList[]): void {
         (patch.node as Element).value = patch.newValue;
         break;
       case 7:
-        patch.node.repeatData = patch.newRepeatData;
+        patch.node.repeatData = patch.newValue as any;
+        break;
+      case 8:
+        patch.node.indiv_should_remove = patch.newValue as boolean;
         break;
     }
   });

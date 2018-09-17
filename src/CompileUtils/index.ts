@@ -6,6 +6,7 @@ declare global {
       [key: string]: any;
     };
     indiv_repeat_key?: any;
+    indiv_should_remove?: boolean;
   }
   interface Node {
     eventTypes?: string;
@@ -13,6 +14,7 @@ declare global {
       [key: string]: any;
     };
     indiv_repeat_key?: any;
+    indiv_should_remove?: boolean;
   }
 }
 
@@ -217,7 +219,12 @@ export class CompileUtilForRepeat {
    * @memberof CompileUtilForRepeat
    */
   public ifUpdater(node: Element, value: any): void {
-    if (!value && this.$fragment.contains(node)) (node as HTMLElement).style.display = 'none';
+    if (!value && this.$fragment.contains(node)) {
+      node.indiv_should_remove = true;
+      (node as HTMLElement).style.display = 'none';
+    } else {
+      node.indiv_should_remove = false;
+    }
   }
 
   /**
@@ -491,7 +498,12 @@ export class CompileUtil {
    * @memberof CompileUtil
    */
   public ifUpdater(node: Element, value: any): void {
-    if (!value && this.$fragment.contains(node)) (node as HTMLElement).style.display = 'none';
+    if (!value && this.$fragment.contains(node)) {
+      node.indiv_should_remove = true;
+      (node as HTMLElement).style.display = 'none';
+    } else {
+      node.indiv_should_remove = false;
+    }
   }
 
   /**
@@ -562,6 +574,17 @@ export class CompileUtil {
       const reg = /\{\{(.*)\}\}/g;
 
       this.$fragment.insertBefore(newElement, node);
+
+      Array.from(nodeAttrs).forEach(attr => {
+        const attrName = attr.name;
+        if (attrName === 'nv-if') {
+          const dir = attrName.substring(3);
+          const exp = attr.value;
+          new CompileUtilForRepeat(this.$fragment).bind(newElement as Element, key, dir, exp, index, vm, value);
+        }
+      });
+      console.log(88888, newElement, newElement.indiv_should_remove);
+      if (newElement.indiv_should_remove) return;
 
       if (this.isTextNode((newElement as Element)) && reg.test(text)) new CompileUtilForRepeat(this.$fragment).templateUpdater(newElement as Element, val, key, vm);
       

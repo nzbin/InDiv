@@ -7,6 +7,7 @@ export type ComponentList<C> = {
       tagName: string;
       index: number;
       key?: any;
+      remove?: boolean;
     };
     props: any;
     scope: C;

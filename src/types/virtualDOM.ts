@@ -8,6 +8,7 @@ export interface IVnode {
     type?: string;
     value?: string | number;
     repeatData?: any;
+    shouldRemove?: boolean;
 }
 
 export type TAttributes = {
@@ -21,9 +22,8 @@ export interface IPatchList {
     parentNode?: Node;
     newNode?: DocumentFragment | Element;
     oldVnode?: DocumentFragment | Element;
-    newRepeatData?: any;
-    newValue?: TAttributes | string | number;
-    oldValue?: TAttributes | string | number;
+    newValue?: TAttributes | string | number | boolean;
+    oldValue?: TAttributes | string | number | boolean;
 }
 
 export interface IParseToVnode {

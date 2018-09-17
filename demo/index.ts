@@ -447,8 +447,8 @@ class TestComponent implements OnInit {
       <p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>
       <p nv-on:click="@go()">container: {{state.a}}</p>
       <input nv-model="state.a" />
-      <p nv-repeat="let man in state.testArray" nv-key="man.name">{{man.name}}</p>
-      <test-component nv-repeat="let man in state.testArray" nv-key="man.name" man="{man.name}"></test-component>
+      <p nv-repeat="let man in state.testArray" nv-key="man.name" man="{man.name}" nv-if="state.a">{{man.name}}</p>
+      <test-component nv-repeat="let man in state.testArray" man="{man.name}" nv-key="man.name" nv-if="state.a"></test-component>
       <router-render></router-render>
     </div>
   `),
@@ -565,8 +565,7 @@ class Container implements OnInit, AfterMount, WatchState {
 
   public changeInput() {
     // this.state.a = 4;
-    this.setState({
-      testArray: [
+      this.state.testArray = [
         {
           name: '李龙吉',
           sex: '男',
@@ -620,8 +619,7 @@ class Container implements OnInit, AfterMount, WatchState {
               name: '美',
             },
           ],
-        }],
-    });
+        }];
   }
 }
 

@@ -19,6 +19,9 @@ class Vnode {
   public repeatData?: any;
   public shouldRemove?: boolean;
 
+  public checked?: boolean;
+  public key?: any;
+
   /**
    * Creates an instance of Vnode.
    * @param {IVnode} info
@@ -35,6 +38,9 @@ class Vnode {
     this.value = info.value;
     this.repeatData = info.repeatData;
     this.shouldRemove = info.shouldRemove;
+
+    this.key = info.key;
+    this.checked = false;
   }
 }
 
@@ -95,6 +101,8 @@ function parseToVnode(node: DocumentFragment | Element): IVnode {
     value: (node as Element).value,
     repeatData: node.repeatData ? node.repeatData : null,
     shouldRemove: node.indiv_should_remove ? node.indiv_should_remove : null,
+
+    key: node.indiv_repeat_key ? node.indiv_repeat_key : null,
   });
 }
 
@@ -184,28 +192,65 @@ function diffTagName(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]
  * @param {IPatchList[]} patchList
  */
 function diffChildNodes(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchList[]): void {
-  if (newVnode.childNodes.length > 0) {
-    (newVnode.childNodes as IVnode[]).forEach((nChild, index) => {
-      if (!oldVnode.childNodes[index]) {
-        patchList.push({
-          type: 1,
-          newNode: nChild.node,
-          parentNode: oldVnode.node,
-        });
-      } else {
-        diffVnode(oldVnode.childNodes[index], nChild, patchList);
-      }
-    });
-  }
+  // if (newVnode.childNodes.length > 0) {
+  //   (newVnode.childNodes as IVnode[]).forEach((nChild, index) => {
+  //     if (!oldVnode.childNodes[index]) {
+  //       patchList.push({
+  //         type: 1,
+  //         newNode: nChild.node,
+  //         parentNode: oldVnode.node,
+  //       });
+  //     } else {
+  //       diffVnode(oldVnode.childNodes[index], nChild, patchList);
+  //     }
+  //   });
+  // }
+  // if (oldVnode.childNodes.length > 0) {
+  //   (oldVnode.childNodes as IVnode[]).forEach((oChild, index) => {
+  //     if (!newVnode.childNodes[index]) {
+  //       patchList.push({
+  //         type: 2,
+  //         node: oChild.node,
+  //         parentNode: oldVnode.node,
+  //       });
+  //     }
+  //   });
+  // }
   if (oldVnode.childNodes.length > 0) {
     (oldVnode.childNodes as IVnode[]).forEach((oChild, index) => {
-      if (!newVnode.childNodes[index]) {
+      if (oChild.checked) return;
+      const sameCode = newVnode.childNodes.find(nChild => nChild.tagName === oChild.tagName && nChild.key === oChild.key && !nChild.checked);
+      if (sameCode) {
+        const sameCodeIndex = newVnode.childNodes.findIndex(nChild => nChild === sameCode);
+        patchList.push({
+          type: 0,
+          newIndex: sameCodeIndex,
+          oldVnode: oChild.node,
+          parentNode: oldVnode.parentNode,
+        });
+        diffVnode(oChild, sameCode, patchList);
+        sameCode.checked = true;
+      } else {
         patchList.push({
           type: 2,
           node: oChild.node,
           parentNode: oldVnode.node,
         });
       }
+      oChild.checked = true;
+    });
+  }
+
+  if (newVnode.childNodes.length > 0) {
+    (newVnode.childNodes as IVnode[]).forEach((nChild, index) => {
+      if (nChild.checked) return;
+      patchList.push({
+        type: 0,
+        newIndex: index,
+        oldVnode: nChild.node,
+        parentNode: oldVnode.parentNode,
+      });
+      nChild.checked = true;
     });
   }
 }

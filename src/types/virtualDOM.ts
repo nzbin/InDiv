@@ -3,12 +3,17 @@ export interface IVnode {
     node?: DocumentFragment | Element;
     parentNode?: Node;
     attributes?: TAttributes[];
-    nodeValue?: string | null;
-    childNodes?: IVnode[] | any[];
+    // nodeValue?: string | null;
+    nodeValue?: string;
+    // childNodes?: IVnode[] | any[];
+    childNodes?: IVnode[];
     type?: string;
     value?: string | number;
     repeatData?: any;
     shouldRemove?: boolean;
+
+    key?: any;
+    checked?: boolean;
 }
 
 export type TAttributes = {
@@ -24,6 +29,8 @@ export interface IPatchList {
     oldVnode?: DocumentFragment | Element;
     newValue?: TAttributes | string | number | boolean;
     oldValue?: TAttributes | string | number | boolean;
+
+    newIndex?: number;
 }
 
 export interface IParseToVnode {

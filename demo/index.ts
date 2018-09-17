@@ -447,7 +447,7 @@ class TestComponent implements OnInit {
       <p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>
       <p nv-on:click="@go()">container: {{state.a}}</p>
       <input nv-model="state.a" />
-      <p nv-repeat="let man in state.testArray" nv-key="man.name" man="{man.name}" nv-if="state.a">{{man.name}}</p>
+      <p nv-repeat="let man in state.testArray" nv-key="man.name" nv-if="state.a">{{man.name}}</p>
       <test-component nv-repeat="let man in state.testArray" man="{man.name}" nv-key="man.name" nv-if="state.a"></test-component>
       <router-render></router-render>
     </div>
@@ -492,44 +492,45 @@ class Container implements OnInit, AfterMount, WatchState {
     this.state = {
       a: 1,
       b: 3,
-      testArray: [
-        {
-          name: '李龙吉',
-          sex: '男',
-          job: [
-            {
-              id: 1,
-              name: '程序员',
-            },
-            {
-              id: 2,
-              name: '码农',
-            },
-            {
-              id: 3,
-              name: '帅',
-            },
-          ],
-        },
-        {
-          name: '邱宝环',
-          sex: '女',
-          // job: ['老师', '英语老师', '美1'],
-          job: [
-            {
-              id: 1,
-              name: '老师',
-            },
-            {
-              id: 2,
-              name: '英语老师',
-            },
-            {
-              id: 3,
-              name: '美',
-            },
-          ],
-        }],
+      // testArray: [],
+      // testArray: [
+      //   {
+      //     name: '李龙吉',
+      //     sex: '男',
+      //     job: [
+      //       {
+      //         id: 1,
+      //         name: '程序员',
+      //       },
+      //       {
+      //         id: 2,
+      //         name: '码农',
+      //       },
+      //       {
+      //         id: 3,
+      //         name: '帅',
+      //       },
+      //     ],
+      //   },
+      //   {
+      //     name: '邱宝环',
+      //     sex: '女',
+      //     // job: ['老师', '英语老师', '美1'],
+      //     job: [
+      //       {
+      //         id: 1,
+      //         name: '老师',
+      //       },
+      //       {
+      //         id: 2,
+      //         name: '英语老师',
+      //       },
+      //       {
+      //         id: 3,
+      //         name: '美',
+      //       },
+      //     ],
+      //   }],
       testArray2: ['程序员3', '码农3', '帅3'],
     };
   }
@@ -565,7 +566,8 @@ class Container implements OnInit, AfterMount, WatchState {
 
   public changeInput() {
     // this.state.a = 4;
-      this.state.testArray = [
+    this.setState({
+      testArray: [
         {
           name: '李龙吉',
           sex: '男',
@@ -619,7 +621,63 @@ class Container implements OnInit, AfterMount, WatchState {
               name: '美',
             },
           ],
-        }];
+        }],
+    });
+      // this.state.testArray = [
+      //   {
+      //     name: '李龙吉',
+      //     sex: '男',
+      //     job: [
+      //       {
+      //         id: 1,
+      //         name: '程序员',
+      //       },
+      //       {
+      //         id: 2,
+      //         name: '码农',
+      //       },
+      //       {
+      //         id: 3,
+      //         name: '帅',
+      //       },
+      //     ],
+      //   },
+      //   {
+      //     name: '李龙吉2',
+      //     sex: '男2',
+      //     job: [
+      //       {
+      //         id: 1,
+      //         name: '程序员2',
+      //       },
+      //       {
+      //         id: 2,
+      //         name: '码农2',
+      //       },
+      //       {
+      //         id: 3,
+      //         name: '帅2',
+      //       },
+      //     ],
+      //   },
+      //   {
+      //     name: '邱宝环',
+      //     sex: '女',
+      //     job: [
+      //       {
+      //         id: 1,
+      //         name: '老师',
+      //       },
+      //       {
+      //         id: 2,
+      //         name: '英语老师',
+      //       },
+      //       {
+      //         id: 3,
+      //         name: '美',
+      //       },
+      //     ],
+      //   }];
   }
 }
 

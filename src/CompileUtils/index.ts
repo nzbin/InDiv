@@ -222,6 +222,7 @@ export class CompileUtilForRepeat {
     if (!value && this.$fragment.contains(node)) {
       node.indiv_should_remove = true;
       (node as HTMLElement).style.display = 'none';
+      node.innerHTML = "";
     } else {
       node.indiv_should_remove = false;
     }
@@ -501,6 +502,7 @@ export class CompileUtil {
     if (!value && this.$fragment.contains(node)) {
       node.indiv_should_remove = true;
       (node as HTMLElement).style.display = 'none';
+      node.innerHTML = "";
     } else {
       node.indiv_should_remove = false;
     }
@@ -563,6 +565,8 @@ export class CompileUtil {
    * @memberof CompileUtil
    */
   public repeatUpdater(node: Element, value: any, expFather: string, vm: any): void {
+    if (!value || !(value instanceof Array)) return;
+
     const key = expFather.split(' ')[1];
     value.forEach((val: any, index: number) => {
       const repeatData: { [key: string]: any } = {};
@@ -574,17 +578,6 @@ export class CompileUtil {
       const reg = /\{\{(.*)\}\}/g;
 
       this.$fragment.insertBefore(newElement, node);
-
-      Array.from(nodeAttrs).forEach(attr => {
-        const attrName = attr.name;
-        if (attrName === 'nv-if') {
-          const dir = attrName.substring(3);
-          const exp = attr.value;
-          new CompileUtilForRepeat(this.$fragment).bind(newElement as Element, key, dir, exp, index, vm, value);
-        }
-      });
-      console.log(88888, newElement, newElement.indiv_should_remove);
-      if (newElement.indiv_should_remove) return;
 
       if (this.isTextNode((newElement as Element)) && reg.test(text)) new CompileUtilForRepeat(this.$fragment).templateUpdater(newElement as Element, val, key, vm);
       

@@ -312,7 +312,7 @@ function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]):
  * TEXT: 5, 更改文字: 5
  * value: 6, 更改 input textarea select value 的值: 6
  * value: 7, 更改 node 的 repeatData: 7, render过来的的被复制的值
- * value: 8, 更改 node 的 show: 7, nv-if 更改的值
+ * value: 8, 更改 node 的 show: 8, nv-if 更改的值
  * 
  * @param [] patchList
  */

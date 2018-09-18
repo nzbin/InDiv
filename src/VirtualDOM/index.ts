@@ -104,6 +104,58 @@ function parseToVnode(node: DocumentFragment | Element): IVnode {
 }
 
 /**
+ * diff childNodes for diff VNode
+ * 
+ * type: 0 removeChild
+ * type: 1 change Child index
+ *
+ * @param {IVnode} newVnode
+ * @param {IVnode} oldVnode
+ * @param {IPatchList[]} patchList
+ */
+function diffChildNodes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
+  if (oldVnode.childNodes.length > 0) {
+    (oldVnode.childNodes as IVnode[]).forEach((oChild, index) => {
+      if (oChild.checked) return;
+      const sameCode = newVnode.childNodes.find(nChild => nChild.tagName === oChild.tagName && nChild.key === oChild.key && !nChild.checked);
+      if (sameCode) {
+        const sameCodeIndex = newVnode.childNodes.findIndex(nChild => nChild === sameCode);
+        if (sameCodeIndex !== index) {
+          patchList.push({
+            type: 1,
+            newIndex: sameCodeIndex,
+            oldVnode: oChild.node,
+            parentNode: oldVnode.node,
+          });
+        }
+        diffVnode(oChild, sameCode, patchList);
+        sameCode.checked = true;
+      } else {
+        patchList.push({
+          type: 0,
+          node: oChild.node,
+          parentNode: oldVnode.node,
+        });
+      }
+      oChild.checked = true;
+    });
+  }
+
+  if (newVnode.childNodes.length > 0) {
+    (newVnode.childNodes as IVnode[]).forEach((nChild, index) => {
+      if (nChild.checked) return;
+      patchList.push({
+        type: 1,
+        newIndex: index,
+        oldVnode: nChild.node,
+        parentNode: oldVnode.node,
+      });
+      nChild.checked = true;
+    });
+  }
+}
+
+/**
  * diff attributes for diff VNode
  * 
  * type: 2 setAttribute
@@ -159,61 +211,9 @@ function diffNodeValue(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList
 }
 
 /**
- * diff childNodes for diff VNode
- * 
- * type: 0 removeChild
- * type: 1 change Child index
- *
- * @param {IVnode} newVnode
- * @param {IVnode} oldVnode
- * @param {IPatchList[]} patchList
- */
-function diffChildNodes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
-  if (oldVnode.childNodes.length > 0) {
-    (oldVnode.childNodes as IVnode[]).forEach((oChild, index) => {
-      if (oChild.checked) return;
-      const sameCode = newVnode.childNodes.find(nChild => nChild.tagName === oChild.tagName && nChild.key === oChild.key && !nChild.checked);
-      if (sameCode) {
-        const sameCodeIndex = newVnode.childNodes.findIndex(nChild => nChild === sameCode);
-        if (sameCodeIndex !== index) {
-          patchList.push({
-            type: 1,
-            newIndex: sameCodeIndex,
-            oldVnode: oChild.node,
-            parentNode: oldVnode.node,
-          });
-        }
-        diffVnode(oChild, sameCode, patchList);
-        sameCode.checked = true;
-      } else {
-        patchList.push({
-          type: 0,
-          node: oChild.node,
-          parentNode: oldVnode.node,
-        });
-      }
-      oChild.checked = true;
-    });
-  }
-
-  if (newVnode.childNodes.length > 0) {
-    (newVnode.childNodes as IVnode[]).forEach((nChild, index) => {
-      if (nChild.checked) return;
-      patchList.push({
-        type: 1,
-        newIndex: index,
-        oldVnode: nChild.node,
-        parentNode: oldVnode.node,
-      });
-      nChild.checked = true;
-    });
-  }
-}
-
-/**
  * diff value of input, textarea, select for diff VNode
  * 
- * type: 5 change value of from input
+ * type: 5 change value of input
  *
  * @param {IVnode} newVnode
  * @param {IVnode} oldVnode
@@ -234,7 +234,7 @@ function diffInputValue(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
 /**
  * diff repeatData of repeat node
  * 
- * type: 6 change repeatData of from node
+ * type: 6 change repeatData of node
  *
  * @param {IVnode} newVnode
  * @param {IVnode} oldVnode
@@ -254,7 +254,8 @@ function diffRepeatData(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
 /**
  * diff event of node
  *
- * type: 7 change event of from node
+ * type: 7 change event of node
+ * type: 8 change eventTypes of node
  * 
  * @param {IVnode} oldVnode
  * @param {IVnode} newVnode
@@ -299,6 +300,12 @@ function diffEventTypes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
         }
       });
     }
+    // 最后要更新下 eventTypes，否则下次 oldVnode.eventTypes 将为最开始的eventTypes
+    patchList.push({
+      type: 8,
+      node: oldVnode.node,
+      newValue: newVnode.eventTypes,
+    });
   }
 }
 
@@ -340,6 +347,7 @@ function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]):
  * value: 5, 更改 input textarea select value 的值: 5
  * value: 6, 更改 node 的 repeatData: 6, render过来的的被复制的值
  * value: 7, 更改 node 的 event: 7, 修改事件
+ * value: 8, 更改 node 的 eventTypes: 8, 修改node的eventTypes
  * 
  * @param [] patchList
  */
@@ -380,6 +388,9 @@ function renderVnode(patchList: IPatchList[]): void {
         break;
       case 7:
         (patch.node as any)[`on${patch.eventType}`] = patch.newValue as any;
+        break;
+      case 8:
+        patch.node.eventTypes = patch.newValue as string;
         break;
     }
   });

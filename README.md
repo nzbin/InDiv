@@ -396,13 +396,13 @@ Now we support for typescript!
       - `<p nv-on:click="@componentClick()"></p>;`
     - If: 
       - Now `nv-if` will not remove this DOM, and will change DOM's display to `none`.
-      - Because continually change DOM structure will lead the waste of performance, so we change remove DOM to hide DOM in version:1.1.0
+      - Because continually change DOM structure will lead the waste of performance, so please reduce use this template syntax
       - `<p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>` 
     - Repeat: `<p  class="b" nv-class="state.a" nv-repeat="let a in state.b" nv-if="a.f">{{a.z}}</p>`
     - Key: 
       - If u are repeating an `Component`, please use `nv-key` with `nv-repeat`.
       - `nv-key` is a key for InDiv to mark repeat `Component`, and it must be an unique value.
-      - If u are not use `nv-key`, InDiv will render this with a new `Component`, and `state` in `Component` will be reset.
+      - If u are not use `nv-repeat` without `nv-key`, InDiv will render this with a new `Component`, and `state` in `Component` will be reset.
       - `<test-component nv-repeat="let man in state.testArray" nv-key="man.id" man="{man.name}"></test-component>`
 
   - about function in Template Syntax
@@ -719,7 +719,7 @@ route => NvModule => component
 - [x] 组件中使用组件
 - [x] 改用 history的pushState
 - [x] 监听路由变化动态渲染(2/2)
-- [x] Virtual DOM 优化
+- [x] Virtual DOM
 - [x] Service
 - [x] Route bug
 - [x] ts (强类型赛高)

@@ -73,3 +73,5 @@
 20. 2018-08-31 rename to InDiv
 
 21. 2018-09-17 fix some bugs and support ssr render
+
+22. 2018-09-18 rewrite virtual DOM algorithm

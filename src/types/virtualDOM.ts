@@ -8,6 +8,7 @@ export interface IVnode {
     type?: string;
     value?: string | number;
     repeatData?: any;
+    eventTypes?: string;
     key?: any;
     checked?: boolean;
 }
@@ -23,9 +24,9 @@ export interface IPatchList {
     parentNode?: Node;
     newNode?: DocumentFragment | Element;
     oldVnode?: DocumentFragment | Element;
-    newValue?: TAttributes | string | number | boolean;
-    oldValue?: TAttributes | string | number | boolean;
-
+    newValue?: TAttributes | string | number | boolean | Function;
+    oldValue?: TAttributes | string | number | boolean | Function;
+    eventType?: string;
     newIndex?: number;
 }
 

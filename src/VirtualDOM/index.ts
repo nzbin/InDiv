@@ -1,5 +1,5 @@
 import Utils from '../Utils';
-import { IVnode, TAttributes, IPatchList, IVirtualDOM  } from '../types';
+import { IVnode, TAttributes, IPatchList, IVirtualDOM } from '../types';
 
 const utils = new Utils();
 /**
@@ -17,10 +17,9 @@ class Vnode {
   public type?: string;
   public value?: string | number;
   public repeatData?: any;
-  // public shouldRemove?: boolean;
-
-  public checked?: boolean;
+  public eventTypes?: string;
   public key?: any;
+  public checked?: boolean;
 
   /**
    * Creates an instance of Vnode.
@@ -37,6 +36,7 @@ class Vnode {
     this.type = info.type;
     this.value = info.value;
     this.repeatData = info.repeatData;
+    this.eventTypes = info.eventTypes;
     this.key = info.key;
     this.checked = false;
   }
@@ -98,6 +98,7 @@ function parseToVnode(node: DocumentFragment | Element): IVnode {
     type: bindNodeType(node),
     value: (node as Element).value,
     repeatData: node.repeatData ? node.repeatData : null,
+    eventTypes: node.eventTypes ? node.eventTypes : null,
     key: node.indiv_repeat_key ? node.indiv_repeat_key : null,
   });
 }
@@ -105,8 +106,8 @@ function parseToVnode(node: DocumentFragment | Element): IVnode {
 /**
  * diff attributes for diff VNode
  * 
- * type: 3 setAttribute
- * type: 4 removeAttribute
+ * type: 2 setAttribute
+ * type: 3 removeAttribute
  *
  * @param {IVnode} oldVnode
  * @param {IVnode} newVnode
@@ -117,7 +118,7 @@ function diffAttributes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
     const oldVnodeAttr = oldVnode.attributes.find(at => at.name === attr.name);
     if (!oldVnodeAttr || oldVnodeAttr.value !== attr.value) {
       patchList.push({
-        type: 3,
+        type: 2,
         node: oldVnode.node,
         newValue: attr,
         oldValue: oldVnodeAttr,
@@ -128,7 +129,7 @@ function diffAttributes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
     const newVnodeAttr = newVnode.attributes.find(at => at.name === attr.name);
     if (!newVnodeAttr) {
       patchList.push({
-        type: 4,
+        type: 3,
         node: oldVnode.node,
         oldValue: attr,
       });
@@ -139,7 +140,7 @@ function diffAttributes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
 /**
  * diff nodeValue for diff VNode
  * 
- * type:5 change text for node
+ * type: 4 change text for node
  *
  * @param {IVnode} oldVnode
  * @param {IVnode} newVnode
@@ -149,7 +150,7 @@ function diffAttributes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
 function diffNodeValue(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
   if (oldVnode.nodeValue !== newVnode.nodeValue) {
     patchList.push({
-      type: 5,
+      type: 4,
       node: oldVnode.node,
       newValue: newVnode.nodeValue,
       oldValue: oldVnode.nodeValue,
@@ -160,14 +161,14 @@ function diffNodeValue(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList
 /**
  * diff childNodes for diff VNode
  * 
- * type: 1 appendChild
- * type: 2 removeChild
+ * type: 0 removeChild
+ * type: 1 change Child index
  *
  * @param {IVnode} newVnode
  * @param {IVnode} oldVnode
  * @param {IPatchList[]} patchList
  */
-function diffChildNodes(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchList[]): void {
+function diffChildNodes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
   if (oldVnode.childNodes.length > 0) {
     (oldVnode.childNodes as IVnode[]).forEach((oChild, index) => {
       if (oChild.checked) return;
@@ -176,7 +177,7 @@ function diffChildNodes(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchLis
         const sameCodeIndex = newVnode.childNodes.findIndex(nChild => nChild === sameCode);
         if (sameCodeIndex !== index) {
           patchList.push({
-            type: 2,
+            type: 1,
             newIndex: sameCodeIndex,
             oldVnode: oChild.node,
             parentNode: oldVnode.node,
@@ -199,7 +200,7 @@ function diffChildNodes(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchLis
     (newVnode.childNodes as IVnode[]).forEach((nChild, index) => {
       if (nChild.checked) return;
       patchList.push({
-        type: 2,
+        type: 1,
         newIndex: index,
         oldVnode: nChild.node,
         parentNode: oldVnode.node,
@@ -212,17 +213,17 @@ function diffChildNodes(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchLis
 /**
  * diff value of input, textarea, select for diff VNode
  * 
- * type: 6 change value of from input
+ * type: 5 change value of from input
  *
  * @param {IVnode} newVnode
  * @param {IVnode} oldVnode
  * @param {IPatchList[]} patchList
  * @returns {void}
  */
-function diffInputValue(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchList[]): void {
+function diffInputValue(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
   if (oldVnode.value !== newVnode.value) {
     patchList.push({
-      type: 6,
+      type: 5,
       node: oldVnode.node,
       newValue: newVnode.value,
       oldValue: oldVnode.value,
@@ -233,20 +234,71 @@ function diffInputValue(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchLis
 /**
  * diff repeatData of repeat node
  * 
- * type: 7 change repeatData of from node
+ * type: 6 change repeatData of from node
  *
  * @param {IVnode} newVnode
  * @param {IVnode} oldVnode
  * @param {IPatchList[]} patchList
  * @returns {void}
  */
-function diffRepeatData(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchList[]): void {
-  if (utils.isEqual(oldVnode.repeatData, newVnode.repeatData)) {
+function diffRepeatData(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
+  if (!utils.isEqual(oldVnode.repeatData, newVnode.repeatData)) {
     patchList.push({
-      type: 7,
+      type: 6,
       node: oldVnode.node,
       newValue: newVnode.repeatData,
     });
+  }
+}
+
+/**
+ * diff event of node
+ *
+ * type: 7 change event of from node
+ * 
+ * @param {IVnode} oldVnode
+ * @param {IVnode} newVnode
+ * @param {IPatchList[]} patchList
+ */
+function diffEventTypes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
+  const oEventTypes: string[] = JSON.parse(oldVnode.eventTypes);
+  const nEventTypes: string[] = JSON.parse(newVnode.eventTypes);
+
+  if (!utils.isEqual(oEventTypes, nEventTypes)) {
+    // 全部更新为新的事件
+    if (nEventTypes && nEventTypes.length > 0) {
+      nEventTypes.forEach(neventType => {
+        patchList.push({
+          type: 7,
+          node: oldVnode.node,
+          eventType: neventType,
+          newValue: (newVnode.node as any)[`event${neventType}`],
+        });
+      });
+    }
+
+    if (oEventTypes && oEventTypes.length > 0) {
+      // 如果新事件不存在，则删除事件
+      // 如果新事件找不到旧事件中的事件，则把旧事件的事件删除
+      oEventTypes.forEach(oeventType => {
+        if (!nEventTypes || nEventTypes.length <= 0) {
+          patchList.push({
+            type: 7,
+            node: oldVnode.node,
+            eventType: oeventType,
+            newValue: null,
+          });
+        }
+        if (nEventTypes && nEventTypes.length > 0 && !nEventTypes.find(neventType => neventType === oeventType)) {
+          patchList.push({
+            type: 7,
+            node: oldVnode.node,
+            eventType: oeventType,
+            newValue: null,
+          });
+        }
+      });
+    }
   }
 }
 
@@ -265,35 +317,35 @@ function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]):
   }
 
   if (newVnode.type === 'document-fragment') {
-    diffChildNodes(newVnode, oldVnode, patchList);
+    diffChildNodes(oldVnode, newVnode, patchList);
     return;
   }
 
   diffAttributes(oldVnode, newVnode, patchList);
   diffNodeValue(oldVnode, newVnode, patchList);
-  if (oldVnode.tagName === 'INPUT' || oldVnode.tagName === 'TEXTAREA textarea' || oldVnode.tagName === 'INPUT') diffInputValue(newVnode, oldVnode, patchList);
-  diffRepeatData(newVnode, oldVnode, patchList);
-  diffChildNodes(newVnode, oldVnode, patchList);
+  if (oldVnode.tagName === 'INPUT' || oldVnode.tagName === 'TEXTAREA textarea' || oldVnode.tagName === 'INPUT') diffInputValue(oldVnode, newVnode, patchList);
+  diffRepeatData(oldVnode, newVnode, patchList);
+  diffEventTypes(oldVnode, newVnode, patchList);
+  diffChildNodes(oldVnode, newVnode, patchList);
 }
 
 /**
  * renderVnode 对比完render node
  * 
  * REMOVETAG: 0, 移除dom: 0
- * ADDTAG: 1, 增加dom: 1
- * REMOVETAG: 2, 移动位置: 2
- * ADDATTRIBUTES: 3, 增加属性: 3
- * REPLACEATTRIBUTES: 4, 移除属性: 4
- * TEXT: 5, 更改文字: 5
- * value: 6, 更改 input textarea select value 的值: 6
- * value: 7, 更改 node 的 repeatData: 7, render过来的的被复制的值
- * value: 8, 更改 node 的 show: 8, nv-if 更改的值
+ * REMOVETAG: 1, 移动位置: 1
+ * ADDATTRIBUTES: 2, 增加属性: 2
+ * REPLACEATTRIBUTES: 3, 移除属性: 3
+ * TEXT: 4, 更改文字: 4
+ * value: 5, 更改 input textarea select value 的值: 5
+ * value: 6, 更改 node 的 repeatData: 6, render过来的的被复制的值
+ * value: 7, 更改 node 的 event: 7, 修改事件
  * 
  * @param [] patchList
  */
 function renderVnode(patchList: IPatchList[]): void {
   patchList.sort((a, b) => {
-    if (a.type === b.type && a.newIndex && b.newIndex) return  a.newIndex - b.newIndex;
+    if (a.type === b.type && a.newIndex && b.newIndex) return a.newIndex - b.newIndex;
     return a.type - b.type;
   });
   patchList.forEach(patch => {
@@ -302,9 +354,6 @@ function renderVnode(patchList: IPatchList[]): void {
         patch.parentNode.removeChild(patch.node);
         break;
       case 1:
-        patch.parentNode.appendChild(patch.newNode);
-        break;
-      case 2:
         if (!(Array.from((patch.parentNode as Element).children).indexOf(patch.oldVnode as Element) === patch.newIndex)) {
           if (patch.parentNode.contains(patch.oldVnode)) patch.parentNode.removeChild(patch.oldVnode);
           if (patch.parentNode.childNodes[patch.newIndex]) {
@@ -314,20 +363,23 @@ function renderVnode(patchList: IPatchList[]): void {
           }
         }
         break;
-      case 3:
+      case 2:
         (patch.node as Element).setAttribute((patch.newValue as TAttributes).name, (patch.newValue as TAttributes).value);
         break;
-      case 4:
+      case 3:
         (patch.node as Element).removeAttribute((patch.oldValue as TAttributes).name);
         break;
-      case 5:
+      case 4:
         patch.node.nodeValue = (patch.newValue as string);
         break;
-      case 6:
+      case 5:
         (patch.node as Element).value = patch.newValue;
         break;
-      case 7:
+      case 6:
         patch.node.repeatData = patch.newValue as any;
+        break;
+      case 7:
+        (patch.node as any)[`on${patch.eventType}`] = patch.newValue as any;
         break;
     }
   });

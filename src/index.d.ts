@@ -180,7 +180,6 @@ export declare class CompileUtil {
     isEventDirective(event: string): boolean;
     isElementNode(node: Element): boolean;
     isRepeatNode(node: Element): boolean;
-    // isIfNode(node: Element): boolean;
     isRepeatProp(node: Element): boolean;
     isTextNode(node: Element): boolean;
     cloneNode(node: Element, repeatData?: any): Node;
@@ -202,7 +201,6 @@ export declare class Compile {
     isEventDirective(eventName: string): boolean;
     isElementNode(node: Element | string): boolean;
     isRepeatNode(node: Element): boolean;
-    // isIfNode(node: Element): boolean;
     isTextNode(node: Element): boolean;
 }
 

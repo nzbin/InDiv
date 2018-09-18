@@ -268,7 +268,8 @@ export class CompileUtilForRepeat {
         }
       }
     };
-    node.addEventListener('input', func, false);
+    // node.addEventListener('input', func, false);
+    (node as any).oninput = func;
     (node as any).eventinput = func;
     if (node.eventTypes) {
       const eventlist = JSON.parse(node.eventTypes);
@@ -529,7 +530,9 @@ export class CompileUtil {
       event.preventDefault();
       if (/(state.).*/.test(exp)) vm.state[val] = (event.target as HTMLInputElement).value;
     };
-    node.addEventListener('input', func, false);
+
+    // node.addEventListener('input', func, false);
+    (node as any).oninput = func;
     (node as any).eventinput = func;
     if (node.eventTypes) {
       const eventlist = JSON.parse(node.eventTypes);

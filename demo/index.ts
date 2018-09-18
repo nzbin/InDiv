@@ -423,6 +423,7 @@ class TestComponent implements OnInit {
   }
 
   public click() {
+    console.log('this.state.man', this.state.man);
     this.state.man = 'fuck!';
   }
 }

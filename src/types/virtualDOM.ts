@@ -3,15 +3,11 @@ export interface IVnode {
     node?: DocumentFragment | Element;
     parentNode?: Node;
     attributes?: TAttributes[];
-    // nodeValue?: string | null;
     nodeValue?: string;
-    // childNodes?: IVnode[] | any[];
     childNodes?: IVnode[];
     type?: string;
     value?: string | number;
     repeatData?: any;
-    shouldRemove?: boolean;
-
     key?: any;
     checked?: boolean;
 }

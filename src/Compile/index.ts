@@ -249,25 +249,6 @@ class Compile {
   }
 
   /**
-   * judge DOM is nv-if dom or not
-   *
-   * @param {Element} node
-   * @returns {boolean}
-   * @memberof Compile
-   */
-  public isIfNode(node: Element): boolean {
-    const nodeAttrs = node.attributes;
-    let result = false;
-    if (nodeAttrs) {
-      Array.from(nodeAttrs).forEach(attr => {
-        const attrName = attr.name;
-        if (attrName === 'nv-if') result = true;
-      });
-    }
-    return result;
-  }
-
-  /**
    * judge DOM is text node or not
    *
    * @param {Element} node

@@ -17,6 +17,5 @@ export interface ICompile {
     isEventDirective(eventName: string): boolean;
     isElementNode(node: Element | string): boolean;
     isRepeatNode(node: Element): boolean;
-    isIfNode(node: Element): boolean;
     isTextNode(node: Element): boolean;
 }

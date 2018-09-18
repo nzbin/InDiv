@@ -17,7 +17,7 @@ class Vnode {
   public type?: string;
   public value?: string | number;
   public repeatData?: any;
-  public shouldRemove?: boolean;
+  // public shouldRemove?: boolean;
 
   public checked?: boolean;
   public key?: any;
@@ -37,8 +37,6 @@ class Vnode {
     this.type = info.type;
     this.value = info.value;
     this.repeatData = info.repeatData;
-    this.shouldRemove = info.shouldRemove;
-
     this.key = info.key;
     this.checked = false;
   }
@@ -100,8 +98,6 @@ function parseToVnode(node: DocumentFragment | Element): IVnode {
     type: bindNodeType(node),
     value: (node as Element).value,
     repeatData: node.repeatData ? node.repeatData : null,
-    shouldRemove: node.indiv_should_remove ? node.indiv_should_remove : null,
-
     key: node.indiv_repeat_key ? node.indiv_repeat_key : null,
   });
 }
@@ -162,26 +158,6 @@ function diffNodeValue(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList
 }
 
 /**
- * diff tagName for diff VNode
- * 
- * type: 0 replaceChild
- *
- * @param {IVnode} oldVnode
- * @param {IVnode} newVnode
- * @param {IPatchList[]} patchList
- */
-function diffTagName(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
-  if (oldVnode.tagName !== newVnode.tagName) {
-    patchList.push({
-      type: 0,
-      newNode: newVnode.node,
-      oldVnode: oldVnode.node,
-      parentNode: oldVnode.parentNode,
-    });
-  }
-}
-
-/**
  * diff childNodes for diff VNode
  * 
  * type: 1 appendChild
@@ -192,47 +168,25 @@ function diffTagName(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]
  * @param {IPatchList[]} patchList
  */
 function diffChildNodes(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchList[]): void {
-  // if (newVnode.childNodes.length > 0) {
-  //   (newVnode.childNodes as IVnode[]).forEach((nChild, index) => {
-  //     if (!oldVnode.childNodes[index]) {
-  //       patchList.push({
-  //         type: 1,
-  //         newNode: nChild.node,
-  //         parentNode: oldVnode.node,
-  //       });
-  //     } else {
-  //       diffVnode(oldVnode.childNodes[index], nChild, patchList);
-  //     }
-  //   });
-  // }
-  // if (oldVnode.childNodes.length > 0) {
-  //   (oldVnode.childNodes as IVnode[]).forEach((oChild, index) => {
-  //     if (!newVnode.childNodes[index]) {
-  //       patchList.push({
-  //         type: 2,
-  //         node: oChild.node,
-  //         parentNode: oldVnode.node,
-  //       });
-  //     }
-  //   });
-  // }
   if (oldVnode.childNodes.length > 0) {
     (oldVnode.childNodes as IVnode[]).forEach((oChild, index) => {
       if (oChild.checked) return;
       const sameCode = newVnode.childNodes.find(nChild => nChild.tagName === oChild.tagName && nChild.key === oChild.key && !nChild.checked);
       if (sameCode) {
         const sameCodeIndex = newVnode.childNodes.findIndex(nChild => nChild === sameCode);
-        patchList.push({
-          type: 0,
-          newIndex: sameCodeIndex,
-          oldVnode: oChild.node,
-          parentNode: oldVnode.parentNode,
-        });
+        if (sameCodeIndex !== index) {
+          patchList.push({
+            type: 2,
+            newIndex: sameCodeIndex,
+            oldVnode: oChild.node,
+            parentNode: oldVnode.node,
+          });
+        }
         diffVnode(oChild, sameCode, patchList);
         sameCode.checked = true;
       } else {
         patchList.push({
-          type: 2,
+          type: 0,
           node: oChild.node,
           parentNode: oldVnode.node,
         });
@@ -245,10 +199,10 @@ function diffChildNodes(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchLis
     (newVnode.childNodes as IVnode[]).forEach((nChild, index) => {
       if (nChild.checked) return;
       patchList.push({
-        type: 0,
+        type: 2,
         newIndex: index,
         oldVnode: nChild.node,
-        parentNode: oldVnode.parentNode,
+        parentNode: oldVnode.node,
       });
       nChild.checked = true;
     });
@@ -297,25 +251,6 @@ function diffRepeatData(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchLis
 }
 
 /**
- * diff indiv_should_remove of repeat node
- * 
- * type: 8 change indiv_should_remove of from node
- *
- * @param {IVnode} newVnode
- * @param {IVnode} oldVnode
- * @param {IPatchList[]} patchList
- */
-function diffIfShow(newVnode: IVnode, oldVnode: IVnode, patchList: IPatchList[]) {
-  if (oldVnode.shouldRemove !== newVnode.shouldRemove) {
-    patchList.push({
-      type: 8,
-      node: oldVnode.node,
-      newValue: newVnode.shouldRemove,
-    });
-  }
-}
-
-/**
  * diff two Vnode
  *
  * @param {IVnode} oldVnode
@@ -334,24 +269,19 @@ function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]):
     return;
   }
 
-  if (oldVnode.tagName !== newVnode.tagName) {
-    diffTagName(oldVnode, newVnode, patchList);
-    return;
-  }
   diffAttributes(oldVnode, newVnode, patchList);
   diffNodeValue(oldVnode, newVnode, patchList);
   if (oldVnode.tagName === 'INPUT' || oldVnode.tagName === 'TEXTAREA textarea' || oldVnode.tagName === 'INPUT') diffInputValue(newVnode, oldVnode, patchList);
   diffRepeatData(newVnode, oldVnode, patchList);
-  diffIfShow(newVnode, oldVnode, patchList);
   diffChildNodes(newVnode, oldVnode, patchList);
 }
 
 /**
  * renderVnode 对比完render node
  * 
- * REMOVETAG: 0, 替换dom: 0
+ * REMOVETAG: 0, 移除dom: 0
  * ADDTAG: 1, 增加dom: 1
- * REMOVETAG: 2, 移除dom: 2
+ * REMOVETAG: 2, 移动位置: 2
  * ADDATTRIBUTES: 3, 增加属性: 3
  * REPLACEATTRIBUTES: 4, 移除属性: 4
  * TEXT: 5, 更改文字: 5
@@ -362,16 +292,27 @@ function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]):
  * @param [] patchList
  */
 function renderVnode(patchList: IPatchList[]): void {
+  patchList.sort((a, b) => {
+    if (a.type === b.type && a.newIndex && b.newIndex) return  a.newIndex - b.newIndex;
+    return a.type - b.type;
+  });
   patchList.forEach(patch => {
     switch (patch.type) {
       case 0:
-        patch.parentNode.replaceChild(patch.newNode, patch.oldVnode);
+        patch.parentNode.removeChild(patch.node);
         break;
       case 1:
         patch.parentNode.appendChild(patch.newNode);
         break;
       case 2:
-        patch.parentNode.removeChild(patch.node);
+        if (!(Array.from((patch.parentNode as Element).children).indexOf(patch.oldVnode as Element) === patch.newIndex)) {
+          if (patch.parentNode.contains(patch.oldVnode)) patch.parentNode.removeChild(patch.oldVnode);
+          if (patch.parentNode.childNodes[patch.newIndex]) {
+            patch.parentNode.insertBefore(patch.oldVnode, patch.parentNode.childNodes[patch.newIndex]);
+          } else {
+            patch.parentNode.appendChild(patch.oldVnode);
+          }
+        }
         break;
       case 3:
         (patch.node as Element).setAttribute((patch.newValue as TAttributes).name, (patch.newValue as TAttributes).value);
@@ -387,9 +328,6 @@ function renderVnode(patchList: IPatchList[]): void {
         break;
       case 7:
         patch.node.repeatData = patch.newValue as any;
-        break;
-      case 8:
-        patch.node.indiv_should_remove = patch.newValue as boolean;
         break;
     }
   });

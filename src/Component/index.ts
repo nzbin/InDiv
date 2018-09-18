@@ -91,26 +91,18 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     };
 
     vm.mountComponent = function (dom: Element, isFirstRender?: boolean): void {
-      const saveStates: ComponentList<IComponent<State, Props, Vm>>[] = [];
+      const cacheStates: ComponentList<IComponent<State, Props, Vm>>[] = [];
       (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
-        saveStates.push(component);
+        cacheStates.push(component);
       });
       (this as IComponent<State, Props, Vm>).componentsConstructor(dom);
       (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
         // find Component from cache
-        const saveComponent = saveStates.find(save => {
-          if (save.dom.remove) return;
-          if (save.dom.key !== null) {
-            return save.dom.tagName === component.dom.tagName && save.dom.key === component.dom.key;
-          }
-          if (save.dom.key === null) {
-            return save.dom.tagName === component.dom.tagName && save.dom.index === component.dom.index;
-          }
-        });
+        const cacheComponent = cacheStates.find(cache => cache.dom === component.dom);
 
-        if (saveComponent) {
-          saveComponent.scope.renderDom = component.scope.renderDom;
-          component.scope = saveComponent.scope;
+        if (cacheComponent) {
+          // cacheComponent.scope.renderDom = component.scope.renderDom;
+          component.scope = cacheComponent.scope;
           // old props: component.scope.props
           // new props: component.props
           if (!this.utils.isEqual(component.scope.props, component.props)) {
@@ -120,7 +112,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
         }
         component.scope.$vm = (this as IComponent<State, Props, Vm>).$vm;
         component.scope.$components = (this as IComponent<State, Props, Vm>).$components;
-        if (component.scope.nvOnInit && !saveComponent) component.scope.nvOnInit();
+        if (component.scope.nvOnInit && !cacheComponent) component.scope.nvOnInit();
         if (component.scope.watchData) component.scope.watchData();
         if (component.scope.nvBeforeMount) component.scope.nvBeforeMount();
       });
@@ -135,7 +127,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       for (let i = 0; i <= (this as IComponent<State, Props, Vm>).$components.length - 1 ; i ++) {
         const name = (((this as IComponent<State, Props, Vm>).$components[i]) as any).$selector;
         const tags = dom.getElementsByTagName(name);
-        Array.from(tags).forEach((node, index) => {
+        Array.from(tags).forEach(node => {
           //  protect component in <router-render>
           if (routerRenderDom && routerRenderDom.contains(node)) return;
 
@@ -168,20 +160,13 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
                 props[attrName] = (this as IComponent<State, Props, Vm>).buildProps(_prop);
               }
 
-              // can't remove style
-              if (attr.name !== 'indiv_repeat_key' && attr.name !== 'indiv_should_remove' && attr.name !== 'style')  node.removeAttribute(attrName);
+              // can't remove indiv_repeat_key
+              if (attr.name !== 'indiv_repeat_key')  node.removeAttribute(attrName);
             });
           }
 
-          if (node.indiv_should_remove) return;
-
           (this as IComponent<State, Props, Vm>).$componentList.push({
-            dom: {
-              tagName: name,
-              index,
-              key: node.getAttribute('indiv_repeat_key') ? node.getAttribute('indiv_repeat_key') : null,
-              remove: node.indiv_should_remove ? node.indiv_should_remove : null,
-            },
+            dom: node,
             props,
             scope: (this as IComponent<State, Props, Vm>).buildComponentScope((this as IComponent<State, Props, Vm>).$components[i], props, node),
           });

@@ -6,7 +6,6 @@ declare global {
       [key: string]: any;
     };
     indiv_repeat_key?: any;
-    indiv_should_remove?: boolean;
   }
   interface Node {
     eventTypes?: string;
@@ -14,7 +13,6 @@ declare global {
       [key: string]: any;
     };
     indiv_repeat_key?: any;
-    indiv_should_remove?: boolean;
   }
 }
 
@@ -219,13 +217,7 @@ export class CompileUtilForRepeat {
    * @memberof CompileUtilForRepeat
    */
   public ifUpdater(node: Element, value: any): void {
-    if (!value && this.$fragment.contains(node)) {
-      node.indiv_should_remove = true;
-      (node as HTMLElement).style.display = 'none';
-      node.innerHTML = "";
-    } else {
-      node.indiv_should_remove = false;
-    }
+    if (!value && this.$fragment.contains(node)) this.$fragment.removeChild(node);
   }
 
   /**
@@ -288,7 +280,7 @@ export class CompileUtilForRepeat {
 
 
   public keyUpdater(node: Element, value: any): void {
-    node.setAttribute('indiv_repeat_key', value);
+    node.indiv_repeat_key = value;
   }
 
   /**
@@ -499,13 +491,7 @@ export class CompileUtil {
    * @memberof CompileUtil
    */
   public ifUpdater(node: Element, value: any): void {
-    if (!value && this.$fragment.contains(node)) {
-      node.indiv_should_remove = true;
-      (node as HTMLElement).style.display = 'none';
-      node.innerHTML = "";
-    } else {
-      node.indiv_should_remove = false;
-    }
+    if (!value && this.$fragment.contains(node)) this.$fragment.removeChild(node);
   }
 
   /**
@@ -565,7 +551,11 @@ export class CompileUtil {
    * @memberof CompileUtil
    */
   public repeatUpdater(node: Element, value: any, expFather: string, vm: any): void {
-    if (!value || !(value instanceof Array)) return;
+    if (!value) return;
+    if (value && !(value instanceof Array)) {
+      console.error('compile error: nv-repeat need an Array!');
+      return;
+    }
 
     const key = expFather.split(' ')[1];
     value.forEach((val: any, index: number) => {
@@ -711,25 +701,6 @@ export class CompileUtil {
       Array.from(nodeAttrs).forEach(attr => {
         const attrName = attr.name;
         if (attrName === 'nv-repeat') result = true;
-      });
-    }
-    return result;
-  }
-
-  /**
-   * judge DOM is nv-if DOM or not
-   *
-   * @param {Element} node
-   * @returns {boolean}
-   * @memberof CompileUtil
-   */
-  public isIfNode(node: Element): boolean {
-    const nodeAttrs = node.attributes;
-    let result = false;
-    if (nodeAttrs) {
-      Array.from(nodeAttrs).forEach(attr => {
-        const attrName = attr.name;
-        if (attrName === 'nv-if') result = true;
       });
     }
     return result;

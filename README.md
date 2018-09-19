@@ -9,7 +9,7 @@ Now we support for typescript!
 ## demo
   - `npm run start`
   - `npm run start-js`
-  - open `http://localhost:1234`
+  - open `http://localhost:1234/demo`
 
 ## Basic Usage
 
@@ -385,16 +385,26 @@ Now we support for typescript!
 6. Template Syntax
 
   - 规定：指令以 nv-xxx 命名
-  - now: nv-text nv-html nv-model nv-class nv-repeat nv-if nv-on:Event
+  - now: nv-text nv-html nv-model nv-class nv-repeat nv-key nv-if nv-on:Event
   - 事件指令, 如 nv-on:click
     - Text1: `<p nv-text="state.b"></p>;`
     - Text2: `<p>this.state.b是：{{state.b}}</p>;`
     - HTML: `<p nv-html="state.c"></p>;`
     - Model for input: `'<input nv-model="state.c"/>';` **if input is a repeat DOM, and intem of Array is'nt an object, please use `$index`**
-    - Class: `<p  class="b" nv-class="state.a"></p>';`
+    - Class: `<p class="b" nv-class="state.a"></p>';`
     - Directives: ues `nv-on:event`
       - `<p nv-on:click="@componentClick()"></p>;`
+    - If: 
+      - Now `nv-if` will remove this DOM
+      - Because continually change DOM structure will lead the waste of performance, so please reduce use this template syntax
+      - `<p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>` 
     - Repeat: `<p  class="b" nv-class="state.a" nv-repeat="let a in state.b" nv-if="a.f">{{a.z}}</p>`
+    - Key: 
+      - If u are repeating an `Component`, please use `nv-key` with `nv-repeat`.
+      - `nv-key` is a key for InDiv to mark repeat `Component`, and it must be an unique value.
+      - If u are not use `nv-repeat` without `nv-key`, InDiv will render this with a new `Component`, and `state` in `Component` will be reset.
+      - `<test-component nv-repeat="let man in state.testArray" nv-key="man.id" man="{man.name}"></test-component>`
+
   - about function in Template Syntax
     - now you can send arguments in Function
     - arguments include:
@@ -411,7 +421,7 @@ Now we support for typescript!
   - use `this.state: Object` and `this.setState(parmars: Function || Object)`
   - if u have some variable, u can set `this.state` in `constructor(){}`
   - if u want to change State, plz use `this.setState`, parmars can be `Object` or `Function` which must return an `Object`
-  - and u can recive this change in life cycle `nvWatchState(oldData, newData)`, but we need to use a deep clone for `this.state`, so please minimize the use of life cycle `WatchState`
+  - and u can recive this change in life cycle `nvWatchState(newData)`, but we need to use a deep clone for `this.state`, so please minimize the use of life cycle `WatchState`
 
 8. `Watcher` and `KeyWatcher`
 
@@ -420,18 +430,18 @@ Now we support for typescript!
     1. `Watcher`
       - Watcher expects two arguments: `data, watcher`
       - data is an Object
-      - watcher is a function which has two arguments: `oldData, newData`
+      - watcher is a function which has an arguments: `newData`
         ```javascript
-        new Watcher(this.object, (oldData, newData) => {})
+        new Watcher(this.object, (newData) => {})
         ```
 
     2. `KeyWatcher`
       - Watcher expects there arguments: `data, key, watcher`
       - data: `Object`
       - key is a key in Object and type is `String`
-      - watcher is a function which has two arguments: `oldData, newData`
+      - watcher is a function which has an arguments: `newData`
         ```javascript
-        new KeyWatcher(this.object, key,(oldData, newData) => {})
+        new KeyWatcher(this.object, key, (newData) => {})
         ```
 9. Service
 
@@ -670,7 +680,7 @@ Now we support for typescript!
       nvAfterMount(): void;
       nvHasRender(): void;
       nvOnDestory(): void;
-      nvWatchState(oldData?: any, newData?: any): void;
+      nvWatchState(newData?: any): void;
       nvRouteChange(lastRoute?: string, newRoute?: string): void;
       nvReceiveProps(nextProps: any): void;
     ```
@@ -680,6 +690,13 @@ Now we support for typescript!
     ```typescript
     routeChange((lastRoute?: string, newRoute?: string): void;
     ```
+
+12. Server Side Render
+    
+    - `npm install @InDiv/ssr-render` and use nodeJS
+    - export your InDiv instance and routes
+    - use `renderToString(url: string, routes: TRouter[], inDiv: InDiv): string`, render your app to string with `request.url`, `InDiv instance` and `routes`
+    - at last render string to your template
 
 ## Architecture
 
@@ -696,7 +713,7 @@ route => NvModule => component
 - [x] 公共类提取
 - [x] 数据劫持
 - [x] 双向绑定模板
-- [x] Template Syntax: nv-text nv-html nv-model nv-class nv-repeat nv-if(6/6)
+- [x] Template Syntax: nv-text nv-html nv-model nv-class nv-repeat nv-key nv-if(7/7)
 - [x] 组件props
 - [x] 组件渲染
 - [x] 组件中使用组件
@@ -707,3 +724,6 @@ route => NvModule => component
 - [x] Route bug
 - [x] ts (强类型赛高)
 - [x] DI
+- [x] SSR 服务端渲染
+- [ ] asynchronous render template
+- [ ] optimize setState

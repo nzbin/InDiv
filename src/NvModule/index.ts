@@ -10,6 +10,15 @@ type TNvModuleOptions = {
   bootstrap?: Function;
 };
 
+/**
+ * Decorator @NvModule
+ * 
+ * to decorate an InDiv NvModule
+ *
+ * @export
+ * @param {TNvModuleOptions} options
+ * @returns {(_constructor: Function) => void}
+ */
 export function NvModule(options: TNvModuleOptions): (_constructor: Function) => void {
   return function (_constructor: Function): void {
     const vm = _constructor.prototype as INvModule;
@@ -83,6 +92,13 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
   };
 }
 
+/**
+ * create an NvModule instance with factory method
+ *
+ * @export
+ * @param {Function} NM
+ * @returns {INvModule}
+ */
 export function factoryModule(NM: Function): INvModule {
   const nm = new (NM as any)();
   nm.buildImports();

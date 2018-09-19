@@ -1,6 +1,6 @@
 {
   "name": "indiv",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "A web mvvm framework.一个Web mvvm库。",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -22,6 +22,7 @@
   ],
   "scripts": {
     "start": "parcel watch ./demo/index.ts -d dist & nodemon app.js",
+    "start-ts": "parcel ./demo/index-ts.html -d dist --open",
     "start-js": "parcel ./demo/index.html -d dist --open",
     "build": "rm -rf build && parcel build ./src/index.ts --no-source-maps -d build && cp -r src/index.d.ts build",
     "pub-prod": "npm run build && npm publish"

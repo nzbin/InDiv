@@ -19,7 +19,7 @@ export interface HasRender {
 }
 
 export interface WatchState {
-  nvWatchState(oldData?: any, newData?: any): void;
+  nvWatchState(newData?: any): void;
 }
 
 export interface RouteChange {
@@ -33,9 +33,14 @@ export interface ReceiveProps {
 export type SetState = <S>(newState: { [key: string]: S }) => void;
 
 export type GetLocation = () => {
-  path: string;
-  query?: any;
-  params?: any;
+  path?: string;
+  query?: {
+    [props: string]: any;
+  };
+  params?: {
+    [props: string]: any;
+  };
+  data?: any;
 };
 
-export type SetLocation = <Q = any, P = any>(path: string, query?: Q, params?: P) => void;
+export type SetLocation = <Q = any, P = any>(path: string, query?: Q, data?: P, title?: string) => void;

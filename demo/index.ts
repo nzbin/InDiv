@@ -1,5 +1,5 @@
 import { InDiv, Component, Router, Utils, NvModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, nvHttp, SetState, SetLocation, GetLocation } from '../src';
-// import { InDiv, Component, Router, Utils, NvModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, nvHttp, SetState, SetLocation, GetLocation } from '../build';
+// import { InDiv, Component, Router, Utils, NvModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, nvHttp, SetState, SetLocation, GetLocation } from '../build';
 
 @Service({
   isSingletonMode: true,
@@ -239,8 +239,9 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
     this.setState({ a: a });
     this.props.b(a);
   }
-  public nvWatchState(oldData: string, newData: string) {
-    console.log('oldData Component:', oldData);
+  // public nvWatchState(oldData: string, newData: string) {
+  public nvWatchState(newData: string) {
+    // console.log('oldData Component:', oldData);
     console.log('newData Component:', newData);
   }
   public nvReceiveProps(nextProps: any) {
@@ -314,6 +315,7 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
       name: 'gerry',
       github: 'https://github.com/DimaLiLongJi',
     }, { expires: 7 });
+    console.log('R1 nvOnInit', this.getLocation());
   }
   public nvBeforeMount() {
     const cookie = this.utils.getCookie('tutor');
@@ -326,8 +328,9 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   public nvRouteChange(lastRoute: string, newRoute: string) {
     console.log('R1 is nvRouteChange', lastRoute, newRoute);
   }
-  public nvWatchState(oldData: any, newData: any) {
-    console.log('oldData Controller:', oldData);
+  // public nvWatchState(oldData: any, newData: any) {
+  public nvWatchState(newData: any) {
+    // console.log('oldData Controller:', oldData);
     console.log('newData Controller:', newData);
   }
   public showAlert(a: any) {
@@ -383,8 +386,9 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   public nvRouteChange(lastRoute: string, newRoute: string) {
     console.log('R2 is nvRouteChange', lastRoute, newRoute);
   }
-  public nvWatchState(oldData: any, newData: any) {
-    console.log('oldData Controller:', oldData);
+  // public nvWatchState(oldData: any, newData: any) {
+  public nvWatchState(newData: any) {
+    // console.log('oldData Controller:', oldData);
     console.log('newData Controller:', newData);
   }
   public showAlert() {
@@ -397,6 +401,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   }
   public showLocation() {
     this.setLocation('/R1/C1/D1', { b: '1' });
+    // this.setLocation('/R2/2', { b: '1' });
   }
 }
 
@@ -404,7 +409,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   selector: 'test-component',
   template: (`
     <div>
-      <p>测试repeat组件: {{state.man}}</p>
+      <p nv-on:click="@click()">测试repeat组件: {{state.man}}</p>
     </div>`),
 })
 class TestComponent implements OnInit {
@@ -416,36 +421,64 @@ class TestComponent implements OnInit {
       man: this.props.man,
     };
   }
+
+  public click() {
+    console.log('this.state.man', this.state.man);
+    this.state.man = 'fuck!';
+  }
 }
 
 
 @Injectable
 @Component({
   selector: 'container-wrap',
+  // template: (`
+  //   <div>
+  //     <p nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>
+  //     <p nv-on:click="@go()">container: {{state.a}}</p>
+  //     <input nv-model="state.a" />
+  //     <router-render></router-render>
+  //   </div>
+  // `),
+  // <test-component nv-repeat="let man in state.testArray" man="{man.name}" nv-key="man.name"></test-component>
+
+  // key nv-if="state.a"
+  // template: (`
+  //   <div>
+  //     <p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>
+  //     <p nv-on:click="@go()">container: {{state.a}}</p>
+  //     <input nv-model="state.a" />
+  //     <p nv-repeat="let man in state.testArray" nv-key="man.name" nv-if="state.a">{{man.name}}</p>
+  //     <test-component nv-repeat="let man in state.testArray" man="{man.name}" nv-key="man.name" nv-if="state.a"></test-component>
+  //     <router-render></router-render>
+  //   </div>
+  // `),
   template: (`
     <div>
-      <p nv-if="state.a">{{state.a}}</p>
+      <p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>
       <p nv-on:click="@go()">container: {{state.a}}</p>
       <input nv-model="state.a" />
-      <div nv-repeat="let man in state.testArray">
-        <test-component man="{man.name}"></test-component>
-        <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
-        <div>性别：{{man.sex}}</div>
-        <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
-        <div class="fuck" nv-repeat="let b in man.job">
-          <input nv-on:click="@show(b, $index)" nv-model="b.name" nv-class="b.id" />
-        </div>
+      <div nv-repeat="let man in state.testArray" nv-key="man.name">
+          <test-component man="{man.name}"></test-component>
+          <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
+          <div>性别：{{man.sex}}</div>
+          <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
+          <div class="fuck" nv-repeat="let c in man.job">
+            <input nv-on:click="@show(c, $index)" nv-model="c.name" nv-class="c.id" />
+          </div>
       </div>
       <router-render></router-render>
-    </div>`),
+    </div>
+  `),
 })
 
-class Container implements OnInit, AfterMount {
+class Container implements OnInit, AfterMount, WatchState {
   public ss: HeroSearchService;
   public ss2: HeroSearchService1;
   public state: any;
   public props: any;
   public setLocation: SetLocation;
+  public getLocation: GetLocation;
   public setState: SetState;
 
   constructor(
@@ -459,6 +492,8 @@ class Container implements OnInit, AfterMount {
     // console.log('hss2', this.hss2);
     this.state = {
       a: 1,
+      b: 3,
+      // testArray: [],
       testArray: [
         {
           name: '李龙吉',
@@ -503,6 +538,7 @@ class Container implements OnInit, AfterMount {
 
   public nvOnInit() {
     console.log('nvOnInit Container');
+    console.log('R1 nvOnInit', this.getLocation());
   }
 
   public nvAfterMount() {
@@ -523,6 +559,126 @@ class Container implements OnInit, AfterMount {
     testArray2[index] = event.target.value;
     console.log('this.state.testArray2', this.state.testArray2);
     // this.state.testArray2[index] = event.target.value;
+  }
+
+  public nvWatchState(newData: any) {
+    console.log('newData Controller:', newData);
+  }
+
+  public changeInput() {
+    // this.state.a = 4;
+    // this.setState({
+    //   testArray: [
+    //     {
+    //       name: '李龙吉',
+    //       sex: '男',
+    //       job: [
+    //         {
+    //           id: 1,
+    //           name: '程序员',
+    //         },
+    //         {
+    //           id: 2,
+    //           name: '码农',
+    //         },
+    //         {
+    //           id: 3,
+    //           name: '帅',
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       name: '李龙吉2',
+    //       sex: '男2',
+    //       job: [
+    //         {
+    //           id: 1,
+    //           name: '程序员2',
+    //         },
+    //         {
+    //           id: 2,
+    //           name: '码农2',
+    //         },
+    //         {
+    //           id: 3,
+    //           name: '帅2',
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       name: '邱宝环',
+    //       sex: '女',
+    //       job: [
+    //         {
+    //           id: 1,
+    //           name: '老师',
+    //         },
+    //         {
+    //           id: 2,
+    //           name: '英语老师',
+    //         },
+    //         {
+    //           id: 3,
+    //           name: '美',
+    //         },
+    //       ],
+    //     }],
+    // });
+      this.state.testArray = [
+        {
+          name: '李龙吉',
+          sex: '男',
+          job: [
+            {
+              id: 1,
+              name: '程序员',
+            },
+            {
+              id: 2,
+              name: '码农',
+            },
+            {
+              id: 3,
+              name: '帅',
+            },
+          ],
+        },
+        {
+          name: '李龙吉2',
+          sex: '男2',
+          job: [
+            {
+              id: 1,
+              name: '程序员2',
+            },
+            {
+              id: 2,
+              name: '码农2',
+            },
+            {
+              id: 3,
+              name: '帅2',
+            },
+          ],
+        },
+        {
+          name: '邱宝环',
+          sex: '女',
+          job: [
+            {
+              id: 1,
+              name: '老师',
+            },
+            {
+              id: 2,
+              name: '英语老师',
+            },
+            {
+              id: 3,
+              name: '美',
+            },
+          ],
+        }];
   }
 }
 
@@ -580,7 +736,7 @@ const routes = [
               {
                 path: '/D1',
                 // component: 'R2',
-                redirectTo: '/R2',
+                redirectTo: '/R2/2',
               },
             ],
           },

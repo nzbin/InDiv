@@ -5,6 +5,12 @@ import KeyWatcher from '../KeyWatcher';
 
 export { TRouter } from '../types';
 
+/**
+ * route for InDiv
+ *
+ * @export
+ * @class Router
+ */
 export class Router {
   public routes: TRouter[];
   public routesList: TRouter[];
@@ -18,6 +24,7 @@ export class Router {
   public $vm: IInDiv;
   public watcher: KeyWatcher;
   public renderRouteList: string[];
+  public routeChange?: (lastRoute?: string, nextRoute?: string) => void;
 
   constructor() {
     this.routes = [];
@@ -34,28 +41,47 @@ export class Router {
     this.renderRouteList = [];
   }
 
+  /**
+   * bootstrap and init watch $esRouteParmasObject in InDiv
+   *
+   * @param {IInDiv} vm
+   * @returns {void}
+   * @memberof Router
+   */
   public bootstrap(vm: IInDiv): void {
-    this.$vm = vm;
-    this.$vm.setRootPath(this.$rootPath);
-    this.$vm.$canRenderModule = false;
-    this.$vm.$routeDOMKey = 'router-render';
-    window.addEventListener('load', this.refresh.bind(this), false);
-    window.addEventListener('popstate', (e) => {
-      let path;
-      if (this.$rootPath === '/') {
-        path = location.pathname || '/';
-      } else {
-        path = location.pathname.replace(this.$rootPath, '') === '' ? '/' : location.pathname.replace(this.$rootPath, '');
-      }
-      this.$vm.$esRouteObject = {
-        path,
-        query: {},
-        params: {},
-      };
-    }, false);
-  }
+      this.$vm = vm;
+      this.$vm.setRootPath(this.$rootPath);
+      this.$vm.$canRenderModule = false;
+      this.$vm.$routeDOMKey = 'router-render';
 
+      if (!this.utils.isBrowser()) return;
+      window.addEventListener('load', this.refresh.bind(this), false);
+      window.addEventListener('popstate', () => {
+        let path;
+        if (this.$rootPath === '/') {
+          path = location.pathname || '/';
+        } else {
+          path = location.pathname.replace(this.$rootPath, '') === '' ? '/' : location.pathname.replace(this.$rootPath, '');
+        }
+        this.$vm.$esRouteObject = {
+          path,
+          query: {},
+          data: null,
+        };
+        this.$vm.$esRouteParmasObject = {};
+      }, false);
+    }
+
+  /**
+   * set rootDom
+   *
+   * @param {TRouter[]} arr
+   * @returns {void}
+   * @memberof Router
+   */
   public init(arr: TRouter[]): void {
+    if (!this.utils.isBrowser()) return;
+
     if (arr && arr instanceof Array) {
       const rootDom = document.querySelector('#root');
       this.rootDom = rootDom || null;
@@ -74,18 +100,28 @@ export class Router {
     }
   }
 
-  public routeChange(lastRoute?: string, nextRoute?: string): void { }
-
+  /**
+   * redirectTo a path
+   *
+   * @param {string} redirectTo
+   * @memberof Router
+   */
   public redirectTo(redirectTo: string): void {
     const rootPath = this.$rootPath === '/' ? '' : this.$rootPath;
     history.replaceState(null, null, `${rootPath}${redirectTo}`);
     this.$vm.$esRouteObject = {
       path: redirectTo || '/',
       query: {},
-      params: {},
+      data: null,
     };
+    this.$vm.$esRouteParmasObject = {};
   }
 
+  /**
+   * refresh if not watch $esRouteObject
+   *
+   * @memberof Router
+   */
   public refresh(): void {
     if (!this.$vm.$esRouteObject || !this.watcher) {
       let path;
@@ -97,8 +133,9 @@ export class Router {
       this.$vm.$esRouteObject = {
         path,
         query: {},
-        params: {},
+        data: null,
       };
+      this.$vm.$esRouteParmasObject = {};
       this.watcher = new KeyWatcher(this.$vm, '$esRouteObject', this.refresh.bind(this));
     }
     this.currentUrl = this.$vm.$esRouteObject.path || '/';
@@ -108,15 +145,21 @@ export class Router {
     this.distributeRoutes();
   }
 
+  /**
+   * distribute routes and decide insert or general Routes
+   *
+   * @memberof Router
+   */
   public distributeRoutes(): void {
     if (this.lastRoute && this.lastRoute !== this.currentUrl) {
       // has rendered
+      this.$vm.$esRouteParmasObject = {};
       this.insertRenderRoutes();
     } else {
       // first render
       this.generalDistributeRoutes();
     }
-    this.routeChange(this.lastRoute, this.currentUrl);
+    if (this.routeChange) this.routeChange(this.lastRoute, this.currentUrl);
     this.lastRoute = this.currentUrl;
     if (this.needRedirectPath) {
       this.redirectTo(this.needRedirectPath);
@@ -124,6 +167,14 @@ export class Router {
     }
   }
 
+  /**
+   * insert Routes and render
+   * 
+   * if has rendered Routes, it will find which is different and render it
+   *
+   * @returns {void}
+   * @memberof Router
+   */
   public insertRenderRoutes(): void {
     const lastRouteList = this.lastRoute === '/' ? ['/'] : this.lastRoute.split('/');
     lastRouteList[0] = '/';
@@ -165,6 +216,12 @@ export class Router {
           console.error(`route error: path ${needRenderRoute.path} need a component which has children path or need a  redirectTo which has't children path`);
           return;
         }
+
+        if (/^\/\:.+/.test(needRenderRoute.path) && !needRenderRoute.redirectTo) {
+          const key = needRenderRoute.path.split('/:')[1];
+          this.$vm.$esRouteParmasObject[key] = path;
+        }
+
         if (needRenderComponent) {
           const component = this.instantiateComponent(needRenderComponent, renderDom);
           if (component) {
@@ -174,13 +231,22 @@ export class Router {
             }
             if (!this.hasRenderComponentList[index]) this.hasRenderComponentList[index] = component;
           }
-          
+
           this.routerChangeEvent(index);
         }
 
         if (needRenderRoute.redirectTo && /^\/.*/.test(needRenderRoute.redirectTo) && (index + 1) === this.renderRouteList.length) {
           this.needRedirectPath = needRenderRoute.redirectTo;
           return;
+        }
+      }
+
+      // add parmas in $esRouteParmasObject
+      if (path === lastRouteList[index]) {
+        const needRenderRoute = this.routesList[index];
+        if (/^\/\:.+/.test(needRenderRoute.path) && !needRenderRoute.redirectTo) {
+          const key = needRenderRoute.path.split('/:')[1];
+          this.$vm.$esRouteParmasObject[key] = path;
         }
       }
 
@@ -199,6 +265,14 @@ export class Router {
     }
   }
 
+  /**
+   * render Routes
+   * 
+   * first render
+   *
+   * @returns {void}
+   * @memberof Router
+   */
   public generalDistributeRoutes(): void {
     for (let index = 0; index < this.renderRouteList.length; index++) {
       const path = this.renderRouteList[index];
@@ -215,6 +289,11 @@ export class Router {
         } else {
           console.error(`route error: path ${rootRoute.path} is undefined`);
           return;
+        }
+
+        if (/^\/\:.+/.test(rootRoute.path)) {
+          const key = rootRoute.path.split('/:')[1];
+          this.$vm.$esRouteParmasObject[key] = path;
         }
 
         const rootDom = document.querySelector('#root');
@@ -251,6 +330,12 @@ export class Router {
           console.error(`route error: path ${route.path} need a component which has children path or need a  redirectTo which has't children path`);
           return;
         }
+
+        if (/^\/\:.+/.test(route.path)) {
+          const key = route.path.split('/:')[1];
+          this.$vm.$esRouteParmasObject[key] = path;
+        }
+
         const renderDom = document.querySelectorAll('router-render')[index - 1];
         this.routesList.push(route);
 
@@ -268,7 +353,13 @@ export class Router {
       }
     }
   }
-  
+
+  /**
+   * emit nvRouteChange and nvOnDestory for Components
+   *
+   * @param {number} index
+   * @memberof Router
+   */
   public routerChangeEvent(index: number): void {
     this.hasRenderComponentList.forEach((c, i) => {
       if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
@@ -281,6 +372,13 @@ export class Router {
     this.hasRenderComponentList.length = index + 1;
   }
 
+  /**
+   * emit nvRouteChange and nvOnDestory for Components with recursion
+   *
+   * @param {ComponentList<IComponent>[]} componentList
+   * @param {string} event
+   * @memberof Router
+   */
   public emitComponentEvent(componentList: ComponentList<IComponent>[], event: string): void {
     if (event === 'nvRouteChange') {
       componentList.forEach(component => {
@@ -296,6 +394,16 @@ export class Router {
     }
   }
 
+  /**
+   * instantiate Component
+   * 
+   * use InDiv renderComponent
+   *
+   * @param {Function} FindComponent
+   * @param {Element} renderDom
+   * @returns {*}
+   * @memberof Router
+   */
   public instantiateComponent(FindComponent: Function, renderDom: Element): any {
     return this.$vm.renderComponent(FindComponent, renderDom);
   }

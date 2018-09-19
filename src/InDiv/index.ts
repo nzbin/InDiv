@@ -4,6 +4,11 @@ import Utils from '../Utils';
 import { factoryCreator } from '../Injectable';
 import { factoryModule } from '../NvModule';
 
+/**
+ * main: for new InDiv
+ *
+ * @class InDiv
+ */
 class InDiv {
   public modalList: IMiddleware<InDiv>[];
   public utils: Utils;
@@ -14,11 +19,16 @@ class InDiv {
   public $rootModule: INvModule;
   public $components: Function[];
   public $esRouteObject?: EsRouteObject;
+  public $esRouteParmasObject?: {
+    [props: string]: any;
+  };
 
 
   constructor() {
     this.modalList = [];
     this.utils = new Utils();
+
+    if (!this.utils.isBrowser()) return;
 
     this.rootDom = document.querySelector('#root');
     this.$rootPath = '/';
@@ -27,14 +37,30 @@ class InDiv {
 
     this.$rootModule = null;
     this.$esRouteObject = null;
+    this.$esRouteParmasObject = {};
   }
 
+  /**
+   * for using middleware and use bootstrap method of middleware
+   *
+   * @param {IMiddleware<InDiv>} modal
+   * @returns {number}
+   * @memberof InDiv
+   */
   public use(modal: IMiddleware<InDiv>): number {
     modal.bootstrap(this);
     this.modalList.push(modal);
     return this.modalList.findIndex(md => this.utils.isEqual(md, modal));
   }
 
+  /**
+   * for Route set RootPath
+   * 
+   * if not use, rootPath will be <router-render />
+   *
+   * @param {string} rootPath
+   * @memberof InDiv
+   */
   public setRootPath(rootPath: string): void {
     if (rootPath && typeof rootPath === 'string') {
       this.$rootPath = rootPath;
@@ -43,6 +69,15 @@ class InDiv {
     }
   }
 
+  /**
+   * bootstrap NvModule
+   * 
+   * if not use Route it will be used
+   *
+   * @param {Function} Esmodule
+   * @returns {void}
+   * @memberof InDiv
+   */
   public bootstrapModule(Esmodule: Function): void {
     if (!Esmodule) {
       console.error('must send a root module');
@@ -53,7 +88,15 @@ class InDiv {
     this.$components = [...this.$rootModule.$components];
   }
 
+  /**
+   * init InDiv and renderModuleBootstrap()
+   *
+   * @returns {void}
+   * @memberof InDiv
+   */
   public init(): void {
+    if (!this.utils.isBrowser()) return;
+
     if (!this.$rootModule) {
       console.error('must use bootstrapModule to declare a root NvModule before init');
       return;
@@ -61,6 +104,12 @@ class InDiv {
     if (this.$canRenderModule) this.renderModuleBootstrap();
   }
 
+  /**
+   * render NvModule Bootstrap
+   *
+   * @returns {void}
+   * @memberof InDiv
+   */
   public renderModuleBootstrap(): void {
     if (!this.$rootModule.bootstrap) {
       console.error('need bootstrap for render Module Bootstrap');
@@ -70,6 +119,14 @@ class InDiv {
     this.renderComponent(BootstrapComponent, this.rootDom);
   }
 
+  /**
+   * expose function for render Component
+   *
+   * @param {Function} BootstrapComponent
+   * @param {Element} renderDOM
+   * @returns {*}
+   * @memberof InDiv
+   */
   public renderComponent(BootstrapComponent: Function, renderDOM: Element): any {
     const component: any = factoryCreator(BootstrapComponent, this.$rootModule);
 
@@ -95,6 +152,13 @@ class InDiv {
     }
   }
 
+  /**
+   * render adn replace DOM
+   *
+   * @param {IComponent} component
+   * @param {Element} renderDOM
+   * @memberof InDiv
+   */
   public replaceDom(component: IComponent, renderDOM: Element): void {
     component.renderDom = renderDOM;
     component.render();

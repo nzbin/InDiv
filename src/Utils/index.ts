@@ -1,22 +1,60 @@
 import Cookie from 'easier-cookie';
 
+/**
+ * utils for InDiv
+ *
+ * @class Utils
+ */
 class Utils {
+  /**
+   * Creates an instance of Utils.
+   * @memberof Utils
+   */
   constructor() {
     this.toString = Object.prototype.toString;
   }
 
+  /**
+   * set Cookie with easier-cookie
+   *
+   * @param {string} name
+   * @param {*} value
+   * @param {*} [options]
+   * @memberof Utils
+   */
   public setCookie(name: string, value: any, options?: any): void {
     Cookie.set(name, value, options);
   }
 
+  /**
+   * get Cookie with easier-cookie
+   *
+   * @param {string} name
+   * @returns {*}
+   * @memberof Utils
+   */
   public getCookie(name: string): any {
     return Cookie.get(name);
   }
 
+  /**
+   * remove Cookie with easier-cookie
+   *
+   * @param {string} name
+   * @returns {boolean}
+   * @memberof Utils
+   */
   public removeCookie(name: string): boolean {
     return Cookie.remove(name);
   }
 
+  /**
+   * build url query
+   *
+   * @param {*} object
+   * @returns {string}
+   * @memberof Utils
+   */
   public buildQuery(object: any): string {
     if (!object || !(object instanceof Object)) return '';
     let query = '?';
@@ -30,6 +68,13 @@ class Utils {
     return query.slice(0, query.length - 1);
   }
 
+  /**
+   * get one url query
+   *
+   * @param {string} name
+   * @returns {string}
+   * @memberof Utils
+   */
   public getQuery(name: string): string {
     const parts: string[] = window.location.search.replace('?', '').split('&');
     const params: any = {};
@@ -44,10 +89,27 @@ class Utils {
     }
   }
 
+  /**
+   * judge something is Function or not
+   *
+   * @param {*} func
+   * @returns {boolean}
+   * @memberof Utils
+   */
   public isFunction(func: any): boolean {
     return this.toString.call(func) === '[object Function]';
   }
 
+  /**
+   * judge two things are equal or not
+   *
+   * @param {*} a
+   * @param {*} b
+   * @param {any[]} [aStack]
+   * @param {any[]} [bStack]
+   * @returns {boolean}
+   * @memberof Utils
+   */
   public isEqual(a: any, b: any, aStack?: any[], bStack?: any[]): boolean {
     // === 结果为 true 的区别出 +0 和 -0
     if (a === b) return a !== 0 || 1 / a === 1 / b;
@@ -62,6 +124,16 @@ class Utils {
     return this.deepIsEqual(a, b, aStack, bStack);
   }
 
+  /**
+   * deep judge two things are equal or not
+   *
+   * @param {*} a
+   * @param {*} b
+   * @param {any[]} [aStack]
+   * @param {any[]} [bStack]
+   * @returns {boolean}
+   * @memberof Utils
+   */
   public deepIsEqual(a: any, b: any, aStack?: any[], bStack?: any[]): boolean {
     // a 和 b 的内部属性 [[class]] 相同时 返回 true
     const className = this.toString.call(a);
@@ -124,10 +196,27 @@ class Utils {
     return true;
   }
 
+  /**
+   * format string for InnerHTML
+   *
+   * @param {string} inner
+   * @returns {string}
+   * @memberof Utils
+   */
   public formatInnerHTML(inner: string): string {
     inner = inner.replace(/(\n\s*)/g, '');
     inner = inner.replace(/^[^\S\n]+/gm, '');
     return inner;
+  }
+
+  /**
+   * judge evn is browser or node
+   *
+   * @returns {boolean}
+   * @memberof Utils
+   */
+  public isBrowser(): boolean {
+    return typeof window !== 'undefined' && typeof window.document !== 'undefined';
   }
 }
 

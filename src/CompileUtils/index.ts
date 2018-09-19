@@ -268,13 +268,13 @@ export class CompileUtilForRepeat {
         }
       }
     };
-    // node.addEventListener('input', func, false);
+
     (node as any).oninput = func;
     (node as any).eventinput = func;
     if (node.eventTypes) {
       const eventlist = JSON.parse(node.eventTypes);
       eventlist.push('input');
-      node.eventTypes = eventlist;
+      node.eventTypes = JSON.stringify(eventlist);
     }
     if (!node.eventTypes) node.eventTypes = JSON.stringify(['input']);
   }
@@ -531,7 +531,6 @@ export class CompileUtil {
       if (/(state.).*/.test(exp)) vm.state[val] = (event.target as HTMLInputElement).value;
     };
 
-    // node.addEventListener('input', func, false);
     (node as any).oninput = func;
     (node as any).eventinput = func;
     if (node.eventTypes) {
@@ -749,7 +748,7 @@ export class CompileUtil {
     const newElement = node.cloneNode(true);
     if (node.eventTypes) {
       JSON.parse(node.eventTypes).forEach((eve: string) => (newElement as any)[`on${eve}`] = (node as any)[`event${eve}`]);
-      newElement.eventTypes = JSON.parse(JSON.stringify(node.eventTypes));
+      newElement.eventTypes = node.eventTypes;
     }
     if (repeatData) newElement.repeatData = repeatData;
     return newElement;

@@ -9,7 +9,7 @@ Now we support for typescript!
 ## demo
   - `npm run start`
   - `npm run start-js`
-  - open `http://localhost:1234`
+  - open `http://localhost:1234/demo`
 
 ## Basic Usage
 
@@ -395,7 +395,7 @@ Now we support for typescript!
     - Directives: ues `nv-on:event`
       - `<p nv-on:click="@componentClick()"></p>;`
     - If: 
-      - Now `nv-if` will not remove this DOM, and will change DOM's display to `none`.
+      - Now `nv-if` will remove this DOM
       - Because continually change DOM structure will lead the waste of performance, so please reduce use this template syntax
       - `<p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>` 
     - Repeat: `<p  class="b" nv-class="state.a" nv-repeat="let a in state.b" nv-if="a.f">{{a.z}}</p>`
@@ -713,7 +713,7 @@ route => NvModule => component
 - [x] 公共类提取
 - [x] 数据劫持
 - [x] 双向绑定模板
-- [x] Template Syntax: nv-text nv-html nv-model nv-class nv-repeat nv-if nv-key(7/7)
+- [x] Template Syntax: nv-text nv-html nv-model nv-class nv-repeat nv-key nv-if(7/7)
 - [x] 组件props
 - [x] 组件渲染
 - [x] 组件中使用组件
@@ -725,3 +725,5 @@ route => NvModule => component
 - [x] ts (强类型赛高)
 - [x] DI
 - [x] SSR 服务端渲染
+- [ ] asynchronous render template
+- [ ] optimize setState

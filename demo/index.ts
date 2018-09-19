@@ -1,5 +1,5 @@
 import { InDiv, Component, Router, Utils, NvModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, nvHttp, SetState, SetLocation, GetLocation } from '../src';
-// import { InDiv, Component, Router, Utils, NvModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, nvHttp, SetState, SetLocation, GetLocation } from '../build';
+// import { InDiv, Component, Router, Utils, NvModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, nvHttp, SetState, SetLocation, GetLocation } from '../build';
 
 @Service({
   isSingletonMode: true,
@@ -443,33 +443,33 @@ class TestComponent implements OnInit {
   // <test-component nv-repeat="let man in state.testArray" man="{man.name}" nv-key="man.name"></test-component>
 
   // key nv-if="state.a"
-  template: (`
-    <div>
-      <p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>
-      <p nv-on:click="@go()">container: {{state.a}}</p>
-      <input nv-model="state.a" />
-      <p nv-repeat="let man in state.testArray" nv-key="man.name" nv-if="state.a">{{man.name}}</p>
-      <test-component nv-repeat="let man in state.testArray" man="{man.name}" nv-key="man.name" nv-if="state.a"></test-component>
-      <router-render></router-render>
-    </div>
-  `),
   // template: (`
   //   <div>
   //     <p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>
   //     <p nv-on:click="@go()">container: {{state.a}}</p>
   //     <input nv-model="state.a" />
-  //     <div nv-repeat="let man in state.testArray">
-  //         <test-component man="{man.name}"></test-component>
-  //         <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
-  //         <div>性别：{{man.sex}}</div>
-  //         <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
-  //         <div class="fuck" nv-repeat="let b in man.job">
-  //           <input nv-on:click="@show(b, $index)" nv-model="b.name" nv-class="b.id" />
-  //         </div>
-  //     </div>
+  //     <p nv-repeat="let man in state.testArray" nv-key="man.name" nv-if="state.a">{{man.name}}</p>
+  //     <test-component nv-repeat="let man in state.testArray" man="{man.name}" nv-key="man.name" nv-if="state.a"></test-component>
   //     <router-render></router-render>
   //   </div>
   // `),
+  template: (`
+    <div>
+      <p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>
+      <p nv-on:click="@go()">container: {{state.a}}</p>
+      <input nv-model="state.a" />
+      <div nv-repeat="let man in state.testArray" nv-key="man.name">
+          <test-component man="{man.name}"></test-component>
+          <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
+          <div>性别：{{man.sex}}</div>
+          <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
+          <div class="fuck" nv-repeat="let c in man.job">
+            <input nv-on:click="@show(c, $index)" nv-model="c.name" nv-class="c.id" />
+          </div>
+      </div>
+      <router-render></router-render>
+    </div>
+  `),
 })
 
 class Container implements OnInit, AfterMount, WatchState {

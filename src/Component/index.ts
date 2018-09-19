@@ -101,7 +101,6 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
         const cacheComponent = cacheStates.find(cache => cache.dom === component.dom);
 
         if (cacheComponent) {
-          // cacheComponent.scope.renderDom = component.scope.renderDom;
           component.scope = cacheComponent.scope;
           // old props: component.scope.props
           // new props: component.props
@@ -139,25 +138,42 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
             const _propsKeys: any = {};
 
             attrList.forEach((attr: any) => {
-              if (/^\_prop\-(.+)/.test(attr.name)) _propsKeys[attr.name.replace('_prop-', '')] = JSON.parse(attr.value);
+              if (/^\_prop\-(.+)/.test(attr.name)) {
+                _propsKeys[attr.name.replace('_prop-', '')] = JSON.parse(attr.value);
+                node.removeAttribute(attr.name);
+              }
             });
 
             attrList.forEach((attr: any) => {
               const attrName = attr.name;
-              if ((/^\_prop\-(.+)/.test(attr.name))) {
-                node.removeAttribute(attrName);
-                return;
-              }
+
+              if ((/^\_prop\-(.+)/.test(attr.name))) return;
+
               const prop = /^\{(.+)\}$/.exec(attr.value);
               if (prop) {
                 const valueList = prop[1].split('.');
                 const key = valueList[0];
                 let _prop = null;
-                if (/^(state.).*/g.test(prop[1])) _prop = (this as IComponent<State, Props, Vm>).compileUtil._getVMVal(this as IComponent<State, Props, Vm>, prop[1]);
-                if (/^(\@.).*/g.test(prop[1])) _prop = (this as IComponent<State, Props, Vm>).compileUtil._getVMVal(this as IComponent<State, Props, Vm>, prop[1].replace(/^(\@)/, ''));
-                if (_propsKeys.hasOwnProperty(key)) _prop = (this as IComponent<State, Props, Vm>).getPropsValue(valueList, _propsKeys[key]);
-                if (node.repeatData && node.repeatData[key] !== null) _prop = (this as IComponent<State, Props, Vm>).compileUtil._getValueByValue(node.repeatData[key], prop[1], key);
-                props[attrName] = (this as IComponent<State, Props, Vm>).buildProps(_prop);
+                if (/^(state.).*/g.test(prop[1])) {
+                  _prop = (this as IComponent<State, Props, Vm>).compileUtil._getVMVal(this as IComponent<State, Props, Vm>, prop[1]);
+                  props[attrName] = (this as IComponent<State, Props, Vm>).buildProps(_prop);
+                  return;
+                }
+                if (/^(\@.).*/g.test(prop[1])) {
+                  _prop = (this as IComponent<State, Props, Vm>).compileUtil._getVMVal(this as IComponent<State, Props, Vm>, prop[1].replace(/^(\@)/, ''));
+                  props[attrName] = (this as IComponent<State, Props, Vm>).buildProps(_prop);
+                  return;
+                }
+                if (_propsKeys.hasOwnProperty(key)) {
+                  _prop = (this as IComponent<State, Props, Vm>).getPropsValue(valueList, _propsKeys[key]);
+                  props[attrName] = (this as IComponent<State, Props, Vm>).buildProps(_prop);
+                  return;
+                }
+                if (node.repeatData && node.repeatData[key] !== null) {
+                  _prop = (this as IComponent<State, Props, Vm>).compileUtil._getValueByValue(node.repeatData[key], prop[1], key);
+                  props[attrName] = (this as IComponent<State, Props, Vm>).buildProps(_prop);
+                  return;
+                }
               }
 
               // can't remove indiv_repeat_key

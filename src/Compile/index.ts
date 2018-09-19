@@ -189,7 +189,7 @@ class Compile {
       if (node.eventTypes) {
         const eventlist = JSON.parse(node.eventTypes);
         eventlist.push(eventType);
-        node.eventTypes = eventlist;
+        node.eventTypes = JSON.stringify(eventlist);
       }
       if (!node.eventTypes) node.eventTypes = JSON.stringify([eventType]);
     }

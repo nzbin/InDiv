@@ -117,7 +117,7 @@ function diffChildNodes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
   if (oldVnode.childNodes.length > 0) {
     (oldVnode.childNodes as IVnode[]).forEach((oChild, index) => {
       if (oChild.checked) return;
-      const sameCode = newVnode.childNodes.find(nChild => nChild.tagName === oChild.tagName && nChild.key === oChild.key && !nChild.checked);
+      const sameCode = newVnode.childNodes.find(nChild => (nChild.node.isEqualNode(oChild.node) || nChild.tagName === oChild.tagName) && nChild.key === oChild.key && !nChild.checked);
       if (sameCode) {
         const sameCodeIndex = newVnode.childNodes.findIndex(nChild => nChild === sameCode);
         if (sameCodeIndex !== index) {

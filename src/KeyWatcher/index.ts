@@ -34,8 +34,15 @@ class KeyWatcher {
       set(newVal: any) {
         if (vm.utils.isEqual(newVal, val)) return;
 
+        let oldData;
+        if (vm.watcher) {
+          if (typeof val === 'object') oldData = JSON.parse(JSON.stringify(val));
+          if (typeof val !== 'object' && typeof val !== 'function') oldData = val;
+        }
+
         val = newVal;
-        if (vm.watcher) vm.watcher(newVal);
+
+        if (vm.watcher) vm.watcher(oldData);
       },
     });
   }

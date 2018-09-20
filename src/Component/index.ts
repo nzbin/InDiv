@@ -70,7 +70,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     vm.render = function () {
       const dom = (this as IComponent<State, Props, Vm>).renderDom;
       const compile = new Compile(dom, this as IComponent<State, Props, Vm>);
-      (this as IComponent<State, Props, Vm>).mountComponent(dom, true);
+      (this as IComponent<State, Props, Vm>).mountComponent(dom);
       (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
         if (component.scope.render) component.scope.render();
         if (component.scope.nvAfterMount) component.scope.nvAfterMount();
@@ -82,7 +82,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       const dom = (this as IComponent<State, Props, Vm>).renderDom;
       const routerRenderDom = dom.querySelectorAll((this as IComponent<State, Props, Vm>).$vm.$routeDOMKey)[0];
       const compile = new Compile(dom, (this as IComponent<State, Props, Vm>), routerRenderDom);
-      (this as IComponent<State, Props, Vm>).mountComponent(dom, false);
+      (this as IComponent<State, Props, Vm>).mountComponent(dom);
       (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
         if (component.scope.render) component.scope.reRender();
         if (component.scope.nvAfterMount) component.scope.nvAfterMount();
@@ -90,7 +90,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       if ((this as IComponent<State, Props, Vm>).nvHasRender) (this as IComponent<State, Props, Vm>).nvHasRender();
     };
 
-    vm.mountComponent = function (dom: Element, isFirstRender?: boolean): void {
+    vm.mountComponent = function (dom: Element): void {
       const cacheStates: ComponentList<IComponent<State, Props, Vm>>[] = [];
       (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
         cacheStates.push(component);

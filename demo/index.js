@@ -195,10 +195,9 @@ class PComponent {
     this.setState({ a: a });
     this.props.b(a);
   }
-  // nvWatchState(oldData, newData) {
-  nvWatchState(newData) {
-    // console.log('oldData Component:', oldData);
-    console.log('newData Component:', newData);
+
+  nvWatchState(oldState) {
+    console.log('newData Component:', oldState);
   }
 }
 
@@ -263,10 +262,8 @@ class R1 {
   nvRouteChange(lastRoute, newRoute) {
     console.log('R1 is nvRouteChange', lastRoute, newRoute);
   }
-  // nvWatchState(oldData, newData) {
-  nvWatchState(newData) {
-    // console.log('oldData Controller:', oldData);
-    console.log('newData Controller:', newData);
+  nvWatchState(oldState) {
+    console.log('oldState Controller:', oldState);
   }
   showAlert(a) {
     this.setLocation('/R1/C1', { a: '1' });
@@ -323,10 +320,9 @@ class R2 {
   nvRouteChange(lastRoute, newRoute) {
     console.log('R2 is nvRouteChange', lastRoute, newRoute);
   }
-  // nvWatchState(oldData, newData) {
-  nvWatchState(newData) {
-    // console.log('oldData Controller:', oldData);
-    console.log('newData Controller:', newData);
+
+  nvWatchState(oldState) {
+    console.log('oldState Controller:', oldState);
   }
   showAlert() {
     console.log('this.state.a', this.state.a);

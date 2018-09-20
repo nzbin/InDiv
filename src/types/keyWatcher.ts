@@ -1,6 +1,6 @@
 import { IUtil } from './utils';
 
-export type TFnWatcher = (oldData: any, newData: any) => void;
+export type TFnWatcher = (oldData: any) => void;
 
 export interface IKeyWatcher {
     data: any;

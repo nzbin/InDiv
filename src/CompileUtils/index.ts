@@ -584,9 +584,6 @@ export class CompileUtil {
             } else {
               new CompileUtilForRepeat(this.$fragment).bind(newElement as Element, key, dir, exp, index, vm, value);
             }
-
-            // add
-            (newElement as Element).removeAttribute(attrName);
           }
         });
       }
@@ -654,9 +651,6 @@ export class CompileUtil {
             new CompileUtil(node).repeatUpdater(child, this._getValueByValue(value, newWatchData, key), restRepeat.value, vm);
             if (node.contains(child)) node.removeChild(child);
           }
-
-          // add
-          (child as Element).removeAttribute('nv-repeat');
         }
       }
     });

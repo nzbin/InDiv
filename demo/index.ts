@@ -239,10 +239,9 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
     this.setState({ a: a });
     this.props.b(a);
   }
-  // public nvWatchState(oldData: string, newData: string) {
-  public nvWatchState(newData: string) {
-    // console.log('oldData Component:', oldData);
-    console.log('newData Component:', newData);
+
+  public nvWatchState(oldState: string) {
+    console.log('oldState Component:', oldState);
   }
   public nvReceiveProps(nextProps: any) {
     console.log(1111111111111, nextProps);
@@ -328,10 +327,9 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   public nvRouteChange(lastRoute: string, newRoute: string) {
     console.log('R1 is nvRouteChange', lastRoute, newRoute);
   }
-  // public nvWatchState(oldData: any, newData: any) {
-  public nvWatchState(newData: any) {
-    // console.log('oldData Controller:', oldData);
-    console.log('newData Controller:', newData);
+
+  public nvWatchState(oldState: any) {
+    console.log('oldState Controller:', oldState);
   }
   public showAlert(a: any) {
     this.setLocation('/R1/C1', { a: '1' });
@@ -386,10 +384,9 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   public nvRouteChange(lastRoute: string, newRoute: string) {
     console.log('R2 is nvRouteChange', lastRoute, newRoute);
   }
-  // public nvWatchState(oldData: any, newData: any) {
-  public nvWatchState(newData: any) {
-    // console.log('oldData Controller:', oldData);
-    console.log('newData Controller:', newData);
+
+  public nvWatchState(oldState: any) {
+    console.log('oldState Controller:', oldState);
   }
   public showAlert() {
     console.log('this.state.a', this.state.a);
@@ -534,14 +531,18 @@ class Container implements OnInit, AfterMount, WatchState {
   }
 
   public showInput(event: any, index: number) {
-    console.log('aaaa', event.target.value);
-    const testArray2 = this.state.testArray2;
-    testArray2[index] = event.target.value;
-    // this.state.testArray2[index] = event.target.value;
+    console.log(1111, event.target.value);
+    console.log(2222, this.state.testArray2);
+    // const testArray2 = this.state.testArray2;
+    // testArray2[index] = event.target.value;
+    // this.setState({
+    //   testArray2,
+    // });
+    this.state.testArray2[index] = event.target.value;
   }
 
-  public nvWatchState(newData: any) {
-    console.log('newData Controller:', newData);
+  public nvWatchState(oldState: any) {
+    console.log('oldState Controller:', oldState);
   }
 
   public changeInput() {

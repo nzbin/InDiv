@@ -52,14 +52,12 @@ class Watcher {
           if (vm.utils.isEqual(newVal, val)) return;
 
           // for watcher method
-          if (vm.watcher) {
-            const newData = JSON.parse(JSON.stringify(vm.data));
-            newData[key] = newVal;
-            vm.watcher(newData);
-          }
+          let oldData;
+          if (vm.watcher) oldData = JSON.parse(JSON.stringify(vm.data));
 
           val = newVal;
           vm.watchData(val);
+          if (vm.watcher) vm.watcher(oldData);
           if (vm.render) vm.render();
         },
       });

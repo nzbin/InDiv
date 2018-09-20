@@ -346,6 +346,7 @@ function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]):
  * @param [] patchList
  */
 function renderVnode(patchList: IPatchList[]): void {
+  console.log(5555555, patchList);
   patchList.sort((a, b) => {
     if (a.type === b.type && a.newIndex && b.newIndex) return a.newIndex - b.newIndex;
     return a.type - b.type;

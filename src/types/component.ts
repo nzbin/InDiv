@@ -46,12 +46,12 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     nvAfterMount?(): void;
     nvOnDestory?(): void;
     nvHasRender?(): void;
-    nvWatchState?(newData?: any): void;
+    nvWatchState?(oldState?: any): void;
     nvRouteChange?(lastRoute: string, newRoute: string): void;
     nvReceiveProps?(nextProps: Props): void;
     render(): void;
     reRender(): void;
-    mountComponent(dom: Element, isFirstRender?: boolean): void;
+    mountComponent(dom: Element): void;
     componentsConstructor(dom: Element): void;
     getPropsValue(valueList: any[], value: any): void;
     buildProps(prop: any): any;

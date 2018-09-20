@@ -194,9 +194,9 @@ class PComponent {
     this.setState({ a: a });
     this.props.b(a);
   }
-  nvWatchState(oldData, newData) {
-    console.log('oldData Component:', oldData);
-    console.log('newData Component:', newData);
+
+  nvWatchState(oldState) {
+    console.log('newData Component:', oldState);
   }
 }
 
@@ -261,9 +261,8 @@ class R1 {
   nvRouteChange(lastRoute, newRoute) {
     console.log('R1 is nvRouteChange', lastRoute, newRoute);
   }
-  nvWatchState(oldData, newData) {
-    console.log('oldData Controller:', oldData);
-    console.log('newData Controller:', newData);
+  nvWatchState(oldState) {
+    console.log('oldState Controller:', oldState);
   }
   showAlert(a) {
     this.setLocation('/R1/C1', { a: '1' });
@@ -320,9 +319,9 @@ class R2 {
   nvRouteChange(lastRoute, newRoute) {
     console.log('R2 is nvRouteChange', lastRoute, newRoute);
   }
-  nvWatchState(oldData, newData) {
-    console.log('oldData Controller:', oldData);
-    console.log('newData Controller:', newData);
+
+  nvWatchState(oldState) {
+    console.log('oldState Controller:', oldState);
   }
   showAlert() {
     console.log('this.state.a', this.state.a);
@@ -357,12 +356,17 @@ class TestComponent {
       man: this.props.man,
     };
   }
+
+  click() {
+    console.log('this.state.man', this.state.man);
+    this.state.man = 'fuck!';
+  }
 }
 Component({
   selector: 'test-component',
   template: (`
     <div>
-      <p>测试repeat组件: {{state.man}}</p>
+      <p nv-on:click="@click()">测试repeat组件: {{state.man}}</p>
     </div>`),
 })(TestComponent);
 
@@ -378,9 +382,10 @@ class Container {
     console.log('nvHttp', nvHttp);
     this.state = {
       a: 1,
+      b: 3,
       testArray: [
         {
-          name: '李龙吉',
+          name: 'gerry',
           sex: '男',
           job: [
             {
@@ -398,7 +403,7 @@ class Container {
           ],
         },
         {
-          name: '邱宝环',
+          name: 'nina',
           sex: '女',
           // job: ['老师', '英语老师', '美1'],
           job: [
@@ -428,6 +433,7 @@ class Container {
 
   go() {
     this.setLocation('/R1', { b: '1' });
+    console.log('R1 nvOnInit', this.getLocation());
   }
 
   show(a, index) {
@@ -442,26 +448,87 @@ class Container {
     console.log('this.state.testArray2', this.state.testArray2);
     // this.state.testArray2[index] = event.target.value;
   }
+
+  changeInput() {
+    this.state.a = 4;
+    this.state.testArray = [
+      {
+        name: 'gerry',
+        sex: '男',
+        job: [
+          {
+            id: 1,
+            name: '程序员',
+          },
+          {
+            id: 2,
+            name: '码农',
+          },
+          {
+            id: 3,
+            name: '帅',
+          },
+        ],
+      },
+      {
+        name: 'gerry2',
+        sex: '男2',
+        job: [
+          {
+            id: 1,
+            name: '程序员2',
+          },
+          {
+            id: 2,
+            name: '码农2',
+          },
+          {
+            id: 3,
+            name: '帅2',
+          },
+        ],
+      },
+      {
+        name: 'nina',
+        sex: '女',
+        job: [
+          {
+            id: 1,
+            name: '老师',
+          },
+          {
+            id: 2,
+            name: '英语老师',
+          },
+          {
+            id: 3,
+            name: '美',
+          },
+        ],
+      }];
+  }
 }
 
 Component({
   selector: 'container-wrap',
   template: (`
     <div>
-      <p nv-if="state.a">{{state.a}}</p>
+      <p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>
+      <test-component nv-repeat="let man in state.testArray" man="{man.name}" nv-key="man.name" nv-if="state.a"></test-component>
       <p nv-on:click="@go()">container: {{state.a}}</p>
       <input nv-model="state.a" />
-      <div nv-repeat="let man in state.testArray">
-        <test-component man="{man.name}"></test-component>
-        <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
-        <div>性别：{{man.sex}}</div>
-        <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
-        <div class="fuck" nv-repeat="let b in man.job">
-          <input nv-on:click="@show(b, $index)" nv-model="b.name" nv-class="b.id" />
-        </div>
+      <div nv-repeat="let man in state.testArray" nv-key="man.name">
+          <test-component man="{man.name}"></test-component>
+          <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
+          <div>性别：{{man.sex}}</div>
+          <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-key="$index" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
+          <div class="fuck" nv-repeat="let c in man.job" nv-key="c.id">
+            <input nv-on:click="@show(c, $index)" nv-model="c.name" nv-class="c.id" />
+          </div>
       </div>
       <router-render></router-render>
-    </div>`),
+    </div>
+  `),
 })(Container);
 
 class M2 {}

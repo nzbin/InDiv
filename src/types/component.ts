@@ -3,7 +3,7 @@ import { ICompileUtil } from './compileUtils';
 import { IUtil } from './utils';
 
 export type ComponentList<C> = {
-    dom: Element;
+    dom: Node;
     props: any;
     scope: C;
 };
@@ -11,12 +11,17 @@ export type ComponentList<C> = {
 export type SetState = <S>(newState: { [key: string]: S }) => void;
 
 export type GetLocation = () => {
-  path: string;
-  query?: any;
-  params?: any;
+  path?: string;
+  query?: {
+    [props: string]: any;
+  };
+  params?: {
+    [props: string]: any;
+  };
+  data?: any;
 };
 
-export type SetLocation = <Q = any, P = any>(path: string, query?: Q, params?: P) => void;
+export type SetLocation = <Q = any, P = any>(path: string, query?: Q, params?: P, title?: string) => void;
 
 export interface IComponent<State = any, Props = any, Vm = any> {
     state?: State | any;
@@ -41,12 +46,12 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     nvAfterMount?(): void;
     nvOnDestory?(): void;
     nvHasRender?(): void;
-    nvWatchState?(oldData?: any, newData?: any): void;
+    nvWatchState?(oldState?: any): void;
     nvRouteChange?(lastRoute: string, newRoute: string): void;
     nvReceiveProps?(nextProps: Props): void;
     render(): void;
     reRender(): void;
-    mountComponent(dom: Element, isFirstRender?: boolean): void;
+    mountComponent(dom: Element): void;
     componentsConstructor(dom: Element): void;
     getPropsValue(valueList: any[], value: any): void;
     buildProps(prop: any): any;

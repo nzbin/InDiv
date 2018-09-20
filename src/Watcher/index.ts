@@ -1,11 +1,29 @@
 import { TFnWatcher, TFnRender } from '../types';
 import Utils from '../Utils';
+
+/**
+ * Watcher for InDiv
+ *
+ * @class Watcher
+ */
 class Watcher {
   public data: any;
   public watcher: TFnWatcher;
   public render: TFnRender;
   public utils: Utils;
 
+  /**
+   * Creates an instance of Watcher.
+   * 
+   * data: watched data
+   * watcher: function for data change
+   * render: InDiv render
+   * 
+   * @param {*} data
+   * @param {TFnWatcher} [watcher]
+   * @param {TFnRender} [render]
+   * @memberof Watcher
+   */
   constructor(
     data: any,
     watcher?: TFnWatcher,
@@ -32,14 +50,14 @@ class Watcher {
         },
         set(newVal: any) {
           if (vm.utils.isEqual(newVal, val)) return;
-          const oldData = JSON.parse(JSON.stringify(vm.data));
-          const newData: any = {};
-          newData[key] = newVal;
+
+          // for watcher method
+          let oldData;
+          if (vm.watcher) oldData = JSON.parse(JSON.stringify(vm.data));
+
           val = newVal;
           vm.watchData(val);
-          if (vm.watcher) {
-            vm.watcher(oldData, vm.data);
-          }
+          if (vm.watcher) vm.watcher(oldData);
           if (vm.render) vm.render();
         },
       });

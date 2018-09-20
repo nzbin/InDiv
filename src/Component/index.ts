@@ -12,6 +12,17 @@ type TComponentOptions = {
   template: string;
 };
 
+/**
+ * Decorator @Component
+ * 
+ * to decorate an InDiv component
+ *
+ * @template State
+ * @template Props
+ * @template Vm
+ * @param {TComponentOptions} options
+ * @returns {(_constructor: Function) => void}
+ */
 function Component<State = any, Props = any, Vm = any>(options: TComponentOptions): (_constructor: Function) => void {
   return function (_constructor: Function): void {
     (_constructor as any).$selector = options.selector;
@@ -23,22 +34,30 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     vm.$components = [];
     vm.$componentList = [];
 
-    vm.getLocation = function (): any {
+    vm.getLocation = function (): {
+      path?: string;
+      query?: any;
+      params?: any;
+      data?: any;
+    } {
+      if (!this.utils.isBrowser()) return {};
       return {
         path: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.path,
         query: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.query,
-        params: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.params,
+        params: (this as IComponent<State, Props, Vm>).$vm.$esRouteParmasObject,
+        data: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.data,
       };
     };
 
-    vm.setLocation = function (path: string, query?: any, params?: any): void {
+    vm.setLocation = function (path: string, query?: any, data?: any, title?: string): void {
+      if (!this.utils.isBrowser()) return;
       const rootPath = (this as IComponent<State, Props, Vm>).$vm.$rootPath === '/' ? '' : (this as IComponent<State, Props, Vm>).$vm.$rootPath;
       history.pushState(
-        { path, query, params },
-        null,
+        { path, query, data },
+        title,
         `${rootPath}${path}${(this as IComponent<State, Props, Vm>).utils.buildQuery(query)}`,
       );
-      (this as IComponent<State, Props, Vm>).$vm.$esRouteObject = { path, query, params };
+      (this as IComponent<State, Props, Vm>).$vm.$esRouteObject = { path, query, data };
     };
 
     vm.watchData = function (): void {
@@ -51,7 +70,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     vm.render = function () {
       const dom = (this as IComponent<State, Props, Vm>).renderDom;
       const compile = new Compile(dom, this as IComponent<State, Props, Vm>);
-      (this as IComponent<State, Props, Vm>).mountComponent(dom, true);
+      (this as IComponent<State, Props, Vm>).mountComponent(dom);
       (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
         if (component.scope.render) component.scope.render();
         if (component.scope.nvAfterMount) component.scope.nvAfterMount();
@@ -63,7 +82,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       const dom = (this as IComponent<State, Props, Vm>).renderDom;
       const routerRenderDom = dom.querySelectorAll((this as IComponent<State, Props, Vm>).$vm.$routeDOMKey)[0];
       const compile = new Compile(dom, (this as IComponent<State, Props, Vm>), routerRenderDom);
-      (this as IComponent<State, Props, Vm>).mountComponent(dom, false);
+      (this as IComponent<State, Props, Vm>).mountComponent(dom);
       (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
         if (component.scope.render) component.scope.reRender();
         if (component.scope.nvAfterMount) component.scope.nvAfterMount();
@@ -71,24 +90,28 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       if ((this as IComponent<State, Props, Vm>).nvHasRender) (this as IComponent<State, Props, Vm>).nvHasRender();
     };
 
-    vm.mountComponent = function (dom: Element, isFirstRender?: boolean): void {
-      const saveStates: ComponentList<IComponent<State, Props, Vm>>[] = [];
+    vm.mountComponent = function (dom: Element): void {
+      const cacheStates: ComponentList<IComponent<State, Props, Vm>>[] = [];
       (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
-        saveStates.push(component);
+        cacheStates.push(component);
       });
       (this as IComponent<State, Props, Vm>).componentsConstructor(dom);
       (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
-        const saveComponent = saveStates.find(save => save.dom === component.dom);
-        if (saveComponent) {
-          component.scope = saveComponent.scope;
-          if (!this.utils.isEqual(component.scope, component.scope.props)) {
+        // find Component from cache
+        const cacheComponent = cacheStates.find(cache => cache.dom === component.dom);
+
+        if (cacheComponent) {
+          component.scope = cacheComponent.scope;
+          // old props: component.scope.props
+          // new props: component.props
+          if (!this.utils.isEqual(component.scope.props, component.props)) {
             if (component.scope.nvReceiveProps) component.scope.nvReceiveProps(component.props);
             component.scope.props = component.props;
           }
         }
         component.scope.$vm = (this as IComponent<State, Props, Vm>).$vm;
         component.scope.$components = (this as IComponent<State, Props, Vm>).$components;
-        if (component.scope.nvOnInit && isFirstRender) component.scope.nvOnInit();
+        if (component.scope.nvOnInit && !cacheComponent) component.scope.nvOnInit();
         if (component.scope.watchData) component.scope.watchData();
         if (component.scope.nvBeforeMount) component.scope.nvBeforeMount();
       });
@@ -106,29 +129,58 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
         Array.from(tags).forEach(node => {
           //  protect component in <router-render>
           if (routerRenderDom && routerRenderDom.contains(node)) return;
+
           const nodeAttrs = node.attributes;
           const props: any = {};
+
           if (nodeAttrs) {
             const attrList = Array.from(nodeAttrs);
             const _propsKeys: any = {};
+
             attrList.forEach((attr: any) => {
-              if (/^\_prop\-(.+)/.test(attr.name)) _propsKeys[attr.name.replace('_prop-', '')] = JSON.parse(attr.value);
+              if (/^\_prop\-(.+)/.test(attr.name)) {
+                _propsKeys[attr.name.replace('_prop-', '')] = JSON.parse(attr.value);
+                node.removeAttribute(attr.name);
+              }
             });
+
             attrList.forEach((attr: any) => {
               const attrName = attr.name;
+
+              if ((/^\_prop\-(.+)/.test(attr.name))) return;
+
               const prop = /^\{(.+)\}$/.exec(attr.value);
               if (prop) {
                 const valueList = prop[1].split('.');
                 const key = valueList[0];
                 let _prop = null;
-                if (/^(state.).*/g.test(prop[1])) _prop = (this as IComponent<State, Props, Vm>).compileUtil._getVMVal(this as IComponent<State, Props, Vm>, prop[1]);
-                if (/^(\@.).*/g.test(prop[1])) _prop = (this as IComponent<State, Props, Vm>).compileUtil._getVMVal(this as IComponent<State, Props, Vm>, prop[1].replace(/^(\@)/, ''));
-                if (_propsKeys.hasOwnProperty(key)) _prop = (this as IComponent<State, Props, Vm>).getPropsValue(valueList, _propsKeys[key]);
-                props[attrName] = (this as IComponent<State, Props, Vm>).buildProps(_prop);
+                if (/^(state.).*/g.test(prop[1])) {
+                  _prop = (this as IComponent<State, Props, Vm>).compileUtil._getVMVal(this as IComponent<State, Props, Vm>, prop[1]);
+                  props[attrName] = (this as IComponent<State, Props, Vm>).buildProps(_prop);
+                  return;
+                }
+                if (/^(\@.).*/g.test(prop[1])) {
+                  _prop = (this as IComponent<State, Props, Vm>).compileUtil._getVMVal(this as IComponent<State, Props, Vm>, prop[1].replace(/^(\@)/, ''));
+                  props[attrName] = (this as IComponent<State, Props, Vm>).buildProps(_prop);
+                  return;
+                }
+                if (_propsKeys.hasOwnProperty(key)) {
+                  _prop = (this as IComponent<State, Props, Vm>).getPropsValue(valueList, _propsKeys[key]);
+                  props[attrName] = (this as IComponent<State, Props, Vm>).buildProps(_prop);
+                  return;
+                }
+                if (node.repeatData && node.repeatData[key] !== null) {
+                  _prop = (this as IComponent<State, Props, Vm>).compileUtil._getValueByValue(node.repeatData[key], prop[1], key);
+                  props[attrName] = (this as IComponent<State, Props, Vm>).buildProps(_prop);
+                  return;
+                }
               }
-              node.removeAttribute(attrName);
+
+              // can't remove indiv_repeat_key
+              if (attr.name !== 'indiv_repeat_key')  node.removeAttribute(attrName);
             });
           }
+
           (this as IComponent<State, Props, Vm>).$componentList.push({
             dom: node,
             props,

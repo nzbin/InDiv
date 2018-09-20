@@ -5,23 +5,46 @@ declare global {
     repeatData?: {
       [key: string]: any;
     };
+    indiv_repeat_key?: any;
   }
   interface Node {
     eventTypes?: string;
     repeatData?: {
       [key: string]: any;
     };
+    indiv_repeat_key?: any;
   }
 }
 
+/**
+ * compile util for nv-repeat DOM
+ *
+ * @export
+ * @class CompileUtilForRepeat
+ */
 export class CompileUtilForRepeat {
   [index: string]: any;
   public $fragment?: Element | DocumentFragment;
 
+  /**
+   * Creates an instance of CompileUtilForRepeat.
+   * 
+   * @param {(Element | DocumentFragment)} [fragment]
+   * @memberof CompileUtilForRepeat
+   */
   constructor(fragment?: Element | DocumentFragment) {
     this.$fragment = fragment;
   }
 
+  /**
+   * get value by key and anthor value
+   *
+   * @param {*} vm
+   * @param {string} exp
+   * @param {string} key
+   * @returns {*}
+   * @memberof CompileUtilForRepeat
+   */
   public _getValueByValue(vm: any, exp: string, key: string): any {
     const valueList = exp.replace('()', '').split('.');
     let value = vm;
@@ -32,6 +55,16 @@ export class CompileUtilForRepeat {
     return value;
   }
 
+  /**
+   * set value by key and anthor value
+   *
+   * @param {*} vm
+   * @param {string} exp
+   * @param {string} key
+   * @param {*} setValue
+   * @returns {*}
+   * @memberof CompileUtilForRepeat
+   */
   public _setValueByValue(vm: any, exp: string, key: string, setValue: any): any {
     const valueList = exp.replace('()', '').split('.');
     let value = vm;
@@ -44,6 +77,14 @@ export class CompileUtilForRepeat {
     if (lastKey) value[lastKey] = setValue;
   }
 
+  /**
+   * get value of VM
+   *
+   * @param {*} vm
+   * @param {string} exp
+   * @returns {*}
+   * @memberof CompileUtilForRepeat
+   */
   public _getVMVal(vm: any, exp: string): any {
     const valueList = exp.replace('()', '').split('.');
     let value = vm;
@@ -53,6 +94,15 @@ export class CompileUtilForRepeat {
     return value;
   }
 
+  /**
+   * get value by repeat value
+   *
+   * @param {*} val
+   * @param {string} exp
+   * @param {string} key
+   * @returns {*}
+   * @memberof CompileUtilForRepeat
+   */
   public _getVMRepeatVal(val: any, exp: string, key: string): any {
     let value: any;
     const valueList = exp.replace('()', '').split('.');
@@ -66,6 +116,18 @@ export class CompileUtilForRepeat {
     return value;
   }
 
+  /**
+   * bind handler for nv irective
+   *
+   * @param {Element} node
+   * @param {string} [key]
+   * @param {string} [dir]
+   * @param {string} [exp]
+   * @param {number} [index]
+   * @param {*} [vm]
+   * @param {*} [watchValue]
+   * @memberof CompileUtilForRepeat
+   */
   public bind(node: Element, key?: string, dir?: string, exp?: string, index?: number, vm?: any, watchValue?: any): void {
     const repeatValue = (node.repeatData)[key];
     let value;
@@ -94,34 +156,79 @@ export class CompileUtilForRepeat {
     }
   }
 
+  /**
+   * update text for {{}}
+   *
+   * @param {Element} node
+   * @param {*} [val]
+   * @param {string} [key]
+   * @param {*} [vm]
+   * @memberof CompileUtilForRepeat
+   */
   public templateUpdater(node: Element, val?: any, key?: string, vm?: any): void {
     const text = node.textContent;
     const reg = /\{\{(.*)\}\}/g;
     if (reg.test(text)) {
-      const exp = RegExp.$1;
-      let value;
-      if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
-        value = this._getVMRepeatVal(val, exp, key);
-      } else {
-        value = this._getVMVal(vm, exp);
+      const textList = text.match(/(\{\{[^\{\}]+?\}\})/g);
+      if (textList && textList.length > 0) {
+        for (let i = 0; i < textList.length; i++) {
+          const exp = textList[i].replace('{{', '').replace('}}', '');
+          let value;
+          if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
+            value = this._getVMRepeatVal(val, exp, key);
+          } else {
+            value = this._getVMVal(vm, exp);
+        }
+          node.textContent = node.textContent.replace(textList[i], value);
+        }
       }
-      node.textContent = node.textContent.replace(/(\{\{.*\}\})/g, value);
     }
   }
 
+  /**
+   * update text for nv-text
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @returns {void}
+   * @memberof CompileUtilForRepeat
+   */
   public textUpdater(node: Element, value: any): void {
     if (node.tagName.toLocaleLowerCase() === 'input') return node.value = value;
     node.textContent = typeof value === 'undefined' ? '' : value;
   }
 
+  /**
+   * update html for nv-html
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @memberof CompileUtilForRepeat
+   */
   public htmlUpdater(node: Element, value: any): void {
     node.innerHTML = typeof value === 'undefined' ? '' : value;
   }
 
+  /**
+   * remove or show DOM for nv-if
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @memberof CompileUtilForRepeat
+   */
   public ifUpdater(node: Element, value: any): void {
     if (!value && this.$fragment.contains(node)) this.$fragment.removeChild(node);
   }
 
+  /**
+   * update class for nv-class
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @param {*} oldValue
+   * @returns {void}
+   * @memberof CompileUtilForRepeat
+   */
   public classUpdater(node: Element, value: any, oldValue: any): void {
     if (!value && !oldValue) return;
     let className = node.className;
@@ -130,6 +237,18 @@ export class CompileUtilForRepeat {
     node.className = className + space + value;
   }
 
+  /**
+   * update value of input for nv-model
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @param {string} exp
+   * @param {string} key
+   * @param {number} index
+   * @param {*} watchData
+   * @param {*} vm
+   * @memberof CompileUtilForRepeat
+   */
   public modelUpdater(node: Element, value: any, exp: string, key: string, index: number, watchData: any, vm: any): void {
     node.value = typeof value === 'undefined' ? '' : value;
     const utilVm = this;
@@ -149,16 +268,33 @@ export class CompileUtilForRepeat {
         }
       }
     };
-    node.addEventListener('input', func, false);
+
+    (node as any).oninput = func;
     (node as any).eventinput = func;
     if (node.eventTypes) {
       const eventlist = JSON.parse(node.eventTypes);
       eventlist.push('input');
-      node.eventTypes = eventlist;
+      node.eventTypes = JSON.stringify(eventlist);
     }
     if (!node.eventTypes) node.eventTypes = JSON.stringify(['input']);
   }
 
+
+  public keyUpdater(node: Element, value: any): void {
+    node.indiv_repeat_key = value;
+  }
+
+  /**
+   * compile event and build eventType in DOM
+   *
+   * @param {Element} node
+   * @param {*} vm
+   * @param {string} exp
+   * @param {string} eventName
+   * @param {string} key
+   * @param {*} val
+   * @memberof CompileUtilForRepeat
+   */
   public eventHandler(node: Element, vm: any, exp: string, eventName: string, key: string, val: any): void {
     const eventType = eventName.split(':')[1];
 
@@ -203,14 +339,35 @@ export class CompileUtilForRepeat {
   }
 }
 
+/**
+ * compile util for Compiler
+ *
+ * @export
+ * @class CompileUtil
+ */
 export class CompileUtil {
   [index: string]: any;
   public $fragment?: Element | DocumentFragment;
 
+  /**
+   * Creates an instance of CompileUtil.
+   * 
+   * @param {(Element | DocumentFragment)} [fragment]
+   *  @memberof CompileUtil
+   */
   constructor(fragment?: Element | DocumentFragment) {
     this.$fragment = fragment;
   }
 
+  /**
+   * get value by key and anthor value
+   *
+   * @param {*} vm
+   * @param {string} exp
+   * @param {string} key
+   * @returns {*}
+   * @memberof CompileUtil
+   */
   public _getValueByValue(vm: any, exp: string, key: string): any {
     const valueList = exp.replace('()', '').split('.');
     let value = vm;
@@ -221,6 +378,14 @@ export class CompileUtil {
     return value;
   }
 
+  /**
+   * get value of VM
+   *
+   * @param {*} vm
+   * @param {string} exp
+   * @returns {*}
+   * @memberof CompileUtil
+   */
   public _getVMVal(vm: any, exp: string): any {
     const valueList = exp.replace('()', '').split('.');
     let value = vm;
@@ -230,12 +395,31 @@ export class CompileUtil {
     return value;
   }
 
+  /**
+   * get value by repeat value
+   *
+   * @param {*} vm
+   * @param {string} exp
+   * @returns {void}
+   * @memberof CompileUtil
+   */
   public _getVMRepeatVal(vm: any, exp: string): void {
     const vlList = exp.split(' ');
     const value = this._getVMVal(vm, vlList[3]);
     return value;
   }
 
+  /**
+   * bind handler for nv irective
+   * 
+   * if node is repeat node and it will break compile and into CompileUtilForRepeat
+   *
+   * @param {Element} node
+   * @param {*} vm
+   * @param {string} exp
+   * @param {string} dir
+   * @memberof CompileUtil
+   */
   public bind(node: Element, vm: any, exp: string, dir: string): void {
     const updaterFn = this[`${dir}Updater`];
     const isRepeatNode = this.isRepeatNode(node);
@@ -264,23 +448,62 @@ export class CompileUtil {
     }
   }
 
+  /**
+   * update text for {{}}
+   *
+   * @param {*} node
+   * @param {*} vm
+   * @param {string} exp
+   * @memberof CompileUtil
+   */
   public templateUpdater(node: any, vm: any, exp: string): void {
-    node.textContent = node.textContent.replace(/(\{\{.*\}\})/g, this._getVMVal(vm, exp));
+    node.textContent = node.textContent.replace(exp, this._getVMVal(vm, exp.replace('{{', '').replace('}}', '')));
   }
 
+  /**
+   * update text for nv-text
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @returns {void}
+   * @memberof CompileUtil
+   */
   public textUpdater(node: Element, value: any): void {
     if (node.tagName.toLocaleLowerCase() === 'input') return node.value = value;
     node.textContent = typeof value === 'undefined' ? '' : value;
   }
 
+  /**
+   * update html for nv-html
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @memberof CompileUtil
+   */
   public htmlUpdater(node: Element, value: any): void {
     node.innerHTML = typeof value === 'undefined' ? '' : value;
   }
 
+  /**
+   * remove or show DOM for nv-if
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @memberof CompileUtil
+   */
   public ifUpdater(node: Element, value: any): void {
     if (!value && this.$fragment.contains(node)) this.$fragment.removeChild(node);
   }
 
+  /**
+   * update class for nv-class
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @param {*} oldValue
+   * @returns {void}
+   * @memberof CompileUtil
+   */
   public classUpdater(node: Element, value: any, oldValue: any): void {
     if (!value && !oldValue) return;
     let className = node.className;
@@ -289,6 +512,15 @@ export class CompileUtil {
     node.className = className + space + value;
   }
 
+  /**
+   * update value of input for nv-model
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @param {string} exp
+   * @param {*} vm
+   * @memberof CompileUtil
+   */
   public modelUpdater(node: Element, value: any, exp: string, vm: any): void {
     node.value = typeof value === 'undefined' ? '' : value;
 
@@ -298,7 +530,8 @@ export class CompileUtil {
       event.preventDefault();
       if (/(state.).*/.test(exp)) vm.state[val] = (event.target as HTMLInputElement).value;
     };
-    node.addEventListener('input', func, false);
+
+    (node as any).oninput = func;
     (node as any).eventinput = func;
     if (node.eventTypes) {
       const eventlist = JSON.parse(node.eventTypes);
@@ -308,7 +541,24 @@ export class CompileUtil {
     if (!node.eventTypes) node.eventTypes = JSON.stringify(['input']);
   }
 
+  /**
+   * update repeat DOM for nv-repeat
+   * 
+   * if it has child and it will into repeatChildrenUpdater
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @param {string} expFather
+   * @param {*} vm
+   * @memberof CompileUtil
+   */
   public repeatUpdater(node: Element, value: any, expFather: string, vm: any): void {
+    if (!value) return;
+    if (value && !(value instanceof Array)) {
+      console.error('compile error: nv-repeat need an Array!');
+      return;
+    }
+
     const key = expFather.split(' ')[1];
     value.forEach((val: any, index: number) => {
       const repeatData: { [key: string]: any } = {};
@@ -320,6 +570,8 @@ export class CompileUtil {
       const reg = /\{\{(.*)\}\}/g;
 
       this.$fragment.insertBefore(newElement, node);
+
+      (newElement as Element).removeAttribute('nv-repeat');
 
       if (this.isTextNode((newElement as Element)) && reg.test(text)) new CompileUtilForRepeat(this.$fragment).templateUpdater(newElement as Element, val, key, vm);
       
@@ -334,6 +586,8 @@ export class CompileUtil {
             } else {
               new CompileUtilForRepeat(this.$fragment).bind(newElement as Element, key, dir, exp, index, vm, value);
             }
+
+            (newElement as Element).removeAttribute(attrName);
           }
         });
       }
@@ -343,6 +597,19 @@ export class CompileUtil {
     });
   }
 
+  /**
+   * update child of nv-repeat DOM
+   *
+   * if child is an nv-repeat DOM, it will into CompileUtil repeatUpdater
+   * 
+   * @param {Element} node
+   * @param {*} value
+   * @param {string} expFather
+   * @param {number} index
+   * @param {*} vm
+   * @param {*} watchValue
+   * @memberof CompileUtil
+   */
   public repeatChildrenUpdater(node: Element, value: any, expFather: string, index: number, vm: any, watchValue: any): void {
     const key = expFather.split(' ')[1];
     Array.from(node.childNodes).forEach((child: Element) => {
@@ -388,23 +655,53 @@ export class CompileUtil {
             new CompileUtil(node).repeatUpdater(child, this._getValueByValue(value, newWatchData, key), restRepeat.value, vm);
             if (node.contains(child)) node.removeChild(child);
           }
+
+          node.removeAttribute('nv-repeat');
         }
       }
     });
   }
 
+  /**
+   * judge attribute is nv directive or not
+   *
+   * @param {string} attr
+   * @returns {boolean}
+   * @memberof CompileUtil
+   */
   public isDirective(attr: string): boolean {
     return attr.indexOf('nv-') === 0;
   }
 
+  /**
+   * judge attribute is nv event directive or not
+   *
+   * @param {string} event
+   * @returns {boolean}
+   * @memberof CompileUtil
+   */
   public isEventDirective(event: string): boolean {
     return event.indexOf('on') === 0;
   }
 
+  /**
+   * judge DOM is a element node or not
+   *
+   * @param {Element} node
+   * @returns {boolean}
+   * @memberof CompileUtil
+   */
   public isElementNode(node: Element): boolean {
     return node.nodeType === 1;
   }
 
+  /**
+   * judge DOM is nv-repeat DOM or not
+   *
+   * @param {Element} node
+   * @returns {boolean}
+   * @memberof CompileUtil
+   */
   public isRepeatNode(node: Element): boolean {
     const nodeAttrs = node.attributes;
     let result = false;
@@ -417,18 +714,13 @@ export class CompileUtil {
     return result;
   }
 
-  public isIfNode(node: Element): boolean {
-    const nodeAttrs = node.attributes;
-    let result = false;
-    if (nodeAttrs) {
-      Array.from(nodeAttrs).forEach(attr => {
-        const attrName = attr.name;
-        if (attrName === 'nv-if') result = true;
-      });
-    }
-    return result;
-  }
-
+  /**
+   * judge DOM is a Component DOM in a repeat DOM or not
+   *
+   * @param {Element} node
+   * @returns {boolean}
+   * @memberof CompileUtil
+   */
   public isRepeatProp(node: Element): boolean {
     const nodeAttrs = node.attributes;
     const result = false;
@@ -436,15 +728,36 @@ export class CompileUtil {
     return result;
   }
 
+  /**
+   * judge DOM is text node or not
+   *
+   * @param {Element} node
+   * @returns {boolean}
+   * @memberof CompileUtil
+   */
   public isTextNode(node: Element): boolean {
     return node.nodeType === 3;
   }
 
+  /**
+   * clone Node and clone it event
+   * 
+   * event by attribute in DOM: eventTypes
+   * repeat data by attribute in DOM: repeatData
+   *
+   * @param {Element} node
+   * @param {*} [repeatData]
+   * @returns {Node}
+   * @memberof CompileUtil
+   */
   public cloneNode(node: Element, repeatData?: any): Node {
     const newElement = node.cloneNode(true);
     if (node.eventTypes) {
-      JSON.parse(node.eventTypes).forEach((eve: string) => (newElement as any)[`on${eve}`] = (node as any)[`event${eve}`]);
-      newElement.eventTypes = JSON.parse(JSON.stringify(node.eventTypes));
+      JSON.parse(node.eventTypes).forEach((eventType: string) => {
+        (newElement as any)[`on${eventType}`] = (node as any)[`event${eventType}`];
+        (newElement as any)[`event${eventType}`] = (node as any)[`event${eventType}`];
+      });
+      newElement.eventTypes = node.eventTypes;
     }
     if (repeatData) newElement.repeatData = repeatData;
     return newElement;

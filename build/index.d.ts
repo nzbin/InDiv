@@ -1,4 +1,4 @@
-export type TFnWatcher = (oldData: any, newData: any) => void;
+export type TFnWatcher = (oldData?: any) => void;
 
 export type TFnRender = () => void;
 
@@ -16,7 +16,7 @@ export type TRouter = {
 };
 
 export type ComponentList<C> = {
-    dom: Element;
+    dom: Node;
     props: any;
     scope: C;
 };
@@ -27,8 +27,10 @@ export interface IMiddleware<ES> {
 
 export type EsRouteObject = {
     path: string;
-    query?: any;
-    params?: any;
+    query?: {
+        [props: string]: any;
+    };
+    data?: any;
 }
 
 export type TComponentOptions = {
@@ -47,7 +49,7 @@ export type TNvModuleOptions = {
     exports?: Function[];
     bootstrap?: Function;
 };
-export interface IService { }
+export interface IService {}
 
 export interface IComponent<State = any, Props = any, Vm = any> {
     state?: State | any;
@@ -72,12 +74,12 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     nvAfterMount?(): void;
     nvOnDestory?(): void;
     nvHasRender?(): void;
-    nvWatchState?(oldData?: any, newData?: any): void;
+    nvWatchState?(oldState?: any): void;
     nvRouteChange?(lastRoute: string, newRoute: string): void;
     nvReceiveProps?(nextProps: Props): void;
     render(): void;
     reRender(): void;
-    mountComponent(dom: Element, isFirstRender?: boolean): void;
+    mountComponent(dom: Element): void;
     componentsConstructor(dom: Element): void;
     getPropsValue(valueList: any[], value: any): void;
     buildProps(prop: any): any;
@@ -111,6 +113,7 @@ export declare class Watcher {
 
 export declare class Utils {
     constructor();
+    toString: () => string;
     setCookie(name: string, value: any, options?: any): void;
     getCookie(name: string): any;
     removeCookie(name: string): boolean;
@@ -120,6 +123,7 @@ export declare class Utils {
     isEqual(a: any, b: any, aStack?: any[], bStack?: any[]): boolean;
     deepIsEqual(a: any, b: any, aStack?: any[], bStack?: any[]): boolean;
     formatInnerHTML(inner: string): string;
+    isBrowser(): boolean;
 }
 
 export declare const nvHttp: {
@@ -176,7 +180,6 @@ export declare class CompileUtil {
     isEventDirective(event: string): boolean;
     isElementNode(node: Element): boolean;
     isRepeatNode(node: Element): boolean;
-    isIfNode(node: Element): boolean;
     isRepeatProp(node: Element): boolean;
     isTextNode(node: Element): boolean;
     cloneNode(node: Element, repeatData?: any): Node;
@@ -191,14 +194,13 @@ export declare class Compile {
     compileElement(fragment: DocumentFragment): void;
     recursiveDOM(childNodes: NodeListOf<Node & ChildNode>, fragment: DocumentFragment | Element): void;
     compile(node: Element, fragment: DocumentFragment | Element): void;
-    node2Fragment(el: Element): DocumentFragment;
+    node2Fragment(): DocumentFragment;
     compileText(node: Element, exp: string): void;
     eventHandler(node: Element, vm: any, exp: string, eventName: string): void;
     isDirective(attr: string): boolean;
     isEventDirective(eventName: string): boolean;
     isElementNode(node: Element | string): boolean;
     isRepeatNode(node: Element): boolean;
-    isIfNode(node: Element): boolean;
     isTextNode(node: Element): boolean;
 }
 
@@ -212,6 +214,9 @@ export declare class InDiv {
     $rootModule: INvModule;
     $components: Function[];
     $esRouteObject?: EsRouteObject;
+    $esRouteParmasObject?: {
+        [props: string]: any;
+    };
     constructor();
     use(modal: IMiddleware<InDiv>): number;
     setRootPath(rootPath: string): void;
@@ -221,6 +226,7 @@ export declare class InDiv {
     renderComponent(BootstrapComponent: Function, renderDOM: Element): any;
     replaceDom(component: IComponent, renderDOM: Element): void;
 }
+
 export declare class Router {
     routes: TRouter[];
     routesList: TRouter[];
@@ -238,7 +244,7 @@ export declare class Router {
     bootstrap(vm: InDiv): void;
     init(arr: TRouter[]): void;
     setRootPath(rootPath: string): void;
-    routeChange(lastRoute?: string, nextRoute?: string): void;
+    routeChange?(lastRoute?: string, nextRoute?: string): void;
     redirectTo(redirectTo: string): void;
     refresh(): void;
     distributeRoutes(): void;
@@ -285,7 +291,7 @@ export declare interface HasRender {
 }
 
 export declare interface WatchState {
-    nvWatchState(oldData?: any, newData?: any): void;
+    nvWatchState(oldState?: any): void;
 }
 
 export declare interface RouteChange {
@@ -299,6 +305,15 @@ export declare interface ReceiveProps {
 // component functions
 export declare type SetState = <S>(newState: { [key: string]: S }) => void;
 
-export declare type GetLocation = () => any;
+export declare type GetLocation = () => {
+    path?: string;
+    query?: {
+        [props: string]: any;
+    };
+    params?: {
+        [props: string]: any;
+    };
+    data?: any;
+};
 
-export declare type SetLocation = <Q, P>(path: string, query?: Q, params?: P) => void;
+export declare type SetLocation = <Q, P>(path: string, query?: Q, params?: P, title?: string) => void;

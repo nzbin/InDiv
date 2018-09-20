@@ -400,8 +400,8 @@ Now we support for typescript!
       - `<p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>` 
     - Repeat: `<p  class="b" nv-class="state.a" nv-repeat="let a in state.b" nv-if="a.f">{{a.z}}</p>`
     - Key: 
-      - If u are repeating an `Component`, please use `nv-key` with `nv-repeat`.
-      - `nv-key` is a key for InDiv to mark repeat `Component`, and it must be an unique value or index ** `$index` **.
+      - If u are repeating an `Component` or need continually change DOM structure, please use `nv-key` with `nv-repeat`.
+      - `nv-key` is a key for InDiv to mark repeat `Component` or `DOM`, and it must be an unique value or index ** `$index` **.
       - If u are not use `nv-repeat` without `nv-key`, InDiv will render this with a new `Component`, and `state` in `Component` will be reset.
       - `<test-component nv-repeat="let man in state.testArray" nv-key="man.id" man="{man.name}"></test-component>`
 
@@ -421,7 +421,7 @@ Now we support for typescript!
   - use `this.state: Object` and `this.setState(parmars: Function || Object)`
   - if u have some variable, u can set `this.state` in `constructor(){}`
   - if u want to change State, plz use `this.setState`, parmars can be `Object` or `Function` which must return an `Object`
-  - and u can recive this change in life cycle `nvWatchState(newData)`, but we need to use a deep clone for `this.state`, so please minimize the use of life cycle `WatchState`
+  - and u can recive this change in life cycle `nvWatchState(oldState)`, but we need to use a deep clone for `this.state`, so please minimize the use of life cycle `WatchState`
 
 8. `Watcher` and `KeyWatcher`
 
@@ -671,7 +671,7 @@ Now we support for typescript!
 
     - You can initialize state in life cycle hooks `constructor nvOnInit`, after that u must use `setState` add listener for additional attributes on state
     - After `constructor` u can get this.props and use it
-    - On `nvReceiveProps` u can receive new props with argument `nextProps` and use old props with `this.props`
+    - On `nvReceiveProps` u can receive new props in argument `nextProps` and use old props with `this.props`
 
     ```typescript
       constructor()
@@ -680,7 +680,7 @@ Now we support for typescript!
       nvAfterMount(): void;
       nvHasRender(): void;
       nvOnDestory(): void;
-      nvWatchState(newData?: any): void;
+      nvWatchState(oldState?: any): void;
       nvRouteChange(lastRoute?: string, newRoute?: string): void;
       nvReceiveProps(nextProps: any): void;
     ```
@@ -697,6 +697,7 @@ Now we support for typescript!
     - export your InDiv instance and routes
     - use `renderToString(url: string, routes: TRouter[], inDiv: InDiv): string`, render your app to string with `request.url`, `InDiv instance` and `routes`
     - at last render string to your template
+    - details in `@InDiv/ssr-render`
 
 ## Architecture
 
@@ -725,5 +726,5 @@ route => NvModule => component
 - [x] ts (强类型赛高)
 - [x] DI
 - [x] SSR 服务端渲染
-- [ ] asynchronous template render
+- [ ] async template render
 - [ ] optimize setState

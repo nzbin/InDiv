@@ -296,6 +296,7 @@ export class Router {
           this.$vm.$esRouteParmasObject[key] = path;
         }
 
+        if (!this.utils.isBrowser()) return;
         const rootDom = document.querySelector('#root');
         this.routesList.push(rootRoute);
 

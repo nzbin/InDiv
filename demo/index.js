@@ -1,4 +1,3 @@
-// import { InDiv, Component, Router, Utils, NvModule, Service, nvHttp } from '../build';
 import { InDiv, Component, Router, Utils, NvModule, Service, nvHttp } from '../build';
 
 class HeroSearchService1 {
@@ -386,7 +385,7 @@ class Container {
       b: 3,
       testArray: [
         {
-          name: '李龙吉',
+          name: 'gerry',
           sex: '男',
           job: [
             {
@@ -404,7 +403,7 @@ class Container {
           ],
         },
         {
-          name: '邱宝环',
+          name: 'nina',
           sex: '女',
           // job: ['老师', '英语老师', '美1'],
           job: [

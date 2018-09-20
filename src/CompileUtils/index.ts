@@ -571,6 +571,8 @@ export class CompileUtil {
 
       this.$fragment.insertBefore(newElement, node);
 
+      (newElement as Element).removeAttribute('nv-repeat');
+
       if (this.isTextNode((newElement as Element)) && reg.test(text)) new CompileUtilForRepeat(this.$fragment).templateUpdater(newElement as Element, val, key, vm);
       
       if (nodeAttrs) {
@@ -584,6 +586,8 @@ export class CompileUtil {
             } else {
               new CompileUtilForRepeat(this.$fragment).bind(newElement as Element, key, dir, exp, index, vm, value);
             }
+
+            (newElement as Element).removeAttribute(attrName);
           }
         });
       }
@@ -651,6 +655,8 @@ export class CompileUtil {
             new CompileUtil(node).repeatUpdater(child, this._getValueByValue(value, newWatchData, key), restRepeat.value, vm);
             if (node.contains(child)) node.removeChild(child);
           }
+
+          node.removeAttribute('nv-repeat');
         }
       }
     });
@@ -747,7 +753,10 @@ export class CompileUtil {
   public cloneNode(node: Element, repeatData?: any): Node {
     const newElement = node.cloneNode(true);
     if (node.eventTypes) {
-      JSON.parse(node.eventTypes).forEach((eve: string) => (newElement as any)[`on${eve}`] = (node as any)[`event${eve}`]);
+      JSON.parse(node.eventTypes).forEach((eventType: string) => {
+        (newElement as any)[`on${eventType}`] = (node as any)[`event${eventType}`];
+        (newElement as any)[`event${eventType}`] = (node as any)[`event${eventType}`];
+      });
       newElement.eventTypes = node.eventTypes;
     }
     if (repeatData) newElement.repeatData = repeatData;

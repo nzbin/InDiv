@@ -1,7 +1,7 @@
 {
   "name": "indiv",
   "version": "1.1.0",
-  "description": "A web mvvm framework.一个Web mvvm库。",
+  "description": "A web mvvm view framework.一个 web mvvm 视图库。",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
@@ -18,7 +18,8 @@
     "render",
     "framework",
     "Virtual DOM",
-    "Dependency Injection"
+    "Dependency Injection",
+    "SSR"
   ],
   "scripts": {
     "start": "parcel watch ./demo/index.ts -d dist & nodemon app.js",
@@ -49,7 +50,7 @@
     "eslint-plugin-react": "^7.5.1",
     "express": "^4.16.3",
     "nodemon": "^1.17.5",
-    "parcel-bundler": "^1.8.1",
+    "parcel-bundler": "^1.9.7",
     "tslint": "^5.11.0",
     "typescript": "^3.0.1"
   },

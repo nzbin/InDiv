@@ -1,7 +1,5 @@
-import Utils from '../Utils';
 import { IVnode, TAttributes, IPatchList, IVirtualDOM } from '../types';
 
-const utils = new Utils();
 /**
  * Vnode
  *
@@ -117,7 +115,7 @@ function diffChildNodes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
   if (oldVnode.childNodes.length > 0) {
     (oldVnode.childNodes as IVnode[]).forEach((oChild, index) => {
       if (oChild.checked) return;
-      const sameCode = newVnode.childNodes.find(nChild => (nChild.node.isEqualNode(oChild.node) || nChild.tagName === oChild.tagName) && nChild.key === oChild.key && !nChild.checked);
+      const sameCode = newVnode.childNodes.find(nChild => (nChild.node.isEqualNode(oChild.node) && nChild.key === oChild.key && !nChild.checked) || (nChild.tagName === oChild.tagName && nChild.key === oChild.key && !nChild.checked));
       if (sameCode) {
         const sameCodeIndex = newVnode.childNodes.findIndex(nChild => nChild === sameCode);
         if (sameCodeIndex !== index) {
@@ -242,13 +240,11 @@ function diffInputValue(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
  * @returns {void}
  */
 function diffRepeatData(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
-  if (!utils.isEqual(oldVnode.repeatData, newVnode.repeatData)) {
-    patchList.push({
-      type: 6,
-      node: oldVnode.node,
-      newValue: newVnode.repeatData,
-    });
-  }
+  patchList.push({
+    type: 6,
+    node: oldVnode.node,
+    newValue: newVnode.repeatData,
+  });
 }
 
 /**
@@ -265,48 +261,46 @@ function diffEventTypes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
   const oEventTypes: string[] = JSON.parse(oldVnode.eventTypes);
   const nEventTypes: string[] = JSON.parse(newVnode.eventTypes);
 
-  if (!utils.isEqual(oEventTypes, nEventTypes)) {
-    // 全部更新为新的事件
-    if (nEventTypes && nEventTypes.length > 0) {
-      nEventTypes.forEach(neventType => {
+  // 全部更新为新的事件
+  if (nEventTypes && nEventTypes.length > 0) {
+    nEventTypes.forEach(neventType => {
+      patchList.push({
+        type: 7,
+        node: oldVnode.node,
+        eventType: neventType,
+        newValue: (newVnode.node as any)[`event${neventType}`],
+      });
+    });
+  }
+
+  if (oEventTypes && oEventTypes.length > 0) {
+    // 如果新事件不存在，则删除事件
+    // 如果新事件找不到旧事件中的事件，则把旧事件的事件删除
+    oEventTypes.forEach(oeventType => {
+      if (!nEventTypes || nEventTypes.length <= 0) {
         patchList.push({
           type: 7,
           node: oldVnode.node,
-          eventType: neventType,
-          newValue: (newVnode.node as any)[`event${neventType}`],
+          eventType: oeventType,
+          newValue: null,
         });
-      });
-    }
-
-    if (oEventTypes && oEventTypes.length > 0) {
-      // 如果新事件不存在，则删除事件
-      // 如果新事件找不到旧事件中的事件，则把旧事件的事件删除
-      oEventTypes.forEach(oeventType => {
-        if (!nEventTypes || nEventTypes.length <= 0) {
-          patchList.push({
-            type: 7,
-            node: oldVnode.node,
-            eventType: oeventType,
-            newValue: null,
-          });
-        }
-        if (nEventTypes && nEventTypes.length > 0 && !nEventTypes.find(neventType => neventType === oeventType)) {
-          patchList.push({
-            type: 7,
-            node: oldVnode.node,
-            eventType: oeventType,
-            newValue: null,
-          });
-        }
-      });
-    }
-    // 最后要更新下 eventTypes，否则下次 oldVnode.eventTypes 将为最开始的eventTypes
-    patchList.push({
-      type: 8,
-      node: oldVnode.node,
-      newValue: newVnode.eventTypes,
+      }
+      if (nEventTypes && nEventTypes.length > 0 && !nEventTypes.find(neventType => neventType === oeventType)) {
+        patchList.push({
+          type: 7,
+          node: oldVnode.node,
+          eventType: oeventType,
+          newValue: null,
+        });
+      }
     });
   }
+  // 最后要更新下 eventTypes，否则下次 oldVnode.eventTypes 将为最开始的eventTypes
+  patchList.push({
+    type: 8,
+    node: oldVnode.node,
+    newValue: newVnode.eventTypes,
+  });
 }
 
 /**

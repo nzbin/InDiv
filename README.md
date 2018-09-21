@@ -13,12 +13,12 @@ Now we support for typescript!
 
 ## Basic Usage
 
-1. Create a root DOM for route which id is root:
+#### Create a root DOM for route which id is root:
 
   ```html
   <div id="root"></div>
   ```
-2. Create a InDiv:
+#### Create a InDiv:
 
   1. use `bootstrapModule` to bootstrap a root module `NvModule`
 
@@ -29,7 +29,7 @@ Now we support for typescript!
   indiv.init();
   ```
 
-3. Create a router:
+#### Create a router:
 
   - routes must an `Array` includes `Object`
 
@@ -113,7 +113,7 @@ Now we support for typescript!
   indiv.init();
   ```
 
-4. Create a Component:
+#### Create a Component:
 
   - create a `class`
   - use decorator `Component` in typescript or use function `Component` in javascript
@@ -324,7 +324,7 @@ Now we support for typescript!
   - ** `props: Object` can only be changed or used after lifecycle `constructor()` **
 
 
-5. NvModule
+#### NvModule
 
   - InDiv apps are modular and InDiv has its own modularity system called `NvModule`. An `NvModule` is a container for a cohesive block of code dedicated to an application domain, a workflow, or a closely related set of capabilities. It can contain components, service providers, and other code files whose scope is defined by the containing `NvModule`. It can import functionality that is exported from other `NvModule`, and export selected functionality for use by other `NvModule`.
 
@@ -382,7 +382,7 @@ Now we support for typescript!
     })(M1);
     ```
 
-6. Template Syntax
+#### Template Syntax
 
   - 规定：指令以 nv-xxx 命名
   - now: nv-text nv-html nv-model nv-class nv-repeat nv-key nv-if nv-on:Event
@@ -443,7 +443,7 @@ Now we support for typescript!
         ```javascript
         new KeyWatcher(this.object, key, (newData) => {})
         ```
-9. Service
+#### Service
 
   - Components shouldn't fetch or save data directly and they certainly shouldn't knowingly present fake data. They should focus on presenting data and delegate data access to a service.
   - And u can use `Service` to send communication between `Component` , because we have realized singleton.
@@ -503,7 +503,7 @@ Now we support for typescript!
       http.patch(url, params);
       ```
 
-10. Dependency Injection
+#### Dependency Injection
     
     Dependency injection is an important application design pattern. It's used so widely that almost everyone just calls it DI
     
@@ -659,7 +659,7 @@ Now we support for typescript!
       })(M1);
       ```
 
-11. LifeCycle hooks which from the beginning to the end:
+#### LifeCycle hooks which from the beginning to the end:
 
   - NvModule
 
@@ -691,13 +691,14 @@ Now we support for typescript!
     routeChange((lastRoute?: string, newRoute?: string): void;
     ```
 
-12. Server Side Render
+#### Server Side Render
     
     - `npm install @indiv/ssr-renderer` and use nodeJS v6 or newer
     - export your InDiv instance and routes
     - use `renderToString(url: string, routes: TRouter[], inDiv: InDiv): string`, render your app to string with `request.url`, `routes` and `InDiv instance`
     - at last render string to your template
-    - details in [@indiv/ssr-renderer](https://github.com/DimaLiLongJi/indiv-ssr-renderer#readme) 
+    - details in [@indiv/ssr-renderer](https://github.com/DimaLiLongJi/indiv-ssr-renderer#readme)
+
 
 ## Architecture
 

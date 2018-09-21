@@ -693,7 +693,7 @@ Now we support for typescript!
 
 #### Server Side Render
     
-    - `npm install @indiv/ssr-renderer` and use nodeJS v6 or newer
+    - [npm](https://www.npmjs.com/package/@indiv/ssr-renderer) install and use nodeJS v6 or newer
     - export your InDiv instance and routes
     - use `renderToString(url: string, routes: TRouter[], inDiv: InDiv): string`, render your app to string with `request.url`, `routes` and `InDiv instance`
     - at last render string to your template

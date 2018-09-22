@@ -221,18 +221,39 @@ export class CompileUtilForRepeat {
   }
 
   /**
+   * update attribute src for nv-src
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @memberof CompileUtilForRepeat
+   */
+  public srcUpdater(node: Element, value: any): void {
+    if (value) (node as HTMLImageElement | HTMLIFrameElement | HTMLScriptElement | HTMLInputElement).src = value;
+  }
+
+  /**
+   * update attribute href for nv-href
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @memberof CompileUtilForRepeat
+   */
+  public hrefUpdater(node: Element, value: any): void {
+    if (value) (node as HTMLAnchorElement).href = value;
+  }
+
+  /**
    * update class for nv-class
    *
    * @param {Element} node
    * @param {*} value
-   * @param {*} oldValue
    * @returns {void}
    * @memberof CompileUtilForRepeat
    */
-  public classUpdater(node: Element, value: any, oldValue: any): void {
-    if (!value && !oldValue) return;
+  public classUpdater(node: Element, value: any): void {
+    if (!value) return;
     let className = node.className;
-    className = className.replace(oldValue, '').replace(/\s$/, '');
+    className = className.replace(/\s$/, '');
     const space = className && String(value) ? ' ' : '';
     node.className = className + space + value;
   }
@@ -436,12 +457,6 @@ export class CompileUtil {
         case 'model':
           if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp), exp, vm);
           break;
-        case 'text':
-          if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp));
-          break;
-        case 'if':
-          if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp), exp, vm);
-          break;
         default:
           if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp));
       }
@@ -496,18 +511,39 @@ export class CompileUtil {
   }
 
   /**
+   * update attribute src for nv-src
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @memberof CompileUtil
+   */
+  public srcUpdater(node: Element, value: any): void {
+    if (value) (node as HTMLImageElement | HTMLIFrameElement | HTMLScriptElement | HTMLInputElement).src = value;
+  }
+
+  /**
+   * update attribute href for nv-href
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @memberof CompileUtil
+   */
+  public hrefUpdater(node: Element, value: any): void {
+    if (value) (node as HTMLAnchorElement).href = value;
+  }
+
+  /**
    * update class for nv-class
    *
    * @param {Element} node
    * @param {*} value
-   * @param {*} oldValue
    * @returns {void}
    * @memberof CompileUtil
    */
-  public classUpdater(node: Element, value: any, oldValue: any): void {
-    if (!value && !oldValue) return;
+  public classUpdater(node: Element, value: any): void {
+    if (!value) return;
     let className = node.className;
-    className = className.replace(oldValue, '').replace(/\s$/, '');
+    className = className.replace(/\s$/, '');
     const space = className && String(value) ? ' ' : '';
     node.className = className + space + value;
   }

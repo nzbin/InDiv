@@ -404,6 +404,8 @@ Now we support for typescript!
       - `nv-key` is a key for InDiv to mark repeat `Component` or `DOM`, and it must be an unique value or index ** `$index` **.
       - If u are not use `nv-repeat` without `nv-key`, InDiv will render this with a new `Component`, and `state` in `Component` will be reset.
       - `<test-component nv-repeat="let man in state.testArray" nv-key="man.id" man="{man.name}"></test-component>`
+    - Src: for `HTMLImageElement`  `HTMLIFrameElement`  `HTMLScriptElement`  `HTMLInputElement`,  add attribute `src`  for DOM
+    - Href: for `HTMLAnchorElement`,  add attribute `href` for DOM
 
   - about function in Template Syntax
     - now you can send arguments in Function
@@ -715,7 +717,7 @@ route => NvModule => component
 - [x] 公共类提取
 - [x] 数据劫持
 - [x] 双向绑定模板
-- [x] Template Syntax: nv-text nv-html nv-model nv-class nv-repeat nv-key nv-if(7/7)
+- [x] Template Syntax: nv-text nv-html nv-model nv-class nv-repeat nv-key nv-if nv-src nv-href(7/7)
 - [x] 组件props
 - [x] 组件渲染
 - [x] 组件中使用组件

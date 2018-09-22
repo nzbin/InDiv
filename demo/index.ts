@@ -1,5 +1,5 @@
-// import { InDiv, Component, Router, Utils, NvModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, nvHttp, SetState, SetLocation, GetLocation } from '../src';
-import { InDiv, Component, Router, Utils, NvModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, nvHttp, SetState, SetLocation, GetLocation } from '../build';
+import { InDiv, Component, Router, Utils, NvModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, nvHttp, SetState, SetLocation, GetLocation } from '../src';
+// import { InDiv, Component, Router, Utils, NvModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, nvHttp, SetState, SetLocation, GetLocation } from '../build';
 
 @Service({
   isSingletonMode: true,
@@ -259,7 +259,7 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
       <div nv-if="state.f">
         ef
         <input nv-repeat="let a in state.e" nv-model="a.z" />
-        <p nv-class="state.c" nv-if="a.show" nv-repeat="let a in state.e" nv-text="a.z" nv-on:click="@showAlert(a.z)"></p>
+        <p nv-class="state.c" nv-if="a.z" nv-repeat="let a in state.e" nv-text="a.z" nv-on:click="@showAlert(a)"></p>
         <p>111this.state.a：{{state.a}}</p>
         <input nv-model="state.a" />
       </div>
@@ -334,6 +334,7 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   public showAlert(a: any) {
     this.setLocation('/R1/C1', { a: '1' });
     console.log('this.$location', this.getLocation());
+    // a.show = false;
   }
   public getProps(a: any) {
     // alert('里面传出来了');
@@ -438,6 +439,8 @@ class TestComponent implements OnInit {
       <div nv-repeat="let man in state.testArray" nv-key="man.name">
           <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
           <div>性别：{{man.sex}}</div>
+          <a nv-href="man.name">a {{man.sex}}</a>
+          <img nv-src="man.name" alt="测试src" />
           <test-component nv-key="man.name" man="{man.name}"></test-component>
           <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
           <div class="fuck" nv-repeat="let c in man.job" nv-key="c.id">

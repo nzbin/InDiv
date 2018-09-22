@@ -10,7 +10,9 @@ export interface ICompileUtilForRepeat {
     textUpdater(node: Element, value: any): void;
     htmlUpdater(node: Element, value: any): void;
     ifUpdater(node: Element, value: any): void;
-    classUpdater(node: Element, value: any, oldValue: any): void;
+    srcUpdater(node: Element, value: any): void;
+    hrefUpdater(node: Element, value: any): void;
+    classUpdater(node: Element, value: any): void;
     modelUpdater(node: Element, value: any, exp: string, key: string, index: number, watchData: any, vm: any): void;
     eventHandler(node: Element, vm: any, exp: string, eventName: string, key: string, val: any): void;
 }
@@ -26,7 +28,9 @@ export interface ICompileUtil {
     textUpdater(node: Element, value: any): void;
     htmlUpdater(node: Element, value: any): void;
     ifUpdater(node: Element, value: any): void;
-    classUpdater(node: Element, value: any, oldValue: any): void;
+    srcUpdater(node: Element, value: any): void;
+    hrefUpdater(node: Element, value: any): void;
+    classUpdater(node: Element, value: any): void;
     modelUpdater(node: Element, value: any, exp: string, vm: any): void;
     repeatUpdater(node: Element, value: any, expFather: string, vm: any): void;
     repeatChildrenUpdater(node: Element, value: any, expFather: string, index: number, vm: any, watchValue: any): void;

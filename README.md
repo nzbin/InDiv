@@ -123,67 +123,27 @@ Now we support for typescript!
     type TComponentOptions<State> = {
       selector: string;
       template: string;
-      state?: State;
     };
     ```
   
   - `selector` is your component tag name for HTML and used in template.
   - `template` only accepts `state.XXX` from this.state, and event only accepts `@eventHandler` from method which commes from this
-  - `state` you can set an initial state for component
   - **please use `setState` after lifecycle `constructor()` and `nvOnInit`**, so you can change or set value for `this.state` without `setState` in lifecycle `constructor()` and `nvOnInit`
-  - after `Class`'s `constructor()`, u can use `this.props` in any lifecycle
+  - after `Class`'s `constructor`, u can use `this.props` in any lifecycle
+  - use `nvOnInit` and `nvReceiveProps(nextProps: any): void;` to receive props and set `props` in `state`
 
     1. typescript
 
       - to use decorator `Component` declare `template` and `state`
-      - to implements interface `HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange` to use lifecycle
-      - to use decorator `Injectable` to inject `Service` in `constructor`'s arguments of `Component` 
+      - to implements interface `OnInit, BeforeMount, AfterMount, HasRender, OnDestory, ReceiveProps, WatchState, RouteChange` to use lifecycle
+      - **v1.1.0:  to use decorator `Injectable` to  declare need to be injected `Service` in `constructor`'s arguments of `Component`**
+      - **v1.2.0 +:  to use decorator `Injected` to declare need to be injected `Service` in `constructor`'s arguments of `Component`** 
 
       ```typescript
-      @Injectable
+      // @Injectable v1.1.0
+      @Injected // v1.2.0+
       @Component({
         selector: 'container-wrap',
-        state: {
-          a: 1,
-          testArray: [
-            {
-              name: 'gerry',
-              sex: '男',
-              job: [
-                {
-                  id: 1,
-                  name: '程序员',
-                },
-                {
-                  id: 2,
-                  name: '码农',
-                },
-                {
-                  id: 3,
-                  name: '帅',
-                },
-              ],
-            },
-            {
-              name: 'nina',
-              sex: '女',
-              job: [
-                {
-                  id: 1,
-                  name: '老师',
-                },
-                {
-                  id: 2,
-                  name: '英语老师',
-                },
-                {
-                  id: 3,
-                  name: '美',
-                },
-              ],
-            }],
-          testArray2: ['程序员3', '码农3', '帅3'],
-        },
         template: (`
           <div>
             <p nv-on:click="@go()">container: {{state.a}}</p>
@@ -200,7 +160,7 @@ Now we support for typescript!
           </div>
         `),
       })
-      class Container implements OnInit, AfterMount {
+      class Container implements OnInit, AfterMount, ReceiveProps {
         public ss: HeroSearchService;
         public state: any;
         public setLocation: SetLocation;
@@ -210,15 +170,59 @@ Now we support for typescript!
         ) {
           this.ss = hss;
           this.ss.test();
-          console.log(this.state);
+          this.state = {
+            a: 1,
+            testArray: [
+              {
+                name: 'gerry',
+                sex: '男',
+                job: [
+                  {
+                    id: 1,
+                    name: '程序员',
+                  },
+                  {
+                    id: 2,
+                    name: '码农',
+                  },
+                  {
+                    id: 3,
+                    name: '帅',
+                  },
+                ],
+              },
+              {
+                name: 'nina',
+                sex: '女',
+                job: [
+                  {
+                    id: 1,
+                    name: '老师',
+                  },
+                  {
+                    id: 2,
+                    name: '英语老师',
+                  },
+                  {
+                    id: 3,
+                    name: '美',
+                  },
+                ],
+              }],
+            testArray2: ['程序员3', '码农3', '帅3'],
+          },
         }
 
         public nvOnInit() {
-          console.log('nvOnInit Container');
+          this.state.propsTest = this.props.test;
         }
 
         public nvAfterMount() {
           console.log('nvAfterMount Container');
+        }
+
+        public nvReceiveProps(nextProps: any) {
+          this.state.propsTest = nextProps.test;
         }
 
         public go() {
@@ -234,7 +238,7 @@ Now we support for typescript!
     2. javascript
 
       - to use function `Component` declare `template` and `state`
-      - to use lifecycle `nvOnInit nvBeforeMount nvAfterMount nvOnDestory nvHasRender nvWatchState nvRouteChange` in Class
+      - to use lifecycle `nvOnInit, nvBeforeMount, nvAfterMount, nvOnDestory, nvHasRender nvWatchState nvReceiveProps nvRouteChange` in Class
       - to use `constructor`'s arguments of `Component` for inject `Service`, and arguments must be lowercase lette of initials lette  of Service class name. For example, you want to inject a service  class `HeroService`, you must write argument in `constructor` with `heroService`
 
       ```javascript
@@ -244,9 +248,54 @@ Now we support for typescript!
         ) {
           this.ss = heroSearchService;
           this.ss.test();
+          this.state = {
+            a: 1,
+            testArray: [
+              {
+                name: 'gerry',
+                sex: '男',
+                job: [
+                  {
+                    id: 1,
+                    name: '程序员',
+                  },
+                  {
+                    id: 2,
+                    name: '码农',
+                  },
+                  {
+                    id: 3,
+                    name: '帅',
+                  },
+                ],
+              },
+              {
+                name: 'nina',
+                sex: '女',
+                job: [
+                  {
+                    id: 1,
+                    name: '老师',
+                  },
+                  {
+                    id: 2,
+                    name: '英语老师',
+                  },
+                  {
+                    id: 3,
+                    name: '美',
+                  },
+                ],
+              }],
+            testArray2: ['程序员3', '码农3', '帅3'],
+          };
         }
         nvOnInit() {
+          this.state.propsTest = this.props.test;
           console.log('nvOnInit Container');
+        }
+        nvReceiveProps(nextProps) {
+          this.state.propsTest = nextProps.test;
         }
 
         go() {
@@ -275,47 +324,6 @@ Now we support for typescript!
             </div>
             <router-render></router-render>
           </div>`),
-        state: {
-          a: 1,
-          testArray: [
-            {
-              name: 'gerry',
-              sex: '男',
-              job: [
-                {
-                  id: 1,
-                  name: '程序员',
-                },
-                {
-                  id: 2,
-                  name: '码农',
-                },
-                {
-                  id: 3,
-                  name: '帅',
-                },
-              ],
-            },
-            {
-              name: 'nina',
-              sex: '女',
-              job: [
-                {
-                  id: 1,
-                  name: '老师',
-                },
-                {
-                  id: 2,
-                  name: '英语老师',
-                },
-                {
-                  id: 3,
-                  name: '美',
-                },
-              ],
-            }],
-          testArray2: ['程序员3', '码农3', '帅3'],
-        },
       })(Container);
       ```
 
@@ -445,6 +453,7 @@ Now we support for typescript!
         ```javascript
         new KeyWatcher(this.object, key, (newData) => {})
         ```
+
 #### Service
 
   - Components shouldn't fetch or save data directly and they certainly shouldn't knowingly present fake data. They should focus on presenting data and delegate data access to a service.
@@ -453,11 +462,17 @@ Now we support for typescript!
 
     1. typescript
 
-      -  to use decorator `Injectable` to inject `Service` in `constructor`'s arguments of `Service` 
+      - **v1.1.0: usr decorator `Service` to declare service**
+      - **v1.1.0: to use decorator `Injectable` to inject `Service` in `constructor`'s arguments of `Service`**
+      - **v1.2.0+ : usr decorator `Injectable` to declare service**
+      - **v1.2.0+ : to use decorator `Injected` to inject `Service` in `constructor`'s arguments of `Service`**
 
       ```typescript
-      @Injectable
-      @Service({isSingletonMode: false})
+      // @Injectable v1.1.0
+      // @Service({isSingletonMode: false}) v1.1.0
+
+      @Injected // v1.2.0+
+      @Injectable({isSingletonMode: false}) // v1.2.0+
       class HeroSearchService {
         public hsr: HeroSearchService1;
         constructor(
@@ -476,6 +491,8 @@ Now we support for typescript!
     2. javascript
 
       - to use `constructor`'s arguments of `Service` for inject an other `Service`, and arguments must be lowercase lette of initials lette  of Service class name. For example, you want to inject a service  class `HeroSearchService`, you must write argument in `constructor` with `heroSearchService`
+      - **v1.1.0: use `Service`**
+      - **v1.2.0+: use `Injectable`**
 
       ```javascript
       class HeroSearchService {
@@ -488,7 +505,13 @@ Now we support for typescript!
         }
       }
 
-      Service({
+      // v1.1.0
+      // Service({
+      //   isSingletonMode: false,
+      // })(HeroSearchService);
+
+      // v1.2.0+
+      Injectable({
         isSingletonMode: false,
       })(HeroSearchService);
       ```
@@ -506,18 +529,24 @@ Now we support for typescript!
       ```
 
 #### Dependency Injection
-    
-    Dependency injection is an important application design pattern. It's used so widely that almost everyone just calls it DI
-    
-    1. Use Typescript
 
-      - If u are using `Typescript` to build an app, u can easily use our Dependency Injection.Only use `@Injectable` before the `Class` which need to use other services, that which are declarated in `this.$providers` of `NvModule` or root module.
-      - Use `this.` names of constructor arguments to directly use `Service`.
+  - Dependency injection is an important application design pattern. It's used so widely that almost everyone just calls it DI
+
+      1. Use Typescript
+
+        - If u are using `Typescript` to build an app, u can easily use our Dependency Injection.
+        - **v1.1.0: Only use `@Injectable`** before the `Class` which need to use other services, that which are declarated in `this.$providers` of `NvModule` or root module.
+        - **v1.2.0+ : Only use `@Injected`** before the `Class` which need to use other services, that which are declarated in `this.$providers` of `NvModule` or root module.
+        - Use `this.` names of constructor arguments to directly use `Service`.
 
       ```typescript
-      import { Injectable, Component, NvModule, Service, HasRender } from 'indiv';
+      import { Injected, Injectable, Component, NvModule, HasRender } from 'indiv';
+      
+      // @Service({ v1.1.0
+      //   isSingletonMode: true,
+      // })
 
-      @Service({
+      @Injectable({ // v1.2.0+
         isSingletonMode: true,
       })
       class HeroSearchService1 {
@@ -528,8 +557,11 @@ Now we support for typescript!
         }
       }
 
-      @Injectable
-      @Service()
+      // @Injectable v1.1.0
+      // @Service() v1.1.0
+
+      @Injected // v1.2.0+
+      @Injectable() // v1.2.0+
       class HeroSearchService {
         public hsr: HeroSearchService1;
         constructor(
@@ -543,7 +575,9 @@ Now we support for typescript!
         }
       }
 
-      @Injectable
+      // @Injectable v1.1.0
+
+      @Injected // v1.2.0+
       @Component({
         selector: 'pc-child',
         state: {
@@ -595,7 +629,9 @@ Now we support for typescript!
     2. Use Javascript
 
       - to use `constructor`'s arguments of `Service` for inject an other `Service`, and arguments must be lowercase lette of initials lette  of Service class name. For example, you want to inject a service  class `HeroSearchService`, you must write argument in `constructor` with `heroSearchService`
-      - A little diffrence between javascript and typescript, use constructor arguments to directly use `Service`, and assign them to a variable.
+      - A little diffrence between javascript and typescript.
+      - **v1.1.0: use constructor arguments to directly use `Service`, and assign them to a variable**
+      - **v1.2.0+: use constructor arguments to directly use `Injectable`, and assign them to a variable**
 
       ```javascript
       class HeroSearchService1 {
@@ -606,7 +642,10 @@ Now we support for typescript!
           console.log('HeroSearchService !!!1111');
         }
       }
-      Service({
+      // Service({ v1.1.0
+      //   isSingletonMode: true,
+      // })(HeroSearchService1);
+      Injectable({ //v1.2.0+
         isSingletonMode: true,
       })(HeroSearchService1);
 
@@ -623,7 +662,10 @@ Now we support for typescript!
           console.log('HeroSearchService !!!000000000');
         }
       }
-      Service({
+      // Service({ v1.1.0
+      //   isSingletonMode: false,
+      // })(HeroSearchService);
+      Injectable({ //v1.2.0+
       isSingletonMode: false,
       })(HeroSearchService);
 

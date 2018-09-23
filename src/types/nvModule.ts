@@ -1,4 +1,3 @@
-import { IService } from './service';
 import { IUtil } from './utils';
 
 export interface INvModule {
@@ -7,7 +6,7 @@ export interface INvModule {
   $components?: Function[];
   $providers?: Function[];
   $exports?: Function[];
-  providerList?: Map<string, IService>;
+  providerList?: Map<string, Function>;
   bootstrap?: Function;
 
   buildImports?(): void;

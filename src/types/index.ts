@@ -6,7 +6,6 @@ export { INvModule } from './nvModule';
 export { IHttpGet, IHttpDelete, IHttpPost, IHttpPut, IHttpPatch, IEsHttp } from './http';
 export { IKeyWatcher } from './keyWatcher';
 export { TRouter, IRouter } from './router';
-export { IService } from './service';
 export { IUtil } from './utils';
 export { IVnode, TAttributes, IPatchList, IParseToVnode, IDiffVnode, IRenderVnode, IVirtualDOM } from './virtualDOM';
 export { TFnWatcher, TFnRender, IWatcher } from './watcher';

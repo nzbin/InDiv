@@ -1,4 +1,4 @@
-import { InDiv, Component, Router, Utils, NvModule, Service, nvHttp } from '../build';
+import { InDiv, Component, Router, Utils, NvModule, Injectable, nvHttp } from '../build';
 
 class HeroSearchService1 {
   constructor() {
@@ -9,7 +9,7 @@ class HeroSearchService1 {
     console.log('HeroSearchService !!!1111');
   }
 }
-Service({
+Injectable({
   isSingletonMode: true,
 })(HeroSearchService1);
 
@@ -19,7 +19,7 @@ class HeroSearchService2 {
     console.log('HeroSearchService !!!2222');
   }
 }
-Service({
+Injectable({
   isSingletonMode: false,
 })(HeroSearchService2);
 
@@ -36,7 +36,7 @@ class HeroSearchService {
     console.log('HeroSearchService !!!000000000');
   }
 }
-Service({
+Injectable({
   isSingletonMode: false,
 })(HeroSearchService);
 
@@ -224,7 +224,7 @@ class R1 {
         b: 'a',
         show: true,
       },
-          {
+      {
         z: 33333333333333,
         b: 'a',
         show: true,
@@ -235,7 +235,7 @@ class R1 {
         b: 'a',
         show: true,
       },
-          {
+      {
         z: 1111,
         b: 'a',
         show: false,

@@ -1,7 +1,7 @@
-import { InDiv, Component, Router, Utils, NvModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, nvHttp, SetState, SetLocation, GetLocation } from '../src';
-// import { InDiv, Component, Router, Utils, NvModule, Service, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, nvHttp, SetState, SetLocation, GetLocation } from '../build';
+import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, nvHttp, SetState, SetLocation, GetLocation } from '../src';
+// import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, nvHttp, SetState, SetLocation, GetLocation } from '../build';
 
-@Service({
+@Injectable({
   isSingletonMode: true,
 })
 class HeroSearchService1 {
@@ -12,7 +12,7 @@ class HeroSearchService1 {
   }
 }
 
-@Service()
+@Injectable()
 class HeroSearchService2 {
   constructor() {}
 
@@ -21,8 +21,8 @@ class HeroSearchService2 {
   }
 }
 
-@Injectable
-@Service()
+@Injected
+@Injectable()
 class HeroSearchService {
   public hsr: HeroSearchService1;
   constructor(
@@ -175,7 +175,7 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps {
 }
 
 
-@Injectable
+@Injected
 @Component({
   selector: 'pc-component',
   template: (`
@@ -249,7 +249,7 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
   }
 }
 
-@Injectable
+@Injected
 @Component({
   selector: 'R1',
   template: (`
@@ -343,7 +343,7 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   }
 }
 
-@Injectable
+@Injected
 @Component({
   selector: 'R2',
   template: (`
@@ -427,7 +427,7 @@ class TestComponent implements OnInit {
 }
 
 
-@Injectable
+@Injected
 @Component({
   selector: 'container-wrap',
   template: (`

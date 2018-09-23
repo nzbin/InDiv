@@ -38,7 +38,7 @@ export type TComponentOptions = {
     template: string;
 };
 
-export type TServiceOptions = {
+export type TInjectableOptions = {
     isSingletonMode?: boolean;
 };
 
@@ -49,7 +49,6 @@ export type TNvModuleOptions = {
     exports?: Function[];
     bootstrap?: Function;
 };
-export interface IService {}
 
 export interface IComponent<State = any, Props = any, Vm = any> {
     state?: State | any;
@@ -92,7 +91,7 @@ export interface INvModule {
     $components?: Function[];
     $providers?: Function[];
     $exports?: Function[];
-    providerList?: Map<string, IService>;
+    providerList?: Map<string, Function>;
     bootstrap?: Function;
     buildImports(): void;
     buildProviderList(): void
@@ -259,9 +258,12 @@ export declare class Router {
     instantiateComponent(FindComponent: Function, renderDom: Element): any;
 }
 
-export declare function Injectable(_constructor: Function): void;
+// Dependency Injection
+export declare function Injectable(options?: TInjectableOptions): (_constructor: Function) => void;
 
-export declare function injectorinjector(_constructor: Function, _module: any): any[];
+export declare function Injected(_constructor: Function): void;
+
+export declare function injector(_constructor: Function, _module: any): any[];
 
 export declare function factoryCreator(_constructor: Function, _module: any): any;
 
@@ -270,8 +272,6 @@ export declare function Component<State = any, Props = any, Vm = any>(options: T
 export declare function NvModule(options: TNvModuleOptions): (_constructor: Function) => void;
 
 export declare function factoryModule(EM: Function): INvModule;
-
-export declare function Service(options?: TServiceOptions): (_constructor: Function) => void;
 
 // life cycle hooks
 export declare interface OnInit {

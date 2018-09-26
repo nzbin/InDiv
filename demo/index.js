@@ -38,6 +38,9 @@ class HeroSearchService {
 }
 Injectable({
   isSingletonMode: false,
+  injectTokens: [
+    'heroSearchService1'
+  ],
 })(HeroSearchService);
 
 class RouteChild {
@@ -80,6 +83,9 @@ Component({
       <p>子路由的子组件::{{state.b}}</p>
       <pp-childs ax={state.b}></pp-childs>
     </div>`),
+    injectTokens: [
+    'heroSearchService2'
+  ],
 })(RouteChild);
 
 class PCChild {
@@ -292,6 +298,9 @@ Component({
     <router-render></router-render>
   </div>
     `),
+  injectTokens: [
+    'heroSearchService'
+  ],
 })(R1);
 
 
@@ -348,6 +357,10 @@ Component({
     <router-render></router-render>
   </div>
   `),
+  injectTokens: [
+    'heroSearchService1',
+    'heroSearchService',
+  ]
 })(R2);
 
 class TestComponent {
@@ -376,8 +389,8 @@ class Container {
     heroSearchService,
     heroSearchService1,
   ) {
-    this.ss = heroSearchService;
-    this.ss.test();
+    // this.ss = heroSearchService;
+    // this.ss.test();
     console.log('heroSearchService1', heroSearchService1);
     console.log('nvHttp', nvHttp);
     this.state = {
@@ -531,6 +544,10 @@ Component({
       <router-render></router-render>
     </div>
   `),
+  injectTokens: [
+    'heroSearchService',
+    'heroSearchService1',
+  ]
 })(Container);
 
 class M2 {}
@@ -541,7 +558,10 @@ NvModule({
     PCChild,
   ],
   providers: [
-    HeroSearchService2,
+    {
+      injectToken: 'heroSearchService2',
+      useClass: HeroSearchService2,
+    },
   ],
   exports: [
     R2,
@@ -561,8 +581,14 @@ NvModule({
     R1,
   ],
   providers: [
-    HeroSearchService,
-    HeroSearchService1,
+    {
+      injectToken: 'heroSearchService',
+      useClass: HeroSearchService,
+    },
+    {
+      injectToken: 'heroSearchService1',
+      useClass: HeroSearchService1,
+    }
   ],
 })(M1);
 

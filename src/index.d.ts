@@ -36,16 +36,24 @@ export type EsRouteObject = {
 export type TComponentOptions = {
     selector: string;
     template: string;
+    injectTokens?: string[];
 };
 
 export type TInjectableOptions = {
     isSingletonMode?: boolean;
+    injectTokens?: string[];
+};
+
+export type TInjectTokenProvider = {
+    [props: string]: any;
+    injectToken: string;
+    useClass: Function;
 };
 
 export type TNvModuleOptions = {
     imports?: Function[];
     components: Function[];
-    providers?: Function[];
+    providers?: (Function | TInjectTokenProvider)[];
     exports?: Function[];
     bootstrap?: Function;
 };
@@ -89,9 +97,9 @@ export interface INvModule {
     utils?: Utils;
     $imports?: Function[];
     $components?: Function[];
-    $providers?: Function[];
+    $providers?: (Function | TInjectTokenProvider)[];
     $exports?: Function[];
-    providerList?: Map<string, Function>;
+    providerList?: Map<Function | string, Function>;
     bootstrap?: Function;
     buildImports(): void;
     buildProviderList(): void

@@ -1,12 +1,18 @@
 import { IUtil } from './utils';
 
+export type TInjectTokenProvider = {
+  [props: string]: any;
+  injectToken: string;
+  useClass: Function;
+};
+
 export interface INvModule {
   utils?: IUtil;
   $imports?: Function[];
   $components?: Function[];
-  $providers?: Function[];
+  $providers?: (Function | TInjectTokenProvider)[];
   $exports?: Function[];
-  providerList?: Map<string, Function>;
+  providerList?: Map<Function | string, Function>;
   bootstrap?: Function;
 
   buildImports?(): void;

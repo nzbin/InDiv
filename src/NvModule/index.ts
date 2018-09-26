@@ -1,11 +1,11 @@
 import Utils from '../Utils';
 
-import { INvModule } from '../types';
+import { INvModule, TInjectTokenProvider } from '../types';
 
 type TNvModuleOptions = {
   imports?: Function[];
   components: Function[];
-  providers?: Function[];
+  providers?: (Function | TInjectTokenProvider)[];
   exports?: Function[];
   bootstrap?: Function;
 };
@@ -45,13 +45,19 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
 
     vm.buildProviderList = function (): void {
       if (!(this as INvModule).$providers) return;
-      (this as INvModule).$providers.forEach((service: any) => this.providerList.set(`${service.name.charAt(0).toUpperCase()}${service.name.slice(1)}`, service));
+      (this as INvModule).$providers.forEach(service => {
+        if ((service as TInjectTokenProvider).injectToken) {
+          (this as INvModule).providerList.set((service as TInjectTokenProvider).injectToken, (service as TInjectTokenProvider).useClass);
+        } else {
+          (this as INvModule).providerList.set(service as Function, service as Function);
+        }
+      });
     };
 
     vm.buildProviders4Services = function (): void {
       if (!this.$providers) return;
-      for (const name in (this as INvModule).$providers) {
-        const service: any = (this as INvModule).$providers[name];
+      for (let i = 0; i <= this.$providers.length - 1; i++) {
+        const service: any = (this as INvModule).$providers[i];
         if (service._injectedProviders) {
           (this as INvModule).providerList.forEach((value, key) => {
             if (!service._injectedProviders.has(key)) service._injectedProviders.set(key, value);
@@ -71,7 +77,7 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
             if (!component._injectedProviders.has(key)) component._injectedProviders.set(key, value);
           });
         } else {
-          component._injectedProviders = this.providerList;
+          component._injectedProviders = (this as INvModule).providerList;
         }
       }
     };

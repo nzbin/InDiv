@@ -10,6 +10,7 @@ import { factoryCreator } from '../Injectable';
 type TComponentOptions = {
   selector: string;
   template: string;
+  injectTokens?: string[];
 };
 
 /**
@@ -26,6 +27,7 @@ type TComponentOptions = {
 function Component<State = any, Props = any, Vm = any>(options: TComponentOptions): (_constructor: Function) => void {
   return function (_constructor: Function): void {
     (_constructor as any).$selector = options.selector;
+    (_constructor as any)._injectTokens = options.injectTokens;
     const vm: IComponent<State, Props, Vm> = _constructor.prototype;
     vm.$template = options.template;
 

@@ -42,7 +42,8 @@ class HeroSearchService {
 interface Props {
   a: number;
 }
-// @Injectable
+
+@Injected
 @Component({
   selector: 'route-child',
   template: (`

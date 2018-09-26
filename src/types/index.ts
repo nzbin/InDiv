@@ -2,7 +2,7 @@ export { ICompile } from './compile';
 export { ICompileUtilForRepeat, ICompileUtil } from './compileUtils';
 export { ComponentList, IComponent } from './component';
 export { IMiddleware, EsRouteObject, IInDiv } from './indiv';
-export { INvModule } from './nvModule';
+export { INvModule, TInjectTokenProvider } from './nvModule';
 export { IHttpGet, IHttpDelete, IHttpPost, IHttpPut, IHttpPatch, IEsHttp } from './http';
 export { IKeyWatcher } from './keyWatcher';
 export { TRouter, IRouter } from './router';

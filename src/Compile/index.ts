@@ -22,23 +22,18 @@ class Compile {
    * @param {Element} [routerRenderDom]
    * @memberof Compile
    */
-  constructor(el: string | Element, vm: any, routerRenderDom?: Element) {
+  constructor(el: string | Element, vm: any) {
     this.utils = new Utils();
     this.$vm = vm;
     this.$el = this.isElementNode(el) ? el as Element : document.querySelector(el as string);
     if (this.$el) {
       this.$fragment = this.node2Fragment();
       this.init();
-      if (routerRenderDom) {
-        // replace routeDom
-        const newRouterRenderDom = this.$fragment.querySelectorAll(this.$vm.$vm.$routeDOMKey)[0];
-        newRouterRenderDom.parentNode.replaceChild(routerRenderDom, newRouterRenderDom);
-      }
 
       let oldVnode = VirtualDOM.parseToVnode(this.$el);
       let newVnode = VirtualDOM.parseToVnode(this.$fragment);
       let patchList: IPatchList[] = [];
-      VirtualDOM.diffVnode(oldVnode, newVnode, patchList);
+      VirtualDOM.diffVnode(oldVnode, newVnode, patchList, this.$vm.$vm.$routeDOMKey);
       VirtualDOM.renderVnode(patchList);
 
       this.utils = null;

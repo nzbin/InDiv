@@ -109,12 +109,14 @@ function parseToVnode(node: DocumentFragment | Element): IVnode {
  *
  * @param {IVnode} newVnode
  * @param {IVnode} oldVnode
+ * @param {string} routeDOMKey
  * @param {IPatchList[]} patchList
  */
-function diffChildNodes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
+function diffChildNodes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[], routeDOMKey: string): void {
   if (oldVnode.childNodes.length > 0) {
     (oldVnode.childNodes as IVnode[]).forEach((oChild, index) => {
-      if (oChild.checked) return;
+      // jump route DOM
+      if (oChild.checked || oChild.tagName === routeDOMKey.toLocaleUpperCase()) return;
       const sameCode = newVnode.childNodes.find(nChild => (nChild.node.isEqualNode(oChild.node) && nChild.key === oChild.key && !nChild.checked) || (nChild.tagName === oChild.tagName && nChild.key === oChild.key && !nChild.checked));
       if (sameCode) {
         const sameCodeIndex = newVnode.childNodes.findIndex(nChild => nChild === sameCode);
@@ -126,7 +128,7 @@ function diffChildNodes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
             parentNode: oldVnode.node,
           });
         }
-        diffVnode(oChild, sameCode, patchList);
+        diffVnode(oChild, sameCode, patchList, routeDOMKey);
         sameCode.checked = true;
       } else {
         patchList.push({
@@ -141,7 +143,8 @@ function diffChildNodes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
 
   if (newVnode.childNodes.length > 0) {
     (newVnode.childNodes as IVnode[]).forEach((nChild, index) => {
-      if (nChild.checked) return;
+      // jump route DOM
+      if (nChild.checked || nChild.tagName === routeDOMKey.toLocaleUpperCase()) return;
       patchList.push({
         type: 1,
         newIndex: index,
@@ -309,16 +312,17 @@ function diffEventTypes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
  * @param {IVnode} oldVnode
  * @param {IVnode} newVnode
  * @param {IPatchList[]} patchList
+ * @param {string} routeDOMKey
  * @returns {void}
  */
-function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
+function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[], routeDOMKey: string): void {
   if (!patchList) {
     console.error('patchList can not be null, diffVnode must need an Array');
     return;
   }
 
   if (newVnode.type === 'document-fragment') {
-    diffChildNodes(oldVnode, newVnode, patchList);
+    diffChildNodes(oldVnode, newVnode, patchList, routeDOMKey);
     return;
   }
 
@@ -327,7 +331,7 @@ function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]):
   if (oldVnode.tagName === 'INPUT' || oldVnode.tagName === 'TEXTAREA textarea' || oldVnode.tagName === 'INPUT') diffInputValue(oldVnode, newVnode, patchList);
   diffRepeatData(oldVnode, newVnode, patchList);
   diffEventTypes(oldVnode, newVnode, patchList);
-  diffChildNodes(oldVnode, newVnode, patchList);
+  diffChildNodes(oldVnode, newVnode, patchList, routeDOMKey);
 }
 
 /**

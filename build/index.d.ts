@@ -198,7 +198,7 @@ export declare class Compile {
     $vm: any;
     $el: Element;
     $fragment: DocumentFragment;
-    constructor(el: string | Element, vm: any, routerRenderDom?: Element);
+    constructor(el: string | Element, vm: any);
     init(): void;
     compileElement(fragment: DocumentFragment): void;
     recursiveDOM(childNodes: NodeListOf<Node & ChildNode>, fragment: DocumentFragment | Element): void;

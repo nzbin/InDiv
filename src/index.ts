@@ -22,7 +22,7 @@ export { default as Component } from './Component';
 export { Router, TRouter } from './Router';
 export { default as InDiv } from './InDiv';
 export { NvModule, factoryModule } from './NvModule';
-export { default as nvHttp } from './Http';
+export { default as NVHttp } from './Http';
 export {
   Injectable,
   Injected,

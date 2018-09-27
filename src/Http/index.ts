@@ -1,7 +1,10 @@
 import axios from 'axios';
+import { Injectable } from '../Injectable';
 
-const nvHttp = {
-  get: function<P = any, R = any>(url: string, params?: P): Promise<R> {
+
+@Injectable()
+class NVHttp {
+  public get<P = any, R = any>(url: string, params?: P): Promise<R> {
     return new Promise((resolve, reject) => {
       const pms = params ? { params } : null;
       axios.get(url, pms)
@@ -12,9 +15,9 @@ const nvHttp = {
           reject(e.response.data);
         });
     });
-  },
+  }
 
-  delete: function<P = any, R = any>(url: string, params?: P): Promise<R> {
+  public delete<P = any, R = any>(url: string, params?: P): Promise<R> {
     return new Promise((resolve, reject) => {
       const pms = params ? { params } : null;
       axios.delete(url, pms)
@@ -25,9 +28,9 @@ const nvHttp = {
           reject(e.response.data);
         });
     });
-  },
+  }
 
-  post: function<P = any, R = any>(url: string, params?: P): Promise<R> {
+  public post<P = any, R = any>(url: string, params?: P): Promise<R> {
     return new Promise((resolve, reject) => {
       axios.post(url, params)
         .then(res => {
@@ -37,9 +40,9 @@ const nvHttp = {
           reject(e.response.data);
         });
     });
-  },
+  }
 
-  put: function<P = any, R = any>(url: string, params?: P): Promise<R> {
+  public put<P = any, R = any>(url: string, params?: P): Promise<R> {
     return new Promise((resolve, reject) => {
       axios.put(url, params)
         .then(res => {
@@ -49,9 +52,9 @@ const nvHttp = {
           reject(e.response.data);
         });
     });
-  },
+  }
 
-  patch: function<P = any, R = any>(url: string, params?: P): Promise<R> {
+  public patch<P = any, R = any>(url: string, params?: P): Promise<R> {
     return new Promise((resolve, reject) => {
       axios.patch(url, params)
         .then(res => {
@@ -61,9 +64,8 @@ const nvHttp = {
           reject(e.response.data);
         });
     });
-  },
+  }
+}
 
-};
-
-export default nvHttp;
+export default NVHttp;
 

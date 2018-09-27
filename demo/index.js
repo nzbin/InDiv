@@ -1,4 +1,4 @@
-import { InDiv, Component, Router, Utils, NvModule, Injectable, nvHttp } from '../build';
+import { InDiv, Component, Router, Utils, NvModule, Injectable, NVHttp } from '../build';
 
 class HeroSearchService1 {
   constructor() {
@@ -36,11 +36,11 @@ class HeroSearchService {
     console.log('HeroSearchService !!!000000000');
   }
 }
+HeroSearchService.injectTokens = [
+  'heroSearchService1'
+];
 Injectable({
   isSingletonMode: false,
-  injectTokens: [
-    'heroSearchService1'
-  ],
 })(HeroSearchService);
 
 class RouteChild {
@@ -76,16 +76,17 @@ class RouteChild {
     this.state.b = nextProps.a;
   }
 }
+RouteChild.injectTokens = [
+  'heroSearchService2'
+];
 Component({
   selector: 'route-child',
   template: (`
     <div>
       <p>子路由的子组件::{{state.b}}</p>
       <pp-childs ax={state.b}></pp-childs>
-    </div>`),
-    injectTokens: [
-    'heroSearchService2'
-  ],
+    </div>`
+  ),
 })(RouteChild);
 
 class PCChild {
@@ -280,7 +281,9 @@ class R1 {
     this.setState({ a: a });
   }
 }
-
+R1.injectTokens = [
+  'heroSearchService'
+];
 Component({
   selector: 'R1',
   template: (`
@@ -297,10 +300,7 @@ Component({
     下面是子路由<br/>
     <router-render></router-render>
   </div>
-    `),
-  injectTokens: [
-    'heroSearchService'
-  ],
+  `),
 })(R1);
 
 
@@ -344,6 +344,10 @@ class R2 {
     this.setLocation('/R1/C1/D1', { b: '1' });
   }
 }
+R2.injectTokens = [
+  'heroSearchService1',
+  'heroSearchService',
+];
 Component({
   selector: 'R2',
   template: (`
@@ -357,10 +361,6 @@ Component({
     <router-render></router-render>
   </div>
   `),
-  injectTokens: [
-    'heroSearchService1',
-    'heroSearchService',
-  ]
 })(R2);
 
 class TestComponent {
@@ -388,6 +388,7 @@ class Container {
   constructor(
     heroSearchService,
     heroSearchService1,
+    nvHttp,
   ) {
     // this.ss = heroSearchService;
     // this.ss.test();
@@ -521,7 +522,11 @@ class Container {
       }];
   }
 }
-
+Container.injectTokens = [
+  'heroSearchService',
+  'heroSearchService1',
+  'nvHttp',
+];
 Component({
   selector: 'container-wrap',
   template: (`
@@ -544,10 +549,6 @@ Component({
       <router-render></router-render>
     </div>
   `),
-  injectTokens: [
-    'heroSearchService',
-    'heroSearchService1',
-  ]
 })(Container);
 
 class M2 {}
@@ -588,6 +589,10 @@ NvModule({
     {
       injectToken: 'heroSearchService1',
       useClass: HeroSearchService1,
+    },
+    {
+      injectToken: 'nvHttp',
+      useClass: NVHttp,
     }
   ],
 })(M1);

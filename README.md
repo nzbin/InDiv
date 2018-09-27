@@ -1,7 +1,6 @@
 # indiv
 
 A minimal web mvvm framework.一个小Web mvvm库。
-Now we support for typescript!
 
 [中文](https://dimalilongji.github.io/indiv-doc)
 [npm](https://www.npmjs.com/package/indiv)
@@ -11,7 +10,7 @@ Now we support for typescript!
   - `npm run start-js`
   - open `http://localhost:1234/demo`
 
-## Basic Usage
+## Basic Usage (please use version: v1.2.0+)
 
 #### Create a root DOM for route which id is root:
 
@@ -239,10 +238,15 @@ Now we support for typescript!
 
       - to use function `Component` declare `template` and `state`
       - to use lifecycle `nvOnInit, nvBeforeMount, nvAfterMount, nvOnDestory, nvHasRender nvWatchState nvReceiveProps nvRouteChange` in Class
-      - to use `constructor`'s arguments of `Component` for inject `Service`, and arguments must be lowercase lette of initials lette  of Service class name. For example, you want to inject a service  class `HeroService`, you must write argument in `constructor` with `heroService`
+      - **v1.2.0+: use Class static attribution `injectTokens: string[]` and `injection token mode` of provider for dependence injection for javascript**
+      - **v1.2.0+: Class static attribution `injectTokens: string[]` must be `injectionToken` of providers, and arguments of constructor will be instances of `useClass` of providers**
 
       ```javascript
       class Container {
+        static injectTokens = [
+          'heroSearchService',
+        ];
+
         constructor(
           heroSearchService
         ) {
@@ -336,10 +340,10 @@ Now we support for typescript!
 
   - InDiv apps are modular and InDiv has its own modularity system called `NvModule`. An `NvModule` is a container for a cohesive block of code dedicated to an application domain, a workflow, or a closely related set of capabilities. It can contain components, service providers, and other code files whose scope is defined by the containing `NvModule`. It can import functionality that is exported from other `NvModule`, and export selected functionality for use by other `NvModule`.
 
-  - u need to declare `imports?: Function[]` `components: Function[]` `providers?: Function[]` `exports?: Function[]` `bootstrap?: Function` in `options`
+  - u need to declare `imports?: Function[]` `components: Function[]` `providers?: (Function | { injectToken: string; useClass: Function; })[]` `exports?: Function[]` `bootstrap?: Function` in `options`
   - `imports` imports other `NvModule` and respect it's `exports`
   - `components` declare `Components`
-  - `providers` declare `Service`
+  - `providers` declare `Service` **v1.2.0+: in typescript use` Function[]` and in javascript please use `{ injectToken: string; useClass: Function; }[]`**
   - `exports:` exports `Components` for other `NvModules`
   - `bootstrap` declare `Component` for Module bootstrap only if u don't `Router`
 
@@ -380,8 +384,14 @@ Now we support for typescript!
         R1,
       ],
       providers: [
-        HeroSearchService,
-        HeroSearchService1,
+        {
+          injectToken: 'heroSearchService',
+          useClass: HeroSearchService1
+        },
+        {
+          injectToken: 'heroSearchService1',
+          useClass: HeroSearchService1
+        }
       ],
       exports: [
         Container,
@@ -493,9 +503,14 @@ Now we support for typescript!
       - to use `constructor`'s arguments of `Service` for inject an other `Service`, and arguments must be lowercase lette of initials lette  of Service class name. For example, you want to inject a service  class `HeroSearchService`, you must write argument in `constructor` with `heroSearchService`
       - **v1.1.0: use `Service`**
       - **v1.2.0+: use `Injectable`**
+      - **v1.2.0+: for inject dependences for service, please use Class static attribution `injectTokens: string[]` like `Component`** 
 
       ```javascript
       class HeroSearchService {
+        static injectTokens = [
+          'heroSearchService1'
+        ];
+
         constructor(heroSearchService1) {
           this.hsr = heroSearchService1;
           this.hsr.test();

@@ -36,12 +36,10 @@ export type EsRouteObject = {
 export type TComponentOptions = {
     selector: string;
     template: string;
-    injectTokens?: string[];
 };
 
 export type TInjectableOptions = {
     isSingletonMode?: boolean;
-    injectTokens?: string[];
 };
 
 export type TInjectTokenProvider = {
@@ -133,7 +131,7 @@ export declare class Utils {
     isBrowser(): boolean;
 }
 
-export declare const nvHttp: {
+export declare class NVHttp {
     get?<P = any, R = any>(url: string, params?: P): Promise<R>;
     delete?<P = any, R = any>(url: string, params?: P): Promise<R>;
     post?<P = any, R = any>(url: string, params?: P): Promise<R>;

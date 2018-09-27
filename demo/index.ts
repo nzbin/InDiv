@@ -1,5 +1,5 @@
-import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, nvHttp, SetState, SetLocation, GetLocation } from '../src';
-// import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, nvHttp, SetState, SetLocation, GetLocation } from '../build';
+// import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, SetState, SetLocation, GetLocation } from '../src';
+import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, SetState, SetLocation, GetLocation } from '../build';
 
 @Injectable({
   isSingletonMode: true,
@@ -465,6 +465,7 @@ class Container implements OnInit, AfterMount, WatchState {
   constructor(
     private hss: HeroSearchService,
     private hss2: HeroSearchService1,
+    private nvHttp: NVHttp,
   ) {
     this.hss.test();
     // console.log(this.state);
@@ -694,6 +695,7 @@ class M2 {}
     R1,
   ],
   providers: [
+    NVHttp,
     HeroSearchService,
     HeroSearchService1,
   ],

@@ -32,7 +32,9 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
 
     vm.buildImports = function (): void {
       if (!(this as INvModule).$imports) return;
-      (this as INvModule).$imports.forEach((ModuleImport: any) => {
+      const length = this.$imports.length - 1;
+      for (let i = 0; i <= length; i++) {
+        const ModuleImport = (this as INvModule).$imports[i];
         const moduleImport = factoryModule(ModuleImport);
         for (let i = 0; i <= moduleImport.$exports.length - 1; i++) {
           const importComponent = moduleImport.$exports[i];
@@ -40,23 +42,26 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
             this.$components.push(importComponent);
           }
         }
-      });
+      }
     };
 
     vm.buildProviderList = function (): void {
       if (!(this as INvModule).$providers) return;
-      (this as INvModule).$providers.forEach(service => {
+      const length = this.$providers.length - 1;
+      for (let i = 0; i <= length; i++) {
+        const service = (this as INvModule).$providers[i];
         if ((service as TInjectTokenProvider).injectToken) {
           (this as INvModule).providerList.set((service as TInjectTokenProvider).injectToken, (service as TInjectTokenProvider).useClass);
         } else {
           (this as INvModule).providerList.set(service as Function, service as Function);
         }
-      });
+      }
     };
 
     vm.buildProviders4Services = function (): void {
       if (!this.$providers) return;
-      for (let i = 0; i <= this.$providers.length - 1; i++) {
+      const length = this.$providers.length - 1;
+      for (let i = 0; i <= length; i++) {
         const service: any = (this as INvModule).$providers[i];
         if (service._injectedProviders) {
           (this as INvModule).providerList.forEach((value, key) => {
@@ -69,8 +74,9 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
     };
 
     vm.buildProviders4Components = function (): void {
-      if (!(this as INvModule).$providers) return;
-      for (let i = 0; i <= this.$components.length - 1; i++) {
+      if (!(this as INvModule).$providers || !(this as INvModule).$components) return;
+      const length = this.$components.length - 1;
+      for (let i = 0; i <= length; i++) {
         const component: any = (this as INvModule).$components[i];
         if (component._injectedProviders) {
           (this as INvModule).providerList.forEach((value, key) => {
@@ -84,7 +90,8 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
 
     vm.buildComponents4Components = function (): void {
       if (!this.$components) return;
-      for (let i = 0; i <= this.$components.length - 1; i++) {
+      const length = this.$components.length - 1;
+      for (let i = 0; i <= length; i++) {
         const FindComponent: any = (this as INvModule).$components[i];
         if (FindComponent._injectedComponents) {
           (this as INvModule).$components.forEach((needInjectComponent: any) => {

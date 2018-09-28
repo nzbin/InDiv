@@ -82,7 +82,6 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     vm.reRender = function (): void {
       const dom = (this as IComponent<State, Props, Vm>).renderDom;
       const routerRenderDom = dom.querySelectorAll((this as IComponent<State, Props, Vm>).$vm.$routeDOMKey)[0];
-      // const compile = new Compile(dom, (this as IComponent<State, Props, Vm>));
       const compile = new Compile(dom, (this as IComponent<State, Props, Vm>), routerRenderDom);
       (this as IComponent<State, Props, Vm>).mountComponent(dom);
       (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {

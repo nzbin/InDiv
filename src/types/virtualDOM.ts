@@ -35,7 +35,6 @@ export interface IParseToVnode {
 }
 
 export interface IDiffVnode {
-    // (oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[], routeDOMKey: string): void;
     (oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void;
 }
 

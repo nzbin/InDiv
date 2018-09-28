@@ -1,5 +1,8 @@
 import { TFnWatcher, TFnRender } from '../types';
+
 import Utils from '../Utils';
+
+const utils = new Utils();
 
 /**
  * Watcher for InDiv
@@ -10,7 +13,6 @@ class Watcher {
   public data: any;
   public watcher: TFnWatcher;
   public render: TFnRender;
-  public utils: Utils;
 
   /**
    * Creates an instance of Watcher.
@@ -33,7 +35,6 @@ class Watcher {
     this.watcher = watcher;
     this.render = render;
     this.watchData(this.data);
-    this.utils = new Utils();
   }
 
   public watchData(data: any): void {
@@ -49,7 +50,7 @@ class Watcher {
           return val;
         },
         set(newVal: any) {
-          if (vm.utils.isEqual(newVal, val)) return;
+          if (utils.isEqual(newVal, val)) return;
 
           // for watcher method
           let oldData;

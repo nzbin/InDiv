@@ -219,10 +219,13 @@ Component({
 
 
 class R1 {
-  constructor(heroSearchService) {
+  constructor(
+    heroSearchService,
+    utils
+  ) {
     this.heroSearchService = heroSearchService;
     this.heroSearchService.test();
-    this.utils = new Utils();
+    this.utils = utils;
     this.state = {
       a: 'a11',
       b: 2,
@@ -282,7 +285,8 @@ class R1 {
   }
 }
 R1.injectTokens = [
-  'heroSearchService'
+  'heroSearchService',
+  'utils',
 ];
 Component({
   selector: 'R1',
@@ -584,6 +588,10 @@ NvModule({
     R1,
   ],
   providers: [
+    {
+      provide: 'utils',
+      useClass: Utils,
+    },
     {
       provide: 'heroSearchService',
       useClass: HeroSearchService,

@@ -1,5 +1,3 @@
-import Utils from '../Utils';
-
 import { INvModule, TInjectTokenProvider } from '../types';
 
 type TNvModuleOptions = {
@@ -23,7 +21,6 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
   return function (_constructor: Function): void {
     const vm = _constructor.prototype as INvModule;
     vm.providerList = new Map();
-    vm.utils = new Utils();
     if (options.imports) vm.$imports = options.imports;
     if (options.components) vm.$components = options.components;
     if (options.providers) vm.$providers = options.providers;

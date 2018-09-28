@@ -4,6 +4,8 @@ import VirtualDOM from '../VirtualDOM';
 import Utils from '../Utils';
 import { CompileUtil } from '../CompileUtils';
 
+const utils = new Utils();
+
 /**
  * main compiler
  *
@@ -22,21 +24,24 @@ class Compile {
    * @param {Element} [routerRenderDom]
    * @memberof Compile
    */
-  constructor(el: string | Element, vm: any) {
-    this.utils = new Utils();
+  constructor(el: string | Element, vm: any, routerRenderDom?: Element) {
     this.$vm = vm;
     this.$el = this.isElementNode(el) ? el as Element : document.querySelector(el as string);
     if (this.$el) {
       this.$fragment = this.node2Fragment();
       this.init();
+      if (routerRenderDom) {
+        // replace routeDom
+        const newRouterRenderDom = this.$fragment.querySelectorAll(this.$vm.$vm.$routeDOMKey)[0];
+        newRouterRenderDom.parentNode.replaceChild(routerRenderDom, newRouterRenderDom);
+      }
 
       let oldVnode = VirtualDOM.parseToVnode(this.$el);
       let newVnode = VirtualDOM.parseToVnode(this.$fragment);
       let patchList: IPatchList[] = [];
-      VirtualDOM.diffVnode(oldVnode, newVnode, patchList, this.$vm.$vm.$routeDOMKey);
+      VirtualDOM.diffVnode(oldVnode, newVnode, patchList);
       VirtualDOM.renderVnode(patchList);
 
-      this.utils = null;
       this.$fragment = null;
       oldVnode = null;
       newVnode = null;
@@ -61,7 +66,7 @@ class Compile {
    */
   public compileElement(fragment: DocumentFragment): void {
     const elementCreated = document.createElement('div');
-    elementCreated.innerHTML = this.utils.formatInnerHTML(this.$vm.$template);
+    elementCreated.innerHTML = utils.formatInnerHTML(this.$vm.$template);
     const childNodes = elementCreated.childNodes;
     this.recursiveDOM(childNodes, fragment);
   }

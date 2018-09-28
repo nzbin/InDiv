@@ -1,6 +1,5 @@
 import { IWatcher } from './watcher';
 import { ICompileUtil } from './compileUtils';
-import { IUtil } from './utils';
 
 export type ComponentList<C> = {
     dom: Node;
@@ -26,7 +25,6 @@ export type SetLocation = <Q = any, P = any>(path: string, query?: Q, params?: P
 export interface IComponent<State = any, Props = any, Vm = any> {
     state?: State | any;
     props?: Props | any;
-    utils: IUtil;
     compileUtil: ICompileUtil;
     renderDom?: Element;
     $vm?: Vm | any;

@@ -5,6 +5,8 @@ import KeyWatcher from '../KeyWatcher';
 
 export { TRouter } from '../types';
 
+const utils = new Utils();
+
 /**
  * route for InDiv
  *
@@ -17,7 +19,6 @@ export class Router {
   public currentUrl: string;
   public lastRoute: string;
   public rootDom: Element;
-  public utils: Utils;
   public $rootPath: string;
   public hasRenderComponentList: IComponent[];
   public needRedirectPath: string;
@@ -32,7 +33,6 @@ export class Router {
     this.currentUrl = '';
     this.lastRoute = null;
     this.rootDom = null;
-    this.utils = new Utils();
     this.$rootPath = '/';
     this.hasRenderComponentList = [];
     this.needRedirectPath = null;
@@ -54,7 +54,7 @@ export class Router {
       this.$vm.$canRenderModule = false;
       this.$vm.$routeDOMKey = 'router-render';
 
-      if (!this.utils.isBrowser()) return;
+      if (!utils.isBrowser()) return;
       window.addEventListener('load', this.refresh.bind(this), false);
       window.addEventListener('popstate', () => {
         let path;
@@ -80,7 +80,7 @@ export class Router {
    * @memberof Router
    */
   public init(arr: TRouter[]): void {
-    if (!this.utils.isBrowser()) return;
+    if (!utils.isBrowser()) return;
 
     if (arr && arr instanceof Array) {
       const rootDom = document.querySelector('#root');
@@ -296,7 +296,7 @@ export class Router {
           this.$vm.$esRouteParmasObject[key] = path;
         }
 
-        if (!this.utils.isBrowser()) return;
+        if (!utils.isBrowser()) return;
         const rootDom = document.querySelector('#root');
         this.routesList.push(rootRoute);
 

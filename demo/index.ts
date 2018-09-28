@@ -271,7 +271,6 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
 })
 class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   public hSr: HeroSearchService;
-  public utils: Utils;
   public getLocation: GetLocation;
   public setLocation: SetLocation;
   public setState: SetState;
@@ -280,6 +279,7 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
 
   constructor(
     private heroSearchService: HeroSearchService,
+    private utils: Utils,
   ) {
     this.heroSearchService.test();
     this.state = {
@@ -694,6 +694,7 @@ class M2 {}
     R1,
   ],
   providers: [
+    Utils,
     NVHttp,
     HeroSearchService,
     {

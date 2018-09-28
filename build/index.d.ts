@@ -60,7 +60,6 @@ export type TNvModuleOptions = {
 export interface IComponent<State = any, Props = any, Vm = any> {
     state?: State | any;
     props?: Props | any;
-    utils: Utils;
     compileUtil: CompileUtil;
     renderDom?: Element;
     $vm?: Vm | any;
@@ -93,7 +92,6 @@ export interface IComponent<State = any, Props = any, Vm = any> {
 }
 
 export interface INvModule {
-    utils?: Utils;
     $imports?: Function[];
     $components?: Function[];
     $providers?: (Function | TInjectTokenProvider)[];
@@ -112,7 +110,6 @@ export declare class Watcher {
     data: any;
     watcher: TFnWatcher;
     render: TFnRender;
-    utils: Utils;
     constructor(data: any, watcher?: TFnWatcher, render?: TFnRender);
     watchData(data: any): void;
 }
@@ -144,7 +141,6 @@ export declare class KeyWatcher {
     data: any;
     watcher?: TFnWatcher;
     key: string;
-    utils: Utils;
     constructor(data: any, key: string, watcher?: TFnWatcher);
     watchData(data: any, key: string): void;
 }
@@ -195,7 +191,6 @@ export declare class CompileUtil {
     cloneNode(node: Element, repeatData?: any): Node;
 }
 export declare class Compile {
-    utils: Utils;
     $vm: any;
     $el: Element;
     $fragment: DocumentFragment;
@@ -216,7 +211,6 @@ export declare class Compile {
 
 export declare class InDiv {
     modalList: IMiddleware<InDiv>[];
-    utils: Utils;
     rootDom: Element;
     $rootPath: string;
     $canRenderModule: boolean;
@@ -243,7 +237,6 @@ export declare class Router {
     currentUrl: string;
     lastRoute: string;
     rootDom: Element;
-    utils: Utils;
     $rootPath: string;
     hasRenderComponentList: IComponent[];
     needRedirectPath: string;

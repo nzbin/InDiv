@@ -4,6 +4,8 @@ import Utils from '../Utils';
 import { factoryCreator } from '../Injectable';
 import { factoryModule } from '../NvModule';
 
+const utils = new Utils();
+
 /**
  * main: for new InDiv
  *
@@ -11,7 +13,6 @@ import { factoryModule } from '../NvModule';
  */
 class InDiv {
   public modalList: IMiddleware<InDiv>[];
-  public utils: Utils;
   public rootDom: Element;
   public $rootPath: string;
   public $canRenderModule: boolean;
@@ -26,9 +27,8 @@ class InDiv {
 
   constructor() {
     this.modalList = [];
-    this.utils = new Utils();
 
-    if (!this.utils.isBrowser()) return;
+    if (!utils.isBrowser()) return;
 
     this.rootDom = document.querySelector('#root');
     this.$rootPath = '/';
@@ -50,7 +50,7 @@ class InDiv {
   public use(modal: IMiddleware<InDiv>): number {
     modal.bootstrap(this);
     this.modalList.push(modal);
-    return this.modalList.findIndex(md => this.utils.isEqual(md, modal));
+    return this.modalList.findIndex(md => utils.isEqual(md, modal));
   }
 
   /**
@@ -95,7 +95,7 @@ class InDiv {
    * @memberof InDiv
    */
   public init(): void {
-    if (!this.utils.isBrowser()) return;
+    if (!utils.isBrowser()) return;
 
     if (!this.$rootModule) {
       console.error('must use bootstrapModule to declare a root NvModule before init');

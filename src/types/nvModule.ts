@@ -1,5 +1,3 @@
-import { IUtil } from './utils';
-
 export type TInjectTokenProvider = {
   [props: string]: any | Function;
   provide: any;
@@ -8,7 +6,6 @@ export type TInjectTokenProvider = {
 };
 
 export interface INvModule {
-  utils?: IUtil;
   $imports?: Function[];
   $components?: Function[];
   $providers?: (Function | TInjectTokenProvider)[];

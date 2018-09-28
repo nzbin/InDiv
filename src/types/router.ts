@@ -1,6 +1,5 @@
 import { IComponent, ComponentList } from './component';
 import { IInDiv } from './indiv';
-import { IUtil } from './utils';
 import { IKeyWatcher } from './keyWatcher';
 
 
@@ -17,7 +16,6 @@ export interface IRouter {
     currentUrl: string;
     lastRoute: string;
     rootDom: Element;
-    utils: IUtil;
     $rootPath: string;
     hasRenderComponentList: IComponent[];
     needRedirectPath: string;

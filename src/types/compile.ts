@@ -1,7 +1,4 @@
-import { IUtil } from './utils';
-
 export interface ICompile {
-    utils: IUtil;
     $vm: any;
     $el: Element;
     $fragment: DocumentFragment;

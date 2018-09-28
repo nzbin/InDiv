@@ -2,7 +2,9 @@ import axios from 'axios';
 import { Injectable } from '../Injectable';
 
 
-@Injectable()
+@Injectable({
+  isSingletonMode: false,
+})
 class NVHttp {
   public get<P = any, R = any>(url: string, params?: P): Promise<R> {
     return new Promise((resolve, reject) => {

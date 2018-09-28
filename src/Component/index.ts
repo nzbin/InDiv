@@ -12,6 +12,8 @@ type TComponentOptions = {
   template: string;
 };
 
+const utils = new Utils();
+
 /**
  * Decorator @Component
  * 
@@ -29,7 +31,6 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     const vm: IComponent<State, Props, Vm> = _constructor.prototype;
     vm.$template = options.template;
 
-    vm.utils = new Utils();
     vm.compileUtil = new CompileUtil();
     vm.$components = [];
     vm.$componentList = [];
@@ -40,7 +41,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       params?: any;
       data?: any;
     } {
-      if (!this.utils.isBrowser()) return {};
+      if (!utils.isBrowser()) return {};
       return {
         path: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.path,
         query: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.query,
@@ -50,12 +51,12 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     };
 
     vm.setLocation = function (path: string, query?: any, data?: any, title?: string): void {
-      if (!this.utils.isBrowser()) return;
+      if (!utils.isBrowser()) return;
       const rootPath = (this as IComponent<State, Props, Vm>).$vm.$rootPath === '/' ? '' : (this as IComponent<State, Props, Vm>).$vm.$rootPath;
       history.pushState(
         { path, query, data },
         title,
-        `${rootPath}${path}${(this as IComponent<State, Props, Vm>).utils.buildQuery(query)}`,
+        `${rootPath}${path}${utils.buildQuery(query)}`,
       );
       (this as IComponent<State, Props, Vm>).$vm.$esRouteObject = { path, query, data };
     };
@@ -81,7 +82,8 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     vm.reRender = function (): void {
       const dom = (this as IComponent<State, Props, Vm>).renderDom;
       const routerRenderDom = dom.querySelectorAll((this as IComponent<State, Props, Vm>).$vm.$routeDOMKey)[0];
-      const compile = new Compile(dom, (this as IComponent<State, Props, Vm>));
+      // const compile = new Compile(dom, (this as IComponent<State, Props, Vm>));
+      const compile = new Compile(dom, (this as IComponent<State, Props, Vm>), routerRenderDom);
       (this as IComponent<State, Props, Vm>).mountComponent(dom);
       (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
         if (component.scope.render) component.scope.reRender();
@@ -104,7 +106,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
           component.scope = cacheComponent.scope;
           // old props: component.scope.props
           // new props: component.props
-          if (!this.utils.isEqual(component.scope.props, component.props)) {
+          if (!utils.isEqual(component.scope.props, component.props)) {
             if (component.scope.nvReceiveProps) component.scope.nvReceiveProps(component.props);
             component.scope.props = component.props;
           }
@@ -191,7 +193,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     };
 
     vm.setState = function (newState: any): void {
-      if (newState && (this as IComponent<State, Props, Vm>).utils.isFunction(newState)) {
+      if (newState && utils.isFunction(newState)) {
         const _newState = newState();
         if (_newState && _newState instanceof Object) {
           for (const key in _newState) {
@@ -220,7 +222,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     };
 
     vm.buildProps = function (prop: any): any {
-      if ((this as IComponent<State, Props, Vm>).utils.isFunction(prop)) {
+      if (utils.isFunction(prop)) {
         return prop.bind(this as IComponent<State, Props, Vm>);
       } else {
         return prop;

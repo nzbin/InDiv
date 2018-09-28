@@ -36,7 +36,8 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
       for (let i = 0; i <= length; i++) {
         const ModuleImport = (this as INvModule).$imports[i];
         const moduleImport = factoryModule(ModuleImport);
-        for (let i = 0; i <= moduleImport.$exports.length - 1; i++) {
+        const lengthExports = moduleImport.$exports.length - 1;
+        for (let i = 0; i <= lengthExports; i++) {
           const importComponent = moduleImport.$exports[i];
           if (!this.$components.find((component: any) => component.$selector === (importComponent as any).$selector)) {
             this.$components.push(importComponent);
@@ -50,8 +51,8 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
       const length = this.$providers.length - 1;
       for (let i = 0; i <= length; i++) {
         const service = (this as INvModule).$providers[i];
-        if ((service as TInjectTokenProvider).injectToken) {
-          (this as INvModule).providerList.set((service as TInjectTokenProvider).injectToken, (service as TInjectTokenProvider).useClass);
+        if ((service as TInjectTokenProvider).provide) {
+          if ((service as TInjectTokenProvider).useClass || (service as TInjectTokenProvider).useValue) (this as INvModule).providerList.set((service as TInjectTokenProvider).provide, service);
         } else {
           (this as INvModule).providerList.set(service as Function, service as Function);
         }
@@ -63,13 +64,10 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
       const length = this.$providers.length - 1;
       for (let i = 0; i <= length; i++) {
         const service: any = (this as INvModule).$providers[i];
-        if (service._injectedProviders) {
-          (this as INvModule).providerList.forEach((value, key) => {
-            if (!service._injectedProviders.has(key)) service._injectedProviders.set(key, value);
-          });
-        } else {
-          service._injectedProviders = (this as INvModule).providerList;
-        }
+        if (!service._injectedProviders) service._injectedProviders = new Map();
+        (this as INvModule).providerList.forEach((value, key) => {
+          if (!service._injectedProviders.has(key)) service._injectedProviders.set(key, value);
+        });
       }
     };
 
@@ -78,13 +76,10 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
       const length = this.$components.length - 1;
       for (let i = 0; i <= length; i++) {
         const component: any = (this as INvModule).$components[i];
-        if (component._injectedProviders) {
-          (this as INvModule).providerList.forEach((value, key) => {
-            if (!component._injectedProviders.has(key)) component._injectedProviders.set(key, value);
-          });
-        } else {
-          component._injectedProviders = (this as INvModule).providerList;
-        }
+        if (!component._injectedProviders) component._injectedProviders = new Map();
+        (this as INvModule).providerList.forEach((value, key) => {
+          if (!component._injectedProviders.has(key)) component._injectedProviders.set(key, value);
+        });
       }
     };
 
@@ -93,13 +88,10 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
       const length = this.$components.length - 1;
       for (let i = 0; i <= length; i++) {
         const FindComponent: any = (this as INvModule).$components[i];
-        if (FindComponent._injectedComponents) {
-          (this as INvModule).$components.forEach((needInjectComponent: any) => {
-            if (!FindComponent._injectedComponents.find((c: any) => c.$selector === needInjectComponent.$selector)) FindComponent._injectedComponents.push(needInjectComponent);
-          });
-        } else {
-          FindComponent._injectedComponents = (this as INvModule).$components;
-        }
+        if (!FindComponent._injectedComponents) FindComponent._injectedComponents = [];
+        (this as INvModule).$components.forEach((needInjectComponent: any) => {
+          if (!FindComponent._injectedComponents.find((c: any) => c.$selector === needInjectComponent.$selector)) FindComponent._injectedComponents.push(needInjectComponent);
+        });
       }
     };
   };
@@ -114,10 +106,10 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
  */
 export function factoryModule(NM: Function): INvModule {
   const nm = new (NM as any)();
-  nm.buildImports();
   nm.buildProviderList();
   nm.buildProviders4Services();
   nm.buildComponents4Components();
   nm.buildProviders4Components();
+  nm.buildImports();
   return nm;
 }

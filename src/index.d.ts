@@ -43,10 +43,11 @@ export type TInjectableOptions = {
 };
 
 export type TInjectTokenProvider = {
-    [props: string]: any;
-    injectToken: string;
-    useClass: Function;
-};
+    [props: string]: any | Function;
+    provide: any;
+    useClass?: Function;
+    useValue?: any;
+  };
 
 export type TNvModuleOptions = {
     imports?: Function[];

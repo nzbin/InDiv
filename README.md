@@ -5,6 +5,8 @@ A minimal web mvvm framework.一个小Web mvvm库。
 [中文](https://dimalilongji.github.io/indiv-doc)
 [npm](https://www.npmjs.com/package/indiv)
 
+version: v1.2.0
+
 ## demo
   - `npm run start`
   - `npm run start-js`
@@ -135,12 +137,10 @@ A minimal web mvvm framework.一个小Web mvvm库。
 
       - to use decorator `Component` declare `template` and `state`
       - to implements interface `OnInit, BeforeMount, AfterMount, HasRender, OnDestory, ReceiveProps, WatchState, RouteChange` to use lifecycle
-      - **v1.1.0:  to use decorator `Injectable` to  declare need to be injected `Service` in `constructor`'s arguments of `Component`**
-      - **v1.2.0 +:  to use decorator `Injected` to declare need to be injected `Service` in `constructor`'s arguments of `Component`** 
+      - to use decorator `Injected` to declare need to be injected `Service` in `constructor`'s arguments of `Component`** 
 
       ```typescript
-      // @Injectable v1.1.0
-      @Injected // v1.2.0+
+      @Injected
       @Component({
         selector: 'container-wrap',
         template: (`
@@ -238,8 +238,8 @@ A minimal web mvvm framework.一个小Web mvvm库。
 
       - to use function `Component` declare `template` and `state`
       - to use lifecycle `nvOnInit, nvBeforeMount, nvAfterMount, nvOnDestory, nvHasRender nvWatchState nvReceiveProps nvRouteChange` in Class
-      - **v1.2.0+: use Class static attribution `injectTokens: string[]` and `injection token mode` of provider for dependence injection for javascript**
-      - **v1.2.0+: Class static attribution `injectTokens: string[]` must be `injectionToken` of providers, and arguments of constructor will be instances of `useClass` of providers**
+      - **use Class static attribution `injectTokens: string[]` and `provide injection token mode` of provider for dependence injection for javascript**
+      - **Class static attribution `injectTokens: string[]` must be `provide` of providers, and arguments of constructor will be instances of `useClass` or value of `useValue` of providers**
 
       ```javascript
       class Container {
@@ -340,10 +340,12 @@ A minimal web mvvm framework.一个小Web mvvm库。
 
   - InDiv apps are modular and InDiv has its own modularity system called `NvModule`. An `NvModule` is a container for a cohesive block of code dedicated to an application domain, a workflow, or a closely related set of capabilities. It can contain components, service providers, and other code files whose scope is defined by the containing `NvModule`. It can import functionality that is exported from other `NvModule`, and export selected functionality for use by other `NvModule`.
 
-  - u need to declare `imports?: Function[]` `components: Function[]` `providers?: (Function | { injectToken: string; useClass: Function; })[]` `exports?: Function[]` `bootstrap?: Function` in `options`
+  - u need to declare `imports?: Function[]` `components: Function[]` `providers?: (Function | { provide: any; useClass: Function; } | { provide: any; useValue: any; }[])[]` `exports?: Function[]` `bootstrap?: Function` in `options`
   - `imports` imports other `NvModule` and respect it's `exports`
   - `components` declare `Components`
-  - `providers` declare `Service` **v1.2.0+: in typescript use` Function[]` and in javascript please use `{ injectToken: string; useClass: Function; }[]`**
+  - `providers` declare `Service`
+    - providers have three modes: `Function[]`, `{ provide: any; useClass: Function; }[]`, `{ provide: any; useValue: any; }[]`
+    - **in javascript please use `{ provide: string; useClass: Function; }[]` or `{ provide: string; useValue: any; }[]`**
   - `exports:` exports `Components` for other `NvModules`
   - `bootstrap` declare `Component` for Module bootstrap only if u don't `Router`
 
@@ -361,7 +363,14 @@ A minimal web mvvm framework.一个小Web mvvm库。
       ],
       providers: [
         HeroSearchService,
-        HeroSearchService1,
+        {
+          provide: HeroSearchService1,
+          useClass: HeroSearchService1
+        },
+        {
+          provide: HeroSearchService3,
+          useValue: 123,
+        },
       ],
       exports: [
         Container,
@@ -385,13 +394,17 @@ A minimal web mvvm framework.一个小Web mvvm库。
       ],
       providers: [
         {
-          injectToken: 'heroSearchService',
+          provide: 'heroSearchService',
           useClass: HeroSearchService1
         },
         {
-          injectToken: 'heroSearchService1',
+          provide: 'heroSearchService1',
           useClass: HeroSearchService1
-        }
+        },
+        {
+          provide: HeroSearchService3,
+          useValue: 123,
+        },
       ],
       exports: [
         Container,
@@ -468,21 +481,15 @@ A minimal web mvvm framework.一个小Web mvvm库。
 
   - Components shouldn't fetch or save data directly and they certainly shouldn't knowingly present fake data. They should focus on presenting data and delegate data access to a service.
   - And u can use `Service` to send communication between `Component` , because we have realized singleton.
-  - `Service` accepts an object`isSingletonMode: boolean` to decide use singleton or not.
+  - `Service` accepts an object`isSingletonMode: boolean` to decide use singleton or not, and default value of `isSingletonMode` is `true`
 
     1. typescript
-
-      - **v1.1.0: usr decorator `Service` to declare service**
-      - **v1.1.0: to use decorator `Injectable` to inject `Service` in `constructor`'s arguments of `Service`**
-      - **v1.2.0+ : usr decorator `Injectable` to declare service**
-      - **v1.2.0+ : to use decorator `Injected` to inject `Service` in `constructor`'s arguments of `Service`**
+      - **usr decorator `Injectable` to declare service**
+      - **to use decorator `Injected` to inject `Service` in `constructor`'s arguments of `Service`**
 
       ```typescript
-      // @Injectable v1.1.0
-      // @Service({isSingletonMode: false}) v1.1.0
-
-      @Injected // v1.2.0+
-      @Injectable({isSingletonMode: false}) // v1.2.0+
+      @Injected
+      @Injectable({isSingletonMode: false})
       class HeroSearchService {
         public hsr: HeroSearchService1;
         constructor(
@@ -499,11 +506,8 @@ A minimal web mvvm framework.一个小Web mvvm库。
       ```
 
     2. javascript
-
-      - to use `constructor`'s arguments of `Service` for inject an other `Service`, and arguments must be lowercase lette of initials lette  of Service class name. For example, you want to inject a service  class `HeroSearchService`, you must write argument in `constructor` with `heroSearchService`
-      - **v1.1.0: use `Service`**
-      - **v1.2.0+: use `Injectable`**
-      - **v1.2.0+: for inject dependences for service, please use Class static attribution `injectTokens: string[]` like `Component`** 
+      - **use `Injectable`**
+      - **for inject dependences for service, please use Class static attribution `injectTokens: string[]` like `Component`** 
 
       ```javascript
       class HeroSearchService {
@@ -519,29 +523,12 @@ A minimal web mvvm framework.一个小Web mvvm库。
           console.log('HeroSearchService !!!000000000');
         }
       }
-
-      // v1.1.0
-      // Service({
-      //   isSingletonMode: false,
-      // })(HeroSearchService);
-
-      // v1.2.0+
       Injectable({
         isSingletonMode: false,
       })(HeroSearchService);
       ```
 
-    3. http
-
-      ```javascript
-      import { nvHttp } from 'InDiv';
-      const http = nvHttp;
-      http.get(url, params);
-      http.delete(url, params);
-      http.post(url, params);
-      http.put(url, params);
-      http.patch(url, params);
-      ```
+    3. http: import NVHttp from 'indiv' and use it like a service(isSingletonMode: false)
 
 #### Dependency Injection
 
@@ -550,20 +537,13 @@ A minimal web mvvm framework.一个小Web mvvm库。
       1. Use Typescript
 
         - If u are using `Typescript` to build an app, u can easily use our Dependency Injection.
-        - **v1.1.0: Only use `@Injectable`** before the `Class` which need to use other services, that which are declarated in `this.$providers` of `NvModule` or root module.
-        - **v1.2.0+ : Only use `@Injected`** before the `Class` which need to use other services, that which are declarated in `this.$providers` of `NvModule` or root module.
+        - use `@Injected` before the `Class` which need to use other services, that which are declarated in `providers` of `NvModule` or root module.
         - Use `this.` names of constructor arguments to directly use `Service`.
 
       ```typescript
       import { Injected, Injectable, Component, NvModule, HasRender } from 'indiv';
-      
-      // @Service({ v1.1.0
-      //   isSingletonMode: true,
-      // })
 
-      @Injectable({ // v1.2.0+
-        isSingletonMode: true,
-      })
+      @Injectable()
       class HeroSearchService1 {
         constructor() {}
 
@@ -572,17 +552,15 @@ A minimal web mvvm framework.一个小Web mvvm库。
         }
       }
 
-      // @Injectable v1.1.0
-      // @Service() v1.1.0
-
-      @Injected // v1.2.0+
-      @Injectable() // v1.2.0+
+      @Injected
+      @Injectable()
       class HeroSearchService {
         public hsr: HeroSearchService1;
         constructor(
           private hsrS: HeroSearchService1,
         ) {
           this.hsrS.test();
+          this.state = { a: 1 };
         }
 
         public test() {
@@ -590,14 +568,9 @@ A minimal web mvvm framework.一个小Web mvvm库。
         }
       }
 
-      // @Injectable v1.1.0
-
-      @Injected // v1.2.0+
+      @Injected
       @Component({
         selector: 'pc-child',
-        state: {
-          a: 'a',
-        },
         template: (`
           <div>
             <p nv-on:click="@go()">container: {{state.a}}</p>
@@ -621,6 +594,7 @@ A minimal web mvvm framework.一个小Web mvvm库。
           private hsrS: HeroSearchService,
         ) {
           this.hsrS.test();
+          this.state = { a: 1 };
         }
 
         public nvHasRender() {}
@@ -641,12 +615,10 @@ A minimal web mvvm framework.一个小Web mvvm库。
       class M1 {}
       ```
 
-    2. Use Javascript
+    1. Use Javascript
 
-      - to use `constructor`'s arguments of `Service` for inject an other `Service`, and arguments must be lowercase lette of initials lette  of Service class name. For example, you want to inject a service  class `HeroSearchService`, you must write argument in `constructor` with `heroSearchService`
       - A little diffrence between javascript and typescript.
-      - **v1.1.0: use constructor arguments to directly use `Service`, and assign them to a variable**
-      - **v1.2.0+: use constructor arguments to directly use `Injectable`, and assign them to a variable**
+      - use constructor arguments to directly use `Injectable`, and assign them to a variable**
 
       ```javascript
       class HeroSearchService1 {
@@ -657,12 +629,7 @@ A minimal web mvvm framework.一个小Web mvvm库。
           console.log('HeroSearchService !!!1111');
         }
       }
-      // Service({ v1.1.0
-      //   isSingletonMode: true,
-      // })(HeroSearchService1);
-      Injectable({ //v1.2.0+
-        isSingletonMode: true,
-      })(HeroSearchService1);
+      Injectable()(HeroSearchService1);
 
       class HeroSearchService {
         constructor(
@@ -677,10 +644,10 @@ A minimal web mvvm framework.一个小Web mvvm库。
           console.log('HeroSearchService !!!000000000');
         }
       }
-      // Service({ v1.1.0
-      //   isSingletonMode: false,
-      // })(HeroSearchService);
-      Injectable({ //v1.2.0+
+      HeroSearchService.injectTokens = [
+        'heroSearchService1'
+      ];
+      Injectable({
       isSingletonMode: false,
       })(HeroSearchService);
 
@@ -688,14 +655,16 @@ A minimal web mvvm framework.一个小Web mvvm库。
         constructor(heroSearchService) {
           this.ss = heroSearchService;
           this.ss.test();
+          this.state = {
+            a: 'a',
+          };
         }
       }
-
+      Container.injectTokens = [
+        'heroSearchService'
+      ];
       Component({
         selector: 'container-wrap',
-        state: {
-          a: 'a',
-        },
         template: (`
           <div>
             <p>1232{{state.a}}</p>
@@ -712,8 +681,18 @@ A minimal web mvvm framework.一个小Web mvvm库。
           Container,
         ],
         providers: [
-          HeroSearchService,
-          HeroSearchService1,
+          {
+            provide: 'heroSearchService',
+            useClass: HeroSearchService,
+          },
+          { 
+            provide: 'heroSearchService1',
+            useClass: HeroSearchService1, 
+          },
+          { 
+            provide: 'value',
+            useClass: 3333, 
+          }
         ],
       })(M1);
       ```

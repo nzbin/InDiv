@@ -1,9 +1,7 @@
 import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, SetState, SetLocation, GetLocation } from '../src';
 // import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, SetState, SetLocation, GetLocation } from '../build';
 
-@Injectable({
-  isSingletonMode: true,
-})
+@Injectable()
 class HeroSearchService1 {
   constructor() {}
 
@@ -37,6 +35,8 @@ class HeroSearchService {
     console.log('HeroSearchService !!!000000000');
   }
 }
+
+class ValueType {}
 
 
 interface Props {
@@ -466,12 +466,11 @@ class Container implements OnInit, AfterMount, WatchState {
     private hss: HeroSearchService,
     private hss2: HeroSearchService1,
     private nvHttp: NVHttp,
+    private value: ValueType,
   ) {
     this.hss.test();
-    // console.log(this.state);
-    console.log(' nvHttp', nvHttp);
-    // console.log('hss', this.hss);
-    // console.log('hss2', this.hss2);
+    console.log('nvHttp', nvHttp);
+    console.log('value', value);
     this.state = {
       a: 1,
       b: 3,
@@ -697,7 +696,14 @@ class M2 {}
   providers: [
     NVHttp,
     HeroSearchService,
-    HeroSearchService1,
+    {
+      provide: HeroSearchService1,
+      useClass: HeroSearchService1,
+    },
+    {
+      provide: ValueType,
+      useValue: 1123,
+    },
   ],
 })
 class M1 {}

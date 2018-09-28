@@ -389,11 +389,12 @@ class Container {
     heroSearchService,
     heroSearchService1,
     nvHttp,
+    value,
   ) {
-    // this.ss = heroSearchService;
-    // this.ss.test();
-    console.log('heroSearchService1', heroSearchService1);
+    this.ss = heroSearchService;
+    this.ss.test();
     console.log('nvHttp', nvHttp);
+    console.log('value', value);
     this.state = {
       a: 1,
       b: 3,
@@ -526,6 +527,7 @@ Container.injectTokens = [
   'heroSearchService',
   'heroSearchService1',
   'nvHttp',
+  'value',
 ];
 Component({
   selector: 'container-wrap',
@@ -583,16 +585,20 @@ NvModule({
   ],
   providers: [
     {
-      injectToken: 'heroSearchService',
+      provide: 'heroSearchService',
       useClass: HeroSearchService,
     },
     {
-      injectToken: 'heroSearchService1',
+      provide: 'heroSearchService1',
       useClass: HeroSearchService1,
     },
     {
-      injectToken: 'nvHttp',
+      provide: 'nvHttp',
       useClass: NVHttp,
+    },
+    {
+      provide: 'value',
+      useValue: 1233,
     }
   ],
 })(M1);

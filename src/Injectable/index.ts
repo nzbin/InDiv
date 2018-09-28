@@ -14,7 +14,8 @@ type TInjectableOptions = {
  */
 export function Injectable(options?: TInjectableOptions): (_constructor: Function) => void {
     return function (_constructor: Function): void {
-        if (options && options.isSingletonMode) (_constructor as any).isSingletonMode = options.isSingletonMode;
+        (_constructor as any).isSingletonMode = true;
+        if (options) (_constructor as any).isSingletonMode = options.isSingletonMode;
         (_constructor as any).instance = null;
         (_constructor as any)._injectedProviders = new Map();
         (_constructor as any).getInstance = (args?: any[]) => {
@@ -68,7 +69,8 @@ export function injector(_constructor: Function, _module: any): any[] {
         (_constructor as any)._needInjectedClass.forEach((arg: Function) => {
             const _service = (_constructor as any)._injectedProviders.has(arg) ? (_constructor as any)._injectedProviders.get(arg) : _module.$providers.find((service: Function) => service === arg);
             if (_service && _service.useClass) args.push(factoryCreator(_service.useClass, _module));
-            if (_service && !_service.useClass) args.push(factoryCreator(_service, _module));
+            if (_service && _service.useValue) args.push(_service.useValue);
+            if (_service && !_service.useClass && !_service.useValue) args.push(factoryCreator(_service, _module));
         });
     }
 
@@ -76,11 +78,11 @@ export function injector(_constructor: Function, _module: any): any[] {
     if ((_constructor as any).injectTokens) {
         (_constructor as any).injectTokens.forEach((arg: string) => {
             const _service = (_constructor as any)._injectedProviders.has(arg) ? (_constructor as any)._injectedProviders.get(arg) : _module.$providers.find((service: any) => {
-                if (service.injectToken && service.injectToken === arg) return true;
+                if (service.provide && service.provide === arg) return true;
                 return false;
             });
             if (_service && _service.useClass) args.push(factoryCreator(_service.useClass, _module));
-            if (_service && !_service.useClass) args.push(factoryCreator(_service, _module));
+            if (_service && _service.useValue) args.push(_service.useValue);
         });
     }
     return args;

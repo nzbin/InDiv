@@ -12,7 +12,10 @@ version: v1.2.0
   - `npm run start-js`
   - open `http://localhost:1234/demo`
 
-## Basic Usage (please use version: v1.2.0+)
+## Basic Usage
+
+  1. tsconfig: "emitDecoratorMetadata": true
+  2. please use version: v1.2.0+
 
 #### Create a root DOM for route which id is root:
 
@@ -21,7 +24,7 @@ version: v1.2.0
   ```
 #### Create a InDiv:
 
-  1. use `bootstrapModule` to bootstrap a root module `NvModule`
+  1. Use `bootstrapModule` to bootstrap a root module `NvModule`
 
   ```javascript
   const indiv = new InDiv();
@@ -32,21 +35,21 @@ version: v1.2.0
 
 #### Create a router:
 
-  - routes must an `Array` includes `Object`
+  - Routes must an `Array` includes `Object`
 
-      1. routes must incloude rootPath `'/'`
-      2. routes must set an component name like `component: 'R1'`， `R1` is declared in `NvModule` in `$declarations => this.$components`
-      3. routes can assign redirectTo and use `redirectTo: Path`
-      4. routes can assign children and use `children: Array`
-      5. routes can set a path like `path: '/:id'`
+      1. Routes must incloude rootPath `'/'`
+      2. Routes must set an component name like `component: 'R1'`， `R1` is declared in `NvModule` in `$declarations => this.$components`
+      3. Routes can assign redirectTo and use `redirectTo: Path`
+      4. Routes can assign children and use `children: Array`
+      5. Routes can set a path like `path: '/:id'`
 
-  - if u are using `Router`, u must need to `router.setRootPath('/RootPath')` to set an root path.
+  - If u are using `Router`, u must need to `router.setRootPath('/RootPath')` to set an root path.
   - `router.routeChange = (old, next)` can listen route change
   - `router.init(routes);` can init Array routes
-  - if u want to watch routes changes, plz use `router.routeChange=(old.new) => {}`
+  - If u want to watch routes changes, plz use `router.routeChange=(old.new) => {}`
 
-      1. use `this.setLocation((path: String, query: Object, params: Object)` to go to Path or `location.href`
-      2. use `this.getLocation()` to get location states
+      1. Use `this.setLocation((path: String, query: Object, params: Object)` to go to Path or `location.href`
+      2. Use `this.getLocation()` to get location states
       3. `Router` : `http://localhost:1234/R1`
 
   ``` typescript
@@ -116,8 +119,8 @@ version: v1.2.0
 
 #### Create a Component:
 
-  - create a `class`
-  - use decorator `Component` in typescript or use function `Component` in javascript
+  - Create a `class`
+  - Use decorator `Component` in typescript or use function `Component` in javascript
   - Component types:
 
     ```typescript
@@ -128,18 +131,20 @@ version: v1.2.0
     ```
   
   - `selector` is your component tag name for HTML and used in template.
-  - `template` only accepts `state.XXX` from this.state, and event only accepts `@eventHandler` from method which commes from this
-  - **please use `setState` after lifecycle `constructor()` and `nvOnInit`**, so you can change or set value for `this.state` without `setState` in lifecycle `constructor()` and `nvOnInit`
-  - after `Class`'s `constructor`, u can use `this.props` in any lifecycle
-  - use `nvOnInit` and `nvReceiveProps(nextProps: any): void;` to receive props and set `props` in `state`
+  - `template` only accepts `state.XXX` from this.state, and nv-on:event only accepts `@eventHandler` from method which belongs to Class instance
+  - **Please use `setState` after lifecycle `constructor()` and `nvOnInit`**, and you can change or set value for `this.state` without `setState` in lifecycle `constructor()` and `nvOnInit`
+  - After `Class`'s `constructor`, u can use `this.props` in any lifecycle
+  - Use `nvOnInit` and `nvReceiveProps(nextProps: any): void;` to receive props and set `props` in `state`
+  - Use `setLocation` and `getLocation` to controll route or get route info
 
     1. typescript
 
-      - to use decorator `Component` declare `template` and `state`
-      - to implements interface `OnInit, BeforeMount, AfterMount, HasRender, OnDestory, ReceiveProps, WatchState, RouteChange` to use lifecycle
-      - to use decorator `Injected` to declare need to be injected `Service` in `constructor`'s arguments of `Component`** 
+      - To use decorator `Component` declare `template` and `state`
+      - To implements interface `OnInit, BeforeMount, AfterMount, HasRender, OnDestory, ReceiveProps, WatchState, RouteChange` to use lifecycle hooks
+      - To use decorator `Injected` to declare which need to be injected `Service` in `constructor`'s arguments of `Component`** 
 
       ```typescript
+      import { Injected, Component, OnInit, AfterMount, ReceiveProps, SetLocation, GetLocation } from 'indiv';
       @Injected
       @Component({
         selector: 'container-wrap',
@@ -147,14 +152,6 @@ version: v1.2.0
           <div>
             <p nv-on:click="@go()">container: {{state.a}}</p>
             <input nv-model="state.a" />
-            <div nv-repeat="let man in state.testArray" nv-key="man.name">
-              <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
-              <div>性别：{{man.sex}}</div>
-              <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-key="$" nv-model="b" nv-class="b" />
-              <div class="fuck" nv-repeat="let b in man.job" nv-key="b.id">
-                <input nv-on:click="@show(b.name)" nv-model="b.name" nv-class="b.id" />
-              </div>
-            </div>
             <router-render></router-render>
           </div>
         `),
@@ -171,45 +168,7 @@ version: v1.2.0
           this.ss.test();
           this.state = {
             a: 1,
-            testArray: [
-              {
-                name: 'gerry',
-                sex: '男',
-                job: [
-                  {
-                    id: 1,
-                    name: '程序员',
-                  },
-                  {
-                    id: 2,
-                    name: '码农',
-                  },
-                  {
-                    id: 3,
-                    name: '帅',
-                  },
-                ],
-              },
-              {
-                name: 'nina',
-                sex: '女',
-                job: [
-                  {
-                    id: 1,
-                    name: '老师',
-                  },
-                  {
-                    id: 2,
-                    name: '英语老师',
-                  },
-                  {
-                    id: 3,
-                    name: '美',
-                  },
-                ],
-              }],
-            testArray2: ['程序员3', '码农3', '帅3'],
-          },
+          };
         }
 
         public nvOnInit() {
@@ -221,7 +180,7 @@ version: v1.2.0
         }
 
         public nvReceiveProps(nextProps: any) {
-          this.state.propsTest = nextProps.test;
+          this.state.a = nextProps.test;
         }
 
         public go() {
@@ -236,9 +195,9 @@ version: v1.2.0
 
     2. javascript
 
-      - to use function `Component` declare `template` and `state`
-      - to use lifecycle `nvOnInit, nvBeforeMount, nvAfterMount, nvOnDestory, nvHasRender nvWatchState nvReceiveProps nvRouteChange` in Class
-      - **use Class static attribution `injectTokens: string[]` and `provide injection token mode` of provider for dependence injection for javascript**
+      - To use function `Component` declare `template` and `state`
+      - Lifecycle hooks are equal in TypeScript, and have no use `implements` interface 
+      - **Use Class static attribution `injectTokens: string[]` and every item is `provide: string` of provider in `NvModule`**
       - **Class static attribution `injectTokens: string[]` must be `provide` of providers, and arguments of constructor will be instances of `useClass` or value of `useValue` of providers**
 
       ```javascript
@@ -254,52 +213,14 @@ version: v1.2.0
           this.ss.test();
           this.state = {
             a: 1,
-            testArray: [
-              {
-                name: 'gerry',
-                sex: '男',
-                job: [
-                  {
-                    id: 1,
-                    name: '程序员',
-                  },
-                  {
-                    id: 2,
-                    name: '码农',
-                  },
-                  {
-                    id: 3,
-                    name: '帅',
-                  },
-                ],
-              },
-              {
-                name: 'nina',
-                sex: '女',
-                job: [
-                  {
-                    id: 1,
-                    name: '老师',
-                  },
-                  {
-                    id: 2,
-                    name: '英语老师',
-                  },
-                  {
-                    id: 3,
-                    name: '美',
-                  },
-                ],
-              }],
-            testArray2: ['程序员3', '码农3', '帅3'],
           };
         }
         nvOnInit() {
-          this.state.propsTest = this.props.test;
+          this.state.a = this.props.test;
           console.log('nvOnInit Container');
         }
         nvReceiveProps(nextProps) {
-          this.state.propsTest = nextProps.test;
+          this.state.a = nextProps.test;
         }
 
         go() {
@@ -318,14 +239,6 @@ version: v1.2.0
           <div>
             <p nv-on:click="@go()">container: {{state.a}}</p>
             <input nv-model="state.a" />
-            <div nv-repeat="let man in state.testArray" nv-key="man.name">
-              <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
-              <div>性别：{{man.sex}}</div>
-              <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-key="$index" nv-model="b" nv-class="b" />
-              <div class="fuck" nv-repeat="let b in man.job" nv-key="b.id">
-                <input nv-on:click="@show(b.name)" nv-model="b.name" nv-class="b.id" />
-              </div>
-            </div>
             <router-render></router-render>
           </div>`),
       })(Container);
@@ -338,16 +251,24 @@ version: v1.2.0
 
 #### NvModule
 
-  - InDiv apps are modular and InDiv has its own modularity system called `NvModule`. An `NvModule` is a container for a cohesive block of code dedicated to an application domain, a workflow, or a closely related set of capabilities. It can contain components, service providers, and other code files whose scope is defined by the containing `NvModule`. It can import functionality that is exported from other `NvModule`, and export selected functionality for use by other `NvModule`.
+  - InDiv apps are modular and InDiv has its own modularity system called `NvModule`.
+  - An `NvModule` is a container for a cohesive block of code dedicated to an application domain, a workflow, or a closely related set of capabilities. 
+  - It can contain components, service providers, and other code files whose scope is defined by the containing `NvModule`.
+  - It can import functionality that is exported from other `NvModule`, and export selected functionality for use by other `NvModule`.
 
-  - u need to declare `imports?: Function[]` `components: Function[]` `providers?: (Function | { provide: any; useClass: Function; } | { provide: any; useValue: any; }[])[]` `exports?: Function[]` `bootstrap?: Function` in `options`
-  - `imports` imports other `NvModule` and respect it's `exports`
-  - `components` declare `Components`
+  - You need to declare `imports?: Function[]` `components: Function[]` `providers?: (Function | { provide: any; useClass: Function; } | { provide: any; useValue: any; }[])[]` `exports?: Function[]` `bootstrap?: Function` in `options`
+  - `imports?: Function[]` imports other `NvModule` and respect it's `exports?: Function[]`
+  - `components: Function[]` declare `Components`
   - `providers` declare `Service`
-    - providers have three modes: `Function[]`, `{ provide: any; useClass: Function; }[]`, `{ provide: any; useValue: any; }[]`
-    - **in javascript please use `{ provide: string; useClass: Function; }[]` or `{ provide: string; useValue: any; }[]`**
-  - `exports:` exports `Components` for other `NvModules`
-  - `bootstrap` declare `Component` for Module bootstrap only if u don't `Router`
+    - Providers is an `Array` which has three modes:
+      1. Mode1: `Function` is equal to mode2: `{ provide: Function; useClass: Function; }`
+      2. Mode2: `{ provide: any; useClass: Function; }`
+      3. Mode3: `{ provide: any; useValue: any; }` uses  `useValue` for injector
+    - `provide` can be `string` , `function` or `Type` in TypeScript
+    - **In TypeScript provide can be `function` or `Type`**
+    - **In javascript please use `{ provide: string; useClass: Function; }[]` or `{ provide: string; useValue: any; }[]`**
+  - `exports?: Function[]` exports `Components` for other `NvModules`
+  - `bootstrap?: Function` declare `Component` for Module bootstrap only if u don't `Router`
 
     1. typescript
 
@@ -416,7 +337,7 @@ version: v1.2.0
 #### Template Syntax
 
   - 规定：指令以 nv-xxx 命名
-  - now: nv-text nv-html nv-model nv-class nv-repeat nv-key nv-if nv-on:Event
+  - Now we support: nv-text nv-html nv-model nv-class nv-repeat nv-key nv-if nv-on:Event
   - 事件指令, 如 nv-on:click
     - Text: `<p nv-text="state.b"></p>;`
     - Template: `<p>this.state.b是：{{state.b}}</p>;`
@@ -438,9 +359,9 @@ version: v1.2.0
     - Src: for `HTMLImageElement`  `HTMLIFrameElement`  `HTMLScriptElement`  `HTMLInputElement`,  add attribute `src`  for DOM
     - Href: for `HTMLAnchorElement`,  add attribute `href` for DOM
 
-  - about function in Template Syntax
-    - now you can send arguments in Function
-    - arguments include:
+  - About function in Template Syntax
+    - Now you can send arguments in Function
+    - Arguments include:
       1. Event: `$event`
       2. String: `'xxx'`
       3. Number: `123`
@@ -451,10 +372,10 @@ version: v1.2.0
 
 7. Data monitor: this.state && this.setState
 
-  - use `this.state: Object` and `this.setState(parmars: Function || Object)`
-  - if u have some variable, u can set `this.state` in `constructor(){}`
-  - if u want to change State, plz use `this.setState`, parmars can be `Object` or `Function` which must return an `Object`
-  - and u can recive this change in life cycle `nvWatchState(oldState)`, but we need to use a deep clone for `this.state`, so please minimize the use of life cycle `WatchState`
+  - Use `this.state: Object` and `this.setState(parmars: Function || Object)`
+  - If u have some variable, u can set `this.state` in `constructor(){}`
+  - If u want to change State, plz use `this.setState`, parmars can be `Object` or `Function` which must return an `Object`
+  - And u can recive this change in life cycle `nvWatchState(oldState)`, but we need to use a deep clone for `this.state`, so please minimize the use of life cycle `WatchState`
 
 8. `Watcher` and `KeyWatcher`
 
@@ -481,7 +402,8 @@ version: v1.2.0
 
   - Components shouldn't fetch or save data directly and they certainly shouldn't knowingly present fake data. They should focus on presenting data and delegate data access to a service.
   - And u can use `Service` to send communication between `Component` , because we have realized singleton.
-  - `Service` accepts an object`isSingletonMode: boolean` to decide use singleton or not, and default value of `isSingletonMode` is `true`
+  - `Service` accepts an object`{ isSingletonMode?: boolean }` to decide use singleton or not, and default value of `isSingletonMode` is `true`
+  - If you don't set `isSingletonMode` to `false`, all `Service` in an InDiv app will be a singleton instance and it will only have one instance in this app
 
     1. typescript
       - **usr decorator `Injectable` to declare service**
@@ -489,7 +411,7 @@ version: v1.2.0
 
       ```typescript
       @Injected
-      @Injectable({isSingletonMode: false})
+      @Injectable({ isSingletonMode: false })
       class HeroSearchService {
         public hsr: HeroSearchService1;
         constructor(
@@ -528,7 +450,8 @@ version: v1.2.0
       })(HeroSearchService);
       ```
 
-    3. http: import NVHttp from 'indiv' and use it like a service(isSingletonMode: false)
+    3. NVHttp: import NVHttp from 'indiv' and use it like a `Service` which `isSingletonMode` is false (`@Injectable({ isSingletonMode: false })`)
+    4. Utils: import Utils from 'indiv' and use it like a `Service` which `isSingletonMode` is false (`@Injectable({ isSingletonMode: false })`)
 
 #### Dependency Injection
 
@@ -537,8 +460,9 @@ version: v1.2.0
       1. Use Typescript
 
         - If u are using `Typescript` to build an app, u can easily use our Dependency Injection.
-        - use `@Injected` before the `Class` which need to use other services, that which are declarated in `providers` of `NvModule` or root module.
+        - use `@Injected` before the `Class` which need to use other services, that which are declarated in `providers` of it's `NvModule` or root `NvModule`.
         - Use `this.` names of constructor arguments to directly use `Service`.
+        - If you don't set `isSingletonMode` of `Service` to `false`, all `Service` in an InDiv app will be a singleton instance and it will only have one instance in this app
 
       ```typescript
       import { Injected, Injectable, Component, NvModule, HasRender } from 'indiv';
@@ -575,14 +499,6 @@ version: v1.2.0
           <div>
             <p nv-on:click="@go()">container: {{state.a}}</p>
             <input nv-model="state.a" />
-            <div nv-repeat="let man in state.testArray">
-              <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
-              <div>性别：{{man.sex}}</div>
-              <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-model="b" nv-class="b" />
-              <div class="fuck" nv-repeat="let b in man.job">
-                <input nv-on:click="@show(b.name)" nv-model="b.name" nv-class="b.id" />
-              </div>
-            </div>
             <router-render></router-render>
           </div>
         `),
@@ -648,7 +564,7 @@ version: v1.2.0
         'heroSearchService1'
       ];
       Injectable({
-      isSingletonMode: false,
+        isSingletonMode: false,
       })(HeroSearchService);
 
       class Container {

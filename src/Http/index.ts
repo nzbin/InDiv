@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Injectable } from '../Injectable';
+import { Injectable } from '../DI';
 
 
 @Injectable({

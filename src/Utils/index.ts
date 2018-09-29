@@ -1,6 +1,6 @@
 import Cookie from 'easier-cookie';
 
-import { Injectable } from '../Injectable';
+import { Injectable } from '../DI';
 
 /**
  * utils for InDiv

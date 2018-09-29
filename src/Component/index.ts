@@ -4,7 +4,7 @@ import Compile from '../Compile';
 import Watcher from '../Watcher';
 import Utils from '../Utils';
 import { CompileUtil } from '../CompileUtils';
-import { factoryCreator } from '../Injectable';
+import { factoryCreator } from '../DI';
 
 
 type TComponentOptions = {

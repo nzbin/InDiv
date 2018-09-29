@@ -28,4 +28,4 @@ export {
   Injected,
   injector,
   factoryCreator,
-} from './Injectable';
+} from './DI';

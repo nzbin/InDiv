@@ -1,7 +1,7 @@
 import { IMiddleware, INvModule, EsRouteObject, IComponent } from '../types';
 
 import Utils from '../Utils';
-import { factoryCreator } from '../Injectable';
+import { factoryCreator } from '../DI';
 import { factoryModule } from '../NvModule';
 
 const utils = new Utils();

@@ -433,7 +433,7 @@ class TestComponent implements OnInit {
   selector: 'container-wrap',
   template: (`
     <div>
-      <p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>
+      <p nv-id="state.a" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>
       <test-component nv-repeat="let man in state.testArray" nv-key="man.name" man="{man.name}" nv-if="state.a"></test-component>
       <p nv-on:click="@go()">container: {{state.a}}</p>
       <input nv-model="state.a" />
@@ -441,7 +441,7 @@ class TestComponent implements OnInit {
           <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
           <div>性别：{{man.sex}}</div>
           <a nv-href="man.name">a {{man.sex}}</a>
-          <img nv-src="man.name" alt="测试src" />
+          <img nv-src="man.name" nv-alt="man.name" />
           <test-component nv-key="man.name" man="{man.name}"></test-component>
           <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
           <div class="fuck" nv-repeat="let c in man.job" nv-key="c.id">
@@ -609,61 +609,6 @@ class Container implements OnInit, AfterMount, WatchState {
           ],
         }],
     });
-      // this.state.testArray = [
-      //   {
-      //     name: 'gerry',
-      //     sex: '男',
-      //     job: [
-      //       {
-      //         id: 1,
-      //         name: '程序员',
-      //       },
-      //       {
-      //         id: 2,
-      //         name: '码农',
-      //       },
-      //       {
-      //         id: 3,
-      //         name: '帅',
-      //       },
-      //     ],
-      //   },
-      //   {
-      //     name: 'gerry2',
-      //     sex: '男2',
-      //     job: [
-      //       {
-      //         id: 1,
-      //         name: '程序员2',
-      //       },
-      //       {
-      //         id: 2,
-      //         name: '码农2',
-      //       },
-      //       {
-      //         id: 3,
-      //         name: '帅2',
-      //       },
-      //     ],
-      //   },
-      //   {
-      //     name: 'nina',
-      //     sex: '女',
-      //     job: [
-      //       {
-      //         id: 1,
-      //         name: '老师',
-      //       },
-      //       {
-      //         id: 2,
-      //         name: '英语老师',
-      //       },
-      //       {
-      //         id: 3,
-      //         name: '美',
-      //       },
-      //     ],
-      //   }];
   }
 }
 

@@ -12,7 +12,11 @@ export function injector(_constructor: Function, _module: any): any[] {
   // for ts Dependency Injection
   if ((_constructor as any)._needInjectedClass) {
       (_constructor as any)._needInjectedClass.forEach((arg: Function) => {
-          const _service = (_constructor as any)._injectedProviders.has(arg) ? (_constructor as any)._injectedProviders.get(arg) : _module.$providers.find((service: Function) => service === arg);
+          const _service = (_constructor as any)._injectedProviders.has(arg) ? (_constructor as any)._injectedProviders.get(arg) : _module.$providers.find((service: any) => {
+            if (!service.provide && service === arg) return true;
+            if (service.provide && service.provide === arg) return true;
+            return false;
+          });
           if (_service && _service.useClass) args.push(factoryCreator(_service.useClass, _module));
           if (_service && _service.useValue) args.push(_service.useValue);
           if (_service && !_service.useClass && !_service.useValue) args.push(factoryCreator(_service, _module));
@@ -28,6 +32,7 @@ export function injector(_constructor: Function, _module: any): any[] {
           });
           if (_service && _service.useClass) args.push(factoryCreator(_service.useClass, _module));
           if (_service && _service.useValue) args.push(_service.useValue);
+          if (_service && !_service.useClass && !_service.useValue) console.error('factoryCreator create Instance error: in JavaScript must use useClass or useValue');
       });
   }
   return args;

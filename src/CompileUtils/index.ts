@@ -151,8 +151,23 @@ export class CompileUtilForRepeat {
       case 'model':
         if (updaterFn) (updaterFn as Function).call(this, node, value, exp, key, index, watchData, vm);
         break;
-      default:
+      case 'text':
         if (updaterFn) (updaterFn as Function).call(this, node, value);
+        break;
+      case 'html':
+        if (updaterFn) (updaterFn as Function).call(this, node, value);
+        break;
+      case 'if':
+        if (updaterFn) (updaterFn as Function).call(this, node, value);
+        break;
+      case 'class':
+        if (updaterFn) (updaterFn as Function).call(this, node, value);
+        break;
+      case 'key':
+        if (updaterFn) (updaterFn as Function).call(this, node, value);
+        break;
+      default:
+        this.commonUpdater.call(this, node, value, dir);
     }
   }
 
@@ -183,79 +198,6 @@ export class CompileUtilForRepeat {
         }
       }
     }
-  }
-
-  /**
-   * update text for nv-text
-   *
-   * @param {Element} node
-   * @param {*} value
-   * @returns {void}
-   * @memberof CompileUtilForRepeat
-   */
-  public textUpdater(node: Element, value: any): void {
-    if (node.tagName.toLocaleLowerCase() === 'input') return node.value = value;
-    node.textContent = typeof value === 'undefined' ? '' : value;
-  }
-
-  /**
-   * update html for nv-html
-   *
-   * @param {Element} node
-   * @param {*} value
-   * @memberof CompileUtilForRepeat
-   */
-  public htmlUpdater(node: Element, value: any): void {
-    node.innerHTML = typeof value === 'undefined' ? '' : value;
-  }
-
-  /**
-   * remove or show DOM for nv-if
-   *
-   * @param {Element} node
-   * @param {*} value
-   * @memberof CompileUtilForRepeat
-   */
-  public ifUpdater(node: Element, value: any): void {
-    if (!value && this.$fragment.contains(node)) this.$fragment.removeChild(node);
-  }
-
-  /**
-   * update attribute src for nv-src
-   *
-   * @param {Element} node
-   * @param {*} value
-   * @memberof CompileUtilForRepeat
-   */
-  public srcUpdater(node: Element, value: any): void {
-    if (value) (node as HTMLImageElement | HTMLIFrameElement | HTMLScriptElement | HTMLInputElement).src = value;
-  }
-
-  /**
-   * update attribute href for nv-href
-   *
-   * @param {Element} node
-   * @param {*} value
-   * @memberof CompileUtilForRepeat
-   */
-  public hrefUpdater(node: Element, value: any): void {
-    if (value) (node as HTMLAnchorElement).href = value;
-  }
-
-  /**
-   * update class for nv-class
-   *
-   * @param {Element} node
-   * @param {*} value
-   * @returns {void}
-   * @memberof CompileUtilForRepeat
-   */
-  public classUpdater(node: Element, value: any): void {
-    if (!value) return;
-    let className = node.className;
-    className = className.replace(/\s$/, '');
-    const space = className && String(value) ? ' ' : '';
-    node.className = className + space + value;
   }
 
   /**
@@ -300,9 +242,79 @@ export class CompileUtilForRepeat {
     if (!node.eventTypes) node.eventTypes = JSON.stringify(['input']);
   }
 
+  /**
+   * update text for nv-text
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @returns {void}
+   * @memberof CompileUtilForRepeat
+   */
+  public textUpdater(node: Element, value: any): void {
+    if (node.tagName.toLocaleLowerCase() === 'input') return node.value = value;
+    node.textContent = typeof value === 'undefined' ? '' : value;
+  }
 
+  /**
+   * update html for nv-html
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @memberof CompileUtilForRepeat
+   */
+  public htmlUpdater(node: Element, value: any): void {
+    node.innerHTML = typeof value === 'undefined' ? '' : value;
+  }
+
+  /**
+   * remove or show DOM for nv-if
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @memberof CompileUtilForRepeat
+   */
+  public ifUpdater(node: Element, value: any): void {
+    if (!value && this.$fragment.contains(node)) this.$fragment.removeChild(node);
+  }
+
+  /**
+   * update class for nv-class
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @returns {void}
+   * @memberof CompileUtilForRepeat
+   */
+  public classUpdater(node: Element, value: any): void {
+    if (!value) return;
+    let className = node.className;
+    className = className.replace(/\s$/, '');
+    const space = className && String(value) ? ' ' : '';
+    node.className = className + space + value;
+  }
+
+  /**
+   * update value of repeat node for nv-key
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @memberof CompileUtilForRepeat
+   */
   public keyUpdater(node: Element, value: any): void {
     node.indiv_repeat_key = value;
+  }
+
+  /**
+   * commonUpdater for nv directive except repeat model text html if class 
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @param {string} dir
+   * @memberof CompileUtil
+   */
+  public commonUpdater(node: Element, value: any, dir: string): void {
+    if (value) (node as any)[dir] = value;
+    if (!value && (node as any)[dir]) (node as any)[dir] = null;
   }
 
   /**
@@ -457,9 +469,25 @@ export class CompileUtil {
         case 'model':
           if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp), exp, vm);
           break;
-        default:
+        case 'text':
           if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp));
+          break;
+        case 'html':
+          if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp));
+          break;
+        case 'if':
+          if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp));
+          break;
+        case 'class':
+          if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp));
+          break;
+        case 'key':
+          if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp));
+          break;
+        default:
+          this.commonUpdater.call(this, node, this._getVMVal(vm, exp), dir);
       }
+      node.removeAttribute(`nv-${dir}`);
     }
   }
 
@@ -473,6 +501,35 @@ export class CompileUtil {
    */
   public templateUpdater(node: any, vm: any, exp: string): void {
     node.textContent = node.textContent.replace(exp, this._getVMVal(vm, exp.replace('{{', '').replace('}}', '')));
+  }
+
+  /**
+   * update value of input for nv-model
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @param {string} exp
+   * @param {*} vm
+   * @memberof CompileUtil
+   */
+  public modelUpdater(node: Element, value: any, exp: string, vm: any): void {
+    node.value = typeof value === 'undefined' ? '' : value;
+
+    const val = exp.replace(/(state.)/, '');
+
+    const func = (event: Event) => {
+      event.preventDefault();
+      if (/(state.).*/.test(exp)) vm.state[val] = (event.target as HTMLInputElement).value;
+    };
+
+    (node as any).oninput = func;
+    (node as any).eventinput = func;
+    if (node.eventTypes) {
+      const eventlist = JSON.parse(node.eventTypes);
+      eventlist.push('input');
+      node.eventTypes = JSON.stringify(eventlist);
+    }
+    if (!node.eventTypes) node.eventTypes = JSON.stringify(['input']);
   }
 
   /**
@@ -511,28 +568,6 @@ export class CompileUtil {
   }
 
   /**
-   * update attribute src for nv-src
-   *
-   * @param {Element} node
-   * @param {*} value
-   * @memberof CompileUtil
-   */
-  public srcUpdater(node: Element, value: any): void {
-    if (value) (node as HTMLImageElement | HTMLIFrameElement | HTMLScriptElement | HTMLInputElement).src = value;
-  }
-
-  /**
-   * update attribute href for nv-href
-   *
-   * @param {Element} node
-   * @param {*} value
-   * @memberof CompileUtil
-   */
-  public hrefUpdater(node: Element, value: any): void {
-    if (value) (node as HTMLAnchorElement).href = value;
-  }
-
-  /**
    * update class for nv-class
    *
    * @param {Element} node
@@ -549,32 +584,27 @@ export class CompileUtil {
   }
 
   /**
-   * update value of input for nv-model
+   * update value of repeat node for nv-key
    *
    * @param {Element} node
    * @param {*} value
-   * @param {string} exp
-   * @param {*} vm
+   * @memberof CompileUtilForRepeat
+   */
+  public keyUpdater(node: Element, value: any): void {
+    node.indiv_repeat_key = value;
+  }
+
+  /**
+   * commonUpdater for nv directive except repeat model text html if class 
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @param {string} dir
    * @memberof CompileUtil
    */
-  public modelUpdater(node: Element, value: any, exp: string, vm: any): void {
-    node.value = typeof value === 'undefined' ? '' : value;
-
-    const val = exp.replace(/(state.)/, '');
-
-    const func = (event: Event) => {
-      event.preventDefault();
-      if (/(state.).*/.test(exp)) vm.state[val] = (event.target as HTMLInputElement).value;
-    };
-
-    (node as any).oninput = func;
-    (node as any).eventinput = func;
-    if (node.eventTypes) {
-      const eventlist = JSON.parse(node.eventTypes);
-      eventlist.push('input');
-      node.eventTypes = JSON.stringify(eventlist);
-    }
-    if (!node.eventTypes) node.eventTypes = JSON.stringify(['input']);
+  public commonUpdater(node: Element, value: any, dir: string): void {
+    if (value) (node as any)[dir] = value;
+    if (!value && (node as any)[dir]) (node as any)[dir] = null;
   }
 
   /**

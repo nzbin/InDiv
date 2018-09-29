@@ -87,9 +87,7 @@ class Compile {
 
       const text = node.textContent;
       const reg = /\{\{(.*)\}\}/g;
-      if (this.isElementNode(node)) {
-        this.compile(node, fragment);
-      }
+      if (this.isElementNode(node)) this.compile(node, fragment);
 
       if (this.isTextNode(node) && reg.test(text)) {
         const textList = text.match(/(\{\{(state\.)[^\{\}]+?\}\})/g);
@@ -122,6 +120,7 @@ class Compile {
           const exp = attr.value;
           if (this.isEventDirective(dir)) {
             this.eventHandler(node, this.$vm, exp, dir);
+            node.removeAttribute(attrName);
           } else {
             new CompileUtil(fragment).bind(node, this.$vm, exp, dir);
           }

@@ -337,7 +337,8 @@ version: v1.2.0
 #### Template Syntax
 
   - 规定：指令以 nv-xxx 命名
-  - Now we support: nv-text nv-html nv-model nv-class nv-repeat nv-key nv-if nv-on:Event
+  - Now we support: nv-model nv-text nv-html nv-if nv-class nv-repeat nv-key nv-on:Event
+  - And also support some directive which can use `DOM.directiveName` to set value, like `nv-src` `nv-href`
   - 事件指令, 如 nv-on:click
     - Text: `<p nv-text="state.b"></p>;`
     - Template: `<p>this.state.b是：{{state.b}}</p>;`
@@ -356,8 +357,6 @@ version: v1.2.0
       - `nv-key` is a key for InDiv to mark repeat `Component` or `DOM`, and it must be an unique value or index ** `$index` **.
       - If u are not use `nv-repeat` without `nv-key`, InDiv will render this with a new `Component`, and `state` in `Component` will be reset.
       - `<test-component nv-repeat="let man in state.testArray" nv-key="man.id" man="{man.name}"></test-component>`
-    - Src: for `HTMLImageElement`  `HTMLIFrameElement`  `HTMLScriptElement`  `HTMLInputElement`,  add attribute `src`  for DOM
-    - Href: for `HTMLAnchorElement`,  add attribute `href` for DOM
 
   - About function in Template Syntax
     - Now you can send arguments in Function
@@ -370,7 +369,7 @@ version: v1.2.0
       6. Boolean: `true` `false`
       7. For nv-repeat: items like: `nv-repeat="let a in state.b" nv-if="a.f"`
 
-7. Data monitor: this.state && this.setState
+1. Data monitor: this.state && this.setState
 
   - Use `this.state: Object` and `this.setState(parmars: Function || Object)`
   - If u have some variable, u can set `this.state` in `constructor(){}`

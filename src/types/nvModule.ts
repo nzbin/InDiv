@@ -5,10 +5,20 @@ export type TInjectTokenProvider = {
   useValue?: any;
 };
 
+export type TUseClassProvider = {
+  provide: any;
+  useClass: Function;
+};
+
+export type TuseValueProvider = {
+  provide: any;
+  useValue: any;
+};
+
 export interface INvModule {
   $imports?: Function[];
   $components?: Function[];
-  $providers?: (Function | TInjectTokenProvider)[];
+  $providers?: (Function | TUseClassProvider | TuseValueProvider)[];
   $exports?: Function[];
   providerList?: Map<Function | string, Function | any>;
   bootstrap?: Function;

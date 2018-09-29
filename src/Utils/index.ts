@@ -1,15 +1,10 @@
 import Cookie from 'easier-cookie';
 
-import { Injectable } from '../DI';
-
 /**
  * utils for InDiv
  *
  * @class Utils
  */
-@Injectable({
-  isSingletonMode: false,
-})
 class Utils {
   /**
    * Creates an instance of Utils.

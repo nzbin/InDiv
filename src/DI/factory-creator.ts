@@ -43,7 +43,7 @@ export function injector(_constructor: Function, _module: any): any[] {
  */
 export function factoryCreator(_constructor: Function, _module: any): any {
   const args = injector(_constructor, _module);
-  let factory = Reflect.construct(_constructor, args);
-  if ((_constructor as any).isSingletonMode) factory = (_constructor as any).getInstance(args);
-  return factory;
+  let factoryInstance = Reflect.construct(_constructor, args);
+  if ((_constructor as any).isSingletonMode) factoryInstance = (_constructor as any).getInstance(args);
+  return factoryInstance;
 }

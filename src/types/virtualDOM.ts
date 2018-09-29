@@ -29,21 +29,3 @@ export interface IPatchList {
     eventType?: string;
     newIndex?: number;
 }
-
-export interface IParseToVnode {
-    (node: DocumentFragment | Element): IVnode;
-}
-
-export interface IDiffVnode {
-    (oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void;
-}
-
-export interface IRenderVnode {
-    (patchList: IPatchList[]): void;
-}
-
-export interface IVirtualDOM {
-    parseToVnode: IParseToVnode;
-    diffVnode: IDiffVnode;
-    renderVnode: IRenderVnode;
-}

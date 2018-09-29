@@ -1,6 +1,6 @@
 import { IPatchList } from '../types';
 
-import VirtualDOM from '../VirtualDOM';
+import { parseToVnode, diffVnode, renderVnode } from '../VirtualDOM';
 import Utils from '../Utils';
 import { CompileUtil } from '../CompileUtils';
 
@@ -36,11 +36,11 @@ class Compile {
         newRouterRenderDom.parentNode.replaceChild(routerRenderDom, newRouterRenderDom);
       }
 
-      let oldVnode = VirtualDOM.parseToVnode(this.$el);
-      let newVnode = VirtualDOM.parseToVnode(this.$fragment);
+      let oldVnode = parseToVnode(this.$el);
+      let newVnode = parseToVnode(this.$fragment);
       let patchList: IPatchList[] = [];
-      VirtualDOM.diffVnode(oldVnode, newVnode, patchList);
-      VirtualDOM.renderVnode(patchList);
+      diffVnode(oldVnode, newVnode, patchList);
+      renderVnode(patchList);
 
       this.$fragment = null;
       oldVnode = null;

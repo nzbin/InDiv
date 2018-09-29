@@ -314,7 +314,7 @@ class R2 {
     heroSearchService,
   ) {
     this.heroSearchService1 = heroSearchService1;
-    this.heroSearchService1.test();
+    // this.heroSearchService1.test();
     this.state = { a: 1 };
   }
   nvOnInit() {
@@ -566,7 +566,7 @@ NvModule({
   ],
   providers: [
     {
-      injectToken: 'heroSearchService2',
+      provide: 'heroSearchService2',
       useClass: HeroSearchService2,
     },
   ],

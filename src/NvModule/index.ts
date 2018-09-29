@@ -1,9 +1,9 @@
-import { INvModule, TInjectTokenProvider } from '../types';
+import { INvModule, TInjectTokenProvider, TUseClassProvider, TuseValueProvider } from '../types';
 
 type TNvModuleOptions = {
   imports?: Function[];
   components: Function[];
-  providers?: (Function | TInjectTokenProvider)[];
+  providers?: (Function | TUseClassProvider | TuseValueProvider)[];
   exports?: Function[];
   bootstrap?: Function;
 };
@@ -49,7 +49,7 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
       for (let i = 0; i <= length; i++) {
         const service = (this as INvModule).$providers[i];
         if ((service as TInjectTokenProvider).provide) {
-          if ((service as TInjectTokenProvider).useClass || (service as TInjectTokenProvider).useValue) (this as INvModule).providerList.set((service as TInjectTokenProvider).provide, service);
+          if ((service as TUseClassProvider).useClass || (service as TuseValueProvider).useValue) (this as INvModule).providerList.set((service as TInjectTokenProvider).provide, service);
         } else {
           (this as INvModule).providerList.set(service as Function, service as Function);
         }

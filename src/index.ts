@@ -17,7 +17,10 @@ export {
 export { default as Watcher } from './Watcher';
 export { default as KeyWatcher } from './KeyWatcher';
 export { default as Compile } from './Compile';
-export { CompileUtilForRepeat, CompileUtil } from './CompileUtils';
+export {
+  CompileUtilForRepeat,
+  CompileUtil,
+} from './CompileUtils';
 export { default as Component } from './Component';
 export { Router, TRouter } from './Router';
 export { default as InDiv } from './InDiv';

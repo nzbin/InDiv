@@ -33,6 +33,7 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     $template?: string;
     $components?: Function[];
     $componentList?: ComponentList<IComponent<any, any, any>>[];
+    $providerList?: Map<Function | string, Function | any>;
 
     setState?: SetState;
     getLocation?: GetLocation;

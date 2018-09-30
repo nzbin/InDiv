@@ -111,11 +111,11 @@ class InDiv {
    * @memberof InDiv
    */
   public renderModuleBootstrap(): void {
-    if (!this.$rootModule.bootstrap) {
+    if (!this.$rootModule.$bootstrap) {
       console.error('need bootstrap for render Module Bootstrap');
       return;
     }
-    const BootstrapComponent = this.$rootModule.bootstrap;
+    const BootstrapComponent = this.$rootModule.$bootstrap;
     this.renderComponent(BootstrapComponent, this.rootDom);
   }
 

@@ -1,4 +1,4 @@
-import { IComponent, ComponentList } from '../types';
+import { IComponent, ComponentList, TInjectTokenProvider, TUseClassProvider, TuseValueProvider } from '../types';
 
 import Compile from '../Compile';
 import Watcher from '../Watcher';
@@ -10,6 +10,7 @@ import { factoryCreator } from '../DI';
 type TComponentOptions = {
   selector: string;
   template: string;
+  providers?: (Function | TUseClassProvider | TuseValueProvider)[];
 };
 
 const utils = new Utils();
@@ -30,6 +31,19 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     (_constructor as any).$selector = options.selector;
     const vm: IComponent<State, Props, Vm> = _constructor.prototype;
     vm.$template = options.template;
+
+    // component $providerList for injector
+    if (options.providers && options.providers.length > 0) {
+      const length = options.providers.length - 1;
+      for (let i = 0; i <= length; i++) {
+        const service = options.providers[i];
+        if ((service as TInjectTokenProvider).provide) {
+          if ((service as TUseClassProvider).useClass || (service as TuseValueProvider).useValue) vm.$providerList.set((service as TInjectTokenProvider).provide, service);
+        } else {
+          vm.$providerList.set(service as Function, service as Function);
+        }
+      }
+    }
 
     vm.compileUtil = new CompileUtil();
     vm.$components = [];

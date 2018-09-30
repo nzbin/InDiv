@@ -20,13 +20,13 @@ type TNvModuleOptions = {
 export function NvModule(options: TNvModuleOptions): (_constructor: Function) => void {
   return function (_constructor: Function): void {
     const vm = _constructor.prototype as INvModule;
-    vm.providerList = new Map();
-    vm.providerInstances = new Map();
+    vm.$providerList = new Map();
+    vm.$providerInstances = new Map();
     if (options.imports) vm.$imports = options.imports;
     if (options.components) vm.$components = options.components;
     if (options.providers) vm.$providers = options.providers;
     if (options.exports) vm.$exports = options.exports;
-    if (options.bootstrap) vm.bootstrap = options.bootstrap;
+    if (options.bootstrap) vm.$bootstrap = options.bootstrap;
 
     vm.buildProviderList = function (): void {
       if (!(this as INvModule).$providers) return;
@@ -34,9 +34,9 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
       for (let i = 0; i <= length; i++) {
         const service = (this as INvModule).$providers[i];
         if ((service as TInjectTokenProvider).provide) {
-          if ((service as TUseClassProvider).useClass || (service as TuseValueProvider).useValue) (this as INvModule).providerList.set((service as TInjectTokenProvider).provide, service);
+          if ((service as TUseClassProvider).useClass || (service as TuseValueProvider).useValue) (this as INvModule).$providerList.set((service as TInjectTokenProvider).provide, service);
         } else {
-          (this as INvModule).providerList.set(service as Function, service as Function);
+          (this as INvModule).$providerList.set(service as Function, service as Function);
         }
       }
     };
@@ -50,13 +50,13 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
         if ((service as TInjectTokenProvider).provide) {
           if ((service as TUseClassProvider).useClass) {
             if (!((service as TUseClassProvider).useClass as any)._injectedProviders) ((service as TUseClassProvider).useClass as any)._injectedProviders = new Map();
-            (this as INvModule).providerList.forEach((value, key) => {
+            (this as INvModule).$providerList.forEach((value, key) => {
               if (!((service as TUseClassProvider).useClass as any)._injectedProviders.has(key)) ((service as TUseClassProvider).useClass as any)._injectedProviders.set(key, value);
             });
           }
         } else {
           if (!service._injectedProviders) service._injectedProviders = new Map();
-          (this as INvModule).providerList.set(service as Function, service as Function);
+          (this as INvModule).$providerList.set(service as Function, service as Function);
         }
       }
     };
@@ -67,7 +67,7 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
       for (let i = 0; i <= length; i++) {
         const component: any = (this as INvModule).$components[i];
         if (!component._injectedProviders) component._injectedProviders = new Map();
-        (this as INvModule).providerList.forEach((value, key) => {
+        (this as INvModule).$providerList.forEach((value, key) => {
           if (!component._injectedProviders.has(key)) component._injectedProviders.set(key, value);
         });
       }

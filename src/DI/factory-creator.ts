@@ -2,8 +2,8 @@
  * injector: build arguments for factoryCreator
  * 
  * first: find service is a singleton service or not
- * secend: if service is a singleton service, find in rootModule's providerInstances. if not use factoryCreator instance and return
- * last: if service is a singleton service, and can't be found in rootModule's providerInstances, then factoryCreator instance and push in rootModule's providerInstances
+ * secend: if service is a singleton service, find in rootModule's $providerInstances. if not use factoryCreator instance and return
+ * last: if service is a singleton service, and can't be found in rootModule's $providerInstances, then factoryCreator instance and push in rootModule's $providerInstances
  *
  * @export
  * @param {Function} _constructor
@@ -39,12 +39,12 @@ export function injector(_constructor: Function, rootModule: any): any[] {
 
             // if service isn't a singleton service
             if (findService && findService.isSingletonMode) {
-                // if root injector: providerInstances has this key
-                const findServiceInStance = rootModule.providerInstances.has(key) ? rootModule.providerInstances.get(key) : null;
+                // if root injector: $providerInstances has this key
+                const findServiceInStance = rootModule.$providerInstances.has(key) ? rootModule.$providerInstances.get(key) : null;
                 if (findServiceInStance) args.push(findServiceInStance);
                 if (!findServiceInStance) {
                     const serviceInStance = factoryCreator(findService, rootModule);
-                    rootModule.providerInstances.set(key, serviceInStance);
+                    rootModule.$providerInstances.set(key, serviceInStance);
                     args.push(serviceInStance);
                 }
             }
@@ -75,11 +75,11 @@ export function injector(_constructor: Function, rootModule: any): any[] {
             if (findService && !findService.isSingletonMode) args.push(factoryCreator(findService, rootModule));
 
             if (findService && findService.isSingletonMode) {
-                const findServiceInStance = rootModule.providerInstances.has(key) ? rootModule.providerInstances.get(key) : null;
+                const findServiceInStance = rootModule.$providerInstances.has(key) ? rootModule.$providerInstances.get(key) : null;
                 if (findServiceInStance) args.push(findServiceInStance);
                 if (!findServiceInStance) {
                     const serviceInStance = factoryCreator(findService, rootModule);
-                    rootModule.providerInstances.set(key, serviceInStance);
+                    rootModule.$providerInstances.set(key, serviceInStance);
                     args.push(serviceInStance);
                 }
             }

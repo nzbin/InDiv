@@ -106,14 +106,15 @@ export interface INvModule {
     $components?: Function[];
     $providers?: (Function | TUseClassProvider | TuseValueProvider)[];
     $exports?: Function[];
-    providerList?: Map<Function | string, Function>;
+    providerList?: Map<Function | string, Function | any>;
+    providerInstances?: Map<Function | string, any>;
     bootstrap?: Function;
-    buildImports(): void;
-    buildProviderList(): void
+  
+    buildProviderList(): void;
     buildProviders4Services(): void;
     buildProviders4Components(): void;
     buildComponents4Components(): void;
-    buildExports(): void;
+    buildImports(): void;
 }
 
 export declare class Watcher {
@@ -273,9 +274,9 @@ export declare function Injectable(options?: TInjectableOptions): (_constructor:
 
 export declare function Injected(_constructor: Function): void;
 
-export declare function injector(_constructor: Function, _module: any): any[];
+export declare function injector(_constructor: Function, rootModule: any): any[];
 
-export declare function factoryCreator(_constructor: Function, _module: any): any;
+export declare function factoryCreator(_constructor: Function, rootModule: any): any;
 
 export declare function Component<State = any, Props = any, Vm = any>(options: TComponentOptions): (_constructor: Function) => void;
 

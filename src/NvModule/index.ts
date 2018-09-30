@@ -21,27 +21,12 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
   return function (_constructor: Function): void {
     const vm = _constructor.prototype as INvModule;
     vm.providerList = new Map();
+    vm.providerInstances = new Map();
     if (options.imports) vm.$imports = options.imports;
     if (options.components) vm.$components = options.components;
     if (options.providers) vm.$providers = options.providers;
     if (options.exports) vm.$exports = options.exports;
     if (options.bootstrap) vm.bootstrap = options.bootstrap;
-
-    vm.buildImports = function (): void {
-      if (!(this as INvModule).$imports) return;
-      const length = this.$imports.length - 1;
-      for (let i = 0; i <= length; i++) {
-        const ModuleImport = (this as INvModule).$imports[i];
-        const moduleImport = factoryModule(ModuleImport);
-        const lengthExports = moduleImport.$exports.length - 1;
-        for (let i = 0; i <= lengthExports; i++) {
-          const importComponent = moduleImport.$exports[i];
-          if (!this.$components.find((component: any) => component.$selector === (importComponent as any).$selector)) {
-            this.$components.push(importComponent);
-          }
-        }
-      }
-    };
 
     vm.buildProviderList = function (): void {
       if (!(this as INvModule).$providers) return;
@@ -61,10 +46,18 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
       const length = this.$providers.length - 1;
       for (let i = 0; i <= length; i++) {
         const service: any = (this as INvModule).$providers[i];
-        if (!service._injectedProviders) service._injectedProviders = new Map();
-        (this as INvModule).providerList.forEach((value, key) => {
-          if (!service._injectedProviders.has(key)) service._injectedProviders.set(key, value);
-        });
+
+        if ((service as TInjectTokenProvider).provide) {
+          if ((service as TUseClassProvider).useClass) {
+            if (!((service as TUseClassProvider).useClass as any)._injectedProviders) ((service as TUseClassProvider).useClass as any)._injectedProviders = new Map();
+            (this as INvModule).providerList.forEach((value, key) => {
+              if (!((service as TUseClassProvider).useClass as any)._injectedProviders.has(key)) ((service as TUseClassProvider).useClass as any)._injectedProviders.set(key, value);
+            });
+          }
+        } else {
+          if (!service._injectedProviders) service._injectedProviders = new Map();
+          (this as INvModule).providerList.set(service as Function, service as Function);
+        }
       }
     };
 
@@ -89,6 +82,22 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
         (this as INvModule).$components.forEach((needInjectComponent: any) => {
           if (!FindComponent._injectedComponents.find((c: any) => c.$selector === needInjectComponent.$selector)) FindComponent._injectedComponents.push(needInjectComponent);
         });
+      }
+    };
+
+    vm.buildImports = function (): void {
+      if (!(this as INvModule).$imports) return;
+      const length = this.$imports.length - 1;
+      for (let i = 0; i <= length; i++) {
+        const ModuleImport = (this as INvModule).$imports[i];
+        const moduleImport = factoryModule(ModuleImport);
+        const lengthExports = moduleImport.$exports.length - 1;
+        for (let i = 0; i <= lengthExports; i++) {
+          const importComponent = moduleImport.$exports[i];
+          if (!this.$components.find((component: any) => component.$selector === (importComponent as any).$selector)) {
+            this.$components.push(importComponent);
+          }
+        }
       }
     };
   };

@@ -21,12 +21,12 @@ export interface INvModule {
   $providers?: (Function | TUseClassProvider | TuseValueProvider)[];
   $exports?: Function[];
   providerList?: Map<Function | string, Function | any>;
+  providerInstances?: Map<Function | string, any>;
   bootstrap?: Function;
 
-  buildImports?(): void;
   buildProviderList(): void;
   buildProviders4Services(): void;
-  buildProviders4Components?(): void;
-  buildComponents4Components?(): void;
-  buildExports?(): void;
+  buildProviders4Components(): void;
+  buildComponents4Components(): void;
+  buildImports(): void;
 }

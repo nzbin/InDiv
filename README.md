@@ -402,7 +402,8 @@ version: v1.2.0
   - Components shouldn't fetch or save data directly and they certainly shouldn't knowingly present fake data. They should focus on presenting data and delegate data access to a service.
   - And u can use `Service` to send communication between `Component` , because we have realized singleton.
   - `Service` accepts an object`{ isSingletonMode?: boolean }` to decide use singleton or not, and default value of `isSingletonMode` is `true`
-  - If you don't set `isSingletonMode` to `false`, all `Service` in an InDiv app will be a singleton instance and it will only have one instance in this app
+  - If you don't set `isSingletonMode` to `false`, all `Service` will be singleton instance in an InDiv app and it will only have one instance in this app
+  - `Injected` can only inject service in module which own this service or component and in root module
 
     1. typescript
       - **usr decorator `Injectable` to declare service**

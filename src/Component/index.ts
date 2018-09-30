@@ -34,6 +34,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
 
     // component $providerList for injector
     if (options.providers && options.providers.length > 0) {
+      vm.$providerList = new Map();
       const length = options.providers.length - 1;
       for (let i = 0; i <= length; i++) {
         const service = options.providers[i];

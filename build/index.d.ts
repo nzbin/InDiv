@@ -36,6 +36,7 @@ export type EsRouteObject = {
 export type TComponentOptions = {
     selector: string;
     template: string;
+    providers?: (Function | TUseClassProvider | TuseValueProvider)[];
 };
 
 export type TInjectableOptions = {
@@ -78,6 +79,7 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     $template?: string;
     $components?: Function[];
     $componentList?: ComponentList<IComponent<any, any, any>>[];
+    $providerList?: Map<Function | string, Function | any>;
 
     setState?: SetState;
     getLocation?: GetLocation;
@@ -106,9 +108,9 @@ export interface INvModule {
     $components?: Function[];
     $providers?: (Function | TUseClassProvider | TuseValueProvider)[];
     $exports?: Function[];
-    providerList?: Map<Function | string, Function | any>;
-    providerInstances?: Map<Function | string, any>;
-    bootstrap?: Function;
+    $providerList?: Map<Function | string, Function | any>;
+    $providerInstances?: Map<Function | string, any>;
+    $bootstrap?: Function;
   
     buildProviderList(): void;
     buildProviders4Services(): void;

@@ -394,11 +394,13 @@ class Container {
     heroSearchService1,
     nvHttp,
     value,
+    heroSearchService2,
   ) {
     this.ss = heroSearchService;
     this.ss.test();
     console.log('nvHttp', nvHttp);
     console.log('value', value);
+    console.log('heroSearchService2', heroSearchService2);
     this.state = {
       a: 1,
       b: 3,
@@ -532,6 +534,7 @@ Container.injectTokens = [
   'heroSearchService1',
   'nvHttp',
   'value',
+  'heroSearchService2',
 ];
 Component({
   selector: 'container-wrap',
@@ -555,6 +558,12 @@ Component({
       <router-render></router-render>
     </div>
   `),
+  providers: [
+    {
+      provide: 'heroSearchService2',
+      useClass: HeroSearchService2,
+    }
+  ]
 })(Container);
 
 class M2 {}

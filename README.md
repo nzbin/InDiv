@@ -456,6 +456,10 @@ version: v1.2.0
 #### Dependency Injection
 
   - Dependency injection is an important application design pattern. It's used so widely that almost everyone just calls it DI
+  - About `providers` in `Component` and `providers` in `NvModule`
+      1. 
+
+  - Basic Usage
 
       1. Use Typescript
 

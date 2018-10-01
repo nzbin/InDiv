@@ -175,10 +175,10 @@ class Compile {
         if (arg === '') return false;
         if (arg === '$event') return argsList.push(event);
         if (arg === '$element') return argsList.push(node);
+        if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
         if (/(state.).*/g.test(arg)) return argsList.push(new CompileUtil()._getVMVal(vm, arg));
         if (/\'.*\'/g.test(arg)) return argsList.push(arg.match(/\'(.*)\'/)[1]);
         if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
-        if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
       });
       fn.apply(vm, argsList);
     };

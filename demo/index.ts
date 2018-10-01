@@ -440,8 +440,8 @@ class TestComponent implements OnInit {
       <div nv-repeat="let man in state.testArray" nv-key="man.name">
           <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
           <div>性别：{{man.sex}}</div>
-          <a nv-href="man.name">a {{man.sex}}</a>
-          <img nv-src="man.name" nv-alt="man.name" />
+          <a nv-href="man.sex">a {{man.sex}}</a>
+          <img nv-src="man.sex" nv-alt="man.sex" />
           <test-component nv-key="man.name" man="{man.name}"></test-component>
           <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
           <div class="fuck" nv-repeat="let c in man.job" nv-key="c.id">
@@ -556,7 +556,7 @@ class Container implements OnInit, AfterMount, WatchState {
       testArray: [
         {
           name: 'gerry',
-          sex: '男',
+          sex: '女',
           job: [
             {
               id: 1,
@@ -592,7 +592,7 @@ class Container implements OnInit, AfterMount, WatchState {
         },
         {
           name: 'nina',
-          sex: '女',
+          sex: '男',
           job: [
             {
               id: 1,

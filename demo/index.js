@@ -549,7 +549,7 @@ Component({
           <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
           <div>性别：{{man.sex}}</div>
           <a nv-href="man.name">a {{man.sex}}</a>
-          <img nv-src="man.name" alt="测试src" />
+          <img nv-src="man.name" ng-alt="man.name" />
           <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-key="$index" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
           <div class="fuck" nv-repeat="let c in man.job" nv-key="c.id">
             <input nv-on:click="@show(c, $index)" nv-model="c.name" nv-class="c.id" />

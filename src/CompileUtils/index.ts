@@ -28,7 +28,7 @@ export class CompileUtilForRepeat {
 
   /**
    * Creates an instance of CompileUtilForRepeat.
-   * 
+   *
    * @param {(Element | DocumentFragment)} [fragment]
    * @memberof CompileUtilForRepeat
    */
@@ -305,7 +305,7 @@ export class CompileUtilForRepeat {
   }
 
   /**
-   * commonUpdater for nv directive except repeat model text html if class 
+   * commonUpdater for nv directive except repeat model text html if class
    *
    * @param {Element} node
    * @param {*} value
@@ -345,10 +345,10 @@ export class CompileUtilForRepeat {
         if (arg === '') return false;
         if (arg === '$event') return argsList.push(event);
         if (arg === '$element') return argsList.push(node);
+        if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
         if (/(state.).*/g.test(arg)) return argsList.push(utilVm._getVMVal(vm, arg));
         if (/\'.*\'/g.test(arg)) return argsList.push(arg.match(/\'(.*)\'/)[1]);
         if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
-        if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
         if (arg.indexOf(key) === 0 || arg.indexOf(`${key}.`) === 0) return argsList.push(utilVm._getVMRepeatVal(val, arg, key));
         if (this.repeatData) {
           // $index in this
@@ -384,7 +384,7 @@ export class CompileUtil {
 
   /**
    * Creates an instance of CompileUtil.
-   * 
+   *
    * @param {(Element | DocumentFragment)} [fragment]
    *  @memberof CompileUtil
    */
@@ -444,7 +444,7 @@ export class CompileUtil {
 
   /**
    * bind handler for nv irective
-   * 
+   *
    * if node is repeat node and it will break compile and into CompileUtilForRepeat
    *
    * @param {Element} node
@@ -595,7 +595,7 @@ export class CompileUtil {
   }
 
   /**
-   * commonUpdater for nv directive except repeat model text html if class 
+   * commonUpdater for nv directive except repeat model text html if class
    *
    * @param {Element} node
    * @param {*} value
@@ -609,7 +609,7 @@ export class CompileUtil {
 
   /**
    * update repeat DOM for nv-repeat
-   * 
+   *
    * if it has child and it will into repeatChildrenUpdater
    *
    * @param {Element} node
@@ -640,7 +640,7 @@ export class CompileUtil {
       (newElement as Element).removeAttribute('nv-repeat');
 
       if (this.isTextNode((newElement as Element)) && reg.test(text)) new CompileUtilForRepeat(this.$fragment).templateUpdater(newElement as Element, val, key, vm);
-      
+
       if (nodeAttrs) {
         Array.from(nodeAttrs).forEach(attr => {
           const attrName = attr.name;
@@ -667,7 +667,7 @@ export class CompileUtil {
    * update child of nv-repeat DOM
    *
    * if child is an nv-repeat DOM, it will into CompileUtil repeatUpdater
-   * 
+   *
    * @param {Element} node
    * @param {*} value
    * @param {string} expFather
@@ -807,7 +807,7 @@ export class CompileUtil {
 
   /**
    * clone Node and clone it event
-   * 
+   *
    * event by attribute in DOM: eventTypes
    * repeat data by attribute in DOM: repeatData
    *

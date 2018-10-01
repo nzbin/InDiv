@@ -48,7 +48,7 @@ version: v1.2.0
   - `router.init(routes);` can init Array routes
   - If u want to watch routes changes, plz use `router.routeChange=(old.new) => {}`
 
-      1. Use `this.setLocation((path: String, query: Object, params: Object)` to go to Path or `location.href`
+      1. Use `this.setLocation(path: String, query: Object, params: Object)` to go to Path or `location.href`
       2. Use `this.getLocation()` to get location states
       3. `Router` : `http://localhost:1234/R1`
 
@@ -129,8 +129,20 @@ version: v1.2.0
       template: string;
     };
     ```
-  
-  - `selector` is your component tag name for HTML and used in template.
+
+  - `selector: string;` is your component tag name for HTML and used in template.
+  - `template: string` only accepts `state.XXX` as `nv-directive` from this.state, and `nv-on:event` only accepts `@eventHandler` from method which belongs to Class instance
+  - `providers` declares `Service` for `Component`
+
+    - Providers is an `Array` which has three modes:
+      1. Mode1: `Function` is equal to mode2: `{ provide: Function; useClass: Function; }`
+      2. Mode2: `{ provide: any; useClass: Function; }`
+      3. Mode3: `{ provide: any; useValue: any; }` uses  `useValue` for injector
+
+    - `provide` can be `string` , `function` or `Class` in TypeScript
+    - **In TypeScript these three modes can be used and provide can be `function` or `Class`**
+    - **In javascript please use `{ provide: string; useClass: Function; }[]` or `{ provide: string; useValue: any; }[]`**
+
   - `template` only accepts `state.XXX` from this.state, and nv-on:event only accepts `@eventHandler` from method which belongs to Class instance
   - **Please use `setState` after lifecycle `constructor()` and `nvOnInit`**, and you can change or set value for `this.state` without `setState` in lifecycle `constructor()` and `nvOnInit`
   - After `Class`'s `constructor`, u can use `this.props` in any lifecycle
@@ -141,7 +153,7 @@ version: v1.2.0
 
       - To use decorator `Component` declare `template` and `state`
       - To implements interface `OnInit, BeforeMount, AfterMount, HasRender, OnDestory, ReceiveProps, WatchState, RouteChange` to use lifecycle hooks
-      - To use decorator `Injected` to declare which need to be injected `Service` in `constructor`'s arguments of `Component`** 
+      - To use decorator `Injected` to declare which need to be injected `Service` in `constructor`'s arguments of `Component`**
 
       ```typescript
       import { Injected, Component, OnInit, AfterMount, ReceiveProps, SetLocation, GetLocation } from 'indiv';
@@ -155,6 +167,13 @@ version: v1.2.0
             <router-render></router-render>
           </div>
         `),
+        providers: [
+          HeroSearchService,
+          {
+            provide: HeroSearchService1,
+            useClass: HeroSearchService1,
+          }
+        ]
       })
       class Container implements OnInit, AfterMount, ReceiveProps {
         public ss: HeroSearchService;
@@ -196,7 +215,7 @@ version: v1.2.0
     2. javascript
 
       - To use function `Component` declare `template` and `state`
-      - Lifecycle hooks are equal in TypeScript, and have no use `implements` interface 
+      - Lifecycle hooks are equal in TypeScript, and have no use `implements` interface
       - **Use Class static attribution `injectTokens: string[]` and every item is `provide: string` of provider in `NvModule`**
       - **Class static attribution `injectTokens: string[]` must be `provide` of providers, and arguments of constructor will be instances of `useClass` or value of `useValue` of providers**
 
@@ -241,6 +260,16 @@ version: v1.2.0
             <input nv-model="state.a" />
             <router-render></router-render>
           </div>`),
+        providers: [
+          {
+            provide: 'heroSearchService',
+            useClass: HeroSearchService,
+          },
+          {
+            provide: 'heroSearchService1',
+            useClass: HeroSearchService1,
+          }
+        ]
       })(Container);
       ```
 
@@ -252,94 +281,104 @@ version: v1.2.0
 #### NvModule
 
   - InDiv apps are modular and InDiv has its own modularity system called `NvModule`.
-  - An `NvModule` is a container for a cohesive block of code dedicated to an application domain, a workflow, or a closely related set of capabilities. 
+  - An `NvModule` is a container for a cohesive block of code dedicated to an application domain, a workflow, or a closely related set of capabilities.
   - It can contain components, service providers, and other code files whose scope is defined by the containing `NvModule`.
   - It can import functionality that is exported from other `NvModule`, and export selected functionality for use by other `NvModule`.
 
-  - You need to declare `imports?: Function[]` `components: Function[]` `providers?: (Function | { provide: any; useClass: Function; } | { provide: any; useValue: any; }[])[]` `exports?: Function[]` `bootstrap?: Function` in `options`
+  - You need to declare 
+
+    1. `imports?: Function[]`
+    2. `components: Function[]`
+    3. `providers?: (Function | { provide: any; useClass: Function; } | { provide: any; useValue: any; }[])[]`
+    4. `exports?: Function[]`
+    5. `bootstrap?: Function` in `options`
+
   - `imports?: Function[]` imports other `NvModule` and respect it's `exports?: Function[]`
-  - `components: Function[]` declare `Components`
-  - `providers` declare `Service`
+  - `components: Function[]` declares `Components`
+  - `providers` declares `Service` for `Component` or `Service`
+
     - Providers is an `Array` which has three modes:
       1. Mode1: `Function` is equal to mode2: `{ provide: Function; useClass: Function; }`
       2. Mode2: `{ provide: any; useClass: Function; }`
       3. Mode3: `{ provide: any; useValue: any; }` uses  `useValue` for injector
-    - `provide` can be `string` , `function` or `Type` in TypeScript
-    - **In TypeScript provide can be `function` or `Type`**
+
+    - `provide` can be `string` , `function` or `Class` in TypeScript
+    - **In TypeScript these three modes can be used and provide can be `function` or `Class`**
     - **In javascript please use `{ provide: string; useClass: Function; }[]` or `{ provide: string; useValue: any; }[]`**
+
   - `exports?: Function[]` exports `Components` for other `NvModules`
-  - `bootstrap?: Function` declare `Component` for Module bootstrap only if u don't `Router`
+  - `bootstrap?: Function` declares `Component` for Module bootstrap only if u don't `Router`
 
     1. typescript
 
-    ```typescript
-    @NvModule({
-      imports: [
-        M2,
-      ],
-      components: [
-        Container,
-        PComponent,
-        R1,
-      ],
-      providers: [
-        HeroSearchService,
-        {
-          provide: HeroSearchService1,
-          useClass: HeroSearchService1
-        },
-        {
-          provide: HeroSearchService3,
-          useValue: 123,
-        },
-      ],
-      exports: [
-        Container,
-        PComponent,
-      ]
-    })
-    class M1 {}
-    ```
-    1. javascript
-  
-    ```javascript
-    class M1 {}
-    NvModule({
-      imports: [
-        M2,
-      ],
-      components: [
-        Container,
-        PComponent,
-        R1,
-      ],
-      providers: [
-        {
-          provide: 'heroSearchService',
-          useClass: HeroSearchService1
-        },
-        {
-          provide: 'heroSearchService1',
-          useClass: HeroSearchService1
-        },
-        {
-          provide: HeroSearchService3,
-          useValue: 123,
-        },
-      ],
-      exports: [
-        Container,
-        PComponent,
-      ]
-    })(M1);
-    ```
+      ```typescript
+      @NvModule({
+        imports: [
+          M2,
+        ],
+        components: [
+          Container,
+          PComponent,
+          R1,
+        ],
+        providers: [
+          HeroSearchService,
+          {
+            provide: HeroSearchService1,
+            useClass: HeroSearchService1
+          },
+          {
+            provide: HeroSearchService3,
+            useValue: 123,
+          },
+        ],
+        exports: [
+          Container,
+          PComponent,
+        ]
+      })
+      class M1 {}
+      ```
+
+    2. javascript
+
+      ```javascript
+      class M1 {}
+      NvModule({
+        imports: [
+          M2,
+        ],
+        components: [
+          Container,
+          PComponent,
+          R1,
+        ],
+        providers: [
+          {
+            provide: 'heroSearchService',
+            useClass: HeroSearchService1
+          },
+          {
+            provide: 'heroSearchService1',
+            useClass: HeroSearchService1
+          },
+          {
+            provide: 'heroSearchService3',
+            useValue: 123,
+          },
+        ],
+        exports: [
+          Container,
+          PComponent,
+        ]
+      })(M1);
+      ```
 
 #### Template Syntax
 
-  - 规定：指令以 nv-xxx 命名
   - Now we support: nv-model nv-text nv-html nv-if nv-class nv-repeat nv-key nv-on:Event
-  - And also support some directive which can use `DOM.directiveName` to set value, like `nv-src` `nv-href`
-  - 事件指令, 如 nv-on:click
+  - And also support some directive which can use `DOM.directiveName` to set value, like `nv-src` `nv-href` `nv-alt`
+  - Event directive, 如 nv-on:click
     - Text: `<p nv-text="state.b"></p>;`
     - Template: `<p>this.state.b是：{{state.b}}</p>;`
     - HTML: `<p nv-html="state.c"></p>;`
@@ -347,12 +386,12 @@ version: v1.2.0
     - Class: `<p class="b" nv-class="state.a"></p>';`
     - Directives: ues `nv-on:event`
       - `<p nv-on:click="@componentClick()"></p>;`
-    - If: 
+    - If:
       - Now `nv-if` will remove this DOM
       - Because continually change DOM structure will lead the waste of performance, so please reduce use this template syntax
-      - `<p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>` 
+      - `<p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>`
     - Repeat: `<p  class="b" nv-class="state.a" nv-repeat="let a in state.b" nv-if="a.f">{{a.z}}</p>`
-    - Key: 
+    - Key:
       - If u are repeating an `Component` or need continually change DOM structure, please use `nv-key` with `nv-repeat`.
       - `nv-key` is a key for InDiv to mark repeat `Component` or `DOM`, and it must be an unique value or index ** `$index` **.
       - If u are not use `nv-repeat` without `nv-key`, InDiv will render this with a new `Component`, and `state` in `Component` will be reset.
@@ -361,13 +400,13 @@ version: v1.2.0
   - About function in Template Syntax
     - Now you can send arguments in Function
     - Arguments include:
-      1. Event: `$event`
-      2. String: `'xxx'`
-      3. Number: `123`
+      1. Event: `nv-on:click="@click($event)"`
+      2. String: `nv-on:click="@click('xxx')"`
+      3. Number: `nv-on:click="@click(123)"`
       4. Index: `$index`, you can only use this in **repeat DOM** : `<input nv-on:click="this.show(b, $index)" nv-repeat="let b in state.testArray2" nv-model="b" nv-class="b" />`
-      5. Variable: **`state.xxx`**
-      6. Boolean: `true` `false`
-      7. For nv-repeat: items like: `nv-repeat="let a in state.b" nv-if="a.f"`
+      5. Variable: **`nv-on:click="@click(state.a)"`**
+      6. Boolean: `nv-on:click="@click(true, false)"`
+      7. For nv-repeat: items like: `nv-repeat="let data in state.repeatData" nv-if="data.show"`
 
 1. Data monitor: this.state && this.setState
 
@@ -402,8 +441,10 @@ version: v1.2.0
   - Components shouldn't fetch or save data directly and they certainly shouldn't knowingly present fake data. They should focus on presenting data and delegate data access to a service.
   - And u can use `Service` to send communication between `Component` , because we have realized singleton.
   - `Service` accepts an object`{ isSingletonMode?: boolean }` to decide use singleton or not, and default value of `isSingletonMode` is `true`
-  - If you don't set `isSingletonMode` to `false`, all `Service` will be singleton instance in an InDiv app and it will only have one instance in this app
-  - `Injected` can only inject service in module which own this service or component and in root module
+  - If you don't set `isSingletonMode` to `false` and use it in `providers` of `NvModule`, then all `Service` will be singleton instance in an InDiv app and it will only have one instance in this app
+  - If you use it in `providers` of `Component`, `Service` will be a singleton instance only in one instance of `Component`, whatever `isSingletonMode` of `Service` is true or not.
+  - `Injected` can only inject service in module which own this service or component and in root module in TypeScript
+  - Class static attribution `injectTokens: string[]` accepts `provide: string` of `providers` in JavaScript
 
     1. typescript
       - **usr decorator `Injectable` to declare service**
@@ -429,7 +470,7 @@ version: v1.2.0
 
     2. javascript
       - **use `Injectable`**
-      - **for inject dependences for service, please use Class static attribution `injectTokens: string[]` like `Component`** 
+      - **for inject dependences for service, please use Class static attribution `injectTokens: string[]` like `Component`**
 
       ```javascript
       class HeroSearchService {
@@ -450,14 +491,17 @@ version: v1.2.0
       })(HeroSearchService);
       ```
 
-    3. NVHttp: import NVHttp from 'indiv' and use it like a `Service` which `isSingletonMode` is false (`@Injectable({ isSingletonMode: false })`)
-    4. Utils: import Utils from 'indiv' and use it like a `Service` which `isSingletonMode` is false (`@Injectable({ isSingletonMode: false })`)
+    3. Service `NVHttp`: import NVHttp from 'indiv' and use it like a `Service` which `isSingletonMode` is false (`@Injectable({ isSingletonMode: false })`)
+    4. Service `Utils`: import Utils from 'indiv' and use it like a `Service` which `isSingletonMode` is false (`@Injectable({ isSingletonMode: false })`)
 
 #### Dependency Injection
 
-  - Dependency injection is an important application design pattern. It's used so widely that almost everyone just calls it DI
-  - About `providers` in `Component` and `providers` in `NvModule`
-      1. 
+  - Dependency injection is an important application design pattern. It's used so widely that almost everyone just calls it DI.
+  - Difference between `providers` of `Component` and `providers` of `NvModule`
+      1. `providers` of `Component` will be injected to **component injector** and will be the most preferential.
+      2. `providers` of `Component` is a singleton service only in one instance of `Component`, and the instance will only belong to `Component`
+      3. `providers` of `NvModule` will be injected to **root injector**. If dependency can't be found in `providers` of `Component`, it will be found in `providers` of `NvModule`
+      4. If a service in the `providers` of `NvModule`  is a singleton service or not only depends on `isSingletonMode`
 
   - Basic Usage
 
@@ -506,12 +550,18 @@ version: v1.2.0
             <router-render></router-render>
           </div>
         `),
+        providers: [
+          {
+            provide: HeroSearchService1,
+            useClass: HeroSearchService1,
+          }
+        ]
       })
       class PCChild implements HasRender {
         public props: any;
-        public hsr: HeroSearchService;
         constructor(
           private hsrS: HeroSearchService,
+          private hsrS1: HeroSearchService1,
         ) {
           this.hsrS.test();
           this.state = { a: 1 };
@@ -529,8 +579,14 @@ version: v1.2.0
         ],
         providers: [
           HeroSearchService,
-          HeroSearchService1,
-        ],
+          {
+            provide: HeroSearchService1,
+            useClass: HeroSearchService1,
+          },
+          {
+            provide: ValueService,
+            useClass: 3333,
+          }],
       })
       class M1 {}
       ```
@@ -549,9 +605,12 @@ version: v1.2.0
           console.log('HeroSearchService !!!1111');
         }
       }
-      Injectable()(HeroSearchService1);
+      Injectable({ isSingletonMode: true })(HeroSearchService1);
 
       class HeroSearchService {
+        static injectTokens = [
+          'heroSearchService1'
+        ];
         constructor(
           heroSearchService1,
         ) {
@@ -564,25 +623,24 @@ version: v1.2.0
           console.log('HeroSearchService !!!000000000');
         }
       }
-      HeroSearchService.injectTokens = [
-        'heroSearchService1'
-      ];
-      Injectable({
-        isSingletonMode: false,
-      })(HeroSearchService);
+      Injectable({ isSingletonMode: false })(HeroSearchService);
 
       class Container {
-        constructor(heroSearchService) {
-          this.ss = heroSearchService;
-          this.ss.test();
+        static injectTokens = [
+          'heroSearchService',
+          'heroSearchService1',
+        ];
+        constructor(
+          heroSearchService,
+          HeroSearchService1
+        ) {
+          this.hsrS = heroSearchService;
+          this.hsrS.test();
           this.state = {
             a: 'a',
           };
         }
       }
-      Container.injectTokens = [
-        'heroSearchService'
-      ];
       Component({
         selector: 'container-wrap',
         template: (`
@@ -590,6 +648,12 @@ version: v1.2.0
             <p>1232{{state.a}}</p>
           </div>
         `),
+        providers: [
+          {
+            provide: 'heroSearchService1',
+            useClass: HeroSearchService1,
+          }
+        ]
       })(Container)
 
       class M1 {}
@@ -605,15 +669,14 @@ version: v1.2.0
             provide: 'heroSearchService',
             useClass: HeroSearchService,
           },
-          { 
+          {
             provide: 'heroSearchService1',
-            useClass: HeroSearchService1, 
+            useClass: HeroSearchService1,
           },
-          { 
+          {
             provide: 'value',
-            useClass: 3333, 
-          }
-        ],
+            useClass: 3333,
+          }],
       })(M1);
       ```
 
@@ -650,7 +713,7 @@ version: v1.2.0
     ```
 
 #### Server Side Render
-    
+
     - [npm](https://www.npmjs.com/package/@indiv/ssr-renderer) install and use nodeJS v6 or newer
     - export your InDiv instance and routes
     - use `renderToString(url: string, routes: TRouter[], inDiv: InDiv): string`, render your app to string with `request.url`, `routes` and `InDiv instance`
@@ -686,5 +749,7 @@ route => NvModule => component
 - [x] DI
 - [x] SSR 服务端渲染
 - [ ] 自定义指令
+- [ ] Template Syntax remove `state.`
+- [ ] route to NvModule
 - [ ] async template render
 - [ ] optimize setState

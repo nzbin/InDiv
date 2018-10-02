@@ -117,6 +117,56 @@ export class CompileUtilForRepeat {
   }
 
   /**
+   * get Function for vm
+   *
+   * @param {*} vm
+   * @param {string} exp
+   * @returns {Function}
+   * @memberof CompileUtil
+   */
+  public _getVMFunction(vm: any, exp: string): Function {
+    const fnList = exp.replace(/^(\@)/, '').replace(/\(.*\)/, '').split('.');
+    let fn = vm;
+    fnList.forEach(f => {
+      fn = fn[f];
+    });
+    return fn as Function;
+  }
+
+  /**
+   * get Function arguments for vm
+   *
+   * @param {*} vm
+   * @param {string} exp
+   * @param {Element} node
+   * @param {string} key
+   * @param {*} val
+   * @returns {any[]}
+   * @memberof CompileUtilForRepeat
+   */
+  public _getVMFunctionArguments(vm: any, exp: string, node: Element, key: string, val: any): any[] {
+    const args = exp.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
+    const argsList: any[] = [];
+    const utilVm = this;
+    args.forEach(arg => {
+      if (arg === '') return false;
+      if (arg === '$element') return argsList.push(node);
+      if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
+      if (/(state.).*/g.test(arg)) return argsList.push(utilVm._getVMVal(vm, arg));
+      if (/\'.*\'/g.test(arg)) return argsList.push(arg.match(/\'(.*)\'/)[1]);
+      if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
+      if (arg.indexOf(key) === 0 || arg.indexOf(`${key}.`) === 0) return argsList.push(utilVm._getVMRepeatVal(val, arg, key));
+      if (this.repeatData) {
+        // $index in this
+        Object.keys(this.repeatData).forEach(data => {
+          if (arg.indexOf(data) === 0 || arg.indexOf(`${data}.`) === 0) return argsList.push(utilVm._getValueByValue(this.repeatData[data], arg, data));
+        });
+      }
+    });
+    return argsList;
+  }
+
+  /**
    * bind handler for nv irective
    *
    * @param {Element} node
@@ -128,20 +178,20 @@ export class CompileUtilForRepeat {
    * @param {*} [watchValue]
    * @memberof CompileUtilForRepeat
    */
-  public bind(node: Element, key?: string, dir?: string, exp?: string, index?: number, vm?: any, watchValue?: any): void {
+  public bind(node: Element, key?: string, dir?: string, exp?: string, index?: number, vm?: any, watchValue?: any, val?: any): void {
     const repeatValue = (node.repeatData)[key];
     let value;
-    if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
+    if (/^(\@)/.test(exp)) {
+      // if @Function need function return value
+      const fn = this._getVMFunction(vm, exp);
+      const argsList = this._getVMFunctionArguments(vm, exp, node, key, val);
+      value = fn.apply(vm, argsList);
+    } else if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
+      // repeat value
       value = this._getVMRepeatVal(repeatValue, exp, key);
     } else {
+      // normal value
       value = this._getVMVal(vm, exp);
-    }
-
-    let watchData;
-    if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
-      watchData = watchValue;
-    } else {
-      watchData = this._getVMVal(vm, exp);
     }
 
     if (!node.hasChildNodes()) this.templateUpdater(node, repeatValue, key, vm);
@@ -149,6 +199,12 @@ export class CompileUtilForRepeat {
     const updaterFn: any = this[`${dir}Updater`];
     switch (dir) {
       case 'model':
+        let watchData;
+        if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
+          watchData = watchValue;
+        } else {
+          watchData = this._getVMVal(vm, exp);
+        }
         if (updaterFn) (updaterFn as Function).call(this, node, value, exp, key, index, watchData, vm);
         break;
       case 'text':
@@ -188,12 +244,16 @@ export class CompileUtilForRepeat {
       if (textList && textList.length > 0) {
         for (let i = 0; i < textList.length; i++) {
           const exp = textList[i].replace('{{', '').replace('}}', '');
-          let value;
-          if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
+          let value = null;
+          if (/^(\@)/.test(exp)) {
+            const fn = this._getVMFunction(vm, exp);
+            const argsList = this._getVMFunctionArguments(vm, exp, node, key, val);
+            value = fn.apply(vm, argsList);
+          } else if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
             value = this._getVMRepeatVal(val, exp, key);
           } else {
             value = this._getVMVal(vm, exp);
-        }
+          }
           node.textContent = node.textContent.replace(textList[i], value);
         }
       }
@@ -443,6 +503,46 @@ export class CompileUtil {
   }
 
   /**
+   * get Function for vm
+   *
+   * @param {*} vm
+   * @param {string} exp
+   * @returns {Function}
+   * @memberof CompileUtil
+   */
+  public _getVMFunction(vm: any, exp: string): Function {
+    const fnList = exp.replace(/^(\@)/, '').replace(/\(.*\)/, '').split('.');
+    let fn = vm;
+    fnList.forEach(f => {
+      fn = fn[f];
+    });
+    return fn as Function;
+  }
+
+  /**
+   * get Function arguments for vm
+   *
+   * @param {*} vm
+   * @param {string} exp
+   * @param {Element} node
+   * @returns {any[]}
+   * @memberof CompileUtil
+   */
+  public _getVMFunctionArguments(vm: any, exp: string, node: Element): any[] {
+    const args = exp.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
+    const argsList: any[] = [];
+    args.forEach(arg => {
+      if (arg === '') return false;
+      if (arg === '$element') return argsList.push(node);
+      if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
+      if (/(state.).*/g.test(arg)) return argsList.push(new CompileUtil()._getVMVal(vm, arg));
+      if (/\'.*\'/g.test(arg)) return argsList.push(arg.match(/\'(.*)\'/)[1]);
+      if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
+    });
+    return argsList;
+  }
+
+  /**
    * bind handler for nv irective
    *
    * if node is repeat node and it will break compile and into CompileUtilForRepeat
@@ -463,29 +563,41 @@ export class CompileUtil {
           if (updaterFn) (updaterFn as Function).call(this, node, this._getVMRepeatVal(vm, exp), exp, vm);
           break;
       }
-    } else {
+    } else { 
+      let value = null;
+      // for @Function(arg)
+      if (/^(\@)/.test(exp)) {
+        // if @Function need function return value
+        const fn = this._getVMFunction(vm, exp);
+        const argsList = this._getVMFunctionArguments(vm, exp, node);
+        value = fn.apply(vm, argsList);
+      } else {
+        // normal value
+        value = this._getVMVal(vm, exp);
+      }
+
       // compile unrepeatNode's attributes
       switch (dir) {
         case 'model':
-          if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp), exp, vm);
+          if (updaterFn) (updaterFn as Function).call(this, node, value, exp, vm);
           break;
         case 'text':
-          if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp));
+          if (updaterFn) (updaterFn as Function).call(this, node, value);
           break;
         case 'html':
-          if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp));
+          if (updaterFn) (updaterFn as Function).call(this, node, value);
           break;
         case 'if':
-          if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp));
+          if (updaterFn) (updaterFn as Function).call(this, node, value);
           break;
         case 'class':
-          if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp));
+          if (updaterFn) (updaterFn as Function).call(this, node, value);
           break;
         case 'key':
-          if (updaterFn) (updaterFn as Function).call(this, node, this._getVMVal(vm, exp));
+          if (updaterFn) (updaterFn as Function).call(this, node, value);
           break;
         default:
-          this.commonUpdater.call(this, node, this._getVMVal(vm, exp), dir);
+          this.commonUpdater.call(this, node, value, dir);
       }
       node.removeAttribute(`nv-${dir}`);
     }
@@ -500,7 +612,16 @@ export class CompileUtil {
    * @memberof CompileUtil
    */
   public templateUpdater(node: any, vm: any, exp: string): void {
-    node.textContent = node.textContent.replace(exp, this._getVMVal(vm, exp.replace('{{', '').replace('}}', '')));
+    const _exp = exp.replace('{{', '').replace('}}', '');
+    let value = null;
+    if (/^(\@)/.test(_exp)) {
+      const fn = this._getVMFunction(vm, _exp);
+      const argsList = this._getVMFunctionArguments(vm, _exp, node);
+      value = fn.apply(vm, argsList);
+    } else {
+      value = this._getVMVal(vm, _exp);
+    }
+    node.textContent = node.textContent.replace(exp, value);
   }
 
   /**
@@ -530,50 +651,6 @@ export class CompileUtil {
       node.eventTypes = JSON.stringify(eventlist);
     }
     if (!node.eventTypes) node.eventTypes = JSON.stringify(['input']);
-  }
-
-  /**
-   * compile event and build eventType in DOM
-   *
-   * @param {Element} node
-   * @param {*} vm
-   * @param {string} exp
-   * @param {string} eventName
-   * @memberof Compile
-   */
-  public eventHandler(node: Element, vm: any, exp: string, eventName: string): void {
-    const eventType = eventName.split(':')[1];
-
-    const fnList = exp.replace(/^(\@)/, '').replace(/\(.*\)/, '').split('.');
-    const args = exp.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
-
-    let fn = vm;
-    fnList.forEach(f => {
-      fn = fn[f];
-    });
-    const func = function(event: Event): void {
-      const argsList: any[] = [];
-      args.forEach(arg => {
-        if (arg === '') return false;
-        if (arg === '$event') return argsList.push(event);
-        if (arg === '$element') return argsList.push(node);
-        if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
-        if (/(state.).*/g.test(arg)) return argsList.push(new CompileUtil()._getVMVal(vm, arg));
-        if (/\'.*\'/g.test(arg)) return argsList.push(arg.match(/\'(.*)\'/)[1]);
-        if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
-      });
-      fn.apply(vm, argsList);
-    };
-    if (eventType && fn) {
-      (node as any)[`on${eventType}`] = func;
-      (node as any)[`event${eventType}`] = func;
-      if (node.eventTypes) {
-        const eventlist = JSON.parse(node.eventTypes);
-        eventlist.push(eventType);
-        node.eventTypes = JSON.stringify(eventlist);
-      }
-      if (!node.eventTypes) node.eventTypes = JSON.stringify([eventType]);
-    }
   }
 
   /**
@@ -694,7 +771,7 @@ export class CompileUtil {
             if (this.isEventDirective(dir)) {
               new CompileUtilForRepeat(this.$fragment).eventHandler(newElement as Element, vm, exp, dir, key, val);
             } else {
-              new CompileUtilForRepeat(this.$fragment).bind(newElement as Element, key, dir, exp, index, vm, value);
+              new CompileUtilForRepeat(this.$fragment).bind(newElement as Element, key, dir, exp, index, vm, value, val);
             }
 
             (newElement as Element).removeAttribute(attrName);
@@ -742,7 +819,7 @@ export class CompileUtil {
             if (this.isEventDirective(dir)) {
               new CompileUtilForRepeat(node).eventHandler(child, vm, exp, dir, key, value);
             } else {
-              new CompileUtilForRepeat(node).bind(child, key, dir, exp, index, vm, watchValue);
+              new CompileUtilForRepeat(node).bind(child, key, dir, exp, index, vm, watchValue, value);
             }
             child.removeAttribute(attrName);
           }
@@ -770,6 +847,47 @@ export class CompileUtil {
         }
       }
     });
+  }
+
+  /**
+   * compile event and build eventType in DOM
+   *
+   * @param {Element} node
+   * @param {*} vm
+   * @param {string} exp
+   * @param {string} eventName
+   * @memberof Compile
+   */
+  public eventHandler(node: Element, vm: any, exp: string, eventName: string): void {
+    const eventType = eventName.split(':')[1];
+
+    const fn = this._getVMFunction(vm, exp);
+
+    const args = exp.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
+
+    const func = function(event: Event): void {
+      const argsList: any[] = [];
+      args.forEach(arg => {
+        if (arg === '') return false;
+        if (arg === '$event') return argsList.push(event);
+        if (arg === '$element') return argsList.push(node);
+        if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
+        if (/(state.).*/g.test(arg)) return argsList.push(new CompileUtil()._getVMVal(vm, arg));
+        if (/\'.*\'/g.test(arg)) return argsList.push(arg.match(/\'(.*)\'/)[1]);
+        if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
+      });
+      fn.apply(vm, argsList);
+    };
+    if (eventType && fn) {
+      (node as any)[`on${eventType}`] = func;
+      (node as any)[`event${eventType}`] = func;
+      if (node.eventTypes) {
+        const eventlist = JSON.parse(node.eventTypes);
+        eventlist.push(eventType);
+        node.eventTypes = JSON.stringify(eventlist);
+      }
+      if (!node.eventTypes) node.eventTypes = JSON.stringify([eventType]);
+    }
   }
 
   /**

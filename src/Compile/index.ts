@@ -90,7 +90,7 @@ class Compile {
       if (this.isElementNode(node)) this.compile(node, fragment);
 
       if (this.isTextNode(node) && reg.test(text)) {
-        const textList = text.match(/(\{\{(state\.)[^\{\}]+?\}\})/g);
+        const textList = text.match(/(\{\{[^\{\}]+?\}\})/g);
         if (textList && textList.length > 0) {
           for (let i = 0; i < textList.length; i++) {
               this.compileText(node, textList[i]);

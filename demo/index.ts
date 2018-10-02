@@ -433,14 +433,14 @@ class TestComponent implements OnInit {
   selector: 'container-wrap',
   template: (`
     <div>
-      <p nv-id="state.a" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>
+      <p nv-id="@countState(state.a)" nv-if="@countState(state.a)" nv-on:click="@changeInput()">{{state.a}}</p>
       <test-component nv-repeat="let man in state.testArray" nv-key="man.name" man="{man.name}" nv-if="state.a"></test-component>
-      <p nv-on:click="@go()">container: {{state.a}}</p>
+      <p nv-on:click="@go()">container: {{@countState(state.a)}}</p>
       <input nv-model="state.a" />
       <div nv-repeat="let man in state.testArray" nv-key="man.name">
           <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
-          <div>性别：{{man.sex}}</div>
-          <a nv-href="man.sex">a {{man.sex}}</a>
+          <div>性别：{{@countState(man.sex)}}</div>
+          <a nv-href="@countState(man.sex)">a {{man.sex}}</a>
           <img nv-src="man.sex" nv-alt="man.sex" />
           <test-component nv-key="man.name" man="{man.name}"></test-component>
           <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
@@ -528,6 +528,10 @@ class Container implements OnInit, AfterMount, WatchState {
 
   public go() {
     this.setLocation('/R1', { b: '1' });
+  }
+  public countState(a: any): any {
+    if (!a) return 'false';
+    return a;
   }
   public show(a: any, index?: string) {
     console.log('aaaa', a);

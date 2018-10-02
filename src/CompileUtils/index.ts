@@ -533,6 +533,50 @@ export class CompileUtil {
   }
 
   /**
+   * compile event and build eventType in DOM
+   *
+   * @param {Element} node
+   * @param {*} vm
+   * @param {string} exp
+   * @param {string} eventName
+   * @memberof Compile
+   */
+  public eventHandler(node: Element, vm: any, exp: string, eventName: string): void {
+    const eventType = eventName.split(':')[1];
+
+    const fnList = exp.replace(/^(\@)/, '').replace(/\(.*\)/, '').split('.');
+    const args = exp.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
+
+    let fn = vm;
+    fnList.forEach(f => {
+      fn = fn[f];
+    });
+    const func = function(event: Event): void {
+      const argsList: any[] = [];
+      args.forEach(arg => {
+        if (arg === '') return false;
+        if (arg === '$event') return argsList.push(event);
+        if (arg === '$element') return argsList.push(node);
+        if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
+        if (/(state.).*/g.test(arg)) return argsList.push(new CompileUtil()._getVMVal(vm, arg));
+        if (/\'.*\'/g.test(arg)) return argsList.push(arg.match(/\'(.*)\'/)[1]);
+        if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
+      });
+      fn.apply(vm, argsList);
+    };
+    if (eventType && fn) {
+      (node as any)[`on${eventType}`] = func;
+      (node as any)[`event${eventType}`] = func;
+      if (node.eventTypes) {
+        const eventlist = JSON.parse(node.eventTypes);
+        eventlist.push(eventType);
+        node.eventTypes = JSON.stringify(eventlist);
+      }
+      if (!node.eventTypes) node.eventTypes = JSON.stringify([eventType]);
+    }
+  }
+
+  /**
    * update text for nv-text
    *
    * @param {Element} node

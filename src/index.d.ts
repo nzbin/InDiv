@@ -195,6 +195,7 @@ export declare class CompileUtil {
     commonUpdater(node: Element, value: any, dir: string): void;
     repeatUpdater(node: Element, value: any, expFather: string, vm: any): void;
     repeatChildrenUpdater(node: Element, value: any, expFather: string, index: number, vm: any, watchValue: any): void;
+    eventHandler(node: Element, vm: any, exp: string, eventName: string): void;
     isDirective(attr: string): boolean;
     isEventDirective(event: string): boolean;
     isElementNode(node: Element): boolean;
@@ -214,7 +215,7 @@ export declare class Compile {
     compile(node: Element, fragment: DocumentFragment | Element): void;
     node2Fragment(): DocumentFragment;
     compileText(node: Element, exp: string): void;
-    eventHandler(node: Element, vm: any, exp: string, eventName: string): void;
+    // eventHandler(node: Element, vm: any, exp: string, eventName: string): void;
     isDirective(attr: string): boolean;
     isEventDirective(eventName: string): boolean;
     isElementNode(node: Element | string): boolean;

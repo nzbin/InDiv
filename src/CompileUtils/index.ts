@@ -144,7 +144,7 @@ export class CompileUtilForRepeat {
    * @returns {any[]}
    * @memberof CompileUtilForRepeat
    */
-  public _getVMFunctionArguments(vm: any, exp: string, node: Element, key: string, val: any): any[] {
+  public _getVMFunctionArguments(vm: any, exp: string, node: Element, key?: string, val?: any): any[] {
     const args = exp.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
     const argsList: any[] = [];
     const utilVm = this;
@@ -749,10 +749,7 @@ export class CompileUtil {
    */
   public repeatUpdater(node: Element, value: any, expFather: string, vm: any): void {
     if (!value) return;
-    if (value && !(value instanceof Array)) {
-      console.error('compile error: nv-repeat need an Array!');
-      return;
-    }
+    if (value && !(value instanceof Array)) throw new Error('compile error: nv-repeat need an Array!');
 
     const key = expFather.split(' ')[1];
     value.forEach((val: any, index: number) => {

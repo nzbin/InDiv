@@ -3,7 +3,7 @@ import { IComponent, ComponentList, TInjectTokenProvider, TUseClassProvider, Tus
 import Compile from '../Compile';
 import Watcher from '../Watcher';
 import Utils from '../Utils';
-import { CompileUtil } from '../CompileUtils';
+import { CompileUtil, CompileUtilForRepeat } from '../CompileUtils';
 import { factoryCreator } from '../DI';
 
 
@@ -175,7 +175,30 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
                   props[attrName] = (this as IComponent<State, Props, Vm>).buildProps(_prop);
                   return;
                 }
-                if (/^(\@.).*/g.test(prop[1])) {
+                if (/^(\@.).*\(.*\)$/g.test(prop[1])) {
+                  const utilVm = new CompileUtilForRepeat();
+                  const fn = utilVm._getVMFunction(vm, prop[1]);
+                  const args = prop[1].replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
+                  const argsList: any[] = [];
+                  args.forEach(arg => {
+                    if (arg === '') return false;
+                    if (arg === '$element') return argsList.push(node);
+                    if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
+                    if (/(state.).*/g.test(arg)) return argsList.push(utilVm._getVMVal(vm, arg));
+                    if (/\'.*\'/g.test(arg)) return argsList.push(arg.match(/\'(.*)\'/)[1]);
+                    if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
+                    if (node.repeatData) {
+                      // $index in this
+                      Object.keys(node.repeatData).forEach(data => {
+                        if (arg.indexOf(data) === 0 || arg.indexOf(`${data}.`) === 0) return argsList.push(utilVm._getValueByValue(node.repeatData[data], arg, data));
+                      });
+                    }
+                  });
+                  const value = fn.apply(vm, argsList);
+                  props[attrName] = value;
+                  return;
+                }
+                if (/^(\@.).*[^\(.*\)]$/g.test(prop[1])) {
                   _prop = (this as IComponent<State, Props, Vm>).compileUtil._getVMVal(this as IComponent<State, Props, Vm>, prop[1].replace(/^(\@)/, ''));
                   props[attrName] = (this as IComponent<State, Props, Vm>).buildProps(_prop);
                   return;

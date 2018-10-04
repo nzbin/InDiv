@@ -149,130 +149,138 @@ version: v1.2.0
   - After `Class`'s `constructor`, u can use `this.props` in any lifecycle
   - Use `nvOnInit` and `nvReceiveProps(nextProps: any): void;` to receive props and set `props` in `state`
   - Use `setLocation` and `getLocation` to controll route or get route info
+  - Use `Component` in `template`
 
-    1. typescript
+    - Use like a HTML element tag: `<test-component></test-component>`
+    - Set props like HTML attributes, but use `{}` to include props value: `<test-component man="{@countState(man.name)}" women="{man.name}" handler="{@getProps}"></test-component>`
+    - Props can use three types:
+      1. value from `this.state` and repeat data: `women="{state.name}"` `women="{man.name}"`
+      2. value use function from `Component` instance with return value: `man="{@countState(man.name)}"`
+      3. Function form `Component` instance (must use `@`): `handler="{@getProps}"`
 
-      - To use decorator `Component` declare `template` and `state`
-      - To implements interface `OnInit, BeforeMount, AfterMount, HasRender, OnDestory, ReceiveProps, WatchState, RouteChange` to use lifecycle hooks
-      - To use decorator `Injected` to declare which need to be injected `Service` in `constructor`'s arguments of `Component`**
+1. typescript
 
-      ```typescript
-      import { Injected, Component, OnInit, AfterMount, ReceiveProps, SetLocation, GetLocation } from 'indiv';
-      @Injected
-      @Component({
-        selector: 'container-wrap',
-        template: (`
-          <div>
-            <p nv-on:click="@go()">container: {{state.a}}</p>
-            <input nv-model="state.a" />
-            <router-render></router-render>
-          </div>
-        `),
-        providers: [
-          HeroSearchService,
-          {
-            provide: HeroSearchService1,
-            useClass: HeroSearchService1,
-          }
-        ]
-      })
-      class Container implements OnInit, AfterMount, ReceiveProps {
-        public ss: HeroSearchService;
-        public state: any;
-        public setLocation: SetLocation;
+  - To use decorator `Component` declare `template` and `state`
+  - To implements interface `OnInit, BeforeMount, AfterMount, HasRender, OnDestory, ReceiveProps, WatchState, RouteChange` to use lifecycle hooks
+  - To use decorator `Injected` to declare which need to be injected `Service` in `constructor`'s arguments of `Component`**
 
-        constructor(
-          private hss: HeroSearchService,
-        ) {
-          this.ss = hss;
-          this.ss.test();
-          this.state = {
-            a: 1,
-          };
-        }
-
-        public nvOnInit() {
-          this.state.propsTest = this.props.test;
-        }
-
-        public nvAfterMount() {
-          console.log('nvAfterMount Container');
-        }
-
-        public nvReceiveProps(nextProps: any) {
-          this.state.a = nextProps.test;
-        }
-
-        public go() {
-          this.setLocation('/R1', { b: '1' });
-        }
-        public show(a: any, index?: string) {
-          console.log('aaaa', a);
-          console.log('$index', index);
-        }
+  ```typescript
+  import { Injected, Component, OnInit, AfterMount, ReceiveProps, SetLocation, GetLocation } from 'indiv';
+  @Injected
+  @Component({
+    selector: 'container-wrap',
+    template: (`
+      <div>
+        <p nv-on:click="@go()">container: {{state.a}}</p>
+        <input nv-model="state.a" />
+        <router-render></router-render>
+      </div>
+    `),
+    providers: [
+      HeroSearchService,
+      {
+        provide: HeroSearchService1,
+        useClass: HeroSearchService1,
       }
-      ```
+    ]
+  })
+  class Container implements OnInit, AfterMount, ReceiveProps {
+    public ss: HeroSearchService;
+    public state: any;
+    public setLocation: SetLocation;
 
-    2. javascript
+    constructor(
+      private hss: HeroSearchService,
+    ) {
+      this.ss = hss;
+      this.ss.test();
+      this.state = {
+        a: 1,
+      };
+    }
 
-      - To use function `Component` declare `template` and `state`
-      - Lifecycle hooks are equal in TypeScript, and have no use `implements` interface
-      - **Use Class static attribution `injectTokens: string[]` and every item is `provide: string` of provider in `NvModule`**
-      - **Class static attribution `injectTokens: string[]` must be `provide` of providers, and arguments of constructor will be instances of `useClass` or value of `useValue` of providers**
+    public nvOnInit() {
+      this.state.propsTest = this.props.test;
+    }
 
-      ```javascript
-      class Container {
-        static injectTokens = [
-          'heroSearchService',
-        ];
+    public nvAfterMount() {
+      console.log('nvAfterMount Container');
+    }
 
-        constructor(
-          heroSearchService
-        ) {
-          this.ss = heroSearchService;
-          this.ss.test();
-          this.state = {
-            a: 1,
-          };
-        }
-        nvOnInit() {
-          this.state.a = this.props.test;
-          console.log('nvOnInit Container');
-        }
-        nvReceiveProps(nextProps) {
-          this.state.a = nextProps.test;
-        }
+    public nvReceiveProps(nextProps: any) {
+      this.state.a = nextProps.test;
+    }
 
-        go() {
-          this.setLocation('/R1', { b: '1' });
-        }
+    public go() {
+      this.setLocation('/R1', { b: '1' });
+    }
+    public show(a: any, index?: string) {
+      console.log('aaaa', a);
+      console.log('$index', index);
+    }
+  }
+  ```
 
-        show(a, index) {
-          console.log('aaaa', a);
-          console.log('$index', index);
-        }
+2. javascript
+
+  - To use function `Component` declare `template` and `state`
+  - Lifecycle hooks are equal in TypeScript, and have no use `implements` interface
+  - **Use Class static attribution `injectTokens: string[]` and every item is `provide: string` of provider in `NvModule`**
+  - **Class static attribution `injectTokens: string[]` must be `provide` of providers, and arguments of constructor will be instances of `useClass` or value of `useValue` of providers**
+
+  ```javascript
+  class Container {
+    static injectTokens = [
+      'heroSearchService',
+    ];
+
+    constructor(
+      heroSearchService
+    ) {
+      this.ss = heroSearchService;
+      this.ss.test();
+      this.state = {
+        a: 1,
+      };
+    }
+    nvOnInit() {
+      this.state.a = this.props.test;
+      console.log('nvOnInit Container');
+    }
+    nvReceiveProps(nextProps) {
+      this.state.a = nextProps.test;
+    }
+
+    go() {
+      this.setLocation('/R1', { b: '1' });
+    }
+
+    show(a, index) {
+      console.log('aaaa', a);
+      console.log('$index', index);
+    }
+  }
+
+  Component({
+    selector: 'container-wrap',
+    template: (`
+      <div>
+        <p nv-on:click="@go()">container: {{state.a}}</p>
+        <input nv-model="state.a" />
+        <router-render></router-render>
+      </div>`),
+    providers: [
+      {
+        provide: 'heroSearchService',
+        useClass: HeroSearchService,
+      },
+      {
+        provide: 'heroSearchService1',
+        useClass: HeroSearchService1,
       }
-
-      Component({
-        selector: 'container-wrap',
-        template: (`
-          <div>
-            <p nv-on:click="@go()">container: {{state.a}}</p>
-            <input nv-model="state.a" />
-            <router-render></router-render>
-          </div>`),
-        providers: [
-          {
-            provide: 'heroSearchService',
-            useClass: HeroSearchService,
-          },
-          {
-            provide: 'heroSearchService1',
-            useClass: HeroSearchService1,
-          }
-        ]
-      })(Container);
-      ```
+    ]
+  })(Container);
+  ```
 
   - `props: Object` is data which `class Controller` sends to `class Component`
 

@@ -434,7 +434,7 @@ class TestComponent implements OnInit {
   template: (`
     <div>
       <p nv-id="@countState(state.a)" nv-if="@countState(state.a)" nv-on:click="@changeInput()">{{state.a}}</p>
-      <test-component nv-repeat="let man in state.testArray" nv-key="man.name" man="{man.name}" nv-if="state.a"></test-component>
+      <test-component nv-repeat="let man in state.testArray" nv-key="man.name" man="{@countState(man.name)}" nv-if="state.a"></test-component>
       <p nv-on:click="@go()">container: {{@countState(state.a)}}</p>
       <input nv-model="state.a" />
       <div nv-repeat="let man in state.testArray" nv-key="man.name">
@@ -442,7 +442,7 @@ class TestComponent implements OnInit {
           <div>性别：{{@countState(man.sex, $index)}}</div>
           <a nv-href="@countState(man.sex, $index)">a {{man.sex}}</a>
           <img nv-src="man.sex" nv-alt="man.sex" />
-          <test-component nv-key="man.name" man="{man.name}"></test-component>
+          <test-component nv-key="man.name" man="{@countState(man.name)}"></test-component>
           <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
           <div class="fuck" nv-repeat="let c in man.job" nv-key="c.id">
             <input nv-on:click="@show(c, $index)" nv-model="c.name" nv-class="c.id" />

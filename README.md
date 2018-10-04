@@ -127,6 +127,7 @@ version: v1.2.0
     type TComponentOptions<State> = {
       selector: string;
       template: string;
+      providers: (Function | { provide: any; useClass: Function; } | { provide: any; useValue: any; })[];
     };
     ```
 
@@ -378,7 +379,19 @@ version: v1.2.0
 
   - Now we support: nv-model nv-text nv-html nv-if nv-class nv-repeat nv-key nv-on:Event
   - And also support some directive which can use `DOM.directiveName` to set value, like `nv-src` `nv-href` `nv-alt`
-  - Event directive, 如 nv-on:click
+  - Expect value from this.state and value from nv-repeat, some directives can also use Fuction form this which must return a value like `nv-text="@addCount(state.a, state.b)"`
+    - `nv-model` `nv-on:event` can't use Fuction as value
+    - Fuction must from `Component` instance
+    - Arguments in Function can include:
+      1. Element: `nv-text="@addCount($element)"`
+      2. String: `nv-text="@addCount('xxx')"`
+      3. Number: `nv-text="@addCount(123)"`
+      4. Index: `$index`, you can only use this in **repeat DOM** : `<input nv-repeat="let b in state.testArray2" nv-class="@addCount($index)" />`
+      5. Variable: **`nv-text="@addCount(state.a)"`**
+      6. Boolean: `nv-text="@addCount(true, false)"`
+      7. For nv-repeat: items like: `nv-repeat="let data in state.repeatData" nv-text="@addCount(data.show)"`
+
+  - Event directive, like `nv-on:click`
     - Text: `<p nv-text="state.b"></p>;`
     - Template: `<p>this.state.b是：{{state.b}}</p>;`
     - HTML: `<p nv-html="state.c"></p>;`
@@ -397,25 +410,25 @@ version: v1.2.0
       - If u are not use `nv-repeat` without `nv-key`, InDiv will render this with a new `Component`, and `state` in `Component` will be reset.
       - `<test-component nv-repeat="let man in state.testArray" nv-key="man.id" man="{man.name}"></test-component>`
 
-  - About function in Template Syntax
-    - Now you can send arguments in Function
-    - Arguments include:
-      1. Event: `nv-on:click="@click($event)"`
-      2. String: `nv-on:click="@click('xxx')"`
-      3. Number: `nv-on:click="@click(123)"`
-      4. Index: `$index`, you can only use this in **repeat DOM** : `<input nv-on:click="this.show(b, $index)" nv-repeat="let b in state.testArray2" nv-model="b" nv-class="b" />`
-      5. Variable: **`nv-on:click="@click(state.a)"`**
-      6. Boolean: `nv-on:click="@click(true, false)"`
-      7. For nv-repeat: items like: `nv-repeat="let data in state.repeatData" nv-if="data.show"`
+  - About event function in Template Syntax
+    - Arguments in Function can include:
+      1. Element: `nv-on:click="@click($element)"`
+      2. Event: `nv-on:click="@click($event)"`
+      3. String: `nv-on:click="@click('xxx')"`
+      4. Number: `nv-on:click="@click(123)"`
+      5. Index: `$index`, you can only use this in **repeat DOM** : `<input nv-on:click="this.show(b, $index)" nv-repeat="let b in state.testArray2" nv-model="b" nv-class="b" />`
+      6. Variable: **`nv-on:click="@click(state.a)"`**
+      7. Boolean: `nv-on:click="@click(true, false)"`
+      8. For nv-repeat: items like: `nv-repeat="let data in state.repeatData" nv-if="data.show"`
 
-1. Data monitor: this.state && this.setState
+#### Data monitor: this.state && this.setState
 
   - Use `this.state: Object` and `this.setState(parmars: Function || Object)`
   - If u have some variable, u can set `this.state` in `constructor(){}`
   - If u want to change State, plz use `this.setState`, parmars can be `Object` or `Function` which must return an `Object`
   - And u can recive this change in life cycle `nvWatchState(oldState)`, but we need to use a deep clone for `this.state`, so please minimize the use of life cycle `WatchState`
 
-8. `Watcher` and `KeyWatcher`
+#### `Watcher` and `KeyWatcher`
 
   - import {Watcher, KeyWatcher}
 

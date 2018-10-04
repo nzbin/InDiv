@@ -166,7 +166,9 @@ export declare class CompileUtilForRepeat {
     _setValueByValue(vm: any, exp: string, key: string, setValue: any): any;
     _getVMVal(vm: any, exp: string): any;
     _getVMRepeatVal(val: any, exp: string, key: string): any;
-    bind(node: Element, key?: string, dir?: string, exp?: string, index?: number, vm?: any, watchValue?: any): void;
+    _getVMFunction(vm: any, exp: string): Function;
+    _getVMFunctionArguments(vm: any, exp: string, node: Element, key: string, val: any): any[];
+    bind(node: Element, key?: string, dir?: string, exp?: string, index?: number, vm?: any, watchValue?: any, val?: any): void;
     templateUpdater(node: Element, val?: any, key?: string, vm?: any): void;
     modelUpdater(node: Element, value: any, exp: string, key: string, index: number, watchData: any, vm: any): void;
     textUpdater(node: Element, value: any): void;
@@ -184,6 +186,8 @@ export declare class CompileUtil {
     _getValueByValue(vm: any, exp: string, key: string): any;
     _getVMVal(vm: any, exp: string): any;
     _getVMRepeatVal(vm: any, exp: string): void;
+    _getVMFunction(vm: any, exp: string): Function;
+    _getVMFunctionArguments(vm: any, exp: string, node: Element): any[];
     bind(node: Element, vm: any, exp: string, dir: string): void;
     templateUpdater(node: any, vm: any, exp: string): void;
     modelUpdater(node: Element, value: any, exp: string, vm: any): void;

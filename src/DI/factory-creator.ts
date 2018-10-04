@@ -40,7 +40,7 @@ export function injector(_constructor: Function, rootModule: any): any[] {
             if (_service && _service.useClass) findService = _service.useClass;
             if (_service && _service.useValue) return args.push(_service.useValue);
 
-            if (!findService) return console.error('injector injects service error: can\'t find provide: ', key.name);
+            if (!findService) throw new Error(`injector injects service error: can't find provide: ${key.name} in Component ${_constructor}`);
             
             // if service isn't a singleton service
             if (findService && !findService.isSingletonMode) args.push(factoryCreator(findService, rootModule));
@@ -65,7 +65,7 @@ export function injector(_constructor: Function, rootModule: any): any[] {
             // component injector: find service Class in providerList in Component
             if ((_constructor.prototype as IComponent).$providerList) {
                 const _componentService = (_constructor.prototype as IComponent).$providerList.get(key);
-                if (_componentService && !_componentService.useClass && !_componentService.useValue) return console.error('injector injects service error: can\'t find provide: ', key, ` in Component ${_constructor}`);
+                if (_componentService && !_componentService.useClass && !_componentService.useValue) throw new Error(`injector injects service error: can't find provide: ${key} in Component ${_constructor}`);
                 if (_componentService && _componentService.useClass) return args.push(factoryCreator(_componentService.useClass, rootModule));
                 if (_componentService && _componentService.useValue) return args.push(_componentService.useValue);
             }
@@ -77,11 +77,11 @@ export function injector(_constructor: Function, rootModule: any): any[] {
             });
 
             let findService = null;
-            if (_service && !_service.useClass && !_service.useValue) return console.error('injector injects service error: can\'t find provide: ', key);
+            if (_service && !_service.useClass && !_service.useValue) throw new Error(`injector injects service error: can\'t find provide: ${key} in Component ${_constructor}`);
             if (_service && _service.useClass) findService = _service.useClass;
             if (_service && _service.useValue) return args.push(_service.useValue);
 
-            if (!findService) return console.error('injector injects service error: can\'t find provide:', key);
+            if (!findService) throw new Error(`injector injects service error: can't find provide: ${key} in Component ${_constructor}`);
 
             // if service isn't a singleton service
             if (findService && !findService.isSingletonMode) args.push(factoryCreator(findService, rootModule));

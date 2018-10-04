@@ -156,10 +156,10 @@ export class CompileUtilForRepeat {
       if (/\'.*\'/g.test(arg)) return argsList.push(arg.match(/\'(.*)\'/)[1]);
       if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
       if (arg.indexOf(key) === 0 || arg.indexOf(`${key}.`) === 0) return argsList.push(utilVm._getVMRepeatVal(val, arg, key));
-      if (this.repeatData) {
+      if (node.repeatData) {
         // $index in this
-        Object.keys(this.repeatData).forEach(data => {
-          if (arg.indexOf(data) === 0 || arg.indexOf(`${data}.`) === 0) return argsList.push(utilVm._getValueByValue(this.repeatData[data], arg, data));
+        Object.keys(node.repeatData).forEach(data => {
+          if (arg.indexOf(data) === 0 || arg.indexOf(`${data}.`) === 0) return argsList.push(utilVm._getValueByValue(node.repeatData[data], arg, data));
         });
       }
     });
@@ -182,6 +182,7 @@ export class CompileUtilForRepeat {
     const repeatValue = (node.repeatData)[key];
     let value;
     if (/^(\@)/.test(exp)) {
+      if (dir === 'model') throw new Error(`directive: nv-model can't use ${exp} as value`);
       // if @Function need function return value
       const fn = this._getVMFunction(vm, exp);
       const argsList = this._getVMFunctionArguments(vm, exp, node, key, val);
@@ -189,9 +190,11 @@ export class CompileUtilForRepeat {
     } else if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
       // repeat value
       value = this._getVMRepeatVal(repeatValue, exp, key);
-    } else {
+    } else if (/(state.).*/.test(exp)) {
       // normal value
       value = this._getVMVal(vm, exp);
+    } else {
+      throw new Error(`directive: nv-${dir} can't use recognize this value ${exp}`);
     }
 
     if (!node.hasChildNodes()) this.templateUpdater(node, repeatValue, key, vm);
@@ -251,8 +254,10 @@ export class CompileUtilForRepeat {
             value = fn.apply(vm, argsList);
           } else if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
             value = this._getVMRepeatVal(val, exp, key);
-          } else {
+          } else if (/(state.).*/.test(exp)) {
             value = this._getVMVal(vm, exp);
+          } else {
+            throw new Error(`directive: {{.*}} can\'t use recognize ${exp}`);
           }
           node.textContent = node.textContent.replace(textList[i], value);
         }
@@ -281,14 +286,15 @@ export class CompileUtilForRepeat {
         const val = exp.replace(/(state.)/, '');
         if ((event.target as HTMLInputElement).value === watchData) return;
         vm.state[val] = (event.target as HTMLInputElement).value;
-      }
-      if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
+      } else if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
         if (typeof watchData[index] !== 'object') watchData[index] = (event.target as HTMLInputElement).value;
         if (typeof watchData[index] === 'object') {
           let vals = utilVm._getValueByValue(watchData[index], exp, key);
           vals = (event.target as HTMLInputElement).value;
           utilVm._setValueByValue(watchData[index], exp, key, vals);
         }
+      } else {
+        throw new Error('directive: nv-model can\'t use recognize this value');
       }
     };
 
@@ -391,13 +397,10 @@ export class CompileUtilForRepeat {
   public eventHandler(node: Element, vm: any, exp: string, eventName: string, key: string, val: any): void {
     const eventType = eventName.split(':')[1];
 
-    const fnList = exp.replace(/^(\@)/, '').replace(/\(.*\)/, '').split('.');
+    const fn = this._getVMFunction(vm, exp);
+
     const args = exp.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/ /g, '').split(',');
 
-    let fn = vm;
-    fnList.forEach(f => {
-      fn = fn[f];
-    });
     const utilVm = this;
     const func = function(event: Event): any {
       const argsList: any[] = [];
@@ -482,7 +485,7 @@ export class CompileUtil {
   public _getVMVal(vm: any, exp: string): any {
     const valueList = exp.replace('()', '').split('.');
     let value = vm;
-    valueList.forEach((v, index) => {
+    valueList.forEach(v => {
       value = value[v];
     });
     return value;
@@ -567,13 +570,16 @@ export class CompileUtil {
       let value = null;
       // for @Function(arg)
       if (/^(\@)/.test(exp)) {
+        if (dir === 'model') throw new Error(`directive: nv-model can't use ${exp} as value`);
         // if @Function need function return value
         const fn = this._getVMFunction(vm, exp);
         const argsList = this._getVMFunctionArguments(vm, exp, node);
         value = fn.apply(vm, argsList);
-      } else {
+      } else if (/(state.).*/.test(exp)) {
         // normal value
         value = this._getVMVal(vm, exp);
+      } else {
+        throw new Error(`directive: nv-${dir} can't use recognize this value ${exp}`);
       }
 
       // compile unrepeatNode's attributes
@@ -618,8 +624,10 @@ export class CompileUtil {
       const fn = this._getVMFunction(vm, _exp);
       const argsList = this._getVMFunctionArguments(vm, _exp, node);
       value = fn.apply(vm, argsList);
-    } else {
+    } else if (/(state.).*/.test(exp)) {
       value = this._getVMVal(vm, _exp);
+    } else {
+      throw new Error('directive: {{.*}} can\'t use recognize this value');
     }
     node.textContent = node.textContent.replace(exp, value);
   }

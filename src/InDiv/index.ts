@@ -65,7 +65,7 @@ class InDiv {
     if (rootPath && typeof rootPath === 'string') {
       this.$rootPath = rootPath;
     } else {
-      console.error('rootPath is not defined or rootPath must be a String');
+      throw new Error('rootPath is not defined or rootPath must be a String');
     }
   }
 
@@ -79,10 +79,7 @@ class InDiv {
    * @memberof InDiv
    */
   public bootstrapModule(Esmodule: Function): void {
-    if (!Esmodule) {
-      console.error('must send a root module');
-      return;
-    }
+    if (!Esmodule) throw new Error('must send a root module');
 
     this.$rootModule = factoryModule(Esmodule);
     this.$components = [...this.$rootModule.$components];
@@ -97,10 +94,7 @@ class InDiv {
   public init(): void {
     if (!utils.isBrowser()) return;
 
-    if (!this.$rootModule) {
-      console.error('must use bootstrapModule to declare a root NvModule before init');
-      return;
-    }
+    if (!this.$rootModule) throw new Error('must use bootstrapModule to declare a root NvModule before init');
     if (this.$canRenderModule) this.renderModuleBootstrap();
   }
 
@@ -111,10 +105,7 @@ class InDiv {
    * @memberof InDiv
    */
   public renderModuleBootstrap(): void {
-    if (!this.$rootModule.$bootstrap) {
-      console.error('need bootstrap for render Module Bootstrap');
-      return;
-    }
+    if (!this.$rootModule.$bootstrap) throw new Error('need bootstrap for render Module Bootstrap');
     const BootstrapComponent = this.$rootModule.$bootstrap;
     this.renderComponent(BootstrapComponent, this.rootDom);
   }
@@ -134,10 +125,7 @@ class InDiv {
     component.$components = this.$rootModule.$components;
     if (component.nvOnInit) component.nvOnInit();
     if (component.watchData) component.watchData();
-    if (!component.$template) {
-      console.error('must decaler this.$template in bootstrap()');
-      return;
-    }
+    if (!component.$template) throw new Error('must decaler this.$template in bootstrap()');
     const template = component.$template;
     if (template && typeof template === 'string' && renderDOM) {
       if (component.nvBeforeMount) component.nvBeforeMount();
@@ -147,8 +135,7 @@ class InDiv {
       return component;
 
     } else {
-      console.error('renderBootstrap failed: template or rootDom is not exit');
-      return false;
+      throw new Error('renderBootstrap failed: template or rootDom is not exit');
     }
   }
 

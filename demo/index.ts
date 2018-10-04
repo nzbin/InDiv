@@ -439,8 +439,8 @@ class TestComponent implements OnInit {
       <input nv-model="state.a" />
       <div nv-repeat="let man in state.testArray" nv-key="man.name">
           <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
-          <div>性别：{{@countState(man.sex)}}</div>
-          <a nv-href="@countState(man.sex)">a {{man.sex}}</a>
+          <div>性别：{{@countState(man.sex, $index)}}</div>
+          <a nv-href="@countState(man.sex, $index)">a {{man.sex}}</a>
           <img nv-src="man.sex" nv-alt="man.sex" />
           <test-component nv-key="man.name" man="{man.name}"></test-component>
           <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
@@ -529,7 +529,8 @@ class Container implements OnInit, AfterMount, WatchState {
   public go() {
     this.setLocation('/R1', { b: '1' });
   }
-  public countState(a: any): any {
+  public countState(a: any, index: number): any {
+    console.log(1111, index);
     if (!a) return 'false';
     return a;
   }

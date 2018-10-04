@@ -211,10 +211,7 @@ function diffEventTypes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
  * @returns {void}
  */
 export default function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
-  if (!patchList) {
-    console.error('patchList can not be null, diffVnode must need an Array');
-    return;
-  }
+  if (!patchList) throw new Error('patchList can not be null, diffVnode must need an Array');
 
   if (newVnode.type === 'document-fragment') {
     diffChildNodes(oldVnode, newVnode, patchList);

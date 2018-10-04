@@ -88,7 +88,7 @@ export class Router {
       this.routes = arr;
       this.routesList = [];
     } else {
-      console.error('route error: no routes exit');
+      throw new Error(`route error: no routes exit`);
     }
   }
 
@@ -96,7 +96,7 @@ export class Router {
     if (rootPath && typeof rootPath === 'string') {
       this.$rootPath = rootPath;
     } else {
-      console.error('route error: rootPath is not defined or rootPath must be a String');
+      throw new Error('route error: rootPath is not defined or rootPath must be a String');
     }
   }
 
@@ -183,39 +183,24 @@ export class Router {
       const path = this.renderRouteList[index];
       if (index === 0) {
         const rootRoute = this.routes.find(route => route.path === `${path}` || /^\/\:.+/.test(route.path));
-        if (!rootRoute) {
-          console.error('route error: wrong route instantiation in insertRenderRoutes:', this.currentUrl);
-          return;
-        }
+        if (!rootRoute) throw new Error(`route error: wrong route instantiation in insertRenderRoutes: ${this.currentUrl}`);
         this.routesList.push(rootRoute);
       } else {
         const lastRoute = this.routesList[index - 1].children;
-        if (!lastRoute || !(lastRoute instanceof Array)) {
-          console.error('route error: routes not exit or routes must be an array!');
-          return;
-        }
+        if (!lastRoute || !(lastRoute instanceof Array)) throw new Error('route error: routes not exit or routes must be an array!');
         const route = lastRoute.find((r: TRouter) => r.path === `/${path}` || /^\/\:.+/.test(r.path));
-        if (!route) {
-          console.error('route error: wrong route instantiation:', this.currentUrl);
-          return;
-        }
+        if (!route) throw new Error(`route error: wrong route instantiation: ${this.currentUrl}`);
         this.routesList.push(route);
       }
 
       if (path !== lastRouteList[index]) {
         const needRenderRoute = this.routesList[index];
-        if (!needRenderRoute) {
-          console.error('route error: wrong route instantiation in insertRenderRoutes:', this.currentUrl);
-          return;
-        }
+        if (!needRenderRoute) throw new Error(`route error: wrong route instantiation in insertRenderRoutes: ${this.currentUrl}`);
 
         const needRenderComponent = this.$vm.$components.find((component: any) => component.$selector === needRenderRoute.component);
         const renderDom = document.querySelectorAll('router-render')[index - 1];
 
-        if (!needRenderRoute.component && !needRenderRoute.redirectTo) {
-          console.error(`route error: path ${needRenderRoute.path} need a component which has children path or need a  redirectTo which has't children path`);
-          return;
-        }
+        if (!needRenderRoute.component && !needRenderRoute.redirectTo) throw new Error(`route error: path ${needRenderRoute.path} need a component which has children path or need a  redirectTo which has't children path`);
 
         if (/^\/\:.+/.test(needRenderRoute.path) && !needRenderRoute.redirectTo) {
           const key = needRenderRoute.path.split('/:')[1];
@@ -278,17 +263,13 @@ export class Router {
       const path = this.renderRouteList[index];
       if (index === 0) {
         const rootRoute = this.routes.find(route => route.path === `${path}` || /^\/\:.+/.test(route.path));
-        if (!rootRoute) {
-          console.error('route error: wrong route instantiation in generalDistributeRoutes:', this.currentUrl);
-          return;
-        }
+        if (!rootRoute) throw new Error(`route error: wrong route instantiation in generalDistributeRoutes: ${this.currentUrl}`);
 
         let FindComponent = null;
         if (this.$vm.$rootModule.$components.find((component: any) => component.$selector === rootRoute.component)) {
           FindComponent = this.$vm.$rootModule.$components.find((component: any) => component.$selector === rootRoute.component);
         } else {
-          console.error(`route error: path ${rootRoute.path} is undefined`);
-          return;
+          throw new Error(`route error: path ${rootRoute.path} is undefined`);
         }
 
         if (/^\/\:.+/.test(rootRoute.path)) {
@@ -313,24 +294,16 @@ export class Router {
         }
       } else {
         const lastRoute = this.routesList[index - 1].children;
-        if (!lastRoute || !(lastRoute instanceof Array)) {
-          console.error('route error: routes not exit or routes must be an array!');
-        }
+        if (!lastRoute || !(lastRoute instanceof Array)) throw new Error('route error: routes not exit or routes must be an array!');
         const route = lastRoute.find(r => r.path === `/${path}` || /^\/\:.+/.test(r.path));
-        if (!route) {
-          console.error('route error: wrong route instantiation:', this.currentUrl);
-          return;
-        }
+        if (!route) throw new Error(`route error: wrong route instantiation: ${this.currentUrl}`);
 
         let FindComponent = null;
         if (this.$vm.$rootModule.$components.find((component: any) => component.$selector === route.component)) {
           FindComponent = this.$vm.$rootModule.$components.find((component: any) => component.$selector === route.component);
         }
 
-        if (!route.component && !route.redirectTo) {
-          console.error(`route error: path ${route.path} need a component which has children path or need a  redirectTo which has't children path`);
-          return;
-        }
+        if (!route.component && !route.redirectTo) throw new Error(`route error: path ${route.path} need a component which has children path or need a  redirectTo which has't children path`);
 
         if (/^\/\:.+/.test(route.path)) {
           const key = route.path.split('/:')[1];

@@ -1,7 +1,7 @@
 {
   "name": "indiv",
   "version": "1.2.0",
-  "description": "A web mvvm view framework.一个 web mvvm 视图库。",
+  "description": "A web mvvm framework.一个 web mvvm 库。",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [

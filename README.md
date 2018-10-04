@@ -387,7 +387,7 @@ version: v1.2.0
 
   - Now we support: nv-model nv-text nv-html nv-if nv-class nv-repeat nv-key nv-on:Event
   - And also support some directive which can use `DOM.directiveName` to set value, like `nv-src` `nv-href` `nv-alt`
-  - Expect value from this.state and value from nv-repeat, some directives can also use Fuction form this which must return a value like `nv-text="@addCount(state.a, state.b)"`
+  - Expect value from this.state and value from nv-repeat, and some directives can also use Fuction form this which must return a value like `nv-text="@addCount(state.a, state.b)"`
     - `nv-model` `nv-on:event` can't use Fuction as value
     - Fuction must from `Component` instance
     - Arguments in Function can include:

@@ -1,6 +1,7 @@
-# indiv
+# InDiv
 
-A minimal web mvvm framework.一个小Web mvvm库。
+一个 web mvvm 库。
+A web mvvm library.
 
 [中文](https://dimalilongji.github.io/indiv-doc)
 [npm](https://www.npmjs.com/package/indiv)
@@ -769,7 +770,6 @@ route => NvModule => component
 - [x] DI
 - [x] SSR 服务端渲染
 - [ ] 自定义指令
-- [ ] Template Syntax remove `state.`
-- [ ] route to NvModule
+- [ ] route lazy load
 - [ ] async template render
 - [ ] optimize setState

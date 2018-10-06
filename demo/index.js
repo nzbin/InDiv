@@ -451,6 +451,9 @@ class Container {
 
   nvAfterMount() {
   }
+  nvOnDestory() {
+    console.log('TestComponent OnDestory');
+  }
 
   go() {
     this.setLocation('/R1', { b: '1' });

@@ -38,10 +38,10 @@ version: v1.2.0
   - Routes must an `Array` includes `Object`
 
       1. Routes must incloude rootPath `'/'`
-      2. Routes must set an component name like `component: 'R1'`， `R1` is declared in `NvModule` in `$declarations => this.$components`
+      2. Routes must set an component name like `component: 'R1'`， `R1` is a `Component` `selector` from `Root NvModule`.You can use this `Component` from `exports` of other `NvModule` in `Root NvModule`
       3. Routes can assign redirectTo and use `redirectTo: Path`
       4. Routes can assign children and use `children: Array`
-      5. Routes can set a path like `path: '/:id'`
+      5. Routes can set a path like `path: '/:id'`, but route of the same level can't be set
 
   - If u are using `Router`, u must need to `router.setRootPath('/RootPath')` to set an root path.
   - `router.routeChange = (old, next)` can listen route change
@@ -122,7 +122,6 @@ version: v1.2.0
   - Create a `class`
   - Use decorator `Component` in typescript or use function `Component` in javascript
   - Component types:
-
     ```typescript
     type TComponentOptions<State> = {
       selector: string;
@@ -130,7 +129,7 @@ version: v1.2.0
       providers: (Function | { provide: any; useClass: Function; } | { provide: any; useValue: any; })[];
     };
     ```
-
+  - **Recommend to use `Service` with `RXjs` on communication between `Components`**
   - `selector: string;` is your component tag name for HTML and used in template.
   - `template: string` only accepts `state.XXX` as `nv-directive` from this.state, and `nv-on:event` only accepts `@eventHandler` from method which belongs to Class instance
   - `providers` declares `Service` for `Component`

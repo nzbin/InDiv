@@ -35,8 +35,8 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     // component $providerList for injector
     if (options.providers && options.providers.length > 0) {
       vm.$providerList = new Map();
-      const length = options.providers.length - 1;
-      for (let i = 0; i <= length; i++) {
+      const length = options.providers.length;
+      for (let i = 0; i < length; i++) {
         const service = options.providers[i];
         if ((service as TInjectTokenProvider).provide) {
           if ((service as TUseClassProvider).useClass || (service as TuseValueProvider).useValue) vm.$providerList.set((service as TInjectTokenProvider).provide, service);
@@ -87,10 +87,12 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       const dom = (this as IComponent<State, Props, Vm>).renderDom;
       const compile = new Compile(dom, this as IComponent<State, Props, Vm>);
       (this as IComponent<State, Props, Vm>).mountComponent(dom);
-      (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
+      const length = (this as IComponent<State, Props, Vm>).$componentList.length;
+      for (let i = 0; i < length; i++) {
+        const component = (this as IComponent<State, Props, Vm>).$componentList[i];
         if (component.scope.render) component.scope.render();
         if (component.scope.nvAfterMount) component.scope.nvAfterMount();
-      });
+      }
       if (this.nvHasRender) this.nvHasRender();
     };
 
@@ -99,23 +101,27 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       const routerRenderDom = dom.querySelectorAll((this as IComponent<State, Props, Vm>).$vm.$routeDOMKey)[0];
       const compile = new Compile(dom, (this as IComponent<State, Props, Vm>), routerRenderDom);
       (this as IComponent<State, Props, Vm>).mountComponent(dom);
-      (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
+      const length = (this as IComponent<State, Props, Vm>).$componentList.length;
+      for (let i = 0; i < length; i++) {
+        const component = (this as IComponent<State, Props, Vm>).$componentList[i];
         if (component.scope.render) component.scope.reRender();
         if (component.scope.nvAfterMount) component.scope.nvAfterMount();
-      });
+      }
       if ((this as IComponent<State, Props, Vm>).nvHasRender) (this as IComponent<State, Props, Vm>).nvHasRender();
     };
 
     vm.mountComponent = function (dom: Element): void {
-      const cacheStates: ComponentList<IComponent<State, Props, Vm>>[] = [];
-      (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
-        cacheStates.push(component);
-      });
+      const cacheStates: ComponentList<IComponent<State, Props, Vm>>[] = [ ...(this as IComponent<State, Props, Vm>).$componentList ];
       (this as IComponent<State, Props, Vm>).componentsConstructor(dom);
-      (this as IComponent<State, Props, Vm>).$componentList.forEach(component => {
+      const componentListLength = (this as IComponent<State, Props, Vm>).$componentList.length;
+      for (let i = 0; i < componentListLength; i ++) {
+        const component = (this as IComponent<State, Props, Vm>).$componentList[i];
         // find Component from cache
-        const cacheComponent = cacheStates.find(cache => cache.dom === component.dom);
+        const cacheComponentIndex = cacheStates.findIndex(cache => cache.dom === component.dom);
+        const cacheComponent = cacheStates[cacheComponentIndex];
 
+        // clear cache and the rest need to be destoried
+        if (cacheComponentIndex !== -1) cacheStates.splice(cacheComponentIndex, 1);
         if (cacheComponent) {
           component.scope = cacheComponent.scope;
           // old props: component.scope.props
@@ -125,21 +131,31 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
             component.scope.props = component.props;
           }
         }
+
         component.scope.$vm = (this as IComponent<State, Props, Vm>).$vm;
         component.scope.$components = (this as IComponent<State, Props, Vm>).$components;
         if (component.scope.nvOnInit && !cacheComponent) component.scope.nvOnInit();
         if (component.scope.watchData) component.scope.watchData();
         if (component.scope.nvBeforeMount) component.scope.nvBeforeMount();
-      });
+      }
+      // the rest should use nvOnDestory
+      const cacheStatesLength = cacheStates.length;
+      for (let i = 0; i < cacheStatesLength; i ++) {
+        const cache = cacheStates[i];
+        if (cache.scope.nvOnDestory) cache.scope.nvOnDestory();
+      }
     };
 
     vm.componentsConstructor = function (dom: Element): void {
       (this as IComponent<State, Props, Vm>).$componentList = [];
       const routerRenderDom = dom.querySelectorAll((this as IComponent<State, Props, Vm>).$vm.$routeDOMKey)[0];
-      ((this as IComponent<State, Props, Vm>).constructor as any)._injectedComponents.forEach((injectedComponent: any) => {
+      const injectedComponentsLength = ((this as IComponent<State, Props, Vm>).constructor as any)._injectedComponents.length;
+      for (let i = 0; i < injectedComponentsLength; i++) {
+        const injectedComponent = ((this as IComponent<State, Props, Vm>).constructor as any)._injectedComponents[i];
         if (!(this as IComponent<State, Props, Vm>).$components.find((component: any) => component.$selector === injectedComponent.$selector)) (this as IComponent<State, Props, Vm>).$components.push(injectedComponent);
-      });
-      for (let i = 0; i <= (this as IComponent<State, Props, Vm>).$components.length - 1 ; i ++) {
+      }
+      const componentsLength = (this as IComponent<State, Props, Vm>).$components.length;
+      for (let i = 0; i < componentsLength; i++) {
         const name = (((this as IComponent<State, Props, Vm>).$components[i]) as any).$selector;
         const tags = dom.getElementsByTagName(name);
         Array.from(tags).forEach(node => {

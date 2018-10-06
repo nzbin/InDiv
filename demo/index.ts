@@ -1,4 +1,4 @@
-import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, SetState, SetLocation, GetLocation } from '../src';
+import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, SetState, SetLocation, GetLocation, OnDestory } from '../src';
 // import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, SetState, SetLocation, GetLocation } from '../build';
 
 @Injectable()
@@ -411,7 +411,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
       <p nv-on:click="@click()">测试repeat组件: {{state.man}}</p>
     </div>`),
 })
-class TestComponent implements OnInit {
+class TestComponent implements OnInit, OnDestory {
   public state: any;
   public props: any;
 
@@ -425,8 +425,11 @@ class TestComponent implements OnInit {
     console.log('this.state.man', this.state.man);
     this.state.man = 'fuck!';
   }
-}
 
+  public nvOnDestory() {
+    console.log('TestComponent OnDestory');
+  }
+}
 
 @Injected
 @Component({

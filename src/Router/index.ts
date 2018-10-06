@@ -209,12 +209,12 @@ export class Router {
 
         if (needRenderComponent) {
           const component = this.instantiateComponent(needRenderComponent, renderDom);
+          // insert needRenderComponent on index in this.hasRenderComponentList,and remove other component which index >= index of needRenderComponent
           if (component) {
-            if (this.hasRenderComponentList[index]) {
-              this.hasRenderComponentList[index + 1] = this.hasRenderComponentList[index];
-              this.hasRenderComponentList[index] = component;
-            }
+            if (this.hasRenderComponentList[index]) this.hasRenderComponentList.splice(index, 0, component);
             if (!this.hasRenderComponentList[index]) this.hasRenderComponentList[index] = component;
+          } else {
+            throw new Error(`route error: path ${needRenderRoute.path} need a component`);
           }
 
           this.routerChangeEvent(index);
@@ -335,12 +335,12 @@ export class Router {
    * @memberof Router
    */
   public routerChangeEvent(index: number): void {
-    this.hasRenderComponentList.forEach((c, i) => {
-      if (c.nvRouteChange) c.nvRouteChange(this.lastRoute, this.currentUrl);
-      this.emitComponentEvent(c.$componentList, 'nvRouteChange');
+    this.hasRenderComponentList.forEach((component, i) => {
+      if (component.nvRouteChange) component.nvRouteChange(this.lastRoute, this.currentUrl);
+      this.emitComponentEvent(component.$componentList, 'nvRouteChange');
       if (i >= index + 1) {
-        if (c.nvOnDestory) c.nvOnDestory();
-        this.emitComponentEvent(c.$componentList, 'nvOnDestory');
+        if (component.nvOnDestory) component.nvOnDestory();
+        this.emitComponentEvent(component.$componentList, 'nvOnDestory');
       }
     });
     this.hasRenderComponentList.length = index + 1;

@@ -29,6 +29,7 @@ const utils = new Utils();
 function Component<State = any, Props = any, Vm = any>(options: TComponentOptions): (_constructor: Function) => void {
   return function (_constructor: Function): void {
     (_constructor as any).$selector = options.selector;
+    (_constructor as any)._injectedComponents = new Map();
     const vm: IComponent<State, Props, Vm> = _constructor.prototype;
     vm.$template = options.template;
 
@@ -130,6 +131,8 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
             if (component.scope.nvReceiveProps) component.scope.nvReceiveProps(component.props);
             component.scope.props = component.props;
           }
+        } else {
+          component.scope = (this as IComponent<State, Props, Vm>).buildComponentScope(component.constructorFunction, component.props, component.dom as Element);
         }
 
         component.scope.$vm = (this as IComponent<State, Props, Vm>).$vm;
@@ -149,11 +152,9 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     vm.componentsConstructor = function (dom: Element): void {
       (this as IComponent<State, Props, Vm>).$componentList = [];
       const routerRenderDom = dom.querySelectorAll((this as IComponent<State, Props, Vm>).$vm.$routeDOMKey)[0];
-      const injectedComponentsLength = ((this as IComponent<State, Props, Vm>).constructor as any)._injectedComponents.length;
-      for (let i = 0; i < injectedComponentsLength; i++) {
-        const injectedComponent = ((this as IComponent<State, Props, Vm>).constructor as any)._injectedComponents[i];
-        if (!(this as IComponent<State, Props, Vm>).$components.find((component: any) => component.$selector === injectedComponent.$selector)) (this as IComponent<State, Props, Vm>).$components.push(injectedComponent);
-      }
+      ((this as IComponent<State, Props, Vm>).constructor as any)._injectedComponents.forEach((value: Function, key: string) => {
+        if (!(this as IComponent<State, Props, Vm>).$components.find((component: any) => component.$selector === key)) (this as IComponent<State, Props, Vm>).$components.push(value);
+      });
       const componentsLength = (this as IComponent<State, Props, Vm>).$components.length;
       for (let i = 0; i < componentsLength; i++) {
         const name = (((this as IComponent<State, Props, Vm>).$components[i]) as any).$selector;
@@ -161,6 +162,8 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
         Array.from(tags).forEach(node => {
           //  protect component in <router-render>
           if (routerRenderDom && routerRenderDom.contains(node)) return;
+          // protect Component in Component
+          if (!node.isComponent) return;
 
           const nodeAttrs = node.attributes;
           const props: any = {};
@@ -239,8 +242,11 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
           (this as IComponent<State, Props, Vm>).$componentList.push({
             dom: node,
             props,
-            scope: (this as IComponent<State, Props, Vm>).buildComponentScope((this as IComponent<State, Props, Vm>).$components[i], props, node),
+            scope: null,
+            constructorFunction: (this as IComponent<State, Props, Vm>).$components[i],
           });
+          // after construct instance remove isComponent
+          node.isComponent = false;
         });
       }
     };

@@ -80,6 +80,7 @@ class Compile {
    */
   public recursiveDOM(childNodes: NodeListOf<Node & ChildNode>, fragment: DocumentFragment | Element): void {
     Array.from(childNodes).forEach((node: Element) => {
+      if (this.isElementNode(node) && this.$vm.$components.find((component: any) => component.$selector === node.tagName.toLocaleLowerCase())) node.isComponent = true;
 
       if (node.hasChildNodes() && !this.isRepeatNode(node)) this.recursiveDOM(node.childNodes, node);
 

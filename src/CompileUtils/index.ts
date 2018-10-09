@@ -6,6 +6,7 @@ declare global {
       [key: string]: any;
     };
     indiv_repeat_key?: any;
+    isComponent?: boolean;
   }
   interface Node {
     eventTypes?: string;
@@ -13,6 +14,7 @@ declare global {
       [key: string]: any;
     };
     indiv_repeat_key?: any;
+    isComponent?: boolean;
   }
 }
 
@@ -805,6 +807,8 @@ export class CompileUtil {
   public repeatChildrenUpdater(node: Element, value: any, expFather: string, index: number, vm: any, watchValue: any): void {
     const key = expFather.split(' ')[1];
     Array.from(node.childNodes).forEach((child: Element) => {
+      if (this.isElementNode(child) && vm.$components.find((component: any) => component.$selector === child.tagName.toLocaleLowerCase())) child.isComponent = true;
+
       child.repeatData = node.repeatData || {};
       child.repeatData[key] = value;
       child.repeatData.$index = index;
@@ -977,6 +981,7 @@ export class CompileUtil {
    *
    * event by attribute in DOM: eventTypes
    * repeat data by attribute in DOM: repeatData
+   * isComponent: clone Component need add isComponent=true
    *
    * @param {Element} node
    * @param {*} [repeatData]
@@ -993,6 +998,7 @@ export class CompileUtil {
       newElement.eventTypes = node.eventTypes;
     }
     if (repeatData) newElement.repeatData = repeatData;
+    if (node.isComponent) newElement.isComponent = true;
     return newElement;
   }
 }

@@ -78,9 +78,9 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
       const length = this.$components.length;
       for (let i = 0; i < length; i++) {
         const FindComponent: any = (this as INvModule).$components[i];
-        if (!FindComponent._injectedComponents) FindComponent._injectedComponents = [];
+        if (!FindComponent._injectedComponents) FindComponent._injectedComponents = new Map();
         (this as INvModule).$components.forEach((needInjectComponent: any) => {
-          if (!FindComponent._injectedComponents.find((c: any) => c.$selector === needInjectComponent.$selector)) FindComponent._injectedComponents.push(needInjectComponent);
+          if (!FindComponent._injectedComponents.has(needInjectComponent.$selector)) FindComponent._injectedComponents.set(needInjectComponent.$selector, needInjectComponent);
         });
       }
     };

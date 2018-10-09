@@ -533,7 +533,6 @@ class Container implements OnInit, AfterMount, WatchState {
     this.setLocation('/R1', { b: '1' });
   }
   public countState(a: any, index: number): any {
-    console.log(1111, index);
     if (!a) return 'false';
     return a;
   }

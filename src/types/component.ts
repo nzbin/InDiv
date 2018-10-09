@@ -5,6 +5,7 @@ export type ComponentList<C> = {
     dom: Node;
     props: any;
     scope: C;
+    constructorFunction: Function;
 };
 
 export type SetState = <S>(newState: { [key: string]: S }) => void;

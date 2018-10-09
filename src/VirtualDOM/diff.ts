@@ -223,5 +223,11 @@ export default function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList:
   if (oldVnode.tagName === 'INPUT' || oldVnode.tagName === 'TEXTAREA textarea' || oldVnode.tagName === 'INPUT') diffInputValue(oldVnode, newVnode, patchList);
   diffRepeatData(oldVnode, newVnode, patchList);
   diffEventTypes(oldVnode, newVnode, patchList);
+
+  // 如果为组件，则停止对比内部元素，交由对应组件diff
+  if (newVnode.node.isComponent && oldVnode.node) {
+    oldVnode.node.isComponent = true;
+    return;
+  }
   diffChildNodes(oldVnode, newVnode, patchList);
 }

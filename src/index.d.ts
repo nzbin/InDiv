@@ -19,6 +19,7 @@ export type ComponentList<C> = {
     dom: Node;
     props: any;
     scope: C;
+    constructorFunction: Function;
 };
 
 export interface IMiddleware<ES> {

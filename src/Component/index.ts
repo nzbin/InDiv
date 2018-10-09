@@ -180,9 +180,17 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
             });
 
             attrList.forEach((attr: any) => {
-              const attrName = attr.name;
+              let attrName: string = attr.name;
 
-              if ((/^\_prop\-(.+)/.test(attr.name))) return;
+              if ((/^\_prop\-(.+)/.test(attrName))) return;
+
+              const attrNameSplit = attrName.split('-');
+              if (attrNameSplit.length > 1) {
+                attrNameSplit.forEach((name, index) => {
+                  if (index === 0) attrName = name;
+                  if (index !== 0) attrName += name.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase());
+                });
+              }
 
               const prop = /^\{(.+)\}$/.exec(attr.value);
               if (prop) {

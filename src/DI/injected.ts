@@ -1,5 +1,3 @@
-import "reflect-metadata";
-
 /**
  * Decorator @Injected
  * declare Class which need be injected

@@ -195,6 +195,8 @@ export class CompileUtilForRepeat {
     } else if (/(state.).*/.test(exp)) {
       // normal value
       value = this._getVMVal(vm, exp);
+    } else if (exp === '$index') {
+      value = index;
     } else {
       throw new Error(`directive: nv-${dir} can't use recognize this value ${exp}`);
     }

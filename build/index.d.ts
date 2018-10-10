@@ -69,6 +69,26 @@ export type TNvModuleOptions = {
     bootstrap?: Function;
 };
 
+export type TAttributes = {
+    name: string;
+    value: string;
+};
+
+export interface IVnode {
+    tagName?: string;
+    node?: DocumentFragment | Element;
+    parentNode?: Node;
+    attributes?: TAttributes[];
+    nodeValue?: string;
+    childNodes?: IVnode[];
+    type?: string;
+    value?: string | number;
+    repeatData?: any;
+    eventTypes?: string;
+    key?: any;
+    checked?: boolean;
+}
+
 export interface IComponent<State = any, Props = any, Vm = any> {
     state?: State | any;
     props?: Props | any;
@@ -215,6 +235,7 @@ export declare class Compile {
     $fragment: DocumentFragment;
     constructor(el: string | Element, vm: any);
     init(): void;
+    needDiffChildCallback(oldVnode: IVnode, newVnode: IVnode): boolean;
     compileElement(fragment: DocumentFragment): void;
     recursiveDOM(childNodes: NodeListOf<Node & ChildNode>, fragment: DocumentFragment | Element): void;
     compile(node: Element, fragment: DocumentFragment | Element): void;

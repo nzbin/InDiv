@@ -1,9 +1,12 @@
+import { IVnode } from './virtualDOM';
+
 export interface ICompile {
     $vm: any;
     $el: Element;
     $fragment: DocumentFragment;
 
     init(): void;
+    needDiffChildCallback(oldVnode: IVnode, newVnode: IVnode): boolean;
     compileElement(fragment: DocumentFragment): void;
     recursiveDOM(childNodes: NodeListOf<Node & ChildNode>, fragment: DocumentFragment | Element): void;
     compile(node: Element, fragment: DocumentFragment | Element): void;

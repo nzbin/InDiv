@@ -1,4 +1,4 @@
-import { IPatchList } from '../types';
+import { IPatchList, IVnode } from '../types';
 
 import { parseToVnode, diffVnode, renderVnode } from '../VirtualDOM';
 import Utils from '../Utils';
@@ -21,25 +21,19 @@ class Compile {
    * Creates an instance of Compile.
    * @param {(string | Element)} el
    * @param {*} vm
-   * @param {Element} [routerRenderDom]
    * @memberof Compile
    */
-  constructor(el: string | Element, vm: any, routerRenderDom?: Element) {
+  constructor(el: string | Element, vm: any) {
     this.$vm = vm;
     this.$el = this.isElementNode(el) ? el as Element : document.querySelector(el as string);
     if (this.$el) {
       this.$fragment = this.node2Fragment();
       this.init();
-      if (routerRenderDom) {
-        // replace routeDom
-        const newRouterRenderDom = this.$fragment.querySelectorAll(this.$vm.$vm.$routeDOMKey)[0];
-        newRouterRenderDom.parentNode.replaceChild(routerRenderDom, newRouterRenderDom);
-      }
 
       let oldVnode = parseToVnode(this.$el);
       let newVnode = parseToVnode(this.$fragment);
       let patchList: IPatchList[] = [];
-      diffVnode(oldVnode, newVnode, patchList);
+      diffVnode(oldVnode, newVnode, patchList, this.needDiffChildCallback.bind(this));
       renderVnode(patchList);
 
       this.$fragment = null;
@@ -47,6 +41,28 @@ class Compile {
       newVnode = null;
       patchList = null;
     }
+  }
+
+  /**
+   * needDiffChildCallback for Virtual DOM diff
+   * 
+   * if newVnode.node.isComponent no need diff children
+   * if newVnode.tagName and oldVnode.tagName no need diff children
+   *
+   * @param {IVnode} oldVnode
+   * @param {IVnode} newVnode
+   * @returns {boolean}
+   * @memberof Compile
+   */
+  public needDiffChildCallback(oldVnode: IVnode, newVnode: IVnode): boolean {
+    // 如果为组件，则停止对比内部元素，交由对应组件diff
+    if (newVnode.node.isComponent && oldVnode.node) {
+      oldVnode.node.isComponent = true;
+      return false;
+    }
+    // 如果为路由渲染层，则停止对比内部元素，交由router diff
+    if (oldVnode.tagName === newVnode.tagName && newVnode.tagName === (this.$vm.$vm.$routeDOMKey as string).toLocaleUpperCase()) return false;
+    return true;
   }
 
   /**

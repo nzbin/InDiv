@@ -9,8 +9,9 @@ import { IVnode, IPatchList } from '../types';
  * @param {IVnode} newVnode
  * @param {IVnode} oldVnode
  * @param {IPatchList[]} patchList
+ * @param {(oldVnode: IVnode, newVnode: IVnode) => boolean} needDiffChildCallback
  */
-function diffChildNodes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
+function diffChildNodes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[], needDiffChildCallback?: (oldVnode: IVnode, newVnode: IVnode) => boolean): void {
   if (oldVnode.childNodes.length > 0) {
     (oldVnode.childNodes as IVnode[]).forEach((oChild, index) => {
       if (oChild.checked) return;
@@ -25,7 +26,7 @@ function diffChildNodes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
             parentNode: oldVnode.node,
           });
         }
-        diffVnode(oChild, sameCode, patchList);
+        diffVnode(oChild, sameCode, patchList, needDiffChildCallback);
         sameCode.checked = true;
       } else {
         patchList.push({
@@ -205,16 +206,19 @@ function diffEventTypes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
 /**
  * diff two Vnode
  *
+ * if needDiffChildCallback return false, then stop diff childNodes 
+ * 
  * @param {IVnode} oldVnode
  * @param {IVnode} newVnode
  * @param {IPatchList[]} patchList
+ * @param {(oldVnode: IVnode, newVnode: IVnode) => boolean} needDiffChildCallback
  * @returns {void}
  */
-export default function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
+export default function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[], needDiffChildCallback?: (oldVnode: IVnode, newVnode: IVnode) => boolean): void {
   if (!patchList) throw new Error('patchList can not be null, diffVnode must need an Array');
 
   if (newVnode.type === 'document-fragment') {
-    diffChildNodes(oldVnode, newVnode, patchList);
+    diffChildNodes(oldVnode, newVnode, patchList, needDiffChildCallback);
     return;
   }
 
@@ -224,10 +228,6 @@ export default function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList:
   diffRepeatData(oldVnode, newVnode, patchList);
   diffEventTypes(oldVnode, newVnode, patchList);
 
-  // 如果为组件，则停止对比内部元素，交由对应组件diff
-  if (newVnode.node.isComponent && oldVnode.node) {
-    oldVnode.node.isComponent = true;
-    return;
-  }
-  diffChildNodes(oldVnode, newVnode, patchList);
+  if (needDiffChildCallback && !needDiffChildCallback(oldVnode, newVnode)) return;
+  diffChildNodes(oldVnode, newVnode, patchList, needDiffChildCallback);
 }

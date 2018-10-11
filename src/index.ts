@@ -12,7 +12,9 @@ import 'core-js/modules/es6.regexp.match';
 import 'core-js/modules/es6.regexp.replace';
 import 'core-js/modules/es6.map';
 import 'core-js/modules/es6.promise';
+import 'core-js/modules/es6.function.bind';
 import 'core-js/modules/es6.reflect.construct';
+import 'core-js/modules/es6.promise';
 import 'reflect-metadata';
 
 export { default as Utils } from './Utils';

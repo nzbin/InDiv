@@ -192,7 +192,9 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
   public state: any;
   public props: any;
 
-  constructor() {}
+  constructor() {
+    console.log(99900000999);
+  }
 
   public nvOnInit() {
     this.state = {
@@ -233,7 +235,6 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
   }
   public sendProps(ax: any) {
     this.props.b(ax);
-    console.log('this', this);
   }
   public getProps(a: any) {
     alert('子组件里 里面传出来了');
@@ -341,6 +342,7 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
     // alert('里面传出来了');
     console.log('被触发了！', a);
     this.setState({ a: a });
+    // this.state.a = a;
   }
 }
 

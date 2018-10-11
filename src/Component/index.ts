@@ -86,28 +86,52 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
 
     vm.render = function () {
       const dom = (this as IComponent<State, Props, Vm>).renderDom;
-      const compile = new Compile(dom, this as IComponent<State, Props, Vm>);
-      (this as IComponent<State, Props, Vm>).mountComponent(dom);
-      const length = (this as IComponent<State, Props, Vm>).$componentList.length;
-      for (let i = 0; i < length; i++) {
-        const component = (this as IComponent<State, Props, Vm>).$componentList[i];
-        if (component.scope.render) component.scope.render();
-        if (component.scope.nvAfterMount) component.scope.nvAfterMount();
-      }
-      if (this.nvHasRender) this.nvHasRender();
+      new Promise((resolve, reject) => {
+        try {
+          const compile = new Compile(dom, this as IComponent<State, Props, Vm>);
+          resolve();
+        } catch (e) {
+          reject(e);
+        }
+      })
+      .then(() => {
+        (this as IComponent<State, Props, Vm>).mountComponent(dom);
+        const length = (this as IComponent<State, Props, Vm>).$componentList.length;
+        for (let i = 0; i < length; i++) {
+          const component = (this as IComponent<State, Props, Vm>).$componentList[i];
+          if (component.scope.render) component.scope.render();
+          if (component.scope.nvAfterMount) component.scope.nvAfterMount();
+        }
+        if (this.nvHasRender) this.nvHasRender();
+      })
+      .catch(e => {
+        throw new Error(`component ${options.selector} render failed: ${e}`);
+      });
     };
 
     vm.reRender = function (): void {
       const dom = (this as IComponent<State, Props, Vm>).renderDom;
-      const compile = new Compile(dom, (this as IComponent<State, Props, Vm>));
-      (this as IComponent<State, Props, Vm>).mountComponent(dom);
-      const length = (this as IComponent<State, Props, Vm>).$componentList.length;
-      for (let i = 0; i < length; i++) {
-        const component = (this as IComponent<State, Props, Vm>).$componentList[i];
-        if (component.scope.render) component.scope.reRender();
-        if (component.scope.nvAfterMount) component.scope.nvAfterMount();
-      }
-      if ((this as IComponent<State, Props, Vm>).nvHasRender) (this as IComponent<State, Props, Vm>).nvHasRender();
+      new Promise((resolve, reject) => {
+        try {
+          const compile = new Compile(dom, (this as IComponent<State, Props, Vm>));
+          resolve();
+        } catch (e) {
+          reject(e);
+        }
+      })
+      .then(() => {
+        (this as IComponent<State, Props, Vm>).mountComponent(dom);
+        const length = (this as IComponent<State, Props, Vm>).$componentList.length;
+        for (let i = 0; i < length; i++) {
+          const component = (this as IComponent<State, Props, Vm>).$componentList[i];
+          if (component.scope.render) component.scope.reRender();
+          if (component.scope.nvAfterMount) component.scope.nvAfterMount();
+        }
+        if ((this as IComponent<State, Props, Vm>).nvHasRender) (this as IComponent<State, Props, Vm>).nvHasRender();
+      })
+      .catch(e => {
+        throw new Error(`component ${options.selector} reRender failed: ${e}`);
+      });
     };
 
     vm.mountComponent = function (dom: Element): void {
@@ -262,18 +286,22 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       if (newState && utils.isFunction(newState)) {
         const _newState = newState();
         if (_newState && _newState instanceof Object) {
-          for (const key in _newState) {
-            if ((this as IComponent<State, Props, Vm>).state.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).state[key] !== _newState[key]) (this as IComponent<State, Props, Vm>).state[key] = _newState[key];
-            if (!(this as IComponent<State, Props, Vm>).state.hasOwnProperty(key)) (this as IComponent<State, Props, Vm>).state[key] = _newState[key];
-          }
+          if (utils.isEqual(this.state, _newState)) return;
+          const _state = JSON.parse(JSON.stringify(this.state));
+          Object.assign(_state, _newState);
+          this.state = _state;
+          if ((this as IComponent<State, Props, Vm>).nvWatchState) (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, (this as IComponent<State, Props, Vm>).nvWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).reRender.bind(this as IComponent<State, Props, Vm>));
+          if (!(this as IComponent<State, Props, Vm>).nvWatchState) (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, null, (this as IComponent<State, Props, Vm>).reRender.bind(this as IComponent<State, Props, Vm>));
           (this as IComponent<State, Props, Vm>).reRender();
         }
       }
       if (newState && newState instanceof Object) {
-        for (const key in newState) {
-          if ((this as IComponent<State, Props, Vm>).state.hasOwnProperty(key) && (this as IComponent<State, Props, Vm>).state[key] !== newState[key]) (this as IComponent<State, Props, Vm>).state[key] = newState[key];
-          if (!(this as IComponent<State, Props, Vm>).state.hasOwnProperty(key)) (this as IComponent<State, Props, Vm>).state[key] = newState[key];
-        }
+        if (utils.isEqual(this.state, newState)) return;
+        const _state = JSON.parse(JSON.stringify(this.state));
+        Object.assign(_state, newState);
+        this.state = _state;
+        if ((this as IComponent<State, Props, Vm>).nvWatchState) (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, (this as IComponent<State, Props, Vm>).nvWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).reRender.bind(this as IComponent<State, Props, Vm>));
+        if (!(this as IComponent<State, Props, Vm>).nvWatchState) (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, null, (this as IComponent<State, Props, Vm>).reRender.bind(this as IComponent<State, Props, Vm>));
         (this as IComponent<State, Props, Vm>).reRender();
       }
     };

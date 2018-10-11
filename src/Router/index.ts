@@ -147,17 +147,18 @@ export class Router {
 
   /**
    * distribute routes and decide insert or general Routes
-   *
+   * 
+   * @returns {Promise<any>}
    * @memberof Router
    */
-  public distributeRoutes(): void {
+  public async distributeRoutes(): Promise<any> {
     if (this.lastRoute && this.lastRoute !== this.currentUrl) {
       // has rendered
       this.$vm.$esRouteParmasObject = {};
-      this.insertRenderRoutes();
+      await this.insertRenderRoutes();
     } else {
       // first render
-      this.generalDistributeRoutes();
+      await this.generalDistributeRoutes();
     }
     if (this.routeChange) this.routeChange(this.lastRoute, this.currentUrl);
     this.lastRoute = this.currentUrl;
@@ -172,10 +173,10 @@ export class Router {
    * 
    * if has rendered Routes, it will find which is different and render it
    *
-   * @returns {void}
+   * @returns {Promise<IComponent>}
    * @memberof Router
    */
-  public insertRenderRoutes(): void {
+  public async insertRenderRoutes(): Promise<IComponent> {
     const lastRouteList = this.lastRoute === '/' ? ['/'] : this.lastRoute.split('/');
     lastRouteList[0] = '/';
 
@@ -208,8 +209,9 @@ export class Router {
         }
 
         if (needRenderComponent) {
-          const component = this.instantiateComponent(needRenderComponent, renderDom);
-          // insert needRenderComponent on index in this.hasRenderComponentList,and remove other component which index >= index of needRenderComponent
+          const component = await this.instantiateComponent(needRenderComponent, renderDom);
+          // insert needRenderComponent on index in this.hasRenderComponentList
+          // and remove other component which index >= index of needRenderComponent
           if (component) {
             if (this.hasRenderComponentList[index]) this.hasRenderComponentList.splice(index, 0, component);
             if (!this.hasRenderComponentList[index]) this.hasRenderComponentList[index] = component;
@@ -255,10 +257,10 @@ export class Router {
    * 
    * first render
    *
-   * @returns {void}
+   * @returns {Promise<IComponent>}
    * @memberof Router
    */
-  public generalDistributeRoutes(): void {
+  public async generalDistributeRoutes(): Promise<IComponent> {
     for (let index = 0; index < this.renderRouteList.length; index++) {
       const path = this.renderRouteList[index];
       if (index === 0) {
@@ -281,7 +283,7 @@ export class Router {
         const rootDom = document.querySelector('#root');
         this.routesList.push(rootRoute);
 
-        const component = this.instantiateComponent(FindComponent, rootDom);
+        const component = await this.instantiateComponent(FindComponent, rootDom);
         // 因为没有 所有要push进去
         if (component) this.hasRenderComponentList.push(component);
 
@@ -314,7 +316,7 @@ export class Router {
         this.routesList.push(route);
 
         if (FindComponent) {
-          const component = this.instantiateComponent(FindComponent, renderDom);
+          const component = await this.instantiateComponent(FindComponent, renderDom);
           if (component) this.hasRenderComponentList.push(component);
         }
 
@@ -375,10 +377,10 @@ export class Router {
    *
    * @param {Function} FindComponent
    * @param {Element} renderDom
-   * @returns {*}
+   * @returns {Promise<IComponent>}
    * @memberof Router
    */
-  public instantiateComponent(FindComponent: Function, renderDom: Element): any {
+  public instantiateComponent(FindComponent: Function, renderDom: Element): Promise<IComponent> {
     return this.$vm.renderComponent(FindComponent, renderDom);
   }
 }

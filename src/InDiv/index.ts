@@ -115,10 +115,10 @@ class InDiv {
    *
    * @param {Function} BootstrapComponent
    * @param {Element} renderDOM
-   * @returns {*}
+   * @returns {Promise<IComponent>}
    * @memberof InDiv
    */
-  public renderComponent(BootstrapComponent: Function, renderDOM: Element): any {
+  public renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<IComponent> {
     const component: any = factoryCreator(BootstrapComponent, this.$rootModule);
 
     component.$vm = this;
@@ -130,9 +130,11 @@ class InDiv {
     if (template && typeof template === 'string' && renderDOM) {
       if (component.nvBeforeMount) component.nvBeforeMount();
 
-      this.replaceDom(component, renderDOM);
-      if (component.nvAfterMount) component.nvAfterMount();
-      return component;
+      return this.replaceDom(component, renderDOM)
+      .then((_component) => {
+        if (_component.nvAfterMount) _component.nvAfterMount();
+        return _component;
+      });
 
     } else {
       throw new Error('renderBootstrap failed: template or rootDom is not exit');
@@ -144,11 +146,12 @@ class InDiv {
    *
    * @param {IComponent} component
    * @param {Element} renderDOM
+   * @returns {Promise<IComponent>}
    * @memberof InDiv
    */
-  public replaceDom(component: IComponent, renderDOM: Element): void {
+  public replaceDom(component: IComponent, renderDOM: Element): Promise<IComponent> {
     component.renderDom = renderDOM;
-    component.render();
+    return component.render();
   }
 }
 

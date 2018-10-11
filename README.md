@@ -6,7 +6,7 @@ A web mvvm library.
 [中文](https://dimalilongji.github.io/indiv-doc)
 [npm](https://www.npmjs.com/package/indiv)
 
-version: v1.2.0
+current version: v1.2.0
 
 ## demo
   - `npm run start`
@@ -746,9 +746,10 @@ version: v1.2.0
     routeChange((lastRoute?: string, newRoute?: string): void;
     ```
 
-#### Server Side Render
+#### Server Side Render (@indiv/ssr-renderer v1.1.0+)
 
-    - [npm](https://www.npmjs.com/package/@indiv/ssr-renderer) install and use nodeJS v6 or newer
+    - [npm](https://www.npmjs.com/package/@indiv/ssr-renderer)
+    - @indiv/ssr-renderer: v1.1.0+, indiv: v1.2.0+, NodeJs v6+
     - export your InDiv instance and routes
     - use `renderToString(url: string, routes: TRouter[], inDiv: InDiv): string`, render your app to string with `request.url`, `routes` and `InDiv instance`
     - at last render string to your template

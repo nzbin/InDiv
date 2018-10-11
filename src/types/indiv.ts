@@ -31,6 +31,6 @@ export interface IInDiv {
     bootstrapModule(Esmodule: Function): void;
     init(): void;
     renderModuleBootstrap(): void;
-    renderComponent(BootstrapComponent: Function, renderDOM: Element): any;
-    replaceDom(component: IComponent, renderDOM: Element): void;
+    renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<IComponent>;
+    replaceDom(component: IComponent, renderDOM: Element): Promise<IComponent>;
 }

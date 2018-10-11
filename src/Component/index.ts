@@ -84,17 +84,11 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       }
     };
 
-    vm.render = function () {
+    vm.render = function (): Promise<IComponent<State, Props, Vm>> {
       const dom = (this as IComponent<State, Props, Vm>).renderDom;
-      new Promise((resolve, reject) => {
-        try {
-          const compile = new Compile(dom, this as IComponent<State, Props, Vm>);
-          resolve();
-        } catch (e) {
-          reject(e);
-        }
-      })
+      return Promise.resolve()
       .then(() => {
+        const compile = new Compile(dom, this as IComponent<State, Props, Vm>);
         (this as IComponent<State, Props, Vm>).mountComponent(dom);
         const length = (this as IComponent<State, Props, Vm>).$componentList.length;
         for (let i = 0; i < length; i++) {
@@ -103,23 +97,18 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
           if (component.scope.nvAfterMount) component.scope.nvAfterMount();
         }
         if (this.nvHasRender) this.nvHasRender();
+        return this;
       })
       .catch(e => {
         throw new Error(`component ${options.selector} render failed: ${e}`);
       });
     };
 
-    vm.reRender = function (): void {
+    vm.reRender = function (): Promise<IComponent<State, Props, Vm>> {
       const dom = (this as IComponent<State, Props, Vm>).renderDom;
-      new Promise((resolve, reject) => {
-        try {
-          const compile = new Compile(dom, (this as IComponent<State, Props, Vm>));
-          resolve();
-        } catch (e) {
-          reject(e);
-        }
-      })
+      return Promise.resolve()
       .then(() => {
+        const compile = new Compile(dom, (this as IComponent<State, Props, Vm>));
         (this as IComponent<State, Props, Vm>).mountComponent(dom);
         const length = (this as IComponent<State, Props, Vm>).$componentList.length;
         for (let i = 0; i < length; i++) {
@@ -128,9 +117,10 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
           if (component.scope.nvAfterMount) component.scope.nvAfterMount();
         }
         if ((this as IComponent<State, Props, Vm>).nvHasRender) (this as IComponent<State, Props, Vm>).nvHasRender();
+        return this;
       })
       .catch(e => {
-        throw new Error(`component ${options.selector} reRender failed: ${e}`);
+        throw new Error(`component ${options.selector} render failed: ${e}`);
       });
     };
 

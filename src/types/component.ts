@@ -49,8 +49,8 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     nvWatchState?(oldState?: any): void;
     nvRouteChange?(lastRoute: string, newRoute: string): void;
     nvReceiveProps?(nextProps: Props): void;
-    render(): void;
-    reRender(): void;
+    render(): Promise<IComponent<State, Props, Vm>>;
+    reRender(): Promise<IComponent<State, Props, Vm>>;
     mountComponent(dom: Element): void;
     componentsConstructor(dom: Element): void;
     getPropsValue(valueList: any[], value: any): void;

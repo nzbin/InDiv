@@ -115,8 +115,8 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     nvWatchState?(oldState?: any): void;
     nvRouteChange?(lastRoute: string, newRoute: string): void;
     nvReceiveProps?(nextProps: Props): void;
-    render(): void;
-    reRender(): void;
+    render(): Promise<IComponent<State, Props, Vm>>;
+    reRender(): Promise<IComponent<State, Props, Vm>>;
     mountComponent(dom: Element): void;
     componentsConstructor(dom: Element): void;
     getPropsValue(valueList: any[], value: any): void;
@@ -266,8 +266,8 @@ export declare class InDiv {
     bootstrapModule(Esmodule: Function): void;
     init(): void;
     renderModuleBootstrap(): void;
-    renderComponent(BootstrapComponent: Function, renderDOM: Element): any;
-    replaceDom(component: IComponent, renderDOM: Element): void;
+    renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<IComponent>;
+    replaceDom(component: IComponent, renderDOM: Element): Promise<IComponent>;
 }
 
 export declare class Router {
@@ -289,12 +289,12 @@ export declare class Router {
     routeChange?(lastRoute?: string, nextRoute?: string): void;
     redirectTo(redirectTo: string): void;
     refresh(): void;
-    distributeRoutes(): void;
-    insertRenderRoutes(): void;
-    generalDistributeRoutes(): void;
+    distributeRoutes(): Promise<any>;
+    insertRenderRoutes(): Promise<IComponent>;
+    generalDistributeRoutes(): Promise<IComponent>;
     routerChangeEvent(index: number): void;
     emitComponentEvent(componentList: ComponentList<IComponent>[], event: string): void;
-    instantiateComponent(FindComponent: Function, renderDom: Element): any;
+    instantiateComponent(FindComponent: Function, renderDom: Element): Promise<IComponent>;
 }
 
 // Dependency Injection

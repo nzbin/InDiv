@@ -1,4 +1,3 @@
-// es polyfill for es5
 import 'core-js/modules/es6.array.find';
 import 'core-js/modules/es6.array.find-index';
 import 'core-js/modules/es6.array.for-each';

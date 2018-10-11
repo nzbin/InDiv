@@ -1,8 +1,10 @@
 import { IMiddleware, INvModule, EsRouteObject, IComponent } from '../types';
 
 import Utils from '../Utils';
-import { factoryCreator } from '../Injectable';
+import { factoryCreator } from '../DI';
 import { factoryModule } from '../NvModule';
+
+const utils = new Utils();
 
 /**
  * main: for new InDiv
@@ -11,7 +13,6 @@ import { factoryModule } from '../NvModule';
  */
 class InDiv {
   public modalList: IMiddleware<InDiv>[];
-  public utils: Utils;
   public rootDom: Element;
   public $rootPath: string;
   public $canRenderModule: boolean;
@@ -26,9 +27,8 @@ class InDiv {
 
   constructor() {
     this.modalList = [];
-    this.utils = new Utils();
 
-    if (!this.utils.isBrowser()) return;
+    if (!utils.isBrowser()) return;
 
     this.rootDom = document.querySelector('#root');
     this.$rootPath = '/';
@@ -50,7 +50,7 @@ class InDiv {
   public use(modal: IMiddleware<InDiv>): number {
     modal.bootstrap(this);
     this.modalList.push(modal);
-    return this.modalList.findIndex(md => this.utils.isEqual(md, modal));
+    return this.modalList.findIndex(md => utils.isEqual(md, modal));
   }
 
   /**
@@ -65,7 +65,7 @@ class InDiv {
     if (rootPath && typeof rootPath === 'string') {
       this.$rootPath = rootPath;
     } else {
-      console.error('rootPath is not defined or rootPath must be a String');
+      throw new Error('rootPath is not defined or rootPath must be a String');
     }
   }
 
@@ -79,10 +79,7 @@ class InDiv {
    * @memberof InDiv
    */
   public bootstrapModule(Esmodule: Function): void {
-    if (!Esmodule) {
-      console.error('must send a root module');
-      return;
-    }
+    if (!Esmodule) throw new Error('must send a root module');
 
     this.$rootModule = factoryModule(Esmodule);
     this.$components = [...this.$rootModule.$components];
@@ -95,12 +92,9 @@ class InDiv {
    * @memberof InDiv
    */
   public init(): void {
-    if (!this.utils.isBrowser()) return;
+    if (!utils.isBrowser()) return;
 
-    if (!this.$rootModule) {
-      console.error('must use bootstrapModule to declare a root NvModule before init');
-      return;
-    }
+    if (!this.$rootModule) throw new Error('must use bootstrapModule to declare a root NvModule before init');
     if (this.$canRenderModule) this.renderModuleBootstrap();
   }
 
@@ -111,11 +105,8 @@ class InDiv {
    * @memberof InDiv
    */
   public renderModuleBootstrap(): void {
-    if (!this.$rootModule.bootstrap) {
-      console.error('need bootstrap for render Module Bootstrap');
-      return;
-    }
-    const BootstrapComponent = this.$rootModule.bootstrap;
+    if (!this.$rootModule.$bootstrap) throw new Error('need bootstrap for render Module Bootstrap');
+    const BootstrapComponent = this.$rootModule.$bootstrap;
     this.renderComponent(BootstrapComponent, this.rootDom);
   }
 
@@ -124,31 +115,29 @@ class InDiv {
    *
    * @param {Function} BootstrapComponent
    * @param {Element} renderDOM
-   * @returns {*}
+   * @returns {Promise<IComponent>}
    * @memberof InDiv
    */
-  public renderComponent(BootstrapComponent: Function, renderDOM: Element): any {
+  public renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<IComponent> {
     const component: any = factoryCreator(BootstrapComponent, this.$rootModule);
 
     component.$vm = this;
     component.$components = this.$rootModule.$components;
     if (component.nvOnInit) component.nvOnInit();
     if (component.watchData) component.watchData();
-    if (!component.$template) {
-      console.error('must decaler this.$template in bootstrap()');
-      return;
-    }
+    if (!component.$template) throw new Error('must decaler this.$template in bootstrap()');
     const template = component.$template;
     if (template && typeof template === 'string' && renderDOM) {
       if (component.nvBeforeMount) component.nvBeforeMount();
 
-      this.replaceDom(component, renderDOM);
-      if (component.nvAfterMount) component.nvAfterMount();
-      return component;
+      return this.replaceDom(component, renderDOM)
+      .then((_component) => {
+        if (_component.nvAfterMount) _component.nvAfterMount();
+        return _component;
+      });
 
     } else {
-      console.error('renderBootstrap failed: template or rootDom is not exit');
-      return false;
+      throw new Error('renderBootstrap failed: template or rootDom is not exit');
     }
   }
 
@@ -157,11 +146,12 @@ class InDiv {
    *
    * @param {IComponent} component
    * @param {Element} renderDOM
+   * @returns {Promise<IComponent>}
    * @memberof InDiv
    */
-  public replaceDom(component: IComponent, renderDOM: Element): void {
+  public replaceDom(component: IComponent, renderDOM: Element): Promise<IComponent> {
     component.renderDom = renderDOM;
-    component.render();
+    return component.render();
   }
 }
 

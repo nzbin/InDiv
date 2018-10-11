@@ -1,4 +1,4 @@
-import { InDiv, Component, Router, Utils, NvModule, Service, nvHttp } from '../build';
+import { InDiv, Component, Router, Utils, NvModule, Injectable, NVHttp } from '../build';
 
 class HeroSearchService1 {
   constructor() {
@@ -9,7 +9,7 @@ class HeroSearchService1 {
     console.log('HeroSearchService !!!1111');
   }
 }
-Service({
+Injectable({
   isSingletonMode: true,
 })(HeroSearchService1);
 
@@ -19,7 +19,7 @@ class HeroSearchService2 {
     console.log('HeroSearchService !!!2222');
   }
 }
-Service({
+Injectable({
   isSingletonMode: false,
 })(HeroSearchService2);
 
@@ -36,7 +36,10 @@ class HeroSearchService {
     console.log('HeroSearchService !!!000000000');
   }
 }
-Service({
+HeroSearchService.injectTokens = [
+  'heroSearchService1'
+];
+Injectable({
   isSingletonMode: false,
 })(HeroSearchService);
 
@@ -73,13 +76,17 @@ class RouteChild {
     this.state.b = nextProps.a;
   }
 }
+RouteChild.injectTokens = [
+  'heroSearchService2'
+];
 Component({
   selector: 'route-child',
   template: (`
     <div>
       <p>子路由的子组件::{{state.b}}</p>
       <pp-childs ax={state.b}></pp-childs>
-    </div>`),
+    </div>`
+  ),
 })(RouteChild);
 
 class PCChild {
@@ -212,10 +219,13 @@ Component({
 
 
 class R1 {
-  constructor(heroSearchService) {
+  constructor(
+    heroSearchService,
+    utils
+  ) {
     this.heroSearchService = heroSearchService;
     this.heroSearchService.test();
-    this.utils = new Utils();
+    this.utils = utils;
     this.state = {
       a: 'a11',
       b: 2,
@@ -224,7 +234,7 @@ class R1 {
         b: 'a',
         show: true,
       },
-          {
+      {
         z: 33333333333333,
         b: 'a',
         show: true,
@@ -235,7 +245,7 @@ class R1 {
         b: 'a',
         show: true,
       },
-          {
+      {
         z: 1111,
         b: 'a',
         show: false,
@@ -274,7 +284,10 @@ class R1 {
     this.setState({ a: a });
   }
 }
-
+R1.injectTokens = [
+  'heroSearchService',
+  'utils',
+];
 Component({
   selector: 'R1',
   template: (`
@@ -291,7 +304,7 @@ Component({
     下面是子路由<br/>
     <router-render></router-render>
   </div>
-    `),
+  `),
 })(R1);
 
 
@@ -301,7 +314,7 @@ class R2 {
     heroSearchService,
   ) {
     this.heroSearchService1 = heroSearchService1;
-    this.heroSearchService1.test();
+    // this.heroSearchService1.test();
     this.state = { a: 1 };
   }
   nvOnInit() {
@@ -335,6 +348,10 @@ class R2 {
     this.setLocation('/R1/C1/D1', { b: '1' });
   }
 }
+R2.injectTokens = [
+  'heroSearchService1',
+  'heroSearchService',
+];
 Component({
   selector: 'R2',
   template: (`
@@ -375,11 +392,15 @@ class Container {
   constructor(
     heroSearchService,
     heroSearchService1,
+    nvHttp,
+    value,
+    heroSearchService2,
   ) {
     this.ss = heroSearchService;
     this.ss.test();
-    console.log('heroSearchService1', heroSearchService1);
     console.log('nvHttp', nvHttp);
+    console.log('value', value);
+    console.log('heroSearchService2', heroSearchService2);
     this.state = {
       a: 1,
       b: 3,
@@ -429,6 +450,9 @@ class Container {
   }
 
   nvAfterMount() {
+  }
+  nvOnDestory() {
+    console.log('TestComponent OnDestory');
   }
 
   go() {
@@ -508,7 +532,13 @@ class Container {
       }];
   }
 }
-
+Container.injectTokens = [
+  'heroSearchService',
+  'heroSearchService1',
+  'nvHttp',
+  'value',
+  'heroSearchService2',
+];
 Component({
   selector: 'container-wrap',
   template: (`
@@ -521,6 +551,8 @@ Component({
           <test-component man="{man.name}"></test-component>
           <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
           <div>性别：{{man.sex}}</div>
+          <a nv-href="man.name">a {{man.sex}}</a>
+          <img nv-src="man.name" ng-alt="man.name" />
           <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-key="$index" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
           <div class="fuck" nv-repeat="let c in man.job" nv-key="c.id">
             <input nv-on:click="@show(c, $index)" nv-model="c.name" nv-class="c.id" />
@@ -529,6 +561,12 @@ Component({
       <router-render></router-render>
     </div>
   `),
+  providers: [
+    {
+      provide: 'heroSearchService2',
+      useClass: HeroSearchService2,
+    }
+  ]
 })(Container);
 
 class M2 {}
@@ -539,7 +577,10 @@ NvModule({
     PCChild,
   ],
   providers: [
-    HeroSearchService2,
+    {
+      provide: 'heroSearchService2',
+      useClass: HeroSearchService2,
+    },
   ],
   exports: [
     R2,
@@ -559,8 +600,26 @@ NvModule({
     R1,
   ],
   providers: [
-    HeroSearchService,
-    HeroSearchService1,
+    {
+      provide: 'utils',
+      useClass: Utils,
+    },
+    {
+      provide: 'heroSearchService',
+      useClass: HeroSearchService,
+    },
+    {
+      provide: 'heroSearchService1',
+      useClass: HeroSearchService1,
+    },
+    {
+      provide: 'nvHttp',
+      useClass: NVHttp,
+    },
+    {
+      provide: 'value',
+      useValue: 1233,
+    }
   ],
 })(M1);
 

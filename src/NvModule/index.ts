@@ -1,11 +1,9 @@
-import Utils from '../Utils';
-
-import { INvModule } from '../types';
+import { INvModule, TInjectTokenProvider, TUseClassProvider, TuseValueProvider } from '../types';
 
 type TNvModuleOptions = {
   imports?: Function[];
   components: Function[];
-  providers?: Function[];
+  providers?: (Function | TUseClassProvider | TuseValueProvider)[];
   exports?: Function[];
   bootstrap?: Function;
 };
@@ -22,70 +20,83 @@ type TNvModuleOptions = {
 export function NvModule(options: TNvModuleOptions): (_constructor: Function) => void {
   return function (_constructor: Function): void {
     const vm = _constructor.prototype as INvModule;
-    vm.providerList = new Map();
-    vm.utils = new Utils();
+    vm.$providerList = new Map();
+    vm.$providerInstances = new Map();
     if (options.imports) vm.$imports = options.imports;
     if (options.components) vm.$components = options.components;
     if (options.providers) vm.$providers = options.providers;
     if (options.exports) vm.$exports = options.exports;
-    if (options.bootstrap) vm.bootstrap = options.bootstrap;
-
-    vm.buildImports = function (): void {
-      if (!(this as INvModule).$imports) return;
-      (this as INvModule).$imports.forEach((ModuleImport: any) => {
-        const moduleImport = factoryModule(ModuleImport);
-        for (let i = 0; i <= moduleImport.$exports.length - 1; i++) {
-          const importComponent = moduleImport.$exports[i];
-          if (!this.$components.find((component: any) => component.$selector === (importComponent as any).$selector)) {
-            this.$components.push(importComponent);
-          }
-        }
-      });
-    };
+    if (options.bootstrap) vm.$bootstrap = options.bootstrap;
 
     vm.buildProviderList = function (): void {
       if (!(this as INvModule).$providers) return;
-      (this as INvModule).$providers.forEach((service: any) => this.providerList.set(`${service.name.charAt(0).toUpperCase()}${service.name.slice(1)}`, service));
+      const length = this.$providers.length;
+      for (let i = 0; i < length; i++) {
+        const service = (this as INvModule).$providers[i];
+        if ((service as TInjectTokenProvider).provide) {
+          if ((service as TUseClassProvider).useClass || (service as TuseValueProvider).useValue) (this as INvModule).$providerList.set((service as TInjectTokenProvider).provide, service);
+        } else {
+          (this as INvModule).$providerList.set(service as Function, service as Function);
+        }
+      }
     };
 
     vm.buildProviders4Services = function (): void {
       if (!this.$providers) return;
-      for (const name in (this as INvModule).$providers) {
-        const service: any = (this as INvModule).$providers[name];
-        if (service._injectedProviders) {
-          (this as INvModule).providerList.forEach((value, key) => {
-            if (!service._injectedProviders.has(key)) service._injectedProviders.set(key, value);
-          });
+      const length = this.$providers.length;
+      for (let i = 0; i < length; i++) {
+        const service: any = (this as INvModule).$providers[i];
+
+        if ((service as TInjectTokenProvider).provide) {
+          if ((service as TUseClassProvider).useClass) {
+            if (!((service as TUseClassProvider).useClass as any)._injectedProviders) ((service as TUseClassProvider).useClass as any)._injectedProviders = new Map();
+            (this as INvModule).$providerList.forEach((value, key) => {
+              if (!((service as TUseClassProvider).useClass as any)._injectedProviders.has(key)) ((service as TUseClassProvider).useClass as any)._injectedProviders.set(key, value);
+            });
+          }
         } else {
-          service._injectedProviders = (this as INvModule).providerList;
+          if (!service._injectedProviders) service._injectedProviders = new Map();
+          (this as INvModule).$providerList.set(service as Function, service as Function);
         }
       }
     };
 
     vm.buildProviders4Components = function (): void {
-      if (!(this as INvModule).$providers) return;
-      for (let i = 0; i <= this.$components.length - 1; i++) {
+      if (!(this as INvModule).$providers || !(this as INvModule).$components) return;
+      const length = this.$components.length;
+      for (let i = 0; i < length; i++) {
         const component: any = (this as INvModule).$components[i];
-        if (component._injectedProviders) {
-          (this as INvModule).providerList.forEach((value, key) => {
-            if (!component._injectedProviders.has(key)) component._injectedProviders.set(key, value);
-          });
-        } else {
-          component._injectedProviders = this.providerList;
-        }
+        if (!component._injectedProviders) component._injectedProviders = new Map();
+        (this as INvModule).$providerList.forEach((value, key) => {
+          if (!component._injectedProviders.has(key)) component._injectedProviders.set(key, value);
+        });
       }
     };
 
     vm.buildComponents4Components = function (): void {
       if (!this.$components) return;
-      for (let i = 0; i <= this.$components.length - 1; i++) {
+      const length = this.$components.length;
+      for (let i = 0; i < length; i++) {
         const FindComponent: any = (this as INvModule).$components[i];
-        if (FindComponent._injectedComponents) {
-          (this as INvModule).$components.forEach((needInjectComponent: any) => {
-            if (!FindComponent._injectedComponents.find((c: any) => c.$selector === needInjectComponent.$selector)) FindComponent._injectedComponents.push(needInjectComponent);
-          });
-        } else {
-          FindComponent._injectedComponents = (this as INvModule).$components;
+        if (!FindComponent._injectedComponents) FindComponent._injectedComponents = new Map();
+        (this as INvModule).$components.forEach((needInjectComponent: any) => {
+          if (!FindComponent._injectedComponents.has(needInjectComponent.$selector)) FindComponent._injectedComponents.set(needInjectComponent.$selector, needInjectComponent);
+        });
+      }
+    };
+
+    vm.buildImports = function (): void {
+      if (!(this as INvModule).$imports) return;
+      const length = this.$imports.length;
+      for (let i = 0; i < length; i++) {
+        const ModuleImport = (this as INvModule).$imports[i];
+        const moduleImport = factoryModule(ModuleImport);
+        const exportsLength = moduleImport.$exports.length;
+        for (let i = 0; i < exportsLength; i++) {
+          const importComponent = moduleImport.$exports[i];
+          if (!this.$components.find((component: any) => component.$selector === (importComponent as any).$selector)) {
+            this.$components.push(importComponent);
+          }
         }
       }
     };
@@ -101,10 +112,10 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
  */
 export function factoryModule(NM: Function): INvModule {
   const nm = new (NM as any)();
-  nm.buildImports();
   nm.buildProviderList();
   nm.buildProviders4Services();
   nm.buildComponents4Components();
   nm.buildProviders4Components();
+  nm.buildImports();
   return nm;
 }

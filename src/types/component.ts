@@ -1,11 +1,11 @@
 import { IWatcher } from './watcher';
 import { ICompileUtil } from './compileUtils';
-import { IUtil } from './utils';
 
 export type ComponentList<C> = {
     dom: Node;
     props: any;
     scope: C;
+    constructorFunction: Function;
 };
 
 export type SetState = <S>(newState: { [key: string]: S }) => void;
@@ -26,7 +26,6 @@ export type SetLocation = <Q = any, P = any>(path: string, query?: Q, params?: P
 export interface IComponent<State = any, Props = any, Vm = any> {
     state?: State | any;
     props?: Props | any;
-    utils: IUtil;
     compileUtil: ICompileUtil;
     renderDom?: Element;
     $vm?: Vm | any;
@@ -35,6 +34,7 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     $template?: string;
     $components?: Function[];
     $componentList?: ComponentList<IComponent<any, any, any>>[];
+    $providerList?: Map<Function | string, Function | any>;
 
     setState?: SetState;
     getLocation?: GetLocation;
@@ -49,8 +49,8 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     nvWatchState?(oldState?: any): void;
     nvRouteChange?(lastRoute: string, newRoute: string): void;
     nvReceiveProps?(nextProps: Props): void;
-    render(): void;
-    reRender(): void;
+    render(): Promise<IComponent<State, Props, Vm>>;
+    reRender(): Promise<IComponent<State, Props, Vm>>;
     mountComponent(dom: Element): void;
     componentsConstructor(dom: Element): void;
     getPropsValue(valueList: any[], value: any): void;

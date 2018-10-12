@@ -2,6 +2,8 @@ import { TFnWatcher } from '../types';
 
 import Utils from '../Utils';
 
+const utils = new Utils();
+
 /**
  * watch a key of an Object
  *
@@ -11,13 +13,11 @@ class KeyWatcher {
   public data: any;
   public watcher?: TFnWatcher;
   public key: string;
-  public utils: Utils;
 
   constructor(data: any, key: string, watcher?: TFnWatcher) {
     this.data = data;
     this.key = key;
     this.watcher = watcher;
-    this.utils = new Utils();
     this.watchData(this.data, this.key);
   }
 
@@ -32,7 +32,7 @@ class KeyWatcher {
         return val;
       },
       set(newVal: any) {
-        if (vm.utils.isEqual(newVal, val)) return;
+        if (utils.isEqual(newVal, val)) return;
 
         let oldData;
         if (vm.watcher) {

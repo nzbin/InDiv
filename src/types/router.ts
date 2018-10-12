@@ -1,6 +1,5 @@
 import { IComponent, ComponentList } from './component';
 import { IInDiv } from './indiv';
-import { IUtil } from './utils';
 import { IKeyWatcher } from './keyWatcher';
 
 
@@ -17,7 +16,6 @@ export interface IRouter {
     currentUrl: string;
     lastRoute: string;
     rootDom: Element;
-    utils: IUtil;
     $rootPath: string;
     hasRenderComponentList: IComponent[];
     needRedirectPath: string;
@@ -31,10 +29,10 @@ export interface IRouter {
     routeChange?(lastRoute?: string, nextRoute?: string): void;
     redirectTo(redirectTo: string): void;
     refresh(): void;
-    distributeRoutes(): void;
-    insertRenderRoutes(): void;
-    generalDistributeRoutes(): void;
+    distributeRoutes(): Promise<any>;
+    insertRenderRoutes(): Promise<IComponent>;
+    generalDistributeRoutes(): Promise<IComponent>;
     routerChangeEvent(index: number): void;
     emitComponentEvent(componentList: ComponentList<IComponent>[], event: string): void;
-    instantiateComponent(FindComponent: Function, renderDom: Element): any;
+    instantiateComponent(FindComponent: Function, renderDom: Element): Promise<IComponent>;
 }

@@ -75,3 +75,7 @@
 21. 2018-09-17 fix some bugs and support ssr render
 
 22. 2018-09-18 rewrite virtual DOM algorithm
+
+23. 2018-09-29 v1.2.0 write DI system and place  `@Service` `@Injectable` with `@Injectable` `@Injected`
+
+24. 2018-10-04 add `providers` in `@Component`

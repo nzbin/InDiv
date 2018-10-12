@@ -1,8 +1,10 @@
-import { IPatchList } from '../types';
+import { IPatchList, IVnode } from '../types';
 
-import VirtualDOM from '../VirtualDOM';
+import { parseToVnode, diffVnode, renderVnode } from '../VirtualDOM';
 import Utils from '../Utils';
 import { CompileUtil } from '../CompileUtils';
+
+const utils = new Utils();
 
 /**
  * main compiler
@@ -19,34 +21,48 @@ class Compile {
    * Creates an instance of Compile.
    * @param {(string | Element)} el
    * @param {*} vm
-   * @param {Element} [routerRenderDom]
    * @memberof Compile
    */
-  constructor(el: string | Element, vm: any, routerRenderDom?: Element) {
-    this.utils = new Utils();
+  constructor(el: string | Element, vm: any) {
     this.$vm = vm;
     this.$el = this.isElementNode(el) ? el as Element : document.querySelector(el as string);
     if (this.$el) {
       this.$fragment = this.node2Fragment();
       this.init();
-      if (routerRenderDom) {
-        // replace routeDom
-        const newRouterRenderDom = this.$fragment.querySelectorAll(this.$vm.$vm.$routeDOMKey)[0];
-        newRouterRenderDom.parentNode.replaceChild(routerRenderDom, newRouterRenderDom);
-      }
 
-      let oldVnode = VirtualDOM.parseToVnode(this.$el);
-      let newVnode = VirtualDOM.parseToVnode(this.$fragment);
+      let oldVnode = parseToVnode(this.$el);
+      let newVnode = parseToVnode(this.$fragment);
       let patchList: IPatchList[] = [];
-      VirtualDOM.diffVnode(oldVnode, newVnode, patchList);
-      VirtualDOM.renderVnode(patchList);
+      diffVnode(oldVnode, newVnode, patchList, this.needDiffChildCallback.bind(this));
+      renderVnode(patchList);
 
-      this.utils = null;
       this.$fragment = null;
       oldVnode = null;
       newVnode = null;
       patchList = null;
     }
+  }
+
+  /**
+   * needDiffChildCallback for Virtual DOM diff
+   * 
+   * if newVnode.node.isComponent no need diff children
+   * if newVnode.tagName and oldVnode.tagName no need diff children
+   *
+   * @param {IVnode} oldVnode
+   * @param {IVnode} newVnode
+   * @returns {boolean}
+   * @memberof Compile
+   */
+  public needDiffChildCallback(oldVnode: IVnode, newVnode: IVnode): boolean {
+    // 如果为组件，则停止对比内部元素，交由对应组件diff
+    if (newVnode.node.isComponent && oldVnode.node) {
+      oldVnode.node.isComponent = true;
+      return false;
+    }
+    // 如果为路由渲染层，则停止对比内部元素，交由router diff
+    if (oldVnode.tagName === newVnode.tagName && newVnode.tagName === (this.$vm.$vm.$routeDOMKey as string).toLocaleUpperCase()) return false;
+    return true;
   }
 
   /**
@@ -66,7 +82,7 @@ class Compile {
    */
   public compileElement(fragment: DocumentFragment): void {
     const elementCreated = document.createElement('div');
-    elementCreated.innerHTML = this.utils.formatInnerHTML(this.$vm.$template);
+    elementCreated.innerHTML = utils.formatInnerHTML(this.$vm.$template);
     const childNodes = elementCreated.childNodes;
     this.recursiveDOM(childNodes, fragment);
   }
@@ -80,6 +96,7 @@ class Compile {
    */
   public recursiveDOM(childNodes: NodeListOf<Node & ChildNode>, fragment: DocumentFragment | Element): void {
     Array.from(childNodes).forEach((node: Element) => {
+      if (this.isElementNode(node) && this.$vm.$components.find((component: any) => component.$selector === node.tagName.toLocaleLowerCase())) node.isComponent = true;
 
       if (node.hasChildNodes() && !this.isRepeatNode(node)) this.recursiveDOM(node.childNodes, node);
 
@@ -87,14 +104,13 @@ class Compile {
 
       const text = node.textContent;
       const reg = /\{\{(.*)\}\}/g;
-      if (this.isElementNode(node)) {
-        this.compile(node, fragment);
-      }
+      if (this.isElementNode(node)) this.compile(node, fragment);
 
       if (this.isTextNode(node) && reg.test(text)) {
-        const textList = text.match(/(\{\{(state\.)[^\{\}]+?\}\})/g);
-        if (textList && textList.length > 0) {
-          for (let i = 0; i < textList.length; i++) {
+        const textList = text.match(/(\{\{[^\{\}]+?\}\})/g);
+        const length = textList.length;
+        if (textList && length > 0) {
+          for (let i = 0; i < length; i++) {
               this.compileText(node, textList[i]);
           }
         }
@@ -120,10 +136,12 @@ class Compile {
         if (this.isDirective(attrName)) {
           const dir = attrName.substring(3);
           const exp = attr.value;
+          const compileUtil = new CompileUtil(fragment);
           if (this.isEventDirective(dir)) {
-            this.eventHandler(node, this.$vm, exp, dir);
+            compileUtil.eventHandler(node, this.$vm, exp, dir);
+            node.removeAttribute(attrName);
           } else {
-            new CompileUtil(fragment).bind(node, this.$vm, exp, dir);
+            compileUtil.bind(node, this.$vm, exp, dir);
           }
         }
       });
@@ -149,50 +167,6 @@ class Compile {
    */
   public compileText(node: Element, exp: string): void {
     new CompileUtil(this.$fragment).templateUpdater(node, this.$vm, exp);
-  }
-
-  /**
-   * compile event and build eventType in DOM
-   *
-   * @param {Element} node
-   * @param {*} vm
-   * @param {string} exp
-   * @param {string} eventName
-   * @memberof Compile
-   */
-  public eventHandler(node: Element, vm: any, exp: string, eventName: string): void {
-    const eventType = eventName.split(':')[1];
-
-    const fnList = exp.replace(/^(\@)/, '').replace(/\(.*\)/, '').split('.');
-    const args = exp.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
-
-    let fn = vm;
-    fnList.forEach(f => {
-      fn = fn[f];
-    });
-    const func = function(event: Event): void {
-      const argsList: any[] = [];
-      args.forEach(arg => {
-        if (arg === '') return false;
-        if (arg === '$event') return argsList.push(event);
-        if (arg === '$element') return argsList.push(node);
-        if (/(state.).*/g.test(arg)) return argsList.push(new CompileUtil()._getVMVal(vm, arg));
-        if (/\'.*\'/g.test(arg)) return argsList.push(arg.match(/\'(.*)\'/)[1]);
-        if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
-        if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
-      });
-      fn.apply(vm, argsList);
-    };
-    if (eventType && fn) {
-      (node as any)[`on${eventType}`] = func;
-      (node as any)[`event${eventType}`] = func;
-      if (node.eventTypes) {
-        const eventlist = JSON.parse(node.eventTypes);
-        eventlist.push(eventType);
-        node.eventTypes = JSON.stringify(eventlist);
-      }
-      if (!node.eventTypes) node.eventTypes = JSON.stringify([eventType]);
-    }
   }
 
   /**

@@ -210,8 +210,8 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
                 const valueList = prop[1].split('.');
                 const key = valueList[0];
                 let _prop = null;
-                if (/^(state.).*/g.test(prop[1])) {
-                  _prop = (this as IComponent<State, Props, Vm>).compileUtil._getVMVal(this as IComponent<State, Props, Vm>, prop[1]);
+                if (/^(\$\.).*/g.test(prop[1])) {
+                  _prop = (this as IComponent<State, Props, Vm>).compileUtil._getVMVal((this as IComponent<State, Props, Vm>).state, prop[1]);
                   props[attrName] = (this as IComponent<State, Props, Vm>).buildProps(_prop);
                   return;
                 }
@@ -224,7 +224,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
                     if (arg === '') return false;
                     if (arg === '$element') return argsList.push(node);
                     if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
-                    if (/(state.).*/g.test(arg)) return argsList.push(utilVm._getVMVal(vm, arg));
+                    if (/(\$\.).*/g.test(arg)) return argsList.push(utilVm._getVMVal(vm.state, arg));
                     if (/\'.*\'/g.test(arg)) return argsList.push(arg.match(/\'(.*)\'/)[1]);
                     if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
                     if (node.repeatData) {

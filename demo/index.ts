@@ -48,8 +48,8 @@ interface Props {
   selector: 'route-child',
   template: (`
     <div>
-      <p>子路由的子组件::{{state.b}}</p>
-      <pp-childs ax={state.b}></pp-childs>
+      <p>子路由的子组件::{{$.b}}</p>
+      <pp-childs ax={$.b}></pp-childs>
     </div>
   `),
 })
@@ -110,8 +110,8 @@ class RouteChild implements OnInit, HasRender, ReceiveProps {
   template: (`
     <div>
       子组件的子组件<br/>
-      <p nv-on:click="@sendProps(3)">PCChild props.ax:: {{state.b}}</p>
-      <p nv-repeat="let a in state.d">state.d {{a.z}}</p>
+      <p nv-on:click="@sendProps(3)">PCChild props.ax:: {{$.b}}</p>
+      <p nv-repeat="let a in $.d">state.d {{a.z}}</p>
     </div>
   `),
 })
@@ -181,9 +181,9 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps {
   selector: 'pc-component',
   template: (`
     <div>
-      <p nv-if="state.e" nv-class="state.a" nv-repeat="let a in state.d"  nv-on:click="@componentClick(state.d)">你好： {{a.z}}</p>
-      state.d: <input nv-repeat="let a in state.d" nv-model="a.z" />
-      <p nv-on:click="@sendProps(5)">props from component.state.a: {{state.ax}}</p>
+      <p nv-if="$.e" nv-class="$.a" nv-repeat="let a in $.d"  nv-on:click="@componentClick($.d)">你好： {{a.z}}</p>
+      state.d: <input nv-repeat="let a in $.d" nv-model="a.z" />
+      <p nv-on:click="@sendProps(5)">props from component.state.a: {{$.ax}}</p>
     </div>
   `),
 })
@@ -256,14 +256,14 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
   selector: 'R1',
   template: (`
     <div>
-      <pc-component ax="{state.a}" b="{@getProps}"></pc-component>
+      <pc-component ax="{$.a}" b="{@getProps}"></pc-component>
       下面跟组件没关系<br/>
-      <div nv-if="state.f">
+      <div nv-if="$.f">
         ef
-        <input nv-repeat="let a in state.e" nv-model="a.z" />
-        <p nv-class="state.c" nv-if="a.z" nv-repeat="let a in state.e" nv-text="a.z" nv-on:click="@showAlert(a)"></p>
-        <p>111this.state.a：{{state.a}}</p>
-        <input nv-model="state.a" />
+        <input nv-repeat="let a in $.e" nv-model="a.z" />
+        <p nv-class="$.c" nv-if="a.z" nv-repeat="let a in $.e" nv-text="a.z" nv-on:click="@showAlert(a)"></p>
+        <p>111this.state.a：{{$.a}}</p>
+        <input nv-model="$.a" />
       </div>
       下面是子路由<br/>
       <router-render></router-render>
@@ -352,11 +352,11 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   template: (`
     <div>
       <p nv-on:click="@showLocation()">点击显示子路由跳转</p>
-      <input nv-model="state.a"/>
+      <input nv-model="$.a"/>
       <br/>
-      <p nv-on:click="@showAlert()">点击显示this.state.a:{{state.a}}</p>
+      <p nv-on:click="@showAlert()">点击显示this.state.a:{{$.a}}</p>
       子组件:<br/>
-      <route-child a="{state.a}"></route-child>
+      <route-child a="{$.a}"></route-child>
       <router-render></router-render>
     </div>
   `),
@@ -410,7 +410,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   selector: 'test-component',
   template: (`
     <div>
-      <p nv-on:click="@click()">测试repeat组件: {{state.man}}</p>
+      <p nv-on:click="@click()">测试repeat组件: {{$.man}}</p>
     </div>`),
 })
 class TestComponent implements OnInit, OnDestory {
@@ -438,17 +438,17 @@ class TestComponent implements OnInit, OnDestory {
   selector: 'container-wrap',
   template: (`
     <div>
-      <p nv-id="@countState(state.a)" nv-if="@countState(state.a)" nv-on:click="@changeInput()">{{state.a}}</p>
-      <test-component nv-repeat="let man in state.testArray" nv-key="man.name" man="{@countState(man.name)}" nv-if="state.a"></test-component>
-      <p nv-on:click="@go()">container: {{@countState(state.a)}}</p>
-      <input nv-model="state.a" />
-      <div nv-repeat="let man in state.testArray" nv-key="man.name">
-          <div nv-on:click="@show(state.testArray2)">姓名：{{man.name}}</div>
+      <p nv-id="@countState($.a)" nv-if="@countState($.a)" nv-on:click="@changeInput()">{{$.a}}</p>
+      <test-component nv-repeat="let man in $.testArray" nv-key="man.name" man="{@countState(man.name)}" nv-if="$.a"></test-component>
+      <p nv-on:click="@go()">container: {{@countState($.a)}}</p>
+      <input nv-model="$.a" />
+      <div nv-repeat="let man in $.testArray" nv-key="man.name">
+          <div nv-on:click="@show($.testArray2, '你111')">姓名：{{man.name}}</div>
           <div>性别：{{@countState(man.sex, $index)}}</div>
           <a nv-href="@countState(man.sex, $index)">a {{man.sex}}</a>
           <img nv-src="man.sex" nv-alt="man.sex" />
           <test-component nv-key="man.name" man="{@countState(man.name)}"></test-component>
-          <input nv-on:click="@show(b, $index)" nv-repeat="let b in state.testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
+          <input nv-on:click="@show(b, $index)" nv-repeat="let b in $.testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
           <div class="fuck" nv-repeat="let c in man.job" nv-key="c.id">
             <input nv-on:click="@show(c, $index)" nv-model="c.name" nv-class="c.id" />
           </div>

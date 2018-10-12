@@ -132,7 +132,7 @@ current version: v1.2.0
     ```
   - **Recommend to use `Service` with `RXjs` on communication between `Components`**
   - `selector: string;` is your component tag name for HTML and used in template.
-  - `template: string` only accepts `state.XXX` as `nv-directive` from this.state, and `nv-on:event` only accepts `@eventHandler` from method which belongs to Class instance
+  - `template: string` only accepts `$.` as value of `nv-directive` from `this.state`, and `nv-on:event` only accepts `@eventHandler` from method which belongs to Class instance **`$.` in template is `this.state.`**
   - `providers` declares `Service` for `Component`
 
     - Providers is an `Array` which has three modes:
@@ -144,7 +144,7 @@ current version: v1.2.0
     - **In TypeScript these three modes can be used and provide can be `function` or `Class`**
     - **In javascript please use `{ provide: string; useClass: Function; }[]` or `{ provide: string; useValue: any; }[]`**
 
-  - `template` only accepts `state.XXX` from this.state, and nv-on:event only accepts `@eventHandler` from method which belongs to Class instance
+  - `template` only accepts `$.XXX` from this.state, and nv-on:event only accepts `@eventHandler` from method which belongs to Class instance
   - **Please use `setState` after lifecycle `constructor()` and `nvOnInit`**, and you can change or set value for `this.state` without `setState` in lifecycle `constructor()` and `nvOnInit`
   - After `Class`'s `constructor`, u can use `this.props` in any lifecycle
   - Use `nvOnInit` and `nvReceiveProps(nextProps: any): void;` to receive props and set `props` in `state`
@@ -155,13 +155,13 @@ current version: v1.2.0
     - Set props like HTML attributes, but use `{}` to include props value: `<test-component man="{@countState(man.name)}" women="{man.name}" handler="{@getProps}"></test-component>`
     - Please use **UnderScoreCase** to set Props in `template`, and use **CamelCase** to use props
       ```javascript
-        <p-component props-value="state.a"></p-component>
+        <p-component props-value="$.a"></p-component>
 
         this.props.propsValue
       ```
 
     - Props can use three types:
-      1. value from `this.state` and from repeat data: `women="{state.name}"` `women="{man.name}"`
+      1. value from `this.state` and value from repeat data: `women="{$.name}"` `women="{man.name}"`
       2. value use function from `Component` instance with return value: `man="{@countState(man.name)}"`
       3. Function form `Component` instance (must use `@`): `handler="{@getProps}"`
 
@@ -184,8 +184,8 @@ current version: v1.2.0
       selector: 'container-wrap',
       template: (`
         <div>
-          <p nv-on:click="@go()">container: {{state.a}}</p>
-          <input nv-model="state.a" />
+          <p nv-on:click="@go()">container: {{$.a}}</p>
+          <input nv-model="$.a" />
           <router-render></router-render>
         </div>
       `),
@@ -278,8 +278,8 @@ current version: v1.2.0
       selector: 'container-wrap',
       template: (`
         <div>
-          <p nv-on:click="@go()">container: {{state.a}}</p>
-          <input nv-model="state.a" />
+          <p nv-on:click="@go()">container: {{$.a}}</p>
+          <input nv-model="$.a" />
           <router-render></router-render>
         </div>`),
       providers: [
@@ -400,36 +400,36 @@ current version: v1.2.0
 
   - Now we support: nv-model nv-text nv-html nv-if nv-class nv-repeat nv-key nv-on:Event
   - And also support some directive which can use `DOM.directiveName` to set value, like `nv-src` `nv-href` `nv-alt`
-  - Expect value from this.state and value from nv-repeat, and some directives can also use Fuction form this which must return a value like `nv-text="@addCount(state.a, state.b)"`
+  - Expect value from this.state and value from nv-repeat, and some directives can also use Fuction form this which must return a value like `nv-text="@addCount($.a, $.b)"`
     - `nv-model` `nv-on:event` can't use Fuction as value
     - Fuction must from `Component` instance
     - Arguments in Function can include:
       1. Element: `nv-text="@addCount($element)"`
       2. String: `nv-text="@addCount('xxx')"`
       3. Number: `nv-text="@addCount(123)"`
-      4. Index: `$index`, you can only use this in **repeat DOM** : `<input nv-repeat="let b in state.testArray2" nv-class="@addCount($index)" />`
-      5. Variable: **`nv-text="@addCount(state.a)"`**
+      4. Index: `$index`, you can only use this in **repeat DOM** : `<input nv-repeat="let b in $.testArray2" nv-class="@addCount($index)" />`
+      5. Variable: **`nv-text="@addCount($.a)"`**
       6. Boolean: `nv-text="@addCount(true, false)"`
-      7. For nv-repeat: items like: `nv-repeat="let data in state.repeatData" nv-text="@addCount(data.show)"`
+      7. For nv-repeat: items like: `nv-repeat="let data in $.repeatData" nv-text="@addCount(data.show)"`
 
   - Event directive, like `nv-on:click`
-    - Text: `<p nv-text="state.b"></p>;`
-    - Template: `<p>this.state.b是：{{state.b}}</p>;`
-    - HTML: `<p nv-html="state.c"></p>;`
-    - Model for input: `'<input nv-model="state.c"/>';` **if input is a repeat DOM, and intem of Array is'nt an object, please use `$index`**
-    - Class: `<p class="b" nv-class="state.a"></p>';`
+    - Text: `<p nv-text="$.b"></p>;`
+    - Template: `<p>this.$.b是：{{$.b}}</p>;`
+    - HTML: `<p nv-html="$.c"></p>;`
+    - Model for input: `'<input nv-model="$.c"/>';` **if input is a repeat DOM, and intem of Array is'nt an object, please use `$index`**
+    - Class: `<p class="b" nv-class="$.a"></p>';`
     - Directives: ues `nv-on:event`
       - `<p nv-on:click="@componentClick()"></p>;`
     - If:
       - Now `nv-if` will remove this DOM
       - Because continually change DOM structure will lead the waste of performance, so please reduce use this template syntax
-      - `<p id="aa" nv-if="state.a" nv-on:click="@changeInput()">{{state.a}}</p>`
-    - Repeat: `<p  class="b" nv-class="state.a" nv-repeat="let a in state.b" nv-if="a.f">{{a.z}}</p>`
+      - `<p id="aa" nv-if="$.a" nv-on:click="@changeInput()">{{$.a}}</p>`
+    - Repeat: `<p  class="b" nv-class="$.a" nv-repeat="let a in $.b" nv-if="a.f">{{a.z}}</p>`
     - Key:
       - If u are repeating an `Component` or need continually change DOM structure, please use `nv-key` with `nv-repeat`.
       - `nv-key` is a key for InDiv to mark repeat `Component` or `DOM`, and it must be an unique value or index ** `$index` **.
       - If u are not use `nv-repeat` without `nv-key`, InDiv will render this with a new `Component`, and `state` in `Component` will be reset.
-      - `<test-component nv-repeat="let man in state.testArray" nv-key="man.id" man="{man.name}"></test-component>`
+      - `<test-component nv-repeat="let man in $.testArray" nv-key="man.id" man="{man.name}"></test-component>`
 
   - About event function in Template Syntax
     - Arguments in Function can include:
@@ -437,10 +437,10 @@ current version: v1.2.0
       2. Event: `nv-on:click="@click($event)"`
       3. String: `nv-on:click="@click('xxx')"`
       4. Number: `nv-on:click="@click(123)"`
-      5. Index: `$index`, you can only use this in **repeat DOM** : `<input nv-on:click="this.show(b, $index)" nv-repeat="let b in state.testArray2" nv-model="b" nv-class="b" />`
-      6. Variable: **`nv-on:click="@click(state.a)"`**
+      5. Index: `$index`, you can only use this in **repeat DOM** : `<input nv-on:click="this.show(b, $index)" nv-repeat="let b in $.testArray2" nv-model="b" nv-class="b" />`
+      6. Variable: **`nv-on:click="@click($.a)"`**
       7. Boolean: `nv-on:click="@click(true, false)"`
-      8. For nv-repeat: items like: `nv-repeat="let data in state.repeatData" nv-if="data.show"`
+      8. For nv-repeat: items like: `nv-repeat="let data in $.repeatData" nv-if="data.show"`
 
 #### Data monitor: this.state && this.setState
 
@@ -579,8 +579,8 @@ current version: v1.2.0
         selector: 'pc-child',
         template: (`
           <div>
-            <p nv-on:click="@go()">container: {{state.a}}</p>
-            <input nv-model="state.a" />
+            <p nv-on:click="@go()">container: {{$.a}}</p>
+            <input nv-model="$.a" />
             <router-render></router-render>
           </div>
         `),
@@ -679,7 +679,7 @@ current version: v1.2.0
         selector: 'container-wrap',
         template: (`
           <div>
-            <p>1232{{state.a}}</p>
+            <p>1232{{$.a}}</p>
           </div>
         `),
         providers: [
@@ -738,6 +738,8 @@ current version: v1.2.0
       nvWatchState(oldState?: any): void;
       nvRouteChange(lastRoute?: string, newRoute?: string): void;
       nvReceiveProps(nextProps: any): void;
+      setter
+      getter
     ```
 
   - Router
@@ -746,7 +748,7 @@ current version: v1.2.0
     routeChange((lastRoute?: string, newRoute?: string): void;
     ```
 
-#### Server Side Render (@indiv/ssr-renderer v1.1.0+)
+#### Server Side Render (@indiv/ssr-renderer: v1.1.0+)
 
     - [npm](https://www.npmjs.com/package/@indiv/ssr-renderer)
     - @indiv/ssr-renderer: v1.1.0+, indiv: v1.2.0+, NodeJs v6+

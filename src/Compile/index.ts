@@ -108,8 +108,9 @@ class Compile {
 
       if (this.isTextNode(node) && reg.test(text)) {
         const textList = text.match(/(\{\{[^\{\}]+?\}\})/g);
-        if (textList && textList.length > 0) {
-          for (let i = 0; i < textList.length; i++) {
+        const length = textList.length;
+        if (textList && length > 0) {
+          for (let i = 0; i < length; i++) {
               this.compileText(node, textList[i]);
           }
         }

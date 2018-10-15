@@ -413,7 +413,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
       <p nv-on:click="@click()">测试repeat组件: {{$.man}}</p>
     </div>`),
 })
-class TestComponent implements OnInit, OnDestory {
+class TestComponent implements OnInit, OnDestory, ReceiveProps {
   public state: any;
   public props: any;
 
@@ -430,6 +430,10 @@ class TestComponent implements OnInit, OnDestory {
 
   public nvOnDestory() {
     console.log('TestComponent OnDestory');
+  }
+
+  public nvReceiveProps(p: any) {
+    console.log('test-component nvReceiveProps', p);
   }
 }
 

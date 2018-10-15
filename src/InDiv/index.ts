@@ -8,6 +8,14 @@ import { CompileUtilForRepeat } from '../CompileUtils';
 
 const utils = new Utils();
 
+/**
+ * render function for Component
+ *
+ * @template State
+ * @template Props
+ * @template Vm
+ * @returns {Promise<IComponent<State, Props, Vm>>}
+ */
 function render<State = any, Props = any, Vm = any>(): Promise<IComponent<State, Props, Vm>> {
   const dom = (this as IComponent<State, Props, Vm>).renderDom;
   return Promise.resolve()
@@ -24,16 +32,23 @@ function render<State = any, Props = any, Vm = any>(): Promise<IComponent<State,
     return this;
   })
   .catch(e => {
-    // throw new Error(`component ${options.selector} render failed: ${e}`);
+    throw new Error(`component ${this.constructor.$selector} render failed: ${e}`);
   });
 }
 
+/**
+ * reRender function for Component
+ *
+ * @template State
+ * @template Props
+ * @template Vm
+ * @returns {Promise<IComponent<State, Props, Vm>>}
+ */
 function reRender<State = any, Props = any, Vm = any>(): Promise<IComponent<State, Props, Vm>> {
   const dom = (this as IComponent<State, Props, Vm>).renderDom;
   return Promise.resolve()
   .then(() => {
     const compile = new Compile(dom, (this as IComponent<State, Props, Vm>));
-    console.log(333333, this);
     mountComponent(dom, this);
     const length = (this as IComponent<State, Props, Vm>).$componentList.length;
     for (let i = 0; i < length; i++) {
@@ -45,10 +60,19 @@ function reRender<State = any, Props = any, Vm = any>(): Promise<IComponent<Stat
     return this;
   })
   .catch(e => {
-    // throw new Error(`component ${options.selector} render failed: ${e}`);
+    throw new Error(`component ${this.constructor.$selector} render failed: ${e}`);
   });
 }
 
+/**
+ * mountComponent for Components in Component
+ *
+ * @template State
+ * @template Props
+ * @template Vm
+ * @param {Element} dom
+ * @param {IComponent<State, Props, Vm>} vm
+ */
 function mountComponent<State = any, Props = any, Vm = any>(dom: Element, vm: IComponent<State, Props, Vm>): void {
   const cacheStates: ComponentList<IComponent<State, Props, Vm>>[] = [ ...vm.$componentList ];
   componentsConstructor(dom, vm);
@@ -87,6 +111,15 @@ function mountComponent<State = any, Props = any, Vm = any>(dom: Element, vm: IC
   }
 }
 
+/**
+ * construct Components in Component
+ *
+ * @template State
+ * @template Props
+ * @template Vm
+ * @param {Element} dom
+ * @param {IComponent<State, Props, Vm>} vm
+ */
 function componentsConstructor<State = any, Props = any, Vm = any>(dom: Element, vm: IComponent<State, Props, Vm>): void {
   vm.$componentList = [];
   const routerRenderDom = dom.querySelectorAll(vm.$vm.$routeDOMKey)[0];
@@ -200,6 +233,13 @@ function componentsConstructor<State = any, Props = any, Vm = any>(dom: Element,
   }
 }
 
+/**
+ * get props from value
+ *
+ * @param {any[]} valueList
+ * @param {*} value
+ * @returns {void}
+ */
 function getPropsValue(valueList: any[], value: any): void {
   let val = value;
   valueList.forEach((v, index: number) => {
@@ -209,6 +249,16 @@ function getPropsValue(valueList: any[], value: any): void {
   return val;
 }
 
+/**
+ * build Actions for Props in Component
+ *
+ * @template State
+ * @template Props
+ * @template Vm
+ * @param {*} prop
+ * @param {IComponent<State, Props, Vm>} vm
+ * @returns {*}
+ */
 function buildProps<State = any, Props = any, Vm = any>(prop: any, vm: IComponent<State, Props, Vm>): any {
   if (utils.isFunction(prop)) {
     return prop.bind(vm);
@@ -217,14 +267,26 @@ function buildProps<State = any, Props = any, Vm = any>(prop: any, vm: IComponen
   }
 }
 
+/**
+ * build scope for Components in Component
+ *
+ * @template State
+ * @template Props
+ * @template Vm
+ * @param {Function} ComponentClass
+ * @param {*} props
+ * @param {Element} dom
+ * @param {IComponent<State, Props, Vm>} vm
+ * @returns {IComponent<State, Props, Vm>}
+ */
 function buildComponentScope<State = any, Props = any, Vm = any>(ComponentClass: Function, props: any, dom: Element, vm: IComponent<State, Props, Vm>): IComponent<State, Props, Vm> {
   const _component = factoryCreator(ComponentClass, vm.$vm.$rootModule);
   _component.props = props;
   _component.renderDom = dom;
   _component.$declarations = vm.$declarations;
 
-  _component.render = render.bind(_component);
-  _component.reRender = reRender.bind(_component);
+  _component.render = vm.$vm.render.bind(_component);
+  _component.reRender = vm.$vm.reRender.bind(_component);
 
   return _component;
 }
@@ -246,6 +308,8 @@ class InDiv {
   public $esRouteParmasObject?: {
     [props: string]: any;
   };
+  public render: <State = any, Props = any, Vm = any>() => Promise<IComponent<State, Props, Vm>>;
+  public reRender: <State = any, Props = any, Vm = any>() => Promise<IComponent<State, Props, Vm>>;
 
 
   constructor() {
@@ -261,6 +325,9 @@ class InDiv {
     this.$rootModule = null;
     this.$esRouteObject = null;
     this.$esRouteParmasObject = {};
+
+    this.render = render;
+    this.reRender = reRender;
   }
 
   /**
@@ -347,8 +414,8 @@ class InDiv {
     component.$vm = this;
     component.$declarations = this.$rootModule.$declarations;
 
-    component.render = render.bind(component);
-    component.reRender = reRender.bind(component);
+    component.render = this.render.bind(component);
+    component.reRender = this.reRender.bind(component);
 
     if (component.nvOnInit) component.nvOnInit();
     if (component.watchData) component.watchData();

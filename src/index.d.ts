@@ -117,11 +117,6 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     nvReceiveProps?(nextProps: Props): void;
     render(): Promise<IComponent<State, Props, Vm>>;
     reRender(): Promise<IComponent<State, Props, Vm>>;
-    // mountComponent(dom: Element): void;
-    // componentsConstructor(dom: Element): void;
-    // getPropsValue(valueList: any[], value: any): void;
-    // buildProps(prop: any): any;
-    // buildComponentScope(ComponentClass: any, props: any, dom: Element): IComponent<any, any, any>;
 }
 
 export interface INvModule {
@@ -260,6 +255,8 @@ export declare class InDiv {
     $esRouteParmasObject?: {
         [props: string]: any;
     };
+    render?: <State = any, Props = any, Vm = any>() => Promise<IComponent<State, Props, Vm>>;
+    reRender?: <State = any, Props = any, Vm = any>() => Promise<IComponent<State, Props, Vm>>;
     constructor();
     use(modal: IMiddleware<InDiv>): number;
     setRootPath(rootPath: string): void;

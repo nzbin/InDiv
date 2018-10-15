@@ -25,6 +25,8 @@ export interface IInDiv {
     $esRouteParmasObject?: {
         [props: string]: any;
     };
+    render?: <State = any, Props = any, Vm = any>() => Promise<IComponent<State, Props, Vm>>;
+    reRender?: <State = any, Props = any, Vm = any>() => Promise<IComponent<State, Props, Vm>>;
 
     use(modal: IMiddleware<IInDiv>): number;
     setRootPath(rootPath: string): void;

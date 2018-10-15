@@ -17,7 +17,7 @@ export type TuseValueProvider = {
 
 export interface INvModule {
   $imports?: Function[];
-  $components?: Function[];
+  $declarations?: Function[];
   $providers?: (Function | TUseClassProvider | TuseValueProvider)[];
   $exports?: Function[];
   $providerList?: Map<Function | string, Function | any>;
@@ -26,7 +26,7 @@ export interface INvModule {
 
   buildProviderList(): void;
   buildProviders4Services(): void;
-  buildProviders4Components(): void;
-  buildComponents4Components(): void;
+  buildProviders4Declarations(): void;
+  buildDeclarations4Declarations(): void;
   buildImports(): void;
 }

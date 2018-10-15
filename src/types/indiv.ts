@@ -20,7 +20,7 @@ export interface IInDiv {
     $canRenderModule: boolean;
     $routeDOMKey: string;
     $rootModule: INvModule;
-    $components: Function[];
+    $declarations: Function[];
     $esRouteObject?: EsRouteObject;
     $esRouteParmasObject?: {
         [props: string]: any;

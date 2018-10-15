@@ -32,7 +32,7 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     stateWatcher?: IWatcher;
 
     $template?: string;
-    $components?: Function[];
+    $declarations?: Function[];
     $componentList?: ComponentList<IComponent<any, any, any>>[];
     $providerList?: Map<Function | string, Function | any>;
 

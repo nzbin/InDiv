@@ -198,7 +198,8 @@ export class Router {
         const needRenderRoute = this.routesList[index];
         if (!needRenderRoute) throw new Error(`route error: wrong route instantiation in insertRenderRoutes: ${this.currentUrl}`);
 
-        const needRenderComponent = this.$vm.$components.find((component: any) => component.$selector === needRenderRoute.component);
+        const needRenderComponent = this.$vm.$declarations.find((declaration: any) => declaration.$selector === needRenderRoute.component && declaration.$isComponentDirective);
+
         const renderDom = document.querySelectorAll('router-render')[index - 1];
 
         if (!needRenderRoute.component && !needRenderRoute.redirectTo) throw new Error(`route error: path ${needRenderRoute.path} need a component which has children path or need a  redirectTo which has't children path`);
@@ -268,8 +269,8 @@ export class Router {
         if (!rootRoute) throw new Error(`route error: wrong route instantiation in generalDistributeRoutes: ${this.currentUrl}`);
 
         let FindComponent = null;
-        if (this.$vm.$rootModule.$components.find((component: any) => component.$selector === rootRoute.component)) {
-          FindComponent = this.$vm.$rootModule.$components.find((component: any) => component.$selector === rootRoute.component);
+        if (this.$vm.$rootModule.$declarations.find((declaration: any) => declaration.$selector === rootRoute.component && declaration.$isComponentDirective)) {
+          FindComponent = this.$vm.$rootModule.$declarations.find((declaration: any) => declaration.$selector === rootRoute.component && declaration.$isComponentDirective);
         } else {
           throw new Error(`route error: path ${rootRoute.path} is undefined`);
         }
@@ -301,8 +302,8 @@ export class Router {
         if (!route) throw new Error(`route error: wrong route instantiation: ${this.currentUrl}`);
 
         let FindComponent = null;
-        if (this.$vm.$rootModule.$components.find((component: any) => component.$selector === route.component)) {
-          FindComponent = this.$vm.$rootModule.$components.find((component: any) => component.$selector === route.component);
+        if (this.$vm.$rootModule.$declarations.find((declaration: any) => declaration.$selector === route.component && declaration.$isComponentDirective)) {
+          FindComponent = this.$vm.$rootModule.$declarations.find((declaration: any) => declaration.$selector === route.component && declaration.$isComponentDirective);
         }
 
         if (!route.component && !route.redirectTo) throw new Error(`route error: path ${route.path} need a component which has children path or need a  redirectTo which has't children path`);

@@ -18,7 +18,7 @@ class InDiv {
   public $canRenderModule: boolean;
   public $routeDOMKey: string;
   public $rootModule: INvModule;
-  public $components: Function[];
+  public $declarations: Function[];
   public $esRouteObject?: EsRouteObject;
   public $esRouteParmasObject?: {
     [props: string]: any;
@@ -82,7 +82,7 @@ class InDiv {
     if (!Esmodule) throw new Error('must send a root module');
 
     this.$rootModule = factoryModule(Esmodule);
-    this.$components = [...this.$rootModule.$components];
+    this.$declarations = [...this.$rootModule.$declarations];
   }
 
   /**
@@ -122,7 +122,7 @@ class InDiv {
     const component: any = factoryCreator(BootstrapComponent, this.$rootModule);
 
     component.$vm = this;
-    component.$components = this.$rootModule.$components;
+    component.$declarations = this.$rootModule.$declarations;
     if (component.nvOnInit) component.nvOnInit();
     if (component.watchData) component.watchData();
     if (!component.$template) throw new Error('must decaler this.$template in bootstrap()');

@@ -28,8 +28,9 @@ const utils = new Utils();
  */
 function Component<State = any, Props = any, Vm = any>(options: TComponentOptions): (_constructor: Function) => void {
   return function (_constructor: Function): void {
+    (_constructor as any).$isComponentDirective = true;
     (_constructor as any).$selector = options.selector;
-    (_constructor as any)._injectedComponents = new Map();
+    (_constructor as any)._injectedDeclarations = new Map();
     const vm: IComponent<State, Props, Vm> = _constructor.prototype;
     vm.$template = options.template;
 
@@ -48,7 +49,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     }
 
     vm.compileUtil = new CompileUtil();
-    vm.$components = [];
+    vm.$declarations = [];
     vm.$componentList = [];
 
     vm.getLocation = function (): {
@@ -149,7 +150,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
         }
 
         component.scope.$vm = (this as IComponent<State, Props, Vm>).$vm;
-        component.scope.$components = (this as IComponent<State, Props, Vm>).$components;
+        component.scope.$declarations = (this as IComponent<State, Props, Vm>).$declarations;
         if (component.scope.nvOnInit && !cacheComponent) component.scope.nvOnInit();
         if (component.scope.watchData) component.scope.watchData();
         if (component.scope.nvBeforeMount) component.scope.nvBeforeMount();
@@ -165,12 +166,15 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
     vm.componentsConstructor = function (dom: Element): void {
       (this as IComponent<State, Props, Vm>).$componentList = [];
       const routerRenderDom = dom.querySelectorAll((this as IComponent<State, Props, Vm>).$vm.$routeDOMKey)[0];
-      ((this as IComponent<State, Props, Vm>).constructor as any)._injectedComponents.forEach((value: Function, key: string) => {
-        if (!(this as IComponent<State, Props, Vm>).$components.find((component: any) => component.$selector === key)) (this as IComponent<State, Props, Vm>).$components.push(value);
+      ((this as IComponent<State, Props, Vm>).constructor as any)._injectedDeclarations.forEach((value: Function, key: string) => {
+        if (!(this as IComponent<State, Props, Vm>).$declarations.find((declaration: any) => declaration.$selector === key)) (this as IComponent<State, Props, Vm>).$declarations.push(value);
       });
-      const componentsLength = (this as IComponent<State, Props, Vm>).$components.length;
-      for (let i = 0; i < componentsLength; i++) {
-        const name = (((this as IComponent<State, Props, Vm>).$components[i]) as any).$selector;
+      const declarationsLength = (this as IComponent<State, Props, Vm>).$declarations.length;
+      for (let i = 0; i < declarationsLength; i++) {
+        // only for Component can continue to render
+        if (!(((this as IComponent<State, Props, Vm>).$declarations[i]) as any).$isComponentDirective) continue;
+
+        const name = (((this as IComponent<State, Props, Vm>).$declarations[i]) as any).$selector;
         const tags = dom.getElementsByTagName(name);
         Array.from(tags).forEach(node => {
           //  protect component in <router-render>
@@ -264,7 +268,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
             dom: node,
             props,
             scope: null,
-            constructorFunction: (this as IComponent<State, Props, Vm>).$components[i],
+            constructorFunction: (this as IComponent<State, Props, Vm>).$declarations[i],
           });
           // after construct instance remove isComponent
           node.isComponent = false;
@@ -317,7 +321,7 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       const _component = factoryCreator(ComponentClass, (this as IComponent<State, Props, Vm>).$vm.$rootModule);
       _component.props = props;
       _component.renderDom = dom;
-      _component.$components = (this as IComponent<State, Props, Vm>).$components;
+      _component.$declarations = (this as IComponent<State, Props, Vm>).$declarations;
       return _component;
     };
   };

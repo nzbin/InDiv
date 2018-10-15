@@ -63,7 +63,7 @@ export type TuseValueProvider = {
 
 export type TNvModuleOptions = {
     imports?: Function[];
-    components: Function[];
+    declarations: Function[];
     providers?: (Function | TUseClassProvider | TuseValueProvider)[];
     exports?: Function[];
     bootstrap?: Function;
@@ -98,7 +98,7 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     stateWatcher?: Watcher;
 
     $template?: string;
-    $components?: Function[];
+    $declarations?: Function[];
     $componentList?: ComponentList<IComponent<any, any, any>>[];
     $providerList?: Map<Function | string, Function | any>;
 
@@ -126,7 +126,7 @@ export interface IComponent<State = any, Props = any, Vm = any> {
 
 export interface INvModule {
     $imports?: Function[];
-    $components?: Function[];
+    $declarations?: Function[];
     $providers?: (Function | TUseClassProvider | TuseValueProvider)[];
     $exports?: Function[];
     $providerList?: Map<Function | string, Function | any>;
@@ -135,8 +135,8 @@ export interface INvModule {
   
     buildProviderList(): void;
     buildProviders4Services(): void;
-    buildProviders4Components(): void;
-    buildComponents4Components(): void;
+    buildProviders4Declarations(): void;
+    buildDeclarations4Declarations(): void;
     buildImports(): void;
 }
 
@@ -255,7 +255,7 @@ export declare class InDiv {
     $canRenderModule: boolean;
     $routeDOMKey: string;
     $rootModule: INvModule;
-    $components: Function[];
+    $declarations?: Function[];
     $esRouteObject?: EsRouteObject;
     $esRouteParmasObject?: {
         [props: string]: any;

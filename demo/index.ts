@@ -622,7 +622,7 @@ class Container implements OnInit, AfterMount, WatchState {
 }
 
 @NvModule({
-  components: [
+  declarations: [
     R2,
     RouteChild,
     PCChild,
@@ -641,7 +641,7 @@ class M2 {}
   imports: [
     M2,
   ],
-  components: [
+  declarations: [
     Container,
     PComponent,
     TestComponent,

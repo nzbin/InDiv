@@ -54,13 +54,10 @@ export function buildScope<State = any, Props = any, Vm = any>(ComponentClass: F
   const _component = factoryCreator(ComponentClass, vm.$vm.$rootModule);
   _component.props = props;
   _component.renderDom = dom;
-  _component.$declarations = vm.$declarations;
+  _component.$components = vm.$components;
 
   _component.render = vm.$vm.render.bind(_component);
   _component.reRender = vm.$vm.reRender.bind(_component);
-
-  _component.setLocation = vm.$vm.setLocation.bind(_component);
-  _component.getLocation = vm.$vm.getLocation.bind(_component);
 
   return _component;
 }

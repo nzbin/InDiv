@@ -58,7 +58,6 @@
     "axios": "^0.18.0",
     "core-js": "^2.5.7",
     "easier-cookie": "^1.1.0",
-    "es6-proxy-polyfill": "^1.2.0",
     "reflect-metadata": "^0.1.12"
   }
 }

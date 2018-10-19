@@ -20,7 +20,7 @@ export interface IInDiv {
     $canRenderModule: boolean;
     $routeDOMKey: string;
     $rootModule: INvModule;
-    $declarations: Function[];
+    $components: Function[];
     $esRouteObject?: EsRouteObject;
     $esRouteParmasObject?: {
         [props: string]: any;
@@ -34,5 +34,5 @@ export interface IInDiv {
     init(): void;
     renderModuleBootstrap(): void;
     renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<IComponent>;
-    replaceDom(component: IComponent, renderDOM: Element): Promise<IComponent>;
+    replaceDom?(component: IComponent, renderDOM: Element): Promise<IComponent>;
 }

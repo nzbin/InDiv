@@ -30,8 +30,8 @@ export {
   CompileUtilForRepeat,
   CompileUtil,
 } from './CompileUtils';
-export { default as Component } from './Component';
-export { Router, TRouter } from './Router';
+export { Component, setState } from './Component';
+export { Router, TRouter, setLocation, getLocation } from './Router';
 export { default as InDiv } from './InDiv';
 export { NvModule, factoryModule } from './NvModule';
 export { default as NVHttp } from './Http';

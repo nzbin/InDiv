@@ -1,4 +1,5 @@
 import { IComponent } from '../types';
+
 /**
  * injector: build arguments for factoryCreator
  * 

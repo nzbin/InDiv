@@ -4,7 +4,6 @@ import Utils from '../Utils';
 import { factoryCreator } from '../DI';
 import { factoryModule } from '../NvModule';
 import { render, reRender } from '../Render';
-import { setLocation, getLocation } from '../Router';
 
 const utils = new Utils();
 
@@ -20,16 +19,13 @@ class InDiv {
   public $canRenderModule: boolean;
   public $routeDOMKey: string;
   public $rootModule: INvModule;
-  public $declarations: Function[];
+  public $components: Function[];
   public $esRouteObject?: EsRouteObject;
   public $esRouteParmasObject?: {
     [props: string]: any;
   };
   public render: <State = any, Props = any, Vm = any>() => Promise<IComponent<State, Props, Vm>>;
   public reRender: <State = any, Props = any, Vm = any>() => Promise<IComponent<State, Props, Vm>>;
-  public setLocation: SetLocation;
-  public getLocation: GetLocation;
-
 
   constructor() {
     this.modalList = [];
@@ -49,8 +45,6 @@ class InDiv {
     // developer can use function use(modal: IMiddleware<InDiv>): number to change render and reRender
     this.render = render;
     this.reRender = reRender;
-    this.setLocation = setLocation;
-    this.getLocation = getLocation;
   }
 
   /**
@@ -95,7 +89,7 @@ class InDiv {
     if (!Esmodule) throw new Error('must send a root module');
 
     this.$rootModule = factoryModule(Esmodule);
-    this.$declarations = [...this.$rootModule.$declarations];
+    this.$components = [...this.$rootModule.$components];
   }
 
   /**
@@ -135,12 +129,10 @@ class InDiv {
     const component: any = factoryCreator(BootstrapComponent, this.$rootModule);
 
     component.$vm = this;
-    component.$declarations = this.$rootModule.$declarations;
+    component.$components = this.$rootModule.$components;
 
     component.render = this.render.bind(component);
     component.reRender = this.reRender.bind(component);
-    component.setLocation = this.setLocation.bind(component);
-    component.getLocation = this.getLocation.bind(component);
 
     if (component.nvOnInit) component.nvOnInit();
     if (component.watchData) component.watchData();

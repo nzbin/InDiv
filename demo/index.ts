@@ -1,4 +1,4 @@
-import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, SetState, SetLocation, GetLocation, OnDestory } from '../src';
+import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, SetState, SetLocation, GetLocation, OnDestory, setState,  setLocation, getLocation } from '../src';
 // import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, SetState, SetLocation, GetLocation, OnDestory } from '../build';
 
 @Injectable()
@@ -77,6 +77,7 @@ class RouteChild implements OnInit, HasRender, ReceiveProps, OnDestory {
         },
       ],
     };
+    this.setState = setState;
   }
 
   public nvOnInit() {
@@ -137,6 +138,7 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps, OnDestor
         },
       ],
     };
+    this.setState = setState;
   }
 
   public nvHasRender() {
@@ -201,6 +203,7 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
 
   constructor() {
     console.log(99900000999);
+    this.setState = setState;
   }
 
   public nvOnInit() {
@@ -292,6 +295,9 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
     private heroSearchService: HeroSearchService,
     private utils: Utils,
   ) {
+    this.setLocation = setLocation;
+    this.getLocation = getLocation;
+    this.setState = setState;
     this.heroSearchService.test();
     this.state = {
       a: 'a11',
@@ -383,6 +389,8 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
   constructor(
     public heroSearchService1: HeroSearchService1,
   ) {
+    this.setLocation = setLocation;
+    this.getLocation = getLocation;
     this.heroSearchService1.test();
     console.log('this.heroSearchService1', this.heroSearchService1);
     this.state = { a: 1 };
@@ -496,6 +504,9 @@ class Container implements OnInit, AfterMount, WatchState {
     private nvHttp: NVHttp,
     private value: ValueType,
   ) {
+    this.setState = setState;
+    this.getLocation = getLocation;
+    this.setLocation = setLocation;
     this.hss.test();
     console.log('nvHttp', this.nvHttp);
     console.log('value', this.value);
@@ -645,7 +656,7 @@ class Container implements OnInit, AfterMount, WatchState {
 }
 
 @NvModule({
-  declarations: [
+  components: [
     R2,
     RouteChild,
     PCChild,
@@ -664,7 +675,7 @@ class M2 {}
   imports: [
     M2,
   ],
-  declarations: [
+  components: [
     Container,
     PComponent,
     TestComponent,

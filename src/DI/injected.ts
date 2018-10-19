@@ -6,7 +6,7 @@
  * @param {Function} _constructor
  */
 export default function Injected(_constructor: Function): void {
-  // 通过反射机制，获取参数类型列表
+  // through Reflect to get params types
   const paramsTypes: Function[] = Reflect.getMetadata('design:paramtypes', _constructor);
   if (paramsTypes && paramsTypes.length) {
       paramsTypes.forEach(v => {

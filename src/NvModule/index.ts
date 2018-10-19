@@ -2,7 +2,7 @@ import { INvModule, TInjectTokenProvider, TUseClassProvider, TuseValueProvider }
 
 type TNvModuleOptions = {
   imports?: Function[];
-  declarations: Function[];
+  components: Function[];
   providers?: (Function | TUseClassProvider | TuseValueProvider)[];
   exports?: Function[];
   bootstrap?: Function;
@@ -23,7 +23,7 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
     vm.$providerList = new Map();
     vm.$providerInstances = new Map();
     if (options.imports) vm.$imports = options.imports;
-    if (options.declarations) vm.$declarations = options.declarations;
+    if (options.components) vm.$components = options.components;
     if (options.providers) vm.$providers = options.providers;
     if (options.exports) vm.$exports = options.exports;
     if (options.bootstrap) vm.$bootstrap = options.bootstrap;
@@ -61,26 +61,26 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
       }
     };
 
-    vm.buildProviders4Declarations = function (): void {
-      if (!(this as INvModule).$providers || !(this as INvModule).$declarations) return;
-      const length = this.$declarations.length;
+    vm.buildProviders4Components = function (): void {
+      if (!(this as INvModule).$providers || !(this as INvModule).$components) return;
+      const length = this.$components.length;
       for (let i = 0; i < length; i++) {
-        const FindDeclaration: any = (this as INvModule).$declarations[i];
-        if (!FindDeclaration._injectedProviders) FindDeclaration._injectedProviders = new Map();
+        const FindComponent: any = (this as INvModule).$components[i];
+        if (!FindComponent._injectedProviders) FindComponent._injectedProviders = new Map();
         (this as INvModule).$providerList.forEach((value, key) => {
-          if (!FindDeclaration._injectedProviders.has(key)) FindDeclaration._injectedProviders.set(key, value);
+          if (!FindComponent._injectedProviders.has(key)) FindComponent._injectedProviders.set(key, value);
         });
       }
     };
 
-    vm.buildDeclarations4Declarations = function (): void {
-      if (!this.$declarations) return;
-      const length = this.$declarations.length;
+    vm.buildComponents4Components = function (): void {
+      if (!this.$components) return;
+      const length = this.$components.length;
       for (let i = 0; i < length; i++) {
-        const FindDeclaration: any = (this as INvModule).$declarations[i];
-        if (!FindDeclaration._injectedDeclarations) FindDeclaration._injectedDeclarations = new Map();
-        (this as INvModule).$declarations.forEach((needInjectDeclaration: any) => {
-          if (!FindDeclaration._injectedDeclarations.has(needInjectDeclaration.$selector)) FindDeclaration._injectedDeclarations.set(needInjectDeclaration.$selector, needInjectDeclaration);
+        const FindComponent: any = (this as INvModule).$components[i];
+        if (!FindComponent._injectedComponents) FindComponent._injectedComponents = new Map();
+        (this as INvModule).$components.forEach((needInjectComponent: any) => {
+          if (!FindComponent._injectedComponents.has(needInjectComponent.$selector)) FindComponent._injectedComponents.set(needInjectComponent.$selector, needInjectComponent);
         });
       }
     };
@@ -93,9 +93,9 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
         const moduleImport = factoryModule(ModuleImport);
         const exportsLength = moduleImport.$exports.length;
         for (let i = 0; i < exportsLength; i++) {
-          const importDeclaration = moduleImport.$exports[i];
-          if (!this.$declarations.find((declaration: any) => declaration.$selector === (importDeclaration as any).$selector)) {
-            this.$declarations.push(importDeclaration);
+          const importComponent = moduleImport.$exports[i];
+          if (!this.$components.find((component: any) => component.$selector === (importComponent as any).$selector)) {
+            this.$components.push(importComponent);
           }
         }
       }
@@ -114,8 +114,8 @@ export function factoryModule(NM: Function): INvModule {
   const nm = new (NM as any)();
   nm.buildProviderList();
   nm.buildProviders4Services();
-  nm.buildDeclarations4Declarations();
-  nm.buildProviders4Declarations();
+  nm.buildComponents4Components();
+  nm.buildProviders4Components();
   nm.buildImports();
   return nm;
 }

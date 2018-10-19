@@ -63,7 +63,7 @@ export type TuseValueProvider = {
 
 export type TNvModuleOptions = {
     imports?: Function[];
-    declarations: Function[];
+    components: Function[];
     providers?: (Function | TUseClassProvider | TuseValueProvider)[];
     exports?: Function[];
     bootstrap?: Function;
@@ -98,13 +98,9 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     stateWatcher?: Watcher;
 
     $template?: string;
-    $declarations?: Function[];
+    $components?: Function[];
     $providerList?: Map<Function | string, Function | any>;
     $componentList?: ComponentList<IComponent<any, any, any>>[];
-
-    setState?: SetState;
-    getLocation?: GetLocation;
-    setLocation?: SetLocation;
 
     nvOnInit?(): void;
     watchData?(): void;
@@ -115,13 +111,13 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     nvWatchState?(oldState?: any): void;
     nvRouteChange?(lastRoute: string, newRoute: string): void;
     nvReceiveProps?(nextProps: Props): void;
-    render(): Promise<IComponent<State, Props, Vm>>;
-    reRender(): Promise<IComponent<State, Props, Vm>>;
+    render?(): Promise<IComponent<State, Props, Vm>>;
+    reRender?(): Promise<IComponent<State, Props, Vm>>;
 }
 
 export interface INvModule {
     $imports?: Function[];
-    $declarations?: Function[];
+    $components?: Function[];
     $providers?: (Function | TUseClassProvider | TuseValueProvider)[];
     $exports?: Function[];
     $providerList?: Map<Function | string, Function | any>;
@@ -130,8 +126,8 @@ export interface INvModule {
   
     buildProviderList(): void;
     buildProviders4Services(): void;
-    buildProviders4Declarations(): void;
-    buildDeclarations4Declarations(): void;
+    buildProviders4Components(): void;
+    buildComponents4Components(): void;
     buildImports(): void;
 }
 
@@ -250,7 +246,7 @@ export declare class InDiv {
     $canRenderModule: boolean;
     $routeDOMKey: string;
     $rootModule: INvModule;
-    $declarations?: Function[];
+    $components?: Function[];
     $esRouteObject?: EsRouteObject;
     $esRouteParmasObject?: {
         [props: string]: any;
@@ -264,7 +260,7 @@ export declare class InDiv {
     init(): void;
     renderModuleBootstrap(): void;
     renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<IComponent>;
-    replaceDom(component: IComponent, renderDOM: Element): Promise<IComponent>;
+    replaceDom?(component: IComponent, renderDOM: Element): Promise<IComponent>;
 }
 
 // Dependency Injection

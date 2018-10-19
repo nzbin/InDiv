@@ -1,4 +1,4 @@
-import { IComponent } from '../types';
+import { IComponent } from '../../types';
 
 import Compile from '../compile';
 import { CompileUtil } from '../compile-utils';

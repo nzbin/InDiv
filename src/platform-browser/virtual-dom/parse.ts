@@ -1,4 +1,4 @@
-import { IVnode, TAttributes } from '../types';
+import { IVnode, TAttributes } from '../../types';
 
 /**
  * Vnode

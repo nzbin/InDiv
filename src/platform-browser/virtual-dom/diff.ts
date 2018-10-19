@@ -1,4 +1,4 @@
-import { IVnode, IPatchList } from '../types';
+import { IVnode, IPatchList } from '../../types';
 
 /**
  * diff childNodes for diff VNode

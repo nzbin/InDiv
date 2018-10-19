@@ -1,4 +1,4 @@
-import { TAttributes, IPatchList } from '../types';
+import { TAttributes, IPatchList } from '../../types';
 
 /**
  * renderVnode 对比完render node

@@ -1,9 +1,9 @@
-import { TRouter, IInDiv, IComponent, ComponentList } from '../types';
+import { TRouter, IInDiv, IComponent, ComponentList } from '../../types';
 
-import Utils from '../utils';
-import KeyWatcher from '../key-watcher';
+import Utils from '../../utils';
+import KeyWatcher from '../../key-watcher';
 
-export { TRouter } from '../types';
+export { TRouter } from '../../types';
 
 const utils = new Utils();
 

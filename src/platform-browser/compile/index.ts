@@ -1,7 +1,7 @@
-import { IPatchList, IVnode } from '../types';
+import { IPatchList, IVnode } from '../../types';
 
 import { parseToVnode, diffVnode, renderVnode } from '../virtual-dom';
-import Utils from '../utils';
+import Utils from '../../utils';
 import { CompileUtil } from '../compile-utils';
 
 const utils = new Utils();

@@ -9,7 +9,7 @@ import 'core-js/modules/es6.map';
 import 'core-js/modules/es6.promise';
 import 'reflect-metadata';
 
-export { default as Utils } from './Utils';
+export { default as Utils } from './utils';
 export {
   OnInit,
   BeforeMount,
@@ -22,18 +22,18 @@ export {
   SetState,
   SetLocation,
   GetLocation,
-} from './Lifecycle';
-export { default as Watcher } from './Watcher';
-export { default as KeyWatcher } from './KeyWatcher';
+} from './lifecycle';
+export { default as Watcher } from './watcher';
+export { default as KeyWatcher } from './key-watcher';
 export { default as Compile } from './compile';
 export {
   CompileUtilForRepeat,
   CompileUtil,
 } from './compile-utils';
 export { Component, setState } from './component';
-export { Router, TRouter, setLocation, getLocation } from './Router';
+export { Router, TRouter, setLocation, getLocation } from './router';
 export { default as InDiv } from './indiv';
-export { NvModule, factoryModule } from './NvModule';
+export { NvModule, factoryModule } from './nv-module';
 export { default as NVHttp } from './http';
 export {
   Injectable,

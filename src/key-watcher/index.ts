@@ -1,6 +1,6 @@
 import { TFnWatcher } from '../types';
 
-import Utils from '../Utils';
+import Utils from '../utils';
 
 const utils = new Utils();
 

@@ -1,7 +1,7 @@
 import { IComponent } from '../types';
 
 import { factoryCreator } from '../DI';
-import Utils from '../Utils';
+import Utils from '../utils';
 
 const utils = new Utils();
 /**

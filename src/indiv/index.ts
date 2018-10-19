@@ -1,9 +1,9 @@
-import { IMiddleware, INvModule, EsRouteObject, IComponent, GetLocation, SetLocation } from '../types';
+import { IMiddleware, INvModule, EsRouteObject, IComponent } from '../types';
 
-import Utils from '../Utils';
+import Utils from '../utils';
 import { factoryCreator } from '../DI';
-import { factoryModule } from '../NvModule';
-import { render, reRender } from '../Render';
+import { factoryModule } from '../nv-module';
+import { render, reRender } from '../render';
 
 const utils = new Utils();
 

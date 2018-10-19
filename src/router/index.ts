@@ -1,7 +1,7 @@
 import { TRouter, IInDiv, IComponent, ComponentList } from '../types';
 
-import Utils from '../Utils';
-import KeyWatcher from '../KeyWatcher';
+import Utils from '../utils';
+import KeyWatcher from '../key-watcher';
 
 export { TRouter } from '../types';
 

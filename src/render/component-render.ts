@@ -1,6 +1,6 @@
 import { IComponent, ComponentList } from '../types';
 
-import Utils from '../Utils';
+import Utils from '../utils';
 import { CompileUtilForRepeat } from '../compile-utils';
 import { getPropsValue, buildProps, buildScope } from './render-utils';
 

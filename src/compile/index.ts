@@ -2,7 +2,7 @@ import { IPatchList, IVnode } from '../types';
 
 import { parseToVnode, diffVnode, renderVnode } from '../VirtualDOM';
 import Utils from '../Utils';
-import { CompileUtil } from '../CompileUtils';
+import { CompileUtil } from '../compile-utils';
 
 const utils = new Utils();
 

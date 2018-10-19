@@ -1,7 +1,7 @@
 import { IComponent } from '../types';
 
-import Compile from '../Compile';
-import { CompileUtil } from '../CompileUtils';
+import Compile from '../compile';
+import { CompileUtil } from '../compile-utils';
 import { mountComponent } from './component-render';
 
 /**

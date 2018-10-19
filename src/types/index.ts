@@ -1,5 +1,5 @@
 export { ICompile } from './compile';
-export { ICompileUtilForRepeat, ICompileUtil } from './compileUtils';
+export { ICompileUtilForRepeat, ICompileUtil } from './compile-utils';
 export { ComponentList, IComponent, SetState } from './component';
 export { IMiddleware, EsRouteObject, IInDiv } from './indiv';
 export { INvModule, TInjectTokenProvider, TUseClassProvider, TuseValueProvider } from './nvModule';

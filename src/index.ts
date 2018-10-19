@@ -25,16 +25,16 @@ export {
 } from './Lifecycle';
 export { default as Watcher } from './Watcher';
 export { default as KeyWatcher } from './KeyWatcher';
-export { default as Compile } from './Compile';
+export { default as Compile } from './compile';
 export {
   CompileUtilForRepeat,
   CompileUtil,
-} from './CompileUtils';
-export { Component, setState } from './Component';
+} from './compile-utils';
+export { Component, setState } from './component';
 export { Router, TRouter, setLocation, getLocation } from './Router';
-export { default as InDiv } from './InDiv';
+export { default as InDiv } from './indiv';
 export { NvModule, factoryModule } from './NvModule';
-export { default as NVHttp } from './Http';
+export { default as NVHttp } from './http';
 export {
   Injectable,
   Injected,

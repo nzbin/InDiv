@@ -1,10 +1,10 @@
 export { ICompile } from './compile';
 export { ICompileUtilForRepeat, ICompileUtil } from './compileUtils';
-export { ComponentList, IComponent } from './component';
+export { ComponentList, IComponent, SetState } from './component';
 export { IMiddleware, EsRouteObject, IInDiv } from './indiv';
 export { INvModule, TInjectTokenProvider, TUseClassProvider, TuseValueProvider } from './nvModule';
 export { IKeyWatcher } from './keyWatcher';
-export { TRouter, IRouter } from './router';
+export { TRouter, IRouter, GetLocation, SetLocation } from './router';
 export { IUtil } from './utils';
 export { IVnode, TAttributes, IPatchList } from './virtualDOM';
 export { TFnWatcher, TFnRender, IWatcher } from './watcher';

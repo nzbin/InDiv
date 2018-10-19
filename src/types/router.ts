@@ -10,6 +10,19 @@ export type TRouter = {
     children?: TRouter[];
 };
 
+export type GetLocation = () => {
+    path?: string;
+    query?: {
+      [props: string]: any;
+    };
+    params?: {
+      [props: string]: any;
+    };
+    data?: any;
+};
+  
+export type SetLocation = <Q = any, P = any>(path: string, query?: Q, params?: P, title?: string) => void;
+
 export interface IRouter {
     routes: TRouter[];
     routesList: TRouter[];

@@ -385,3 +385,54 @@ export class Router {
     return this.$vm.renderComponent(FindComponent, renderDom);
   }
 }
+
+/**
+ * getLocation in @Component or @Directive
+ *
+ * get $esRouteObject and $esRouteParmasObject in InDiv
+ * 
+ * @export
+ * @returns {{
+ *   path?: string;
+ *   query?: any;
+ *   params?: any;
+ *   data?: any;
+ * }}
+ */
+export function getLocation(): {
+  path?: string;
+  query?: any;
+  params?: any;
+  data?: any;
+} {
+  if (!utils.isBrowser()) return {};
+  return {
+    path: (this as any).$vm.$esRouteObject.path,
+    query: (this as any).$vm.$esRouteObject.query,
+    params: (this as any).$vm.$esRouteParmasObject,
+    data: (this as any).$vm.$esRouteObject.data,
+  };
+}
+
+/**
+ * setLocation in @Component or @Directive
+ * 
+ * set $esRouteObject in InDiv
+ * 
+ * @export
+ * @param {string} path
+ * @param {*} [query]
+ * @param {*} [data]
+ * @param {string} [title]
+ * @returns {void}
+ */
+export function setLocation(path: string, query?: any, data?: any, title?: string): void {
+  if (!utils.isBrowser()) return;
+  const rootPath = (this as any).$vm.$rootPath === '/' ? '' : (this as any).$vm.$rootPath;
+  history.pushState(
+    { path, query, data },
+    title,
+    `${rootPath}${path}${utils.buildQuery(query)}`,
+  );
+  (this as any).$vm.$esRouteObject = { path, query, data };
+}

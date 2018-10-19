@@ -1,5 +1,6 @@
 import { IWatcher } from './watcher';
 import { ICompileUtil } from './compileUtils';
+import { GetLocation, SetLocation } from './router';
 
 export type ComponentList<C> = {
     dom: Node;
@@ -9,19 +10,6 @@ export type ComponentList<C> = {
 };
 
 export type SetState = <S>(newState: { [key: string]: S }) => void;
-
-export type GetLocation = () => {
-  path?: string;
-  query?: {
-    [props: string]: any;
-  };
-  params?: {
-    [props: string]: any;
-  };
-  data?: any;
-};
-
-export type SetLocation = <Q = any, P = any>(path: string, query?: Q, params?: P, title?: string) => void;
 
 export interface IComponent<State = any, Props = any, Vm = any> {
     state?: State | any;
@@ -33,8 +21,8 @@ export interface IComponent<State = any, Props = any, Vm = any> {
 
     $template?: string;
     $declarations?: Function[];
-    $componentList?: ComponentList<IComponent<any, any, any>>[];
     $providerList?: Map<Function | string, Function | any>;
+    $componentList?: ComponentList<IComponent<any, any, any>>[];
 
     setState?: SetState;
     getLocation?: GetLocation;

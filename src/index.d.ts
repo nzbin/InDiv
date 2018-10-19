@@ -1,6 +1,6 @@
 export type TFnWatcher = (oldData?: any) => void;
 
-export type TFnRender = () => void;
+export type TFnRender = () => any;
 
 export type TLocationState = {
     path: string;
@@ -99,8 +99,8 @@ export interface IComponent<State = any, Props = any, Vm = any> {
 
     $template?: string;
     $declarations?: Function[];
-    $componentList?: ComponentList<IComponent<any, any, any>>[];
     $providerList?: Map<Function | string, Function | any>;
+    $componentList?: ComponentList<IComponent<any, any, any>>[];
 
     setState?: SetState;
     getLocation?: GetLocation;
@@ -267,33 +267,6 @@ export declare class InDiv {
     replaceDom(component: IComponent, renderDOM: Element): Promise<IComponent>;
 }
 
-export declare class Router {
-    routes: TRouter[];
-    routesList: TRouter[];
-    currentUrl: string;
-    lastRoute: string;
-    rootDom: Element;
-    $rootPath: string;
-    hasRenderComponentList: IComponent[];
-    needRedirectPath: string;
-    $vm: InDiv;
-    watcher: KeyWatcher;
-    renderRouteList: string[];
-    constructor();
-    bootstrap(vm: InDiv): void;
-    init(arr: TRouter[]): void;
-    setRootPath(rootPath: string): void;
-    routeChange?(lastRoute?: string, nextRoute?: string): void;
-    redirectTo(redirectTo: string): void;
-    refresh(): void;
-    distributeRoutes(): Promise<any>;
-    insertRenderRoutes(): Promise<IComponent>;
-    generalDistributeRoutes(): Promise<IComponent>;
-    routerChangeEvent(index: number): void;
-    emitComponentEvent(componentList: ComponentList<IComponent>[], event: string): void;
-    instantiateComponent(FindComponent: Function, renderDom: Element): Promise<IComponent>;
-}
-
 // Dependency Injection
 export declare function Injectable(options?: TInjectableOptions): (_constructor: Function) => void;
 
@@ -344,6 +317,34 @@ export declare interface ReceiveProps {
 
 // component functions
 export declare type SetState = <S>(newState: { [key: string]: S }) => void;
+
+// InDiv Router
+export declare class Router {
+    routes: TRouter[];
+    routesList: TRouter[];
+    currentUrl: string;
+    lastRoute: string;
+    rootDom: Element;
+    $rootPath: string;
+    hasRenderComponentList: IComponent[];
+    needRedirectPath: string;
+    $vm: InDiv;
+    watcher: KeyWatcher;
+    renderRouteList: string[];
+    constructor();
+    bootstrap(vm: InDiv): void;
+    init(arr: TRouter[]): void;
+    setRootPath(rootPath: string): void;
+    routeChange?(lastRoute?: string, nextRoute?: string): void;
+    redirectTo(redirectTo: string): void;
+    refresh(): void;
+    distributeRoutes(): Promise<any>;
+    insertRenderRoutes(): Promise<IComponent>;
+    generalDistributeRoutes(): Promise<IComponent>;
+    routerChangeEvent(index: number): void;
+    emitComponentEvent(componentList: ComponentList<IComponent>[], event: string): void;
+    instantiateComponent(FindComponent: Function, renderDom: Element): Promise<IComponent>;
+}
 
 export declare type GetLocation = () => {
     path?: string;

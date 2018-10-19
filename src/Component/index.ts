@@ -2,8 +2,6 @@ import { IComponent, TInjectTokenProvider, TUseClassProvider, TuseValueProvider 
 
 import Watcher from '../Watcher';
 import Utils from '../Utils';
-import { CompileUtil } from '../CompileUtils';
-
 
 type TComponentOptions = {
   selector: string;
@@ -17,6 +15,7 @@ const utils = new Utils();
  * Decorator @Component
  * 
  * to decorate an InDiv component
+ * render function comes from InDiv instance, you can set it by youself
  *
  * @template State
  * @template Props
@@ -46,7 +45,6 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
       }
     }
 
-    vm.compileUtil = new CompileUtil();
     vm.$declarations = [];
     vm.$componentList = [];
 
@@ -72,32 +70,6 @@ function Component<State = any, Props = any, Vm = any>(options: TComponentOption
         if (!(this as IComponent<State, Props, Vm>).nvWatchState) (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, null, (this as IComponent<State, Props, Vm>).reRender.bind(this as IComponent<State, Props, Vm>));
         (this as IComponent<State, Props, Vm>).reRender();
       }
-    };
-
-    vm.getLocation = function (): {
-      path?: string;
-      query?: any;
-      params?: any;
-      data?: any;
-    } {
-      if (!utils.isBrowser()) return {};
-      return {
-        path: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.path,
-        query: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.query,
-        params: (this as IComponent<State, Props, Vm>).$vm.$esRouteParmasObject,
-        data: (this as IComponent<State, Props, Vm>).$vm.$esRouteObject.data,
-      };
-    };
-
-    vm.setLocation = function (path: string, query?: any, data?: any, title?: string): void {
-      if (!utils.isBrowser()) return;
-      const rootPath = (this as IComponent<State, Props, Vm>).$vm.$rootPath === '/' ? '' : (this as IComponent<State, Props, Vm>).$vm.$rootPath;
-      history.pushState(
-        { path, query, data },
-        title,
-        `${rootPath}${path}${utils.buildQuery(query)}`,
-      );
-      (this as IComponent<State, Props, Vm>).$vm.$esRouteObject = { path, query, data };
     };
 
     vm.watchData = function (): void {

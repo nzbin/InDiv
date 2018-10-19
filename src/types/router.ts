@@ -1,6 +1,6 @@
 import { IComponent, ComponentList } from './component';
 import { IInDiv } from './indiv';
-import { IKeyWatcher } from './keyWatcher';
+import { IKeyWatcher } from './key-watcher';
 
 
 export type TRouter = {

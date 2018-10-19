@@ -1,4 +1,4 @@
-import { IVnode } from './virtualDOM';
+import { IVnode } from './virtual-dom';
 
 export interface ICompile {
     $vm: any;

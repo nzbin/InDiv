@@ -40,4 +40,4 @@ export {
   Injected,
   injector,
   factoryCreator,
-} from './DI';
+} from './di';

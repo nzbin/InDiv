@@ -1,7 +1,7 @@
 import { IMiddleware, INvModule, EsRouteObject, IComponent } from '../types';
 
 import Utils from '../utils';
-import { factoryCreator } from '../DI';
+import { factoryCreator } from '../di';
 import { factoryModule } from '../nv-module';
 import { render, reRender } from '../render';
 

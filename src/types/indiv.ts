@@ -1,5 +1,5 @@
 import { IComponent } from './component';
-import { INvModule } from './nvModule';
+import { INvModule } from './nv-module';
 
 export interface IMiddleware<ES> {
     bootstrap(vm: ES): void;

@@ -3,7 +3,7 @@ import { IMiddleware, INvModule, EsRouteObject, IComponent } from '../types';
 import Utils from '../utils';
 import { factoryCreator } from '../di';
 import { factoryModule } from '../nv-module';
-import { render, reRender } from '../render';
+import { render, reRender } from '../platform-browser';
 
 const utils = new Utils();
 

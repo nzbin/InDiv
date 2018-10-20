@@ -657,16 +657,32 @@ class Container implements OnInit, AfterMount, WatchState {
 
 @NvModule({
   components: [
-    R2,
-    RouteChild,
     PCChild,
+    RouteChild,
+  ],
+  providers: [
+    HeroSearchService2,
+  ],
+  exports: [
+    PCChild,
+    RouteChild,
+  ],
+})
+class SharedModule {}
+
+@NvModule({
+  imports: [
+    SharedModule,
+  ],
+  components: [
+    R2,
   ],
   providers: [
     HeroSearchService2,
   ],
   exports: [
     R2,
-    RouteChild,
+    SharedModule,
   ],
 })
 class M2 {}

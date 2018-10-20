@@ -123,12 +123,6 @@ export interface INvModule {
     $providerList?: Map<Function | string, Function | any>;
     $providerInstances?: Map<Function | string, any>;
     $bootstrap?: Function;
-  
-    buildProviderList(): void;
-    buildProviders4Services(): void;
-    buildProviders4Components(): void;
-    buildComponents4Components(): void;
-    buildImports(): void;
 }
 
 export declare class Watcher {

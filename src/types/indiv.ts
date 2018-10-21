@@ -25,11 +25,12 @@ export interface IInDiv {
     $esRouteParmasObject?: {
         [props: string]: any;
     };
-    render?: <State = any, Props = any, Vm = any>() => Promise<IComponent<State, Props, Vm>>;
-    reRender?: <State = any, Props = any, Vm = any>() => Promise<IComponent<State, Props, Vm>>;
+    render?: () => Promise<IComponent>;
+    reRender?: () => Promise<IComponent>;
 
     use(modal: IMiddleware<IInDiv>): number;
     setRootPath(rootPath: string): void;
+    setComponentRender<S = any, P = any, V = any>(render?: () => Promise<IComponent<S, P, V>>, reRender?: () => Promise<IComponent<S, P, V>>): void;
     bootstrapModule(Esmodule: Function): void;
     init(): void;
     renderModuleBootstrap(): void;

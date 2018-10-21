@@ -24,8 +24,8 @@ class InDiv {
   public $esRouteParmasObject?: {
     [props: string]: any;
   };
-  public render: <State = any, Props = any, Vm = any>() => Promise<IComponent<State, Props, Vm>>;
-  public reRender: <State = any, Props = any, Vm = any>() => Promise<IComponent<State, Props, Vm>>;
+  public render: () => Promise<IComponent>;
+  public reRender: () => Promise<IComponent>;
 
   constructor() {
     this.modalList = [];
@@ -61,7 +61,7 @@ class InDiv {
   }
 
   /**
-   * for Route set RootPath
+   * for Middleware set RootPath
    * 
    * if not use, rootPath will be <router-render />
    *
@@ -74,6 +74,20 @@ class InDiv {
     } else {
       throw new Error('rootPath is not defined or rootPath must be a String');
     }
+  }
+  
+/**
+ * for Middleware set component Render function 
+ *
+ * @template R
+ * @template Re
+ * @param {R} [render]
+ * @param {Re} [reRender]
+ * @memberof InDiv
+ */
+  public setComponentRender<S = any, P = any, V = any>(render?: () => Promise<IComponent<S, P, V>>, reRender?: () => Promise<IComponent<S, P, V>>): void {
+    this.render = render;
+    this.reRender = reRender;
   }
 
   /**

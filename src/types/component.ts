@@ -1,5 +1,5 @@
 import { IWatcher } from './watcher';
-import { ICompileUtil } from './compile-utils';
+import { ICompileUtil } from './platform-browser/compile-utils';
 
 export type ComponentList<C> = {
     dom: Node;

@@ -4,8 +4,9 @@
   "compilerOptions": {
     "baseUrl": "./",
     "outDir": "build",
-    "module": "commonjs",
-    "target": "es5",
+    "module": "es2015",
+    "moduleResolution": "node",
+    "target": "es3",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
@@ -16,12 +17,11 @@
     "noEmitHelpers": false,
     "lib": ["dom", "es2015.promise", "es5", "es2017"],
     // "allowJs": false,
-    "allowJs": true,
-    // "declaration": true
+    "declaration": true
   },
-  // "include": [
-  //   "src/**/*"
-  // ],
+  "include": [
+    "src/**/*"
+  ],
   "exclude": [
     "node_modules",
     "build",

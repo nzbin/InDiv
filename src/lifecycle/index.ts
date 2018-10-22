@@ -30,7 +30,7 @@ export interface ReceiveProps {
   nvReceiveProps(nextProps: any): void;
 }
 
-export type SetState = <S>(newState: { [key: string]: S }) => void;
+export type SetState = (newState: any) => void;
 
 export type GetLocation = () => {
   path?: string;

@@ -1,5 +1,5 @@
 import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, SetState, SetLocation, GetLocation, OnDestory, setState,  setLocation, getLocation } from '../src';
-// import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, SetState, SetLocation, GetLocation, OnDestory } from '../build';
+// import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, OnDestory, SetState, SetLocation, GetLocation, setState, setLocation, getLocation } from '../build';
 
 @Injectable()
 class HeroSearchService1 {

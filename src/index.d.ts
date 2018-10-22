@@ -307,7 +307,7 @@ export declare interface ReceiveProps {
 }
 
 // component functions
-export declare type SetState = <S>(newState: { [key: string]: S }) => void;
+export declare type SetState = (newState: any) => void;
 
 // InDiv Router
 export declare class Router {
@@ -349,3 +349,19 @@ export declare type GetLocation = () => {
 };
 
 export declare type SetLocation = <Q, P>(path: string, query?: Q, params?: P, title?: string) => void;
+
+export declare function setState(newState: any): void;
+
+export declare function getLocation(): {
+    path?: string;
+    query?: {
+        [props: string]: any;
+    };
+    params?: {
+        [props: string]: any;
+    };
+    data?: any;
+};
+
+export declare function setLocation<Q = any, P = any>(path: string, query?: Q, params?: P, title?: string): void;
+

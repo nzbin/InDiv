@@ -123,12 +123,6 @@ export interface INvModule {
     $providerList?: Map<Function | string, Function | any>;
     $providerInstances?: Map<Function | string, any>;
     $bootstrap?: Function;
-  
-    buildProviderList(): void;
-    buildProviders4Services(): void;
-    buildProviders4Components(): void;
-    buildComponents4Components(): void;
-    buildImports(): void;
 }
 
 export declare class Watcher {
@@ -251,11 +245,12 @@ export declare class InDiv {
     $esRouteParmasObject?: {
         [props: string]: any;
     };
-    render?: <State = any, Props = any, Vm = any>() => Promise<IComponent<State, Props, Vm>>;
-    reRender?: <State = any, Props = any, Vm = any>() => Promise<IComponent<State, Props, Vm>>;
+    render?: () => Promise<IComponent>;
+    reRender?: () => Promise<IComponent>;
     constructor();
     use(modal: IMiddleware<InDiv>): number;
     setRootPath(rootPath: string): void;
+    setComponentRender<S = any, P = any, V = any>(render?: () => Promise<IComponent<S, P, V>>, reRender?: () => Promise<IComponent<S, P, V>>): void;
     bootstrapModule(Esmodule: Function): void;
     init(): void;
     renderModuleBootstrap(): void;
@@ -312,7 +307,7 @@ export declare interface ReceiveProps {
 }
 
 // component functions
-export declare type SetState = <S>(newState: { [key: string]: S }) => void;
+export declare type SetState = (newState: any) => void;
 
 // InDiv Router
 export declare class Router {
@@ -354,3 +349,19 @@ export declare type GetLocation = () => {
 };
 
 export declare type SetLocation = <Q, P>(path: string, query?: Q, params?: P, title?: string) => void;
+
+export declare function setState(newState: any): void;
+
+export declare function getLocation(): {
+    path?: string;
+    query?: {
+        [props: string]: any;
+    };
+    params?: {
+        [props: string]: any;
+    };
+    data?: any;
+};
+
+export declare function setLocation<Q = any, P = any>(path: string, query?: Q, params?: P, title?: string): void;
+

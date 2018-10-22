@@ -8,7 +8,7 @@ export type ComponentList<C> = {
     constructorFunction: Function;
 };
 
-export type SetState = <S>(newState: { [key: string]: S }) => void;
+export type SetState = (newState: any) => void;
 
 export interface IComponent<State = any, Props = any, Vm = any> {
     state?: State | any;

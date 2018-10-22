@@ -34,9 +34,15 @@ export {
   setLocation,
   getLocation,
 } from './platform-browser';
-export { Component, setState } from './component';
+export {
+  Component,
+  setState,
+} from './component';
 export { default as InDiv } from './indiv';
-export { NvModule, factoryModule } from './nv-module';
+export {
+  NvModule,
+  factoryModule,
+} from './nv-module';
 export { default as NVHttp } from './http';
 export {
   Injectable,

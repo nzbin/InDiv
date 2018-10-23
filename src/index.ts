@@ -50,3 +50,5 @@ export {
   injector,
   factoryCreator,
 } from './di';
+
+console.log(111111111, Map, Promise);

@@ -4,6 +4,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "outDir": "build",
+    // "outFile": "build/index.js",
     "module": "es2015",
     "moduleResolution": "node",
     "target": "es5",
@@ -16,7 +17,8 @@
     "inlineSourceMap": true,
     "noEmitHelpers": false,
     "lib": ["dom", "es2015.promise", "es5", "es2017"],
-    "declaration": true
+    "declaration": true,
+    // "declarationDir": "./typings",
   },
   "include": [
     "src/**/*"

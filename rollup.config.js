@@ -1,6 +1,3 @@
-const path = require('path');
-
-import typescript from 'rollup-plugin-typescript2';
 import { uglify } from "rollup-plugin-uglify";
 import commonjs from 'rollup-plugin-commonjs';
 import resolve from 'rollup-plugin-node-resolve';
@@ -9,25 +6,16 @@ import babel from 'rollup-plugin-babel';
 import pkg from './package.json'
 
 export default {
-  // input: 'promise.ts',
-  // output: [{
-  //   file: 'promise2.js',
-  //   format: 'cjs',
-  // }, ],
-  input: 'src/index.ts',
+  input: 'build/bundle.js',
   output: [{
     file: pkg.main,
     format: 'cjs',
+    exports: 'named',
   }, ],
   external: [
     ...Object.keys(pkg.dependencies || {}),
   ],
   plugins: [
-    typescript({
-      typescript: require('typescript'),
-      rollupCommonJSResolveHack: true,
-      tsconfig: "tsconfig.json",
-    }),
     resolve({
       jsnext: true,
       main: true
@@ -60,6 +48,6 @@ export default {
       ],
       runtimeHelpers: true,
     }),
-    // uglify(),
+    uglify(),
   ],
 }

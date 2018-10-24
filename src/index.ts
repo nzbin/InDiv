@@ -1,12 +1,3 @@
-import 'core-js/modules/es6.array.find';
-import 'core-js/modules/es6.array.find-index';
-import 'core-js/modules/es6.array.from';
-import 'core-js/modules/es6.function.bind';
-import 'core-js/modules/es6.reflect.construct';
-import 'core-js/modules/es6.regexp.match';
-import 'core-js/modules/es6.regexp.replace';
-import 'core-js/modules/es6.map';
-import 'core-js/modules/es6.promise';
 import 'reflect-metadata';
 
 export { default as Utils } from './utils';
@@ -50,5 +41,3 @@ export {
   injector,
   factoryCreator,
 } from './di';
-
-console.log(111111111, Map, Promise);

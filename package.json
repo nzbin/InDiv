@@ -26,7 +26,7 @@
     "start-ts": "parcel ./demo/index-ts.html -d dist --open",
     "start-js": "parcel ./demo/index.html -d dist --open",
     "build-parcel": "rm -rf build && parcel build ./src/index.ts --no-source-maps -d build && cp -r src/index.d.ts build",
-    "build": "rm -rf build && rollup -c",
+    "build": "rm -rf build && rollup --config rollup.typescript.config.js && rollup -c && rm -rf build/bundle.js",
     "pub-prod": "npm run build && npm publish"
   },
   "repository": {
@@ -43,7 +43,6 @@
     "@babel/core": "^7.1.2",
     "@babel/plugin-transform-runtime": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
-    "@types/core-js": "^2.5.0",
     "babel-eslint": "^8.2.0",
     "ejs": "^2.6.1",
     "eslint": "^4.19.1",
@@ -54,7 +53,6 @@
     "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-react": "^7.5.1",
     "express": "^4.16.3",
-    "microbundle": "^0.6.0",
     "nodemon": "^1.17.5",
     "parcel-bundler": "1.9.7",
     "rollup": "^0.66.6",

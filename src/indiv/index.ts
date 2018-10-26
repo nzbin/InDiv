@@ -3,7 +3,7 @@ import { IMiddleware, INvModule, EsRouteObject, IComponent } from '../types';
 import Utils from '../utils';
 import { factoryCreator } from '../di';
 import { factoryModule } from '../nv-module';
-import { render, reRender } from '../platform-browser';
+import { render } from '../platform-browser';
 
 const utils = new Utils();
 
@@ -44,7 +44,7 @@ class InDiv {
     // render,reRender for Component
     // developer can use function use(modal: IMiddleware<InDiv>): number to change render and reRender
     this.render = render;
-    this.reRender = reRender;
+    this.reRender = render;
   }
 
   /**

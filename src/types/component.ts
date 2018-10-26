@@ -1,11 +1,13 @@
 import { IWatcher } from './watcher';
 import { ICompileUtil } from './platform-browser/compile-utils';
+import { IRenderTask } from './platform-browser/render-task';
 
 export type ComponentList<C> = {
     dom: Node;
     props: any;
     scope: C;
     constructorFunction: Function;
+    hasRender: boolean;
 };
 
 export type SetState = (newState: any) => void;
@@ -22,6 +24,8 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     $components?: Function[];
     $providerList?: Map<Function | string, Function | any>;
     $componentList?: ComponentList<IComponent<any, any, any>>[];
+
+    renderTask?: IRenderTask;
 
     nvOnInit?(): void;
     watchData?(): void;

@@ -1,5 +1,6 @@
-import { IComponent, ComponentList } from '../../types';
+import { IComponent, ComponentList, IRenderTask } from '../../types';
 
+import Compile from '../compile';
 import Utils from '../../utils';
 import { CompileUtilForRepeat } from '../compile-utils';
 import { getPropsValue, buildProps, buildScope } from './render-utils';
@@ -35,6 +36,8 @@ export function mountComponent<State = any, Props = any, Vm = any>(dom: Element,
         if (component.scope.nvReceiveProps) component.scope.nvReceiveProps(component.props);
         component.scope.props = component.props;
       }
+      // change hasRender to true
+      component.hasRender = true;
     } else {
       component.scope = buildScope(component.constructorFunction, component.props, component.dom as Element, vm);
     }
@@ -166,9 +169,45 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
         props,
         scope: null,
         constructorFunction: vm.$components[i],
+        // init hasRender false
+        hasRender: false,
       });
       // after construct instance remove isComponent
       node.isComponent = false;
     });
   }
+}
+
+/**
+ * render Function for render Component with renderDom and RenderTask instance
+ *
+ * @export
+ * @param {Element} renderDom
+ * @param {IRenderTask} vm
+ * @returns {Promise<IComponent>}
+ */
+export function renderFunction(renderDom: Element, vm: IRenderTask): Promise<IComponent> {
+  return Promise.resolve()
+    .then(() => {
+      const compile = new Compile(renderDom, vm.$vm);
+      mountComponent(renderDom, vm.$vm);
+      const componentListLength = vm.$vm.$componentList.length;
+      for (let i = 0; i < componentListLength; i++) {
+        const component = vm.$vm.$componentList[i];
+        // if component has rendered , it will reRender
+        if (component.hasRender) {
+          component.scope.reRender();
+        } else {
+          // if component didn't rendered, it will render and set hasRender true
+          component.scope.render();
+          component.hasRender = true;
+        }
+        if (component.scope.nvAfterMount) component.scope.nvAfterMount();
+      }
+      if (vm.$vm.nvHasRender) vm.$vm.nvHasRender();
+      return vm.$vm;
+    })
+    .catch(e => {
+      throw new Error(`component ${(vm.$vm.constructor as any).$selector} render failed: ${e}`);
+    });
 }

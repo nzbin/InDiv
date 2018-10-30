@@ -186,7 +186,7 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
  * @param {IRenderTask} vm
  * @returns {Promise<IComponent>}
  */
-export function renderFunction(renderDom: Element, vm: IRenderTask): Promise<IComponent> {
+export async function renderFunction(renderDom: Element, vm: IRenderTask): Promise<IComponent> {
   return Promise.resolve()
     .then(() => {
       const compile = new Compile(renderDom, vm.$vm);

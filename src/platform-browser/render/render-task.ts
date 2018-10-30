@@ -28,11 +28,11 @@ export class RenderTask {
 
   public async render(): Promise<IComponent> {
     const component = await renderFunction(this.taskQueue[0], this as IRenderTask);
-    this.nextTick();
+    this.runNextTask();
     return component;
   }
 
-  public async nextTick(): Promise<IComponent> {
+  public async runNextTask(): Promise<IComponent> {
     this.taskQueue.shift();
     if (this.taskQueue.length === 0) {
       this.renderStatus = PENDING;

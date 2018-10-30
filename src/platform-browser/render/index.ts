@@ -49,10 +49,6 @@ export function render<State = any, Props = any, Vm = any>(): Promise<IComponent
  */
 // export function reRender<State = any, Props = any, Vm = any>(): Promise<IComponent<State, Props, Vm>> {
 //   const dom = (this as IComponent<State, Props, Vm>).renderDom;
-
-//   if (!this.renderTask) this.renderTask = new RenderTask(this);
-//   return this.renderTask.push(dom);
-
   // return Promise.resolve()
   //   .then(() => {
   //     const compile = new Compile(dom, (this as IComponent<State, Props, Vm>));

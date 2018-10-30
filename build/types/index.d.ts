@@ -1,5 +1,6 @@
 export { ICompile } from './platform-browser/compile';
 export { ICompileUtilForRepeat, ICompileUtil } from './platform-browser/compile-utils';
+export { IRenderTask } from './platform-browser/render-task';
 export { ComponentList, IComponent, SetState } from './component';
 export { IMiddleware, EsRouteObject, IInDiv } from './indiv';
 export { INvModule, TInjectTokenProvider, TUseClassProvider, TuseValueProvider } from './nv-module';

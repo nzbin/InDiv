@@ -47,6 +47,7 @@ class RouteChild {
   constructor(heroSearchService2) {
     this.heroSearchService = heroSearchService2;
     this.heroSearchService.test();
+    this.setState = setState;
     this.state = {
       a: 'a',
       b: null,
@@ -323,6 +324,7 @@ class R2 {
     this.state = { a: 1 };
     this.getLocation = getLocation;
     this.setLocation = setLocation;
+    this.setState = setState;
   }
   nvOnInit() {
     console.log('this.$location222', this.getLocation());

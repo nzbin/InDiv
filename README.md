@@ -4,6 +4,7 @@
 A web mvvm library.
 
 [![build](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://www.npmjs.com/package/indiv)
+[![size](https://img.shields.io/badge/size-80%20kb-red.svg)](https://www.npmjs.com/package/indiv)
 [![language](https://img.shields.io/badge/language-typescript-blue.svg)](https://www.typescriptlang.org/)
 [![license](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/DimaLiLongJi/InDiv/blob/feature/package-optimization/LICENSE)
 [![npm package](https://img.shields.io/badge/npm%20package-1.2.1-orange.svg)](https://www.npmjs.com/package/indiv)

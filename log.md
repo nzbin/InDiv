@@ -79,3 +79,7 @@
 23. 2018-09-29 v1.2.0 write DI system and place  `@Service` `@Injectable` with `@Injectable` `@Injected`
 
 24. 2018-10-04 add `providers` in `@Component`
+
+25. 2018-10-6 `NvModule` now can use `NvModule` in `exports` and  removed `setState, setLocation, getLocation`. From v1.2.1 you can use `setState, setLocation, getLocation` from `import { setState, getLocation, setLocation } from 'indiv'`
+
+26. 2018-10-31 add render task in `platform-browser/render` to replace `render`

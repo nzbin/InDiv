@@ -1,27 +1,16 @@
 import { IWatcher } from './watcher';
-import { ICompileUtil } from './compileUtils';
+import { ICompileUtil } from './platform-browser/compile-utils';
+import { IRenderTaskQueue } from './platform-browser/render-task';
 
 export type ComponentList<C> = {
     dom: Node;
     props: any;
     scope: C;
     constructorFunction: Function;
+    hasRender: boolean;
 };
 
-export type SetState = <S>(newState: { [key: string]: S }) => void;
-
-export type GetLocation = () => {
-  path?: string;
-  query?: {
-    [props: string]: any;
-  };
-  params?: {
-    [props: string]: any;
-  };
-  data?: any;
-};
-
-export type SetLocation = <Q = any, P = any>(path: string, query?: Q, params?: P, title?: string) => void;
+export type SetState = (newState: any) => void;
 
 export interface IComponent<State = any, Props = any, Vm = any> {
     state?: State | any;
@@ -33,12 +22,10 @@ export interface IComponent<State = any, Props = any, Vm = any> {
 
     $template?: string;
     $components?: Function[];
-    $componentList?: ComponentList<IComponent<any, any, any>>[];
     $providerList?: Map<Function | string, Function | any>;
+    $componentList?: ComponentList<IComponent<any, any, any>>[];
 
-    setState?: SetState;
-    getLocation?: GetLocation;
-    setLocation?: SetLocation;
+    renderTaskQueue?: IRenderTaskQueue;
 
     nvOnInit?(): void;
     watchData?(): void;
@@ -49,11 +36,6 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     nvWatchState?(oldState?: any): void;
     nvRouteChange?(lastRoute: string, newRoute: string): void;
     nvReceiveProps?(nextProps: Props): void;
-    render(): Promise<IComponent<State, Props, Vm>>;
-    reRender(): Promise<IComponent<State, Props, Vm>>;
-    mountComponent(dom: Element): void;
-    componentsConstructor(dom: Element): void;
-    getPropsValue(valueList: any[], value: any): void;
-    buildProps(prop: any): any;
-    buildComponentScope(ComponentClass: any, props: any, dom: Element): IComponent<any, any, any>;
+    render?(): Promise<IComponent<State, Props, Vm>>;
+    reRender?(): Promise<IComponent<State, Props, Vm>>;
 }

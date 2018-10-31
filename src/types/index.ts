@@ -1,10 +1,10 @@
-export { ICompile } from './compile';
-export { ICompileUtilForRepeat, ICompileUtil } from './compileUtils';
-export { ComponentList, IComponent } from './component';
+export { ICompile } from './platform-browser/compile';
+export { ICompileUtilForRepeat, ICompileUtil } from './platform-browser/compile-utils';
+export { IRenderTaskQueue } from './platform-browser/render-task';
+export { ComponentList, IComponent, SetState } from './component';
 export { IMiddleware, EsRouteObject, IInDiv } from './indiv';
-export { INvModule, TInjectTokenProvider, TUseClassProvider, TuseValueProvider } from './nvModule';
-export { IKeyWatcher } from './keyWatcher';
-export { TRouter, IRouter } from './router';
-export { IUtil } from './utils';
-export { IVnode, TAttributes, IPatchList } from './virtualDOM';
+export { INvModule, TInjectTokenProvider, TUseClassProvider, TuseValueProvider } from './nv-module';
+export { IKeyWatcher } from './key-watcher';
+export { TRouter, IRouter, GetLocation, SetLocation } from './platform-browser/router';
+export { IVnode, TAttributes, IPatchList } from './platform-browser/virtual-dom';
 export { TFnWatcher, TFnRender, IWatcher } from './watcher';

@@ -1,4 +1,4 @@
-import { InDiv, Component, Router, Utils, NvModule, Injectable, NVHttp } from '../build';
+import { InDiv, Component, Router, Utils, NvModule, Injectable, NVHttp, getLocation, setLocation, setState } from '../build';
 
 class HeroSearchService1 {
   constructor() {
@@ -47,6 +47,7 @@ class RouteChild {
   constructor(heroSearchService2) {
     this.heroSearchService = heroSearchService2;
     this.heroSearchService.test();
+    this.setState = setState;
     this.state = {
       a: 'a',
       b: null,
@@ -105,6 +106,7 @@ class PCChild {
         },
       ],
     };
+    this.setState = setState;
   }
   nvHasRender() {
     console.log('PCChild: this.props.ax', this.props.ax);
@@ -171,6 +173,7 @@ class PComponent {
       ax: this.props.ax,
     };
     console.log('props11', this.props);
+    this.setState = setState;
   }
   nvBeforeMount() {
     console.log('nvBeforeMount props11', this.props);
@@ -223,6 +226,9 @@ class R1 {
     heroSearchService,
     utils
   ) {
+    this.setState = setState;
+    this.setLocation = setLocation;
+    this.getLocation = getLocation;
     this.heroSearchService = heroSearchService;
     this.heroSearchService.test();
     this.utils = utils;
@@ -316,6 +322,9 @@ class R2 {
     this.heroSearchService1 = heroSearchService1;
     // this.heroSearchService1.test();
     this.state = { a: 1 };
+    this.getLocation = getLocation;
+    this.setLocation = setLocation;
+    this.setState = setState;
   }
   nvOnInit() {
     console.log('this.$location222', this.getLocation());
@@ -396,6 +405,8 @@ class Container {
     value,
     heroSearchService2,
   ) {
+    this.getLocation = getLocation;
+    this.setLocation = setLocation;
     this.ss = heroSearchService;
     this.ss.test();
     console.log('nvHttp', nvHttp);

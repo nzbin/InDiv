@@ -1,5 +1,5 @@
-import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, SetState, SetLocation, GetLocation, OnDestory } from '../src';
-// import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, SetState, SetLocation, GetLocation, OnDestory } from '../build';
+import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, SetState, SetLocation, GetLocation, OnDestory, setState,  setLocation, getLocation } from '../src';
+// import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, OnDestory, SetState, SetLocation, GetLocation, setState, setLocation, getLocation } from '../build';
 
 @Injectable()
 class HeroSearchService1 {
@@ -38,7 +38,6 @@ class HeroSearchService {
 
 class ValueType {}
 
-
 interface Props {
   a: number;
 }
@@ -54,7 +53,7 @@ interface Props {
   `),
 })
 
-class RouteChild implements OnInit, HasRender, ReceiveProps {
+class RouteChild implements OnInit, HasRender, ReceiveProps, OnDestory {
   public setState: SetState;
   public state: any;
   public heroSearchService: HeroSearchService2;
@@ -78,6 +77,7 @@ class RouteChild implements OnInit, HasRender, ReceiveProps {
         },
       ],
     };
+    this.setState = setState;
   }
 
   public nvOnInit() {
@@ -103,6 +103,10 @@ class RouteChild implements OnInit, HasRender, ReceiveProps {
     //   b: nextProps.a,
     // });
   }
+
+  public nvOnDestory() {
+    console.log('RouteChild nvOnDestory');
+  }
 }
 
 @Component({
@@ -115,7 +119,7 @@ class RouteChild implements OnInit, HasRender, ReceiveProps {
     </div>
   `),
 })
-class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps {
+class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps, OnDestory {
   public props: any;
   public state: any;
   public setState: SetState;
@@ -134,6 +138,7 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps {
         },
       ],
     };
+    this.setState = setState;
   }
 
   public nvHasRender() {
@@ -165,6 +170,10 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps {
     console.log('PCChild nvAfterMount props11', this.props.ax);
   }
 
+  public nvOnDestory() {
+    console.log('PCChild nvOnDestory');
+  }
+
   public nvReceiveProps(nextProps: any) {
     console.log(this.props.ax);
     console.log(4444, nextProps);
@@ -187,13 +196,14 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps {
     </div>
   `),
 })
-class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, ReceiveProps {
+class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, ReceiveProps, OnDestory {
   public setState: SetState;
   public state: any;
   public props: any;
 
   constructor() {
     console.log(99900000999);
+    this.setState = setState;
   }
 
   public nvOnInit() {
@@ -249,6 +259,9 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
     console.log(1111111111111, nextProps);
     this.state.ax = nextProps.ax;
   }
+  public nvOnDestory() {
+    console.log('PComponent is nvOnDestory');
+  }
 }
 
 @Injected
@@ -270,7 +283,7 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
     </div>
     `),
 })
-class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
+class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, OnDestory {
   public hSr: HeroSearchService;
   public getLocation: GetLocation;
   public setLocation: SetLocation;
@@ -282,6 +295,9 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
     private heroSearchService: HeroSearchService,
     private utils: Utils,
   ) {
+    this.setLocation = setLocation;
+    this.getLocation = getLocation;
+    this.setState = setState;
     this.heroSearchService.test();
     this.state = {
       a: 'a11',
@@ -344,6 +360,10 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
     this.setState({ a: a });
     // this.state.a = a;
   }
+
+  public nvOnDestory() {
+    console.log(this.getLocation(), 'R1 is nvOnDestory');
+  }
 }
 
 @Injected
@@ -361,7 +381,7 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
     </div>
   `),
 })
-class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
+class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, OnDestory {
   public getLocation: GetLocation;
   public setLocation: SetLocation;
   public state: any;
@@ -369,6 +389,8 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   constructor(
     public heroSearchService1: HeroSearchService1,
   ) {
+    this.setLocation = setLocation;
+    this.getLocation = getLocation;
     this.heroSearchService1.test();
     console.log('this.heroSearchService1', this.heroSearchService1);
     this.state = { a: 1 };
@@ -392,6 +414,11 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
   public nvWatchState(oldState: any) {
     console.log('oldState Controller:', oldState);
   }
+
+  public nvOnDestory() {
+    console.log(this.getLocation(), 'R2 is nvOnDestory');
+  }
+
   public showAlert() {
     console.log('this.state.a', this.state.a);
     // alert('我错了 点下控制台看看吧');
@@ -413,7 +440,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange {
       <p nv-on:click="@click()">测试repeat组件: {{$.man}}</p>
     </div>`),
 })
-class TestComponent implements OnInit, OnDestory {
+class TestComponent implements OnInit, OnDestory, ReceiveProps {
   public state: any;
   public props: any;
 
@@ -431,6 +458,10 @@ class TestComponent implements OnInit, OnDestory {
   public nvOnDestory() {
     console.log('TestComponent OnDestory');
   }
+
+  public nvReceiveProps(p: any) {
+    console.log('test-component nvReceiveProps', p);
+  }
 }
 
 @Injected
@@ -438,7 +469,7 @@ class TestComponent implements OnInit, OnDestory {
   selector: 'container-wrap',
   template: (`
     <div>
-      <p nv-id="@countState($.a)" nv-if="@countState($.a)" nv-on:click="@changeInput()">{{$.a}}</p>
+      <p test-directive="$.a" nv-id="@countState($.a)" nv-if="@countState($.a)" nv-on:click="@changeInput()">{{$.a}}</p>
       <test-component nv-repeat="let man in $.testArray" nv-key="man.name" man="{@countState(man.name)}" nv-if="$.a"></test-component>
       <p nv-on:click="@go()">container: {{@countState($.a)}}</p>
       <input nv-model="$.a" />
@@ -473,9 +504,12 @@ class Container implements OnInit, AfterMount, WatchState {
     private nvHttp: NVHttp,
     private value: ValueType,
   ) {
+    this.setState = setState;
+    this.getLocation = getLocation;
+    this.setLocation = setLocation;
     this.hss.test();
-    console.log('nvHttp', nvHttp);
-    console.log('value', value);
+    console.log('nvHttp', this.nvHttp);
+    console.log('value', this.value);
     this.state = {
       a: 1,
       b: 3,
@@ -560,7 +594,7 @@ class Container implements OnInit, AfterMount, WatchState {
   }
 
   public changeInput() {
-    // this.state.a = 4;
+    this.state.a = 4;
     this.setState({
       testArray: [
         {
@@ -618,21 +652,39 @@ class Container implements OnInit, AfterMount, WatchState {
           ],
         }],
     });
+    this.state.a = 5;
+    console.log(9999999999);
   }
 }
 
 @NvModule({
   components: [
-    R2,
-    RouteChild,
     PCChild,
+    RouteChild,
+  ],
+  providers: [
+    HeroSearchService2,
+  ],
+  exports: [
+    PCChild,
+    RouteChild,
+  ],
+})
+class SharedModule {}
+
+@NvModule({
+  imports: [
+    SharedModule,
+  ],
+  components: [
+    R2,
   ],
   providers: [
     HeroSearchService2,
   ],
   exports: [
     R2,
-    RouteChild,
+    SharedModule,
   ],
 })
 class M2 {}

@@ -4,7 +4,9 @@
   "compilerOptions": {
     "baseUrl": "./",
     "outDir": "build",
-    "module": "commonjs",
+    // "outFile": "build/index.js",
+    "module": "es2015",
+    "moduleResolution": "node",
     "target": "es5",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -15,13 +17,12 @@
     "inlineSourceMap": true,
     "noEmitHelpers": false,
     "lib": ["dom", "es2015.promise", "es5", "es2017"],
-    // "allowJs": false,
-    "allowJs": true,
-    // "declaration": true
+    "declaration": true,
+    // "declarationDir": "./typings",
   },
-  // "include": [
-  //   "src/**/*"
-  // ],
+  "include": [
+    "src/**/*"
+  ],
   "exclude": [
     "node_modules",
     "build",

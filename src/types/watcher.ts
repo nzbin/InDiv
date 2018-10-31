@@ -1,5 +1,5 @@
 export type TFnWatcher = (oldData?: any) => void;
-export type TFnRender = () => void;
+export type TFnRender = () => any;
 
 export interface IWatcher {
     data: any;

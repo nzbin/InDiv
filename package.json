@@ -1,6 +1,6 @@
 {
   "name": "indiv",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "一个 web mvvm 库。A web mvvm library.",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -25,7 +25,8 @@
     "start": "parcel watch ./demo/index.ts -d dist & nodemon app.js",
     "start-ts": "parcel ./demo/index-ts.html -d dist --open",
     "start-js": "parcel ./demo/index.html -d dist --open",
-    "build": "rm -rf build && parcel build ./src/index.ts --no-source-maps -d build && cp -r src/index.d.ts build",
+    "build-parcel": "rm -rf build && parcel build ./src/index.ts --no-source-maps -d build && cp -r src/index.d.ts build",
+    "build": "rm -rf build && rollup --config rollup.typescript.config.js && rollup -c && rm -rf build/bundle.js",
     "pub-prod": "npm run build && npm publish"
   },
   "repository": {
@@ -33,12 +34,15 @@
     "url": "git+https://github.com/DimaLiLongJi/InDiv.git"
   },
   "author": "DimaLiLongJi",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/DimaLiLongJi/InDiv/issues"
   },
   "homepage": "https://github.com/DimaLiLongJi/InDiv#readme",
   "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/plugin-transform-runtime": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
     "babel-eslint": "^8.2.0",
     "ejs": "^2.6.1",
     "eslint": "^4.19.1",
@@ -51,13 +55,19 @@
     "express": "^4.16.3",
     "nodemon": "^1.17.5",
     "parcel-bundler": "1.9.7",
+    "rollup": "^0.66.6",
+    "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-typescript2": "^0.17.1",
+    "rollup-plugin-uglify": "^6.0.0",
     "tslint": "^5.11.0",
-    "typescript": "^3.0.1"
+    "typescript": "^3.1.3"
   },
   "dependencies": {
+    "@babel/runtime-corejs2": "^7.1.2",
     "axios": "^0.18.0",
-    "core-js": "^2.5.7",
-    "easier-cookie": "^1.1.0",
+    "easier-cookie": "^1.1.1",
     "reflect-metadata": "^0.1.12"
   }
 }

@@ -4,7 +4,8 @@
 /dist
 /tmp
 /out-tsc
-/.cache
+.cache
+.rpt2_cache
 
 # dependencies
 /node_modules

@@ -11,7 +11,7 @@ A web mvvm library.
 [中文](https://dimalilongji.github.io/indiv-doc)
 [npm](https://www.npmjs.com/package/indiv)
 
-current version: v1.2.0
+current version: v1.2.1
 
 ## demo
   - `npm run start`

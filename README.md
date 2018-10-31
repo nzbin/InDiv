@@ -3,6 +3,11 @@
 一个 web mvvm 库。
 A web mvvm library.
 
+[![build](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://www.npmjs.com/package/indiv)
+[![language](https://img.shields.io/badge/language-typescript-blue.svg)](https://www.typescriptlang.org/)
+[![license](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/DimaLiLongJi/InDiv/blob/feature/package-optimization/LICENSE)
+[![npm package](https://img.shields.io/badge/npm%20package-1.2.1-orange.svg)](https://www.npmjs.com/package/indiv)
+
 [中文](https://dimalilongji.github.io/indiv-doc)
 [npm](https://www.npmjs.com/package/indiv)
 
@@ -52,6 +57,7 @@ current version: v1.2.0
       1. Use `this.setLocation(path: String, query: Object, params: Object)` to go to Path or `location.href`
       2. Use `this.getLocation()` to get location states
       3. `Router` : `http://localhost:1234/R1`
+      4. **From v1.2.1, we have removed `setState, setLocation, getLocation`, and you can use `setState, setLocation, getLocation` from `import { setState, getLocation, setLocation } from 'indiv'`**
 
   ``` typescript
   type TRouter = {
@@ -146,6 +152,7 @@ current version: v1.2.0
 
   - `template` only accepts `$.XXX` from this.state, and nv-on:event only accepts `@eventHandler` from method which belongs to Class instance
   - **Please use `setState` after lifecycle `constructor()` and `nvOnInit`**, and you can change or set value for `this.state` without `setState` in lifecycle `constructor()` and `nvOnInit`
+  - **From v1.2.1, we have removed `setState, setLocation, getLocation`, and you can use `setState, setLocation, getLocation` from `import { setState, getLocation, setLocation } from 'indiv'`**
   - After `Class`'s `constructor`, u can use `this.props` in any lifecycle
   - Use `nvOnInit` and `nvReceiveProps(nextProps: any): void;` to receive props and set `props` in `state`
   - Use `setLocation` and `getLocation` to controll route or get route info
@@ -170,6 +177,7 @@ current version: v1.2.0
       2. action of using callback function from `props` to change `state` which comes from `parent Component` in `child Component` is a synchronous action
       3. rerender of Component is an **asynchronous action**, and after rerendering `props` can be changed in `child Component`
       4. so after using callback function from `props` to change `state` which comes from `parent Component` in `child Component`, `props` in `child Component` can't be changed immediately because of out render mechanism is asynchronous render.You should use `nvReceiveProps(nextProps: any): void;` to watch `props` changes
+      5. from v1.2.1 we has remove `setState` in `Component` instance, and u can use `setState` from `import { setState } from 'indiv'`
 
   -  typescript
 
@@ -178,7 +186,8 @@ current version: v1.2.0
     - To use decorator `Injected` to declare which need to be injected `Service` in `constructor`'s arguments of `Component`**
 
     ```typescript
-    import { Injected, Component, OnInit, AfterMount, ReceiveProps, SetLocation, GetLocation } from 'indiv';
+    import { Injected, Component, OnInit, AfterMount, ReceiveProps, SetLocation, GetLocation, SetState, setLocation, getLocation, setState } from 'indiv';
+
     @Injected
     @Component({
       selector: 'container-wrap',
@@ -201,6 +210,8 @@ current version: v1.2.0
       public ss: HeroSearchService;
       public state: any;
       public setLocation: SetLocation;
+      public getLocation: GetLocation;
+      public setState: SetState;
 
       constructor(
         private hss: HeroSearchService,
@@ -210,6 +221,9 @@ current version: v1.2.0
         this.state = {
           a: 1,
         };
+        this.setLocation = setLocation;
+        this.getLocation = getLocation;
+        this.setState = setState;
       }
 
       public nvOnInit() {
@@ -242,6 +256,8 @@ current version: v1.2.0
     - **Class static attribution `injectTokens: string[]` must be `provide` of providers, and arguments of constructor will be instances of `useClass` or value of `useValue` of providers**
 
     ```javascript
+    import { Injected, Component, setLocation, getLocation, setState } from 'indiv';
+
     class Container {
       static injectTokens = [
         'heroSearchService',
@@ -255,6 +271,9 @@ current version: v1.2.0
         this.state = {
           a: 1,
         };
+        this.setLocation = setLocation;
+        this.getLocation = getLocation;
+        this.setState = setState;
       }
       nvOnInit() {
         this.state.a = this.props.test;
@@ -315,7 +334,7 @@ current version: v1.2.0
     4. `exports?: Function[]`
     5. `bootstrap?: Function` in `options`
 
-  - `imports?: Function[]` imports other `NvModule` and respect it's `exports?: Function[]`
+  - `imports?: Function[]` imports other `NvModule` and can use it's `exports?: Function[]`
   - `components: Function[]` declares `Components`
   - `providers` declares `Service` for `Component` or `Service`
 
@@ -328,7 +347,7 @@ current version: v1.2.0
     - **In TypeScript these three modes can be used and provide can be `function` or `Class`**
     - **In javascript please use `{ provide: string; useClass: Function; }[]` or `{ provide: string; useValue: any; }[]`**
 
-  - `exports?: Function[]` exports `Components` for other `NvModules`
+  - `exports?: Function[]` exports `Components` or `NvModule`(v1.2.1 add, actually use `exports` from `NvModule`) for other `NvModule`s
   - `bootstrap?: Function` declares `Component` for Module bootstrap only if u don't `Router`
 
     1. typescript
@@ -336,6 +355,7 @@ current version: v1.2.0
       ```typescript
       @NvModule({
         imports: [
+          ShareModule,
           M2,
         ],
         components: [
@@ -357,6 +377,8 @@ current version: v1.2.0
         exports: [
           Container,
           PComponent,
+          ShareModule,
+          M2,
         ]
       })
       class M1 {}
@@ -368,6 +390,7 @@ current version: v1.2.0
       class M1 {}
       NvModule({
         imports: [
+          ShareModule,
           M2,
         ],
         components: [
@@ -392,6 +415,8 @@ current version: v1.2.0
         exports: [
           Container,
           PComponent,
+          ShareModule,
+          M2,
         ]
       })(M1);
       ```

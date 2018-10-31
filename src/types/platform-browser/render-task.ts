@@ -1,10 +1,9 @@
 import { IComponent } from '../component';
 
-export interface IRenderTask {
+export interface IRenderTaskQueue {
   $vm: IComponent;
-  taskQueue: Element[];
 
   push(renderDom: Element): Promise<IComponent>;
-  render(): Promise<IComponent>;
-  runNextTask(): Promise<IComponent>;
+  runTask(): Promise<IComponent>;
+  stopTask(): void;
 }

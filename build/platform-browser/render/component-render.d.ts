@@ -1,4 +1,4 @@
-import { IComponent, IRenderTask } from '../../types';
+import { IComponent, IRenderTaskQueue } from '../../types';
 /**
  * mountComponent for Components in Component
  *
@@ -20,11 +20,11 @@ export declare function mountComponent<State = any, Props = any, Vm = any>(dom: 
  */
 export declare function componentsConstructor<State = any, Props = any, Vm = any>(dom: Element, vm: IComponent<State, Props, Vm>): void;
 /**
- * render Function for render Component with renderDom and RenderTask instance
+ * render Component with using renderDom and RenderTask instance
  *
  * @export
  * @param {Element} renderDom
- * @param {IRenderTask} vm
+ * @param {IRenderTaskQueue} vm
  * @returns {Promise<IComponent>}
  */
-export declare function renderFunction(renderDom: Element, vm: IRenderTask): Promise<IComponent>;
+export declare function renderFunction(renderDom: Element, vm: IRenderTaskQueue): Promise<IComponent>;

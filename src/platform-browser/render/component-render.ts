@@ -1,4 +1,4 @@
-import { IComponent, ComponentList, IRenderTask } from '../../types';
+import { IComponent, ComponentList, IRenderTaskQueue } from '../../types';
 
 import Compile from '../compile';
 import Utils from '../../utils';
@@ -179,14 +179,14 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
 }
 
 /**
- * render Function for render Component with renderDom and RenderTask instance
+ * render Component with using renderDom and RenderTask instance
  *
  * @export
  * @param {Element} renderDom
- * @param {IRenderTask} vm
+ * @param {IRenderTaskQueue} vm
  * @returns {Promise<IComponent>}
  */
-export async function renderFunction(renderDom: Element, vm: IRenderTask): Promise<IComponent> {
+export async function renderFunction(renderDom: Element, vm: IRenderTaskQueue): Promise<IComponent> {
   return Promise.resolve()
     .then(() => {
       const compile = new Compile(renderDom, vm.$vm);

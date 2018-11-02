@@ -75,10 +75,11 @@ declare class InDiv {
      *
      * @param {Function} BootstrapComponent
      * @param {Element} renderDOM
+     * @param {INvModule} [nvModule=this.$rootModule]
      * @returns {Promise<IComponent>}
      * @memberof InDiv
      */
-    renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<IComponent>;
+    renderComponent(BootstrapComponent: Function, renderDOM: Element, nvModule?: INvModule): Promise<IComponent>;
     /**
      * render adn replace DOM
      *

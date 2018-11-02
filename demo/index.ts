@@ -1,8 +1,8 @@
-import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, SetState, SetLocation, GetLocation, OnDestory, setState,  setLocation, getLocation } from '../src';
+import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, SetState, SetLocation, GetLocation, OnDestory, setState,  setLocation, getLocation, TRouter } from '../src';
 // import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, OnDestory, SetState, SetLocation, GetLocation, setState, setLocation, getLocation } from '../build';
 
 @Injectable()
-class HeroSearchService1 {
+export class HeroSearchService1 {
   constructor() {}
 
   public test() {
@@ -11,7 +11,7 @@ class HeroSearchService1 {
 }
 
 @Injectable()
-class HeroSearchService2 {
+export class HeroSearchService2 {
   constructor() {}
 
   public test(): void {
@@ -21,8 +21,9 @@ class HeroSearchService2 {
 
 @Injected
 @Injectable()
-class HeroSearchService {
+export class HeroSearchService {
   public hsr: HeroSearchService1;
+  public testValue: number = 3;
   constructor(
     private heroSearchService1: HeroSearchService1,
   ) {
@@ -32,7 +33,13 @@ class HeroSearchService {
   }
 
   public test() {
-    console.log('HeroSearchService !!!000000000');
+    console.log('HeroSearchService !!!1111111111', this.testValue);
+    this.testValue = 4;
+    console.log('HeroSearchService !!!000000000', this.testValue);
+  }
+
+  public showValue() {
+    console.log(444422, 'this.testValue', this.testValue);
   }
 }
 
@@ -202,7 +209,6 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
   public props: any;
 
   constructor() {
-    console.log(99900000999);
     this.setState = setState;
   }
 
@@ -298,6 +304,7 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
     this.setLocation = setLocation;
     this.getLocation = getLocation;
     this.setState = setState;
+    console.log(9999888777, 'from R1');
     this.heroSearchService.test();
     this.state = {
       a: 'a11',
@@ -507,6 +514,7 @@ class Container implements OnInit, AfterMount, WatchState {
     this.setState = setState;
     this.getLocation = getLocation;
     this.setLocation = setLocation;
+    console.log(99988, 'from Container');
     this.hss.test();
     console.log('nvHttp', this.nvHttp);
     console.log('value', this.value);
@@ -689,6 +697,7 @@ class SharedModule {}
 })
 class M2 {}
 
+@Injected
 @NvModule({
   imports: [
     M2,
@@ -713,11 +722,17 @@ class M2 {}
     },
   ],
 })
-class M1 {}
+class M1 {
+  constructor (
+    private hsr: HeroSearchService,
+  ) {
+    console.log(999999888777, '来自模块注入', this.hsr);
+  }
+}
 
 const router = new Router();
 
-const routes = [
+const routes: TRouter[] = [
   {
     path: '/',
     // redirectTo: '/R1',
@@ -727,10 +742,18 @@ const routes = [
         path: '/R1',
         component: 'R1',
         // redirectTo: '/R2',
+        // loadChild: {
+        //   name: 'TestLoadchildModule',
+        //   module: () => import('./loadChild'),
+        // },
         children: [
           {
             path: '/C1',
-            component: 'R2',
+            // component: 'R2',
+            loadChild: {
+              name: 'TestLoadchildModule',
+              childModule: () => import('./loadChild'),
+            },
             // redirectTo: '/R1/C1/D1',
             children: [
               {

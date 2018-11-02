@@ -811,6 +811,7 @@ route => NvModule => component
 - [x] ts (强类型赛高)
 - [x] DI
 - [x] SSR 服务端渲染
-- [ ] route lazy load
+- [x] route lazy load
 - [x] async template render
 - [x] optimize setState
+- [ ] support directive(still in doubt)

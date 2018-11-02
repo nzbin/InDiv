@@ -1,4 +1,4 @@
-import { TRouter, IInDiv, IComponent, ComponentList } from '../../types';
+import { TRouter, IInDiv, IComponent } from '../../types';
 import KeyWatcher from '../../key-watcher';
 export { TRouter } from '../../types';
 /**
@@ -37,71 +37,97 @@ export declare class Router {
      * @memberof Router
      */
     init(arr: TRouter[]): void;
+    /**
+     * set rootPath
+     *
+     * @param {string} rootPath
+     * @memberof Router
+     */
     setRootPath(rootPath: string): void;
     /**
      * redirectTo a path
      *
+     * @private
      * @param {string} redirectTo
      * @memberof Router
      */
-    redirectTo(redirectTo: string): void;
+    private redirectTo;
     /**
      * refresh if not watch $esRouteObject
      *
+     * @private
      * @memberof Router
      */
-    refresh(): void;
+    private refresh;
     /**
      * distribute routes and decide insert or general Routes
      *
+     * @private
      * @returns {Promise<any>}
      * @memberof Router
      */
-    distributeRoutes(): Promise<any>;
+    private distributeRoutes;
     /**
      * insert Routes and render
      *
      * if has rendered Routes, it will find which is different and render it
      *
+     * @private
      * @returns {Promise<IComponent>}
      * @memberof Router
      */
-    insertRenderRoutes(): Promise<IComponent>;
+    private insertRenderRoutes;
     /**
      * render Routes
      *
      * first render
      *
+     * @private
      * @returns {Promise<IComponent>}
      * @memberof Router
      */
-    generalDistributeRoutes(): Promise<IComponent>;
+    private generalDistributeRoutes;
     /**
      * emit nvRouteChange and nvOnDestory for Components
      *
+     * @private
      * @param {number} index
      * @memberof Router
      */
-    routerChangeEvent(index: number): void;
+    private routerChangeEvent;
     /**
      * emit nvRouteChange and nvOnDestory for Components with recursion
      *
+     * @private
      * @param {ComponentList<IComponent>[]} componentList
      * @param {string} event
      * @memberof Router
      */
-    emitComponentEvent(componentList: ComponentList<IComponent>[], event: string): void;
+    private emitComponentEvent;
     /**
      * instantiate Component
      *
      * use InDiv renderComponent
      *
+     * if parmas has nvModule, use nvModule
+     * if parmas has'nt nvModule, use rootModule in InDiv
+     *
+     * @private
      * @param {Function} FindComponent
      * @param {Element} renderDom
+     * @param {INvModule} [nvModule]
      * @returns {Promise<IComponent>}
      * @memberof Router
      */
-    instantiateComponent(FindComponent: Function, renderDom: Element): Promise<IComponent>;
+    private instantiateComponent;
+    /**
+     * build Module and return Component for route.loadChild
+     *
+     * @private
+     * @param {() => Promise<INvModule>} loadChild
+     * @memberof Router
+     */
+    private NvModuleFactoryLoader;
 }
 /**
  * getLocation in @Component or @Directive

@@ -1,7 +1,8 @@
-import { TRouter, IInDiv, IComponent, ComponentList } from '../../types';
+import { TRouter, IInDiv, IComponent, ComponentList, INvModule } from '../../types';
 
 import Utils from '../../utils';
 import KeyWatcher from '../../key-watcher';
+import { factoryModule } from '../../nv-module';
 
 export { TRouter } from '../../types';
 
@@ -92,6 +93,12 @@ export class Router {
     }
   }
 
+  /**
+   * set rootPath
+   *
+   * @param {string} rootPath
+   * @memberof Router
+   */
   public setRootPath(rootPath: string): void {
     if (rootPath && typeof rootPath === 'string') {
       this.$rootPath = rootPath;
@@ -103,10 +110,11 @@ export class Router {
   /**
    * redirectTo a path
    *
+   * @private
    * @param {string} redirectTo
    * @memberof Router
    */
-  public redirectTo(redirectTo: string): void {
+  private redirectTo(redirectTo: string): void {
     const rootPath = this.$rootPath === '/' ? '' : this.$rootPath;
     history.replaceState(null, null, `${rootPath}${redirectTo}`);
     this.$vm.$esRouteObject = {
@@ -120,9 +128,10 @@ export class Router {
   /**
    * refresh if not watch $esRouteObject
    *
+   * @private
    * @memberof Router
    */
-  public refresh(): void {
+  private refresh(): void {
     if (!this.$vm.$esRouteObject || !this.watcher) {
       let path;
       if (this.$rootPath === '/') {
@@ -148,10 +157,11 @@ export class Router {
   /**
    * distribute routes and decide insert or general Routes
    * 
+   * @private
    * @returns {Promise<any>}
    * @memberof Router
    */
-  public async distributeRoutes(): Promise<any> {
+  private async distributeRoutes(): Promise<any> {
     if (this.lastRoute && this.lastRoute !== this.currentUrl) {
       // has rendered
       this.$vm.$esRouteParmasObject = {};
@@ -172,11 +182,12 @@ export class Router {
    * insert Routes and render
    * 
    * if has rendered Routes, it will find which is different and render it
-   *
+   *  
+   * @private
    * @returns {Promise<IComponent>}
    * @memberof Router
    */
-  public async insertRenderRoutes(): Promise<IComponent> {
+  private async insertRenderRoutes(): Promise<IComponent> {
     const lastRouteList = this.lastRoute === '/' ? ['/'] : this.lastRoute.split('/');
     lastRouteList[0] = '/';
 
@@ -198,19 +209,28 @@ export class Router {
         const needRenderRoute = this.routesList[index];
         if (!needRenderRoute) throw new Error(`route error: wrong route instantiation in insertRenderRoutes: ${this.currentUrl}`);
 
-        const needRenderComponent = this.$vm.$components.find((component: any) => component.$selector === needRenderRoute.component);
-
         const renderDom = document.querySelectorAll('router-render')[index - 1];
 
-        if (!needRenderRoute.component && !needRenderRoute.redirectTo) throw new Error(`route error: path ${needRenderRoute.path} need a component which has children path or need a  redirectTo which has't children path`);
+        if (!needRenderRoute.component && !needRenderRoute.redirectTo && !needRenderRoute.loadChild) throw new Error(`route error: path ${needRenderRoute.path} need a component which has children path or need a redirectTo which has't children path`);
 
         if (/^\/\:.+/.test(needRenderRoute.path) && !needRenderRoute.redirectTo) {
           const key = needRenderRoute.path.split('/:')[1];
           this.$vm.$esRouteParmasObject[key] = path;
         }
 
+        let needRenderComponent = null;
+        let component = null;
+        if (needRenderRoute.component) {
+          needRenderComponent = this.$vm.$components.find((component: any) => component.$selector === needRenderRoute.component);
+          component = await this.instantiateComponent(needRenderComponent, renderDom);
+        }
+        if (needRenderRoute.loadChild) {
+          const loadModule = await this.NvModuleFactoryLoader(needRenderRoute.loadChild);
+          needRenderComponent = loadModule.$bootstrap;
+          component = await this.instantiateComponent(needRenderComponent, renderDom, loadModule);
+        }
+
         if (needRenderComponent) {
-          const component = await this.instantiateComponent(needRenderComponent, renderDom);
           // insert needRenderComponent on index in this.hasRenderComponentList
           // and remove other component which index >= index of needRenderComponent
           if (component) {
@@ -257,23 +277,34 @@ export class Router {
    * render Routes
    * 
    * first render
-   *
+   *  
+   * @private
    * @returns {Promise<IComponent>}
    * @memberof Router
    */
-  public async generalDistributeRoutes(): Promise<IComponent> {
+  private async generalDistributeRoutes(): Promise<IComponent> {
     for (let index = 0; index < this.renderRouteList.length; index++) {
       const path = this.renderRouteList[index];
       if (index === 0) {
         const rootRoute = this.routes.find(route => route.path === `${path}` || /^\/\:.+/.test(route.path));
         if (!rootRoute) throw new Error(`route error: wrong route instantiation in generalDistributeRoutes: ${this.currentUrl}`);
 
+        const rootDom = document.querySelector('#root');
+
         let FindComponent = null;
-        if (this.$vm.$rootModule.$components.find((component: any) => component.$selector === rootRoute.component)) {
+        let component = null;
+        if (rootRoute.component) {
           FindComponent = this.$vm.$rootModule.$components.find((component: any) => component.$selector === rootRoute.component);
-        } else {
-          throw new Error(`route error: path ${rootRoute.path} is undefined`);
+          component = await this.instantiateComponent(FindComponent, rootDom);
         }
+        if (rootRoute.loadChild) {
+          const loadModule = await this.NvModuleFactoryLoader(rootRoute.loadChild);
+          FindComponent = loadModule.$bootstrap;
+          component = await this.instantiateComponent(FindComponent, rootDom, loadModule);
+        }
+
+        if (!FindComponent) throw new Error(`route error: root route's path: ${rootRoute.path} need a component`);
+
 
         if (/^\/\:.+/.test(rootRoute.path)) {
           const key = rootRoute.path.split('/:')[1];
@@ -281,10 +312,9 @@ export class Router {
         }
 
         if (!utils.isBrowser()) return;
-        const rootDom = document.querySelector('#root');
+
         this.routesList.push(rootRoute);
 
-        const component = await this.instantiateComponent(FindComponent, rootDom);
         // 因为没有 所有要push进去
         if (component) this.hasRenderComponentList.push(component);
 
@@ -301,25 +331,29 @@ export class Router {
         const route = lastRoute.find(r => r.path === `/${path}` || /^\/\:.+/.test(r.path));
         if (!route) throw new Error(`route error: wrong route instantiation: ${this.currentUrl}`);
 
+        const renderDom = document.querySelectorAll('router-render')[index - 1];
+
         let FindComponent = null;
-        if (this.$vm.$rootModule.$components.find((component: any) => component.$selector === route.component)) {
+        let component = null;
+        if (route.component) {
           FindComponent = this.$vm.$rootModule.$components.find((component: any) => component.$selector === route.component);
+          component = await this.instantiateComponent(FindComponent, renderDom);
+        }
+        if (route.loadChild) {
+          const loadModule = await this.NvModuleFactoryLoader(route.loadChild);
+          FindComponent = loadModule.$bootstrap;
+          component = await this.instantiateComponent(FindComponent, renderDom, loadModule);
         }
 
-        if (!route.component && !route.redirectTo) throw new Error(`route error: path ${route.path} need a component which has children path or need a  redirectTo which has't children path`);
+        if (!route.component && !route.redirectTo && !route.loadChild) throw new Error(`route error: path ${route.path} need a component which has children path or need a  redirectTo which has't children path`);
 
         if (/^\/\:.+/.test(route.path)) {
           const key = route.path.split('/:')[1];
           this.$vm.$esRouteParmasObject[key] = path;
         }
-
-        const renderDom = document.querySelectorAll('router-render')[index - 1];
         this.routesList.push(route);
 
-        if (FindComponent) {
-          const component = await this.instantiateComponent(FindComponent, renderDom);
-          if (component) this.hasRenderComponentList.push(component);
-        }
+        if (component) this.hasRenderComponentList.push(component);
 
         if (index === this.renderRouteList.length - 1) this.routerChangeEvent(index);
 
@@ -334,10 +368,11 @@ export class Router {
   /**
    * emit nvRouteChange and nvOnDestory for Components
    *
+   * @private
    * @param {number} index
    * @memberof Router
    */
-  public routerChangeEvent(index: number): void {
+  private routerChangeEvent(index: number): void {
     this.hasRenderComponentList.forEach((component, i) => {
       if (component.nvRouteChange) component.nvRouteChange(this.lastRoute, this.currentUrl);
       this.emitComponentEvent(component.$componentList, 'nvRouteChange');
@@ -351,12 +386,13 @@ export class Router {
 
   /**
    * emit nvRouteChange and nvOnDestory for Components with recursion
-   *
+   * 
+   * @private
    * @param {ComponentList<IComponent>[]} componentList
    * @param {string} event
    * @memberof Router
    */
-  public emitComponentEvent(componentList: ComponentList<IComponent>[], event: string): void {
+  private emitComponentEvent(componentList: ComponentList<IComponent>[], event: string): void {
     if (event === 'nvRouteChange') {
       componentList.forEach(component => {
         if (component.scope.nvRouteChange) component.scope.nvRouteChange(this.lastRoute, this.currentUrl);
@@ -375,14 +411,31 @@ export class Router {
    * instantiate Component
    * 
    * use InDiv renderComponent
+   * 
+   * if parmas has nvModule, use nvModule
+   * if parmas has'nt nvModule, use rootModule in InDiv
    *
+   * @private
    * @param {Function} FindComponent
    * @param {Element} renderDom
+   * @param {INvModule} [nvModule]
    * @returns {Promise<IComponent>}
    * @memberof Router
    */
-  public instantiateComponent(FindComponent: Function, renderDom: Element): Promise<IComponent> {
-    return this.$vm.renderComponent(FindComponent, renderDom);
+  private instantiateComponent(FindComponent: Function, renderDom: Element, nvModule?: INvModule): Promise<IComponent> {
+    return this.$vm.renderComponent(FindComponent, renderDom, nvModule);
+  }
+
+  /**
+   * build Module and return Component for route.loadChild
+   *
+   * @private
+   * @param {() => Promise<INvModule>} loadChild
+   * @memberof Router
+   */
+  private async NvModuleFactoryLoader(loadChild: any): Promise<INvModule> {
+    const loadNvModule = (await loadChild.childModule())[loadChild.name];
+    return factoryModule(loadNvModule);
   }
 }
 

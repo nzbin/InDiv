@@ -83,3 +83,5 @@
 25. 2018-10-6 `NvModule` now can use `NvModule` in `exports` and  removed `setState, setLocation, getLocation`. From v1.2.1 you can use `setState, setLocation, getLocation` from `import { setState, getLocation, setLocation } from 'indiv'`
 
 26. 2018-10-31 add render task in `platform-browser/render` to replace `render`
+
+27. 2018-11-02 add route lazy load and allow `@NvModule` can use service from it's `providers`

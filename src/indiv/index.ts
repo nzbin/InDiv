@@ -136,14 +136,15 @@ class InDiv {
    *
    * @param {Function} BootstrapComponent
    * @param {Element} renderDOM
+   * @param {INvModule} [nvModule=this.$rootModule]
    * @returns {Promise<IComponent>}
    * @memberof InDiv
    */
-  public renderComponent(BootstrapComponent: Function, renderDOM: Element): Promise<IComponent> {
-    const component: any = factoryCreator(BootstrapComponent, this.$rootModule);
+  public renderComponent(BootstrapComponent: Function, renderDOM: Element, nvModule: INvModule = this.$rootModule): Promise<IComponent> {
+    const component: any = factoryCreator(BootstrapComponent, nvModule);
 
     component.$vm = this;
-    component.$components = this.$rootModule.$components;
+    component.$components = nvModule.$components;
 
     component.render = this.render.bind(component);
     component.reRender = this.reRender.bind(component);

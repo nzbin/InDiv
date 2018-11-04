@@ -25,8 +25,7 @@
     "start": "parcel watch ./demo/index.ts -d dist & nodemon app.js",
     "start-ts": "parcel ./demo/index-ts.html -d dist --open",
     "start-js": "parcel ./demo/index.html -d dist --open",
-    "build-parcel": "rm -rf build && parcel build ./src/index.ts --no-source-maps -d build && cp -r src/index.d.ts build",
-    "build": "rm -rf build && rollup --config rollup.typescript.config.js && rollup -c && rm -rf build/bundle.js",
+    "build": "rm -rf build && rollup --config rollup.typescript.config.js && rollup --config rollup.without-polyfill.config.js && rollup -c && rm -rf build/bundle.js && cp -r files/index.d.ts build/without-polyfill",
     "pub-prod": "npm run build && npm publish"
   },
   "repository": {

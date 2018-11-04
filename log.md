@@ -85,3 +85,5 @@
 26. 2018-10-31 add render task in `platform-browser/render` to replace `render`
 
 27. 2018-11-02 add route lazy load and allow `@NvModule` can use service from it's `providers`
+
+28. 2018-11-04 add build/without-polyfill 

@@ -14,4 +14,4 @@ import { IPatchList } from '../../types';
  *
  * @param [] patchList
  */
-export default function renderVnode(patchList: IPatchList[]): void;
+export declare function renderVnode(patchList: IPatchList[]): void;

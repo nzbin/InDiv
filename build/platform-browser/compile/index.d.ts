@@ -1,11 +1,11 @@
 import { IVnode } from '../../types';
-import Utils from '../../utils';
+import { Utils } from '../../utils';
 /**
  * main compiler
  *
  * @class Compile
  */
-declare class Compile {
+export declare class Compile {
     utils: Utils;
     $vm: any;
     $el: Element;
@@ -114,4 +114,3 @@ declare class Compile {
      */
     isTextNode(node: Element): boolean;
 }
-export default Compile;

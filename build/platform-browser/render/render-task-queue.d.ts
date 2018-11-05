@@ -4,7 +4,7 @@ export declare class RenderTaskQueue {
     $vm: IComponent;
     private taskQueue;
     private renderStatus;
-    private stackPointer;
+    private queuePointer;
     constructor(vm: IComponent);
     /**
      * push task in taskQueue
@@ -18,7 +18,7 @@ export declare class RenderTaskQueue {
      */
     push(renderDom: Element): Promise<IComponent>;
     /**
-     * stop render task and save stackPointer
+     * stop render task and save queuePointer
      *
      * @memberof RenderTaskQueue
      */
@@ -33,7 +33,7 @@ export declare class RenderTaskQueue {
     /**
      * run next task
      *
-     * if stackPointer is taskQueue.length -1, then stop render and reset stackPointer, renderStatus, taskQueue
+     * if queuePointer is taskQueue.length -1, then stop render and reset queuePointer, renderStatus, taskQueue
      *
      * @private
      * @returns {Promise<IComponent>}
@@ -41,7 +41,7 @@ export declare class RenderTaskQueue {
      */
     private nextTask;
     /**
-     * reset renderStatus, stackPointer, taskQueue
+     * reset renderStatus, queuePointer, taskQueue
      *
      * @private
      * @memberof RenderTaskQueue

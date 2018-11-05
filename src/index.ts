@@ -1,6 +1,8 @@
 import 'reflect-metadata';
 
-export { Utils } from './utils';
+export {
+  Utils,
+} from './utils';
 export {
   OnInit,
   BeforeMount,
@@ -14,8 +16,12 @@ export {
   SetLocation,
   GetLocation,
 } from './lifecycle';
-export { Watcher } from './watcher';
-export { KeyWatcher } from './key-watcher';
+export {
+  Watcher,
+} from './watcher';
+export {
+  KeyWatcher,
+} from './key-watcher';
 export {
   Compile,
   CompileUtil,
@@ -29,12 +35,19 @@ export {
   Component,
   setState,
 } from './component';
-export { InDiv } from './indiv';
+export {
+  InDiv,
+} from './indiv';
 export {
   NvModule,
   factoryModule,
 } from './nv-module';
-export { NVHttp } from './http';
+export {
+  NVHttp,
+} from './http';
+export {
+  HttpClient,
+} from './http-client';
 export {
   Injectable,
   Injected,

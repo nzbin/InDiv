@@ -3,7 +3,7 @@
  *
  * @class Utils
  */
-declare class Utils {
+export declare class Utils {
     /**
      * Creates an instance of Utils.
      * @memberof Utils
@@ -96,4 +96,3 @@ declare class Utils {
      */
     isBrowser(): boolean;
 }
-export default Utils;

@@ -508,7 +508,7 @@ class Container implements OnInit, AfterMount, WatchState {
   constructor(
     private hss: HeroSearchService,
     private hss2: HeroSearchService1,
-    private nvHttp: NVHttp,
+    private http: NVHttp,
     private value: ValueType,
   ) {
     this.setState = setState;
@@ -516,7 +516,7 @@ class Container implements OnInit, AfterMount, WatchState {
     this.setLocation = setLocation;
     console.log(99988, 'from Container');
     this.hss.test();
-    console.log('nvHttp', this.nvHttp);
+    console.log('http', this.http);
     console.log('value', this.value);
     this.state = {
       a: 1,

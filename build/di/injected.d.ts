@@ -5,4 +5,4 @@
  * @export
  * @param {Function} _constructor
  */
-export default function Injected(_constructor: Function): void;
+export declare function Injected(_constructor: Function): void;

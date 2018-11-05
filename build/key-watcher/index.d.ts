@@ -4,11 +4,10 @@ import { TFnWatcher } from '../types';
  *
  * @class KeyWatcher
  */
-declare class KeyWatcher {
+export declare class KeyWatcher {
     data: any;
     watcher?: TFnWatcher;
     key: string;
     constructor(data: any, key: string, watcher?: TFnWatcher);
     watchData(data: any, key: string): void;
 }
-export default KeyWatcher;

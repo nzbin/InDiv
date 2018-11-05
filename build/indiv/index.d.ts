@@ -4,7 +4,7 @@ import { IMiddleware, INvModule, EsRouteObject, IComponent } from '../types';
  *
  * @class InDiv
  */
-declare class InDiv {
+export declare class InDiv {
     modalList: IMiddleware<InDiv>[];
     rootDom: Element;
     $rootPath: string;
@@ -90,4 +90,3 @@ declare class InDiv {
      */
     replaceDom(component: IComponent, renderDOM: Element): Promise<IComponent>;
 }
-export default InDiv;

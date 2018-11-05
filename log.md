@@ -87,3 +87,5 @@
 27. 2018-11-02 add route lazy load and allow `@NvModule` can use service from it's `providers`
 
 28. 2018-11-04 add build/without-polyfill 
+
+29. 2018-11-05 add HttpClient

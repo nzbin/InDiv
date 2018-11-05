@@ -4,7 +4,7 @@ import { TFnWatcher, TFnRender } from '../types';
  *
  * @class Watcher
  */
-declare class Watcher {
+export declare class Watcher {
     data: any;
     watcher: TFnWatcher;
     render: TFnRender;
@@ -23,4 +23,3 @@ declare class Watcher {
     constructor(data: any, watcher?: TFnWatcher, render?: TFnRender);
     watchData(data: any): void;
 }
-export default Watcher;

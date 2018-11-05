@@ -9,5 +9,5 @@ declare type TInjectableOptions = {
  * @param {TInjectableOptions} [options]
  * @returns {(_constructor: Function) => void}
  */
-export default function Injectable(options?: TInjectableOptions): (_constructor: Function) => void;
+export declare function Injectable(options?: TInjectableOptions): (_constructor: Function) => void;
 export {};

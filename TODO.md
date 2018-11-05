@@ -1,0 +1,25 @@
+- [x] 类分离，通过use来绑定方法
+- [x] route
+- [x] 子路由(2/2)
+- [X] 组件化(3/3)
+- [x] 模块化 + NvModule
+- [X] 双向绑定
+- [x] 公共类提取
+- [x] 数据劫持
+- [x] 视图模板
+- [x] Template Syntax: nv-text nv-html nv-model nv-class nv-repeat nv-key nv-if nv-src nv-href(7/7)
+- [x] 组件props
+- [x] 组件渲染
+- [x] 组件中使用组件
+- [x] 改用 history的pushState并删除通过锚点的路由
+- [x] 监听路由变化动态渲染(2/2)
+- [x] Virtual DOM
+- [x] support Service(now changed to @Injectable)
+- [x] support JavaScript and TypeScript
+- [x] IOC and DI
+- [x] SSR 服务端渲染
+- [ ] route lazy load
+- [x] async template render
+- [x] optimize setState
+- [ ] support directive(still in doubt)
+- [x] HTTP client

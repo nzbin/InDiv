@@ -1,5 +1,5 @@
 import { TRouter, IInDiv, IComponent } from '../../types';
-import KeyWatcher from '../../key-watcher';
+import { KeyWatcher } from '../../key-watcher';
 export { TRouter } from '../../types';
 /**
  * route for InDiv
@@ -124,7 +124,8 @@ export declare class Router {
      * build Module and return Component for route.loadChild
      *
      * @private
-     * @param {() => Promise<INvModule>} loadChild
+     * @param {(TChildModule | TLoadChild)} loadChild
+     * @returns {Promise<INvModule>}
      * @memberof Router
      */
     private NvModuleFactoryLoader;

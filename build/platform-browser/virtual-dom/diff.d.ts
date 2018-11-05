@@ -10,4 +10,4 @@ import { IVnode, IPatchList } from '../../types';
  * @param {(oldVnode: IVnode, newVnode: IVnode) => boolean} needDiffChildCallback
  * @returns {void}
  */
-export default function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[], needDiffChildCallback?: (oldVnode: IVnode, newVnode: IVnode) => boolean): void;
+export declare function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[], needDiffChildCallback?: (oldVnode: IVnode, newVnode: IVnode) => boolean): void;

@@ -790,28 +790,4 @@ route => NvModule => component
 
 ## To do
 
-- [x] 类分离，通过use来绑定方法
-- [x] 无需route渲染
-- [x] 子路由(2/2)
-- [X] 组件化(3/3)
-- [x] 模块化 + NvModule
-- [X] 双向绑定
-- [x] 公共类提取
-- [x] 数据劫持
-- [x] 双向绑定模板
-- [x] Template Syntax: nv-text nv-html nv-model nv-class nv-repeat nv-key nv-if nv-src nv-href(7/7)
-- [x] 组件props
-- [x] 组件渲染
-- [x] 组件中使用组件
-- [x] 改用 history的pushState
-- [x] 监听路由变化动态渲染(2/2)
-- [x] Virtual DOM
-- [x] Service
-- [x] Route bug
-- [x] ts (强类型赛高)
-- [x] DI
-- [x] SSR 服务端渲染
-- [x] route lazy load
-- [x] async template render
-- [x] optimize setState
-- [ ] support directive(still in doubt)
+remove to TODO.md

@@ -1,7 +1,7 @@
 import { IComponent, TInjectTokenProvider, TUseClassProvider, TuseValueProvider } from '../types';
 
-import Watcher from '../watcher';
-import Utils from '../utils';
+import { Watcher } from '../watcher';
+import { Utils } from '../utils';
 
 type TComponentOptions = {
   selector: string;

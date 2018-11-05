@@ -214,7 +214,7 @@ function diffEventTypes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
  * @param {(oldVnode: IVnode, newVnode: IVnode) => boolean} needDiffChildCallback
  * @returns {void}
  */
-export default function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[], needDiffChildCallback?: (oldVnode: IVnode, newVnode: IVnode) => boolean): void {
+export function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[], needDiffChildCallback?: (oldVnode: IVnode, newVnode: IVnode) => boolean): void {
   if (!patchList) throw new Error('patchList can not be null, diffVnode must need an Array');
 
   if (newVnode.type === 'document-fragment') {

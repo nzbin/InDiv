@@ -1,7 +1,7 @@
 import { IComponent, ComponentList, IRenderTaskQueue } from '../../types';
 
-import Compile from '../compile';
-import Utils from '../../utils';
+import { Compile } from '../compile';
+import { Utils } from '../../utils';
 import { CompileUtilForRepeat } from '../compile-utils';
 import { getPropsValue, buildProps, buildScope } from './render-utils';
 

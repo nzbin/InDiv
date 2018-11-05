@@ -1,6 +1,6 @@
 import { IMiddleware, INvModule, EsRouteObject, IComponent } from '../types';
 
-import Utils from '../utils';
+import { Utils } from '../utils';
 import { factoryCreator } from '../di';
 import { factoryModule } from '../nv-module';
 import { render } from '../platform-browser';
@@ -12,7 +12,7 @@ const utils = new Utils();
  *
  * @class InDiv
  */
-class InDiv {
+export class InDiv {
   public modalList: IMiddleware<InDiv>[];
   public rootDom: Element;
   public $rootPath: string;
@@ -180,5 +180,3 @@ class InDiv {
     return component.render();
   }
 }
-
-export default InDiv;

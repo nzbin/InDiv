@@ -1,7 +1,7 @@
-import { TRouter, IInDiv, IComponent, ComponentList, INvModule } from '../../types';
+import { TRouter, IInDiv, IComponent, ComponentList, INvModule, TLoadChild, TChildModule } from '../../types';
 
-import Utils from '../../utils';
-import KeyWatcher from '../../key-watcher';
+import { Utils } from '../../utils';
+import { KeyWatcher } from '../../key-watcher';
 import { factoryModule } from '../../nv-module';
 
 export { TRouter } from '../../types';
@@ -430,11 +430,23 @@ export class Router {
    * build Module and return Component for route.loadChild
    *
    * @private
-   * @param {() => Promise<INvModule>} loadChild
+   * @param {(TChildModule | TLoadChild)} loadChild
+   * @returns {Promise<INvModule>}
    * @memberof Router
    */
-  private async NvModuleFactoryLoader(loadChild: any): Promise<INvModule> {
-    const loadNvModule = (await loadChild.childModule())[loadChild.name];
+  private async NvModuleFactoryLoader(loadChild: TChildModule | TLoadChild): Promise<INvModule> {
+    let loadNvModule = null;
+
+    // export default
+    if ((loadChild as TChildModule) instanceof Function && !(loadChild as TLoadChild).child)
+      loadNvModule = (await (loadChild as TChildModule)()).default;
+
+    // export
+    if (loadChild instanceof Object && (loadChild as TLoadChild).child)
+      loadNvModule = (await (loadChild as TLoadChild).child())[loadChild.name];
+
+    if (!loadNvModule) throw new Error('load child failed, please check your routes.');
+
     return factoryModule(loadNvModule);
   }
 }

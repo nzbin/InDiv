@@ -1,4 +1,4 @@
-export { default as Compile } from './compile';
+export { Compile } from './compile';
 export {
     CompileUtilForRepeat,
     CompileUtil,

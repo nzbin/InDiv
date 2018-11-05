@@ -1,6 +1,6 @@
 import { TFnWatcher } from '../types';
 
-import Utils from '../utils';
+import { Utils } from '../utils';
 
 const utils = new Utils();
 
@@ -9,7 +9,7 @@ const utils = new Utils();
  *
  * @class KeyWatcher
  */
-class KeyWatcher {
+export class KeyWatcher {
   public data: any;
   public watcher?: TFnWatcher;
   public key: string;
@@ -47,5 +47,3 @@ class KeyWatcher {
     });
   }
 }
-
-export default KeyWatcher;

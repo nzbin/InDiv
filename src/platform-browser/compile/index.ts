@@ -1,7 +1,7 @@
 import { IPatchList, IVnode } from '../../types';
 
 import { parseToVnode, diffVnode, renderVnode } from '../virtual-dom';
-import Utils from '../../utils';
+import { Utils } from '../../utils';
 import { CompileUtil } from '../compile-utils';
 
 const utils = new Utils();
@@ -11,7 +11,7 @@ const utils = new Utils();
  *
  * @class Compile
  */
-class Compile {
+export class Compile {
   public utils: Utils;
   public $vm: any;
   public $el: Element;
@@ -233,5 +233,3 @@ class Compile {
     return node.nodeType === 3;
   }
 }
-
-export default Compile;

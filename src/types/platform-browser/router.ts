@@ -1,10 +1,14 @@
+export type TChildModule = () => Promise<any>;
+
+export type TLoadChild = {
+    name: string;
+    child: TChildModule;
+};
+
 export type TRouter = {
     path: string;
     redirectTo?: string;
     component?: string;
     children?: TRouter[];
-    loadChild?: {
-        name: string;
-        childModule: () => Promise<any>;
-    };
+    loadChild?: TLoadChild | TChildModule;
 };

@@ -5,7 +5,7 @@ import Cookie from 'easier-cookie';
  *
  * @class Utils
  */
-class Utils {
+export class Utils {
   /**
    * Creates an instance of Utils.
    * @memberof Utils
@@ -219,5 +219,3 @@ class Utils {
     return typeof window !== 'undefined' && typeof window.document !== 'undefined';
   }
 }
-
-export default Utils;

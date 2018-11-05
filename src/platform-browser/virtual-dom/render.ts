@@ -15,7 +15,7 @@ import { TAttributes, IPatchList } from '../../types';
  * 
  * @param [] patchList
  */
-export default function renderVnode(patchList: IPatchList[]): void {
+export function renderVnode(patchList: IPatchList[]): void {
   patchList.sort((a, b) => {
     if (a.type === b.type && a.newIndex && b.newIndex) return a.newIndex - b.newIndex;
     return a.type - b.type;

@@ -79,7 +79,7 @@ function bindAttributes(node: DocumentFragment | Element): TAttributes[] {
  * @param {(DocumentFragment | Element)} node
  * @returns {IVnode}
  */
-export default function parseToVnode(node: DocumentFragment | Element): IVnode {
+export function parseToVnode(node: DocumentFragment | Element): IVnode {
   const childNodes: IVnode[] = [];
   if (node.childNodes) {
     Array.from(node.childNodes).forEach((child: Element) => {

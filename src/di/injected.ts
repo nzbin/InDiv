@@ -5,7 +5,7 @@
  * @export
  * @param {Function} _constructor
  */
-export default function Injected(_constructor: Function): void {
+export function Injected(_constructor: Function): void {
   // through Reflect to get params types
   const paramsTypes: Function[] = Reflect.getMetadata('design:paramtypes', _constructor);
   if (paramsTypes && paramsTypes.length) {

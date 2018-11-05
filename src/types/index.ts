@@ -4,6 +4,6 @@ export { ComponentList, IComponent, SetState } from './component';
 export { IMiddleware, EsRouteObject, IInDiv } from './indiv';
 export { INvModule, TInjectTokenProvider, TUseClassProvider, TuseValueProvider } from './nv-module';
 export { IKeyWatcher } from './key-watcher';
-export { TRouter } from './platform-browser/router';
+export { TRouter, TChildModule, TLoadChild } from './platform-browser/router';
 export { IVnode, TAttributes, IPatchList } from './platform-browser/virtual-dom';
 export { TFnWatcher, TFnRender, IWatcher } from './watcher';

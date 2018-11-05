@@ -1,6 +1,6 @@
 import { TFnWatcher, TFnRender } from '../types';
 
-import Utils from '../utils';
+import { Utils } from '../utils';
 
 const utils = new Utils();
 
@@ -9,7 +9,7 @@ const utils = new Utils();
  *
  * @class Watcher
  */
-class Watcher {
+export class Watcher {
   public data: any;
   public watcher: TFnWatcher;
   public render: TFnRender;
@@ -65,5 +65,3 @@ class Watcher {
     }
   }
 }
-
-export default Watcher;

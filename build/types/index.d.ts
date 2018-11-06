@@ -7,3 +7,4 @@ export { IKeyWatcher } from './key-watcher';
 export { TRouter, TChildModule, TLoadChild } from './platform-browser/router';
 export { IVnode, TAttributes, IPatchList } from './platform-browser/virtual-dom';
 export { TFnWatcher, TFnRender, IWatcher } from './watcher';
+export { HttpClientRequestConfig, HttpClientResponse, HttpClientRequestInstance } from './http-client';

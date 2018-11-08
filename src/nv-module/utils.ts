@@ -24,54 +24,6 @@ function buildProviderList(moduleInstance: INvModule): void {
 }
 
 /**
- * build provider list for services in module
- * 
- * set Map $providerList in services
- * 
- * @param {INvModule} moduleInstance
- * @returns {void}
- */
-function buildProviders4Services(moduleInstance: INvModule): void {
-  if (!moduleInstance.$providers) return;
-  const length = moduleInstance.$providers.length;
-  for (let i = 0; i < length; i++) {
-    const service: any = moduleInstance.$providers[i];
-
-    if ((service as TInjectTokenProvider).provide) {
-      if ((service as TUseClassProvider).useClass) {
-        if (!((service as TUseClassProvider).useClass as any)._injectedProviders) ((service as TUseClassProvider).useClass as any)._injectedProviders = new Map();
-        moduleInstance.$providerList.forEach((value, key) => {
-          if (!((service as TUseClassProvider).useClass as any)._injectedProviders.has(key)) ((service as TUseClassProvider).useClass as any)._injectedProviders.set(key, value);
-        });
-      }
-    } else {
-      if (!service._injectedProviders) service._injectedProviders = new Map();
-      moduleInstance.$providerList.set(service as Function, service as Function);
-    }
-  }
-}
-
-/**
- * build provider list for component in module
- * 
- * set Map _injectedProviders in component
- *
- * @param {INvModule} moduleInstance
- * @returns {void}
- */
-function buildProviders4Components(moduleInstance: INvModule): void {
-  if (!moduleInstance.$providers || !moduleInstance.$components) return;
-  const length = moduleInstance.$components.length;
-  for (let i = 0; i < length; i++) {
-    const FindComponent: any = moduleInstance.$components[i];
-    if (!FindComponent._injectedProviders) FindComponent._injectedProviders = new Map();
-    moduleInstance.$providerList.forEach((value, key) => {
-      if (!FindComponent._injectedProviders.has(key)) FindComponent._injectedProviders.set(key, value);
-    });
-  }
-}
-
-/**
  * build provider list for component in module
  * 
  * set Map _injectedComponents in component
@@ -103,10 +55,17 @@ function buildImports(moduleInstance: INvModule): void {
   for (let i = 0; i < length; i++) {
     const ModuleImport = moduleInstance.$imports[i];
     const moduleImport = factoryModule(ModuleImport);
+    // build exports
     const exportsLength = moduleImport.$exportsList.length;
     for (let i = 0; i < exportsLength; i++) {
       const exportFromModule = moduleImport.$exportsList[i];
       if (!moduleInstance.$components.find((component: any) => component.$selector === (exportFromModule as any).$selector)) moduleInstance.$components.push(exportFromModule);
+    }
+    // export providerList
+    if (moduleImport.$providerList) {
+      moduleImport.$providerList.forEach((value, key) => {
+        if (!moduleInstance.$providerList.has(key)) moduleInstance.$providerList.set(key, value);
+      });
     }
   }
 }
@@ -151,9 +110,7 @@ function buildExports(moduleInstance: INvModule): void {
  */
 export function factoryModule(NM: Function): INvModule {
   buildProviderList(NM.prototype);
-  buildProviders4Services(NM.prototype);
   buildComponents4Components(NM.prototype);
-  buildProviders4Components(NM.prototype);
   buildImports(NM.prototype);
   buildExports(NM.prototype);
   return factoryCreator(NM, NM.prototype);

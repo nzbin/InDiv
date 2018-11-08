@@ -1,5 +1,4 @@
-import { TRouter, IInDiv, IComponent } from '../../types';
-import { KeyWatcher } from '../../key-watcher';
+import { TRouter, IInDiv } from '../../types';
 export { TRouter } from '../../types';
 /**
  * route for InDiv
@@ -8,19 +7,18 @@ export { TRouter } from '../../types';
  * @class Router
  */
 export declare class Router {
-    routes: TRouter[];
-    routesList: TRouter[];
-    currentUrl: string;
-    lastRoute: string;
-    rootDom: Element;
-    $rootPath: string;
-    hasRenderComponentList: IComponent[];
-    needRedirectPath: string;
-    $vm: IInDiv;
-    watcher: KeyWatcher;
-    renderRouteList: string[];
     routeChange?: (lastRoute?: string, nextRoute?: string) => void;
-    constructor();
+    private routes;
+    private routesList;
+    private currentUrl;
+    private lastRoute;
+    private $rootPath;
+    private hasRenderComponentList;
+    private needRedirectPath;
+    private $vm;
+    private watcher;
+    private renderRouteList;
+    private loadModuleMap;
     /**
      * bootstrap and init watch $esRouteParmasObject in InDiv
      *
@@ -109,13 +107,13 @@ export declare class Router {
      *
      * use InDiv renderComponent
      *
-     * if parmas has nvModule, use nvModule
-     * if parmas has'nt nvModule, use rootModule in InDiv
+     * if parmas has loadModule, use loadModule
+     * if parmas has'nt loadModule, use rootModule in InDiv
      *
      * @private
      * @param {Function} FindComponent
      * @param {Element} renderDom
-     * @param {INvModule} [nvModule]
+     * @param {INvModule} [loadModule]
      * @returns {Promise<IComponent>}
      * @memberof Router
      */
@@ -129,6 +127,20 @@ export declare class Router {
      * @memberof Router
      */
     private NvModuleFactoryLoader;
+    /**
+     * find component from loadModule or rootModule
+     *
+     * if this.loadModuleMap.size === 0, only in $rootModule
+     * if has loadModule, return component in loadModule firstly
+     *
+     *
+     * @private
+     * @param {string} selector
+     * @param {string} currentUrlPath
+     * @returns {{ component: Function, loadModule: INvModule }}
+     * @memberof Router
+     */
+    private findComponentFromModule;
 }
 /**
  * getLocation in @Component or @Directive

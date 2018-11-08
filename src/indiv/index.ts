@@ -20,10 +20,6 @@ export class InDiv {
   public $routeDOMKey: string;
   public $rootModule: INvModule;
   public $components: Function[];
-  public $esRouteObject?: EsRouteObject;
-  public $esRouteParmasObject?: {
-    [props: string]: any;
-  };
   public render: () => Promise<IComponent>;
   public reRender: () => Promise<IComponent>;
 
@@ -38,8 +34,6 @@ export class InDiv {
     this.$routeDOMKey = 'router-render';
 
     this.$rootModule = null;
-    this.$esRouteObject = null;
-    this.$esRouteParmasObject = {};
 
     // render,reRender for Component
     // developer can use function use(modal: IMiddleware<InDiv>): number to change render and reRender
@@ -133,18 +127,23 @@ export class InDiv {
 
   /**
    * expose function for render Component
+   * 
+   * if loadModule don't has use rootModule
    *
    * @param {Function} BootstrapComponent
    * @param {Element} renderDOM
-   * @param {INvModule} [nvModule=this.$rootModule]
+   * @param {INvModule} [loadModule]
    * @returns {Promise<IComponent>}
    * @memberof InDiv
    */
-  public renderComponent(BootstrapComponent: Function, renderDOM: Element, nvModule: INvModule = this.$rootModule): Promise<IComponent> {
-    const component: any = factoryCreator(BootstrapComponent, nvModule);
+  public renderComponent(BootstrapComponent: Function, renderDOM: Element, loadModule?: INvModule): Promise<IComponent> {
+    const component: any = factoryCreator(BootstrapComponent, this.$rootModule, loadModule);
 
     component.$vm = this;
-    component.$components = nvModule.$components;
+
+    // component which comes from loadModule can only extends $components from loadModule
+    if (loadModule)  component.$components = loadModule.$components;
+    else component.$components = this.$rootModule.$components;
 
     component.render = this.render.bind(component);
     component.reRender = this.reRender.bind(component);

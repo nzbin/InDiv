@@ -21,10 +21,6 @@ export interface IInDiv {
     $routeDOMKey: string;
     $rootModule: INvModule;
     $components: Function[];
-    $esRouteObject?: EsRouteObject;
-    $esRouteParmasObject?: {
-        [props: string]: any;
-    };
     render?: () => Promise<IComponent>;
     reRender?: () => Promise<IComponent>;
 
@@ -34,6 +30,6 @@ export interface IInDiv {
     bootstrapModule(Esmodule: Function): void;
     init(): void;
     renderModuleBootstrap(): void;
-    renderComponent(BootstrapComponent: Function, renderDOM: Element, nvModule: INvModule): Promise<IComponent>;
+    renderComponent(BootstrapComponent: Function, renderDOM: Element, loadModule?: INvModule): Promise<IComponent>;
     replaceDom?(component: IComponent, renderDOM: Element): Promise<IComponent>;
 }

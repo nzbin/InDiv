@@ -1,4 +1,4 @@
-import { IMiddleware, INvModule, EsRouteObject, IComponent } from '../types';
+import { IMiddleware, INvModule, IComponent } from '../types';
 /**
  * main: for new InDiv
  *
@@ -12,10 +12,6 @@ export declare class InDiv {
     $routeDOMKey: string;
     $rootModule: INvModule;
     $components: Function[];
-    $esRouteObject?: EsRouteObject;
-    $esRouteParmasObject?: {
-        [props: string]: any;
-    };
     render: () => Promise<IComponent>;
     reRender: () => Promise<IComponent>;
     constructor();
@@ -73,13 +69,15 @@ export declare class InDiv {
     /**
      * expose function for render Component
      *
+     * if loadModule don't has use rootModule
+     *
      * @param {Function} BootstrapComponent
      * @param {Element} renderDOM
-     * @param {INvModule} [nvModule=this.$rootModule]
+     * @param {INvModule} [loadModule]
      * @returns {Promise<IComponent>}
      * @memberof InDiv
      */
-    renderComponent(BootstrapComponent: Function, renderDOM: Element, nvModule?: INvModule): Promise<IComponent>;
+    renderComponent(BootstrapComponent: Function, renderDOM: Element, loadModule?: INvModule): Promise<IComponent>;
     /**
      * render adn replace DOM
      *

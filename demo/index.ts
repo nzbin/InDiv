@@ -671,7 +671,19 @@ class Container implements OnInit, AfterMount, WatchState {
     RouteChild,
   ],
   providers: [
+    // HeroSearchService2,
+    Utils,
+    NVHttp,
+    HeroSearchService,
+    {
+      provide: HeroSearchService1,
+      useClass: HeroSearchService1,
+    },
     HeroSearchService2,
+    {
+      provide: ValueType,
+      useValue: 1123,
+    },
   ],
   exports: [
     PCChild,
@@ -687,9 +699,9 @@ class SharedModule {}
   components: [
     R2,
   ],
-  providers: [
-    HeroSearchService2,
-  ],
+  // providers: [
+  //   HeroSearchService2,
+  // ],
   exports: [
     R2,
     SharedModule,
@@ -708,19 +720,20 @@ class M2 {}
     TestComponent,
     R1,
   ],
-  providers: [
-    Utils,
-    NVHttp,
-    HeroSearchService,
-    {
-      provide: HeroSearchService1,
-      useClass: HeroSearchService1,
-    },
-    {
-      provide: ValueType,
-      useValue: 1123,
-    },
-  ],
+  // providers: [
+  //   Utils,
+  //   NVHttp,
+  //   HeroSearchService,
+  //   {
+  //     provide: HeroSearchService1,
+  //     useClass: HeroSearchService1,
+  //   },
+  //   HeroSearchService2,
+  //   {
+  //     provide: ValueType,
+  //     useValue: 1123,
+  //   },
+  // ],
 })
 class M1 {
   constructor (
@@ -754,13 +767,12 @@ const routes: TRouter[] = [
               name: 'TestLoadchildModule',
               child: () => import('./loadChild'),
             },
-            // loadChild: () => import('./loadChild'),
             // redirectTo: '/R1/C1/D1',
             children: [
               {
                 path: '/D1',
-                // component: 'R2',
-                redirectTo: '/R2/2',
+                component: 'R2',
+                // redirectTo: '/R2/2',
               },
             ],
           },

@@ -1,14 +1,17 @@
-import { TRouter, IInDiv, IComponent, ComponentList, INvModule, TLoadChild, TChildModule, EsRouteObject } from '../../types';
+import { IInDiv, IComponent, INvModule, EsRouteObject, ComponentList, TLoadChild, TChildModule } from '../../types';
 
+import { NvModule } from '../../nv-module';
 import { Utils } from '../../utils';
 import { KeyWatcher } from '../../key-watcher';
 import { factoryModule } from '../../nv-module';
 
-export { TRouter } from '../../types';
+import { NvLocation } from './location';
+
+export { NvLocation } from './location';
 
 const utils = new Utils();
 
-const esRouteStatus: {
+export const esRouteStatus: {
   esRouteObject: EsRouteObject,
   esRouteParmasObject: {
     [props: string]: any;
@@ -22,87 +25,70 @@ const esRouteStatus: {
   esRouteParmasObject: {},
 };
 
-/**
- * route for InDiv
- *
- * @export
- * @class Router
- */
-export class Router {
+export type TRouter = {
+  path: string;
+  redirectTo?: string;
+  // component?: Function;
+  component?: string;
+  children?: TRouter[];
+  loadChild?: TLoadChild | TChildModule;
+};
+
+@NvModule({
+  providers: [
+    {
+      useClass: NvLocation,
+      provide: NvLocation,
+    },
+  ],
+})
+export class RouteModule {
   public routeChange?: (lastRoute?: string, nextRoute?: string) => void;
-  private routes: TRouter[] = [];
-  private routesList: TRouter[] = [];
+  public $indivInstance: IInDiv;
+  private routes: TRouter[];
+  private routesList: TRouter[];
   private currentUrl: string = '';
   private lastRoute: string = null;
   private $rootPath: string = '/';
   private hasRenderComponentList: IComponent[] = [];
   private needRedirectPath: string = null;
-  private $vm: IInDiv = null;
   private watcher: KeyWatcher = null;
   private renderRouteList: string[] = [];
   private loadModuleMap: Map<string, INvModule> = new Map();
 
-  /**
-   * bootstrap and init watch $esRouteParmasObject in InDiv
-   *
-   * @param {IInDiv} vm
-   * @returns {void}
-   * @memberof Router
-   */
-  public bootstrap(vm: IInDiv): void {
-      this.$vm = vm;
-      this.$vm.setRootPath(this.$rootPath);
-      this.$vm.$canRenderModule = false;
-      this.$vm.$routeDOMKey = 'router-render';
+  constructor() {
+    this.$indivInstance.setRootPath(this.$rootPath);
+    this.$indivInstance.$canRenderModule = false;
+    this.$indivInstance.$routeDOMKey = 'router-render';
 
-      if (!utils.isBrowser()) return;
-      window.addEventListener('load', this.refresh.bind(this), false);
-      window.addEventListener('popstate', () => {
-        let path;
-        if (this.$rootPath === '/') {
-          path = location.pathname || '/';
-        } else {
-          path = location.pathname.replace(this.$rootPath, '') === '' ? '/' : location.pathname.replace(this.$rootPath, '');
-        }
-        esRouteStatus.esRouteObject = {
-          path,
-          query: {},
-          data: null,
-        };
-        esRouteStatus.esRouteParmasObject = {};
-      }, false);
-    }
-
-  /**
-   * set rootDom
-   *
-   * @param {TRouter[]} arr
-   * @returns {void}
-   * @memberof Router
-   */
-  public init(arr: TRouter[]): void {
     if (!utils.isBrowser()) return;
+    window.addEventListener('load', this.refresh.bind(this), false);
+    window.addEventListener('popstate', () => {
+      let path;
+      if (this.$rootPath === '/') {
+        path = location.pathname || '/';
+      } else {
+        path = location.pathname.replace(this.$rootPath, '') === '' ? '/' : location.pathname.replace(this.$rootPath, '');
+      }
+      esRouteStatus.esRouteObject = {
+        path,
+        query: {},
+        data: null,
+      };
+      esRouteStatus.esRouteParmasObject = {};
+    }, false);
+  }
 
-    if (arr && arr instanceof Array) {
-      this.routes = arr;
-      this.routesList = [];
+  public static forRoot(routeData: { routes: TRouter[], rootPath?: string }): Function {
+    RouteModule.prototype.$rootPath = routeData.rootPath;
+    if (routeData.routes && routeData.routes instanceof Array) {
+      RouteModule.prototype.routes = routeData.routes;
+      RouteModule.prototype.routesList = [];
     } else {
       throw new Error(`route error: no routes exit`);
     }
-  }
-
-  /**
-   * set rootPath
-   *
-   * @param {string} rootPath
-   * @memberof Router
-   */
-  public setRootPath(rootPath: string): void {
-    if (rootPath && typeof rootPath === 'string') {
-      this.$rootPath = rootPath;
-    } else {
-      throw new Error('route error: rootPath is not defined or rootPath must be a String');
-    }
+    if (!utils.isBrowser()) return;
+    return RouteModule;
   }
 
   /**
@@ -225,6 +211,8 @@ export class Router {
         this.routesList.forEach((r, index) => { if (index !== 0) currentUrlPath += r.path; });
 
         if (needRenderRoute.component) {
+          // FindComponent = needRenderRoute.component;
+          // component = await this.instantiateComponent(FindComponent, renderDom, null);
           const findComponentFromModuleResult = this.findComponentFromModule(needRenderRoute.component, currentUrlPath);
           FindComponent = findComponentFromModuleResult.component;
           component = await this.instantiateComponent(FindComponent, renderDom, findComponentFromModuleResult.loadModule);
@@ -307,6 +295,8 @@ export class Router {
         currentUrlPath += rootRoute.path;
 
         if (rootRoute.component) {
+          // FindComponent = rootRoute.component;
+          // component = await this.instantiateComponent(FindComponent, rootDom, null);
           const findComponentFromModuleResult = this.findComponentFromModule(rootRoute.component, currentUrlPath);
           FindComponent = findComponentFromModuleResult.component;
           component = await this.instantiateComponent(FindComponent, rootDom, findComponentFromModuleResult.loadModule);
@@ -358,6 +348,8 @@ export class Router {
         currentUrlPath += route.path;
 
         if (route.component) {
+          // FindComponent = route.component;
+          // component = await this.instantiateComponent(FindComponent, renderDom, null);
           const findComponentFromModuleResult = this.findComponentFromModule(route.component, currentUrlPath);
           FindComponent = findComponentFromModuleResult.component;
           component = await this.instantiateComponent(FindComponent, renderDom, findComponentFromModuleResult.loadModule);
@@ -447,7 +439,7 @@ export class Router {
    * @memberof Router
    */
   private instantiateComponent(FindComponent: Function, renderDom: Element, loadModule: INvModule): Promise<IComponent> {
-    return this.$vm.renderComponent(FindComponent, renderDom, loadModule);
+    return this.$indivInstance.renderComponent(FindComponent, renderDom, loadModule);
   }
 
   /**
@@ -471,7 +463,7 @@ export class Router {
 
     if (!loadModule) throw new Error('load child failed, please check your routes.');
 
-    return factoryModule(loadModule, this.$vm);
+    return factoryModule(loadModule, this.$indivInstance);
   }
 
   /**
@@ -489,7 +481,7 @@ export class Router {
    */
   private findComponentFromModule(selector: string, currentUrlPath: string): { component: Function, loadModule: INvModule } {
     if (this.loadModuleMap.size === 0) return {
-      component: this.$vm.$rootModule.$components.find((component: any) => component.$selector === selector),
+      component: this.$indivInstance.$rootModule.$components.find((component: any) => component.$selector === selector),
       loadModule: null,
     };
 
@@ -502,61 +494,10 @@ export class Router {
       }
     });
     if (!component) {
-      component = this.$vm.$rootModule.$components.find((component: any) => component.$selector === selector);
+      component = this.$indivInstance.$rootModule.$components.find((component: any) => component.$selector === selector);
       loadModule = null;
     }
 
     return { component, loadModule };
   }
-}
-
-/**
- * getLocation in @Component or @Directive
- *
- * get $esRouteObject and $esRouteParmasObject in InDiv
- * 
- * @export
- * @returns {{
- *   path?: string;
- *   query?: any;
- *   params?: any;
- *   data?: any;
- * }}
- */
-export function getLocation(): {
-  path?: string;
-  query?: any;
-  params?: any;
-  data?: any;
-} {
-  if (!utils.isBrowser()) return {};
-  return {
-    path: esRouteStatus.esRouteObject.path,
-    query: esRouteStatus.esRouteObject.query,
-    params: esRouteStatus.esRouteParmasObject,
-    data: esRouteStatus.esRouteObject.data,
-  };
-}
-
-/**
- * setLocation in @Component or @Directive
- * 
- * set $esRouteObject in InDiv
- * 
- * @export
- * @param {string} path
- * @param {*} [query]
- * @param {*} [data]
- * @param {string} [title]
- * @returns {void}
- */
-export function setLocation(path: string, query?: any, data?: any, title?: string): void {
-  if (!utils.isBrowser()) return;
-  const rootPath = (this as any).$vm.$rootPath === '/' ? '' : (this as any).$vm.$rootPath;
-  history.pushState(
-    { path, query, data },
-    title,
-    `${rootPath}${path}${utils.buildQuery(query)}`,
-  );
-  esRouteStatus.esRouteObject = { path, query, data };
 }

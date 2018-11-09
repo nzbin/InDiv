@@ -1,4 +1,4 @@
-import { IMiddleware, INvModule, EsRouteObject, IComponent } from '../types';
+import { IMiddleware, INvModule, IComponent } from '../types';
 
 import { Utils } from '../utils';
 import { factoryCreator } from '../di';
@@ -96,7 +96,7 @@ export class InDiv {
   public bootstrapModule(Esmodule: Function): void {
     if (!Esmodule) throw new Error('must send a root module');
 
-    this.$rootModule = factoryModule(Esmodule);
+    this.$rootModule = factoryModule(Esmodule, this);
     this.$components = [...this.$rootModule.$components];
   }
 

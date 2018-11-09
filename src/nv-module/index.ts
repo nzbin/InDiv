@@ -1,11 +1,11 @@
-import { INvModule, TUseClassProvider, TuseValueProvider } from '../types';
+import { INvModule, TUseClassProvider, TUseValueProvider } from '../types';
 
 export { factoryModule } from './utils';
 
 type TNvModuleOptions = {
   imports?: Function[];
-  components: Function[];
-  providers?: (Function | TUseClassProvider | TuseValueProvider)[];
+  components?: Function[];
+  providers?: (Function | TUseClassProvider | TUseValueProvider)[];
   exports?: Function[];
   bootstrap?: Function;
 };

@@ -54,3 +54,7 @@ export {
   injector,
   factoryCreator,
 } from './di';
+export {
+  NvLocation,
+  RouteModule,
+} from './platform-browser/router-module';

@@ -41,10 +41,10 @@ class R2 {
 
 @Injected
 @NvModule({
-  providers: [
-    HeroSearchService,
-    HeroSearchService1,
-  ],
+  // providers: [
+  //   HeroSearchService,
+  //   HeroSearchService1,
+  // ],
   components: [
     TestLoadchildComponent,
     R2,

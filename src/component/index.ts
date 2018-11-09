@@ -1,4 +1,4 @@
-import { IComponent, TInjectTokenProvider, TUseClassProvider, TuseValueProvider } from '../types';
+import { IComponent, TInjectTokenProvider, TUseClassProvider, TUseValueProvider } from '../types';
 
 import { Watcher } from '../watcher';
 import { Utils } from '../utils';
@@ -6,7 +6,7 @@ import { Utils } from '../utils';
 type TComponentOptions = {
   selector: string;
   template: string;
-  providers?: (Function | TUseClassProvider | TuseValueProvider)[];
+  providers?: (Function | TUseClassProvider | TUseValueProvider)[];
 };
 
 const utils = new Utils();
@@ -37,7 +37,7 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
       for (let i = 0; i < length; i++) {
         const service = options.providers[i];
         if ((service as TInjectTokenProvider).provide) {
-          if ((service as TUseClassProvider).useClass || (service as TuseValueProvider).useValue) vm.$providerList.set((service as TInjectTokenProvider).provide, service);
+          if ((service as TUseClassProvider).useClass || (service as TUseValueProvider).useValue) vm.$providerList.set((service as TInjectTokenProvider).provide, service);
         } else {
           vm.$providerList.set(service as Function, service as Function);
         }

@@ -1,4 +1,4 @@
-import { TRouter, IInDiv, IComponent, ComponentList, INvModule, TLoadChild, TChildModule, EsRouteObject } from '../../types';
+import { TRouter, IInDiv, IComponent, ComponentList, INvModule, TLoadChild, TChildModule, NvRouteObject } from '../../types';
 
 import { Utils } from '../../utils';
 import { KeyWatcher } from '../../key-watcher';
@@ -8,18 +8,18 @@ export { TRouter } from '../../types';
 
 const utils = new Utils();
 
-const esRouteStatus: {
-  esRouteObject: EsRouteObject,
-  esRouteParmasObject: {
+const nvRouteStatus: {
+  nvRouteObject: NvRouteObject,
+  nvRouteParmasObject: {
     [props: string]: any;
   },
 } = {
-  esRouteObject: {
+  nvRouteObject: {
     path: null,
     query: {},
     data: null,
   },
-  esRouteParmasObject: {},
+  nvRouteParmasObject: {},
 };
 
 /**
@@ -64,12 +64,12 @@ export class Router {
         } else {
           path = location.pathname.replace(this.$rootPath, '') === '' ? '/' : location.pathname.replace(this.$rootPath, '');
         }
-        esRouteStatus.esRouteObject = {
+        nvRouteStatus.nvRouteObject = {
           path,
           query: {},
           data: null,
         };
-        esRouteStatus.esRouteParmasObject = {};
+        nvRouteStatus.nvRouteParmasObject = {};
       }, false);
     }
 
@@ -115,12 +115,12 @@ export class Router {
   private redirectTo(redirectTo: string): void {
     const rootPath = this.$rootPath === '/' ? '' : this.$rootPath;
     history.replaceState(null, null, `${rootPath}${redirectTo}`);
-    esRouteStatus.esRouteObject = {
+    nvRouteStatus.nvRouteObject = {
       path:  redirectTo || '/',
       query: {},
       data: null,
     };
-    esRouteStatus.esRouteParmasObject = {};
+    nvRouteStatus.nvRouteParmasObject = {};
   }
 
   /**
@@ -130,22 +130,22 @@ export class Router {
    * @memberof Router
    */
   private refresh(): void {
-    if (!esRouteStatus.esRouteObject || !this.watcher) {
+    if (!nvRouteStatus.nvRouteObject || !this.watcher) {
       let path;
       if (this.$rootPath === '/') {
         path = location.pathname || '/';
       } else {
         path = location.pathname.replace(this.$rootPath, '') === '' ? '/' : location.pathname.replace(this.$rootPath, '');
       }
-      esRouteStatus.esRouteObject = {
+      nvRouteStatus.nvRouteObject = {
         path,
         query: {},
         data: null,
       };
-      esRouteStatus.esRouteParmasObject = {};
-      this.watcher = new KeyWatcher(esRouteStatus, 'esRouteObject', this.refresh.bind(this));
+      nvRouteStatus.nvRouteParmasObject = {};
+      this.watcher = new KeyWatcher(nvRouteStatus, 'esRouteObject', this.refresh.bind(this));
     }
-    this.currentUrl = esRouteStatus.esRouteObject.path || '/';
+    this.currentUrl = nvRouteStatus.nvRouteObject.path || '/';
     this.routesList = [];
     this.renderRouteList = this.currentUrl === '/' ? ['/'] : this.currentUrl.split('/');
     this.renderRouteList[0] = '/';
@@ -162,7 +162,7 @@ export class Router {
   private async distributeRoutes(): Promise<any> {
     if (this.lastRoute && this.lastRoute !== this.currentUrl) {
       // has rendered
-      esRouteStatus.esRouteParmasObject = {};
+      nvRouteStatus.nvRouteParmasObject = {};
       await this.insertRenderRoutes();
     } else {
       // first render
@@ -213,7 +213,7 @@ export class Router {
 
         if (/^\/\:.+/.test(needRenderRoute.path) && !needRenderRoute.redirectTo) {
           const key = needRenderRoute.path.split('/:')[1];
-          esRouteStatus.esRouteParmasObject[key] = path;
+          nvRouteStatus.nvRouteParmasObject[key] = path;
         }
 
         let FindComponent = null;
@@ -260,7 +260,7 @@ export class Router {
         const needRenderRoute = this.routesList[index];
         if (/^\/\:.+/.test(needRenderRoute.path) && !needRenderRoute.redirectTo) {
           const key = needRenderRoute.path.split('/:')[1];
-          esRouteStatus.esRouteParmasObject[key] = path;
+          nvRouteStatus.nvRouteParmasObject[key] = path;
         }
       }
 
@@ -323,7 +323,7 @@ export class Router {
 
         if (/^\/\:.+/.test(rootRoute.path)) {
           const key = rootRoute.path.split('/:')[1];
-          esRouteStatus.esRouteParmasObject[key] = path;
+          nvRouteStatus.nvRouteParmasObject[key] = path;
         }
 
         if (!utils.isBrowser()) return;
@@ -373,7 +373,7 @@ export class Router {
 
         if (/^\/\:.+/.test(route.path)) {
           const key = route.path.split('/:')[1];
-          esRouteStatus.esRouteParmasObject[key] = path;
+          nvRouteStatus.nvRouteParmasObject[key] = path;
         }
         this.routesList.push(route);
 
@@ -531,10 +531,10 @@ export function getLocation(): {
 } {
   if (!utils.isBrowser()) return {};
   return {
-    path: esRouteStatus.esRouteObject.path,
-    query: esRouteStatus.esRouteObject.query,
-    params: esRouteStatus.esRouteParmasObject,
-    data: esRouteStatus.esRouteObject.data,
+    path: nvRouteStatus.nvRouteObject.path,
+    query: nvRouteStatus.nvRouteObject.query,
+    params: nvRouteStatus.nvRouteParmasObject,
+    data: nvRouteStatus.nvRouteObject.data,
   };
 }
 
@@ -558,5 +558,5 @@ export function setLocation(path: string, query?: any, data?: any, title?: strin
     title,
     `${rootPath}${path}${utils.buildQuery(query)}`,
   );
-  esRouteStatus.esRouteObject = { path, query, data };
+  nvRouteStatus.nvRouteObject = { path, query, data };
 }

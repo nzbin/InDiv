@@ -1,4 +1,4 @@
-import { NvModule, Component, Injected, setLocation, SetLocation } from '../src';
+import { NvModule, Component, Injected, setLocation, SetLocation, NvLocation } from '../src';
 import { HeroSearchService, HeroSearchService1 } from './index';
 
 @Injected
@@ -12,16 +12,18 @@ import { HeroSearchService, HeroSearchService1 } from './index';
   `,
 })
 class TestLoadchildComponent {
-  private setLocation: SetLocation;
+  // private setLocation: SetLocation;
   constructor(
     private sss: HeroSearchService,
+    private location: NvLocation,
   ) {
     console.log(99999, 'from TestLoadchildModule');
     this.sss.test();
-    this.setLocation = setLocation;
+    // this.setLocation = setLocation;
   }
   public jump() {
-    this.setLocation('/R1/C1/D1');
+    // this.setLocation('/R1/C1/D1');
+    this.location.setLocation('/R1/C1/D1');
   }
 }
 

@@ -1,4 +1,4 @@
-import { IInDiv, IComponent, INvModule, EsRouteObject, ComponentList, TLoadChild, TChildModule } from '../../types';
+import { IInDiv, IComponent, INvModule, NvRouteObject, ComponentList, TLoadChild, TChildModule } from '../../types';
 
 import { NvModule } from '../../nv-module';
 import { Utils } from '../../utils';
@@ -11,24 +11,25 @@ export { NvLocation } from './location';
 
 const utils = new Utils();
 
-export const esRouteStatus: {
-  esRouteObject: EsRouteObject,
-  esRouteParmasObject: {
+export const nvRouteStatus: {
+  nvRouteObject: NvRouteObject,
+  nvRouteParmasObject: {
     [props: string]: any;
   },
+  nvRootPath: string,
 } = {
-  esRouteObject: {
+  nvRouteObject: {
     path: null,
     query: {},
     data: null,
   },
-  esRouteParmasObject: {},
+  nvRouteParmasObject: {},
+  nvRootPath: '/',
 };
 
 export type TRouter = {
   path: string;
   redirectTo?: string;
-  // component?: Function;
   component?: string;
   children?: TRouter[];
   loadChild?: TLoadChild | TChildModule;
@@ -46,10 +47,10 @@ export class RouteModule {
   public routeChange?: (lastRoute?: string, nextRoute?: string) => void;
   public $indivInstance: IInDiv;
   private routes: TRouter[];
-  private routesList: TRouter[];
+  private $rootPath: string;
+  private routesList: TRouter[] = [];
   private currentUrl: string = '';
   private lastRoute: string = null;
-  private $rootPath: string = '/';
   private hasRenderComponentList: IComponent[] = [];
   private needRedirectPath: string = null;
   private watcher: KeyWatcher = null;
@@ -57,6 +58,8 @@ export class RouteModule {
   private loadModuleMap: Map<string, INvModule> = new Map();
 
   constructor() {
+    if (!this.routes) this.routes = [];
+    if (!this.$rootPath) this.$rootPath = '/';
     this.$indivInstance.setRootPath(this.$rootPath);
     this.$indivInstance.$canRenderModule = false;
     this.$indivInstance.$routeDOMKey = 'router-render';
@@ -70,20 +73,35 @@ export class RouteModule {
       } else {
         path = location.pathname.replace(this.$rootPath, '') === '' ? '/' : location.pathname.replace(this.$rootPath, '');
       }
-      esRouteStatus.esRouteObject = {
+      nvRouteStatus.nvRouteObject = {
         path,
         query: {},
         data: null,
       };
-      esRouteStatus.esRouteParmasObject = {};
+      nvRouteStatus.nvRouteParmasObject = {};
     }, false);
   }
-
-  public static forRoot(routeData: { routes: TRouter[], rootPath?: string }): Function {
-    RouteModule.prototype.$rootPath = routeData.rootPath;
+  /**
+   * init root data
+   *
+   * @static
+   * @param {{
+   *     routes: TRouter[],
+   *     rootPath?: string,
+   *     routeChange?: (lastRoute?: string, nextRoute?: string) => void,
+   *   }} routeData
+   * @returns {Function}
+   * @memberof RouteModule
+   */
+  public static forRoot(routeData: {
+    routes: TRouter[],
+    rootPath?: string,
+    routeChange?: (lastRoute?: string, nextRoute?: string) => void,
+  }): Function {
+    if (routeData.rootPath) RouteModule.prototype.$rootPath = routeData.rootPath;
+    if (routeData.routeChange) RouteModule.prototype.routeChange = routeData.routeChange;
     if (routeData.routes && routeData.routes instanceof Array) {
       RouteModule.prototype.routes = routeData.routes;
-      RouteModule.prototype.routesList = [];
     } else {
       throw new Error(`route error: no routes exit`);
     }
@@ -101,37 +119,37 @@ export class RouteModule {
   private redirectTo(redirectTo: string): void {
     const rootPath = this.$rootPath === '/' ? '' : this.$rootPath;
     history.replaceState(null, null, `${rootPath}${redirectTo}`);
-    esRouteStatus.esRouteObject = {
+    nvRouteStatus.nvRouteObject = {
       path:  redirectTo || '/',
       query: {},
       data: null,
     };
-    esRouteStatus.esRouteParmasObject = {};
+    nvRouteStatus.nvRouteParmasObject = {};
   }
 
   /**
-   * refresh if not watch $esRouteObject
+   * refresh if not watch $nvRouteObject
    *
    * @private
    * @memberof Router
    */
   private refresh(): void {
-    if (!esRouteStatus.esRouteObject || !this.watcher) {
+    if (!nvRouteStatus.nvRouteObject || !this.watcher) {
       let path;
       if (this.$rootPath === '/') {
         path = location.pathname || '/';
       } else {
         path = location.pathname.replace(this.$rootPath, '') === '' ? '/' : location.pathname.replace(this.$rootPath, '');
       }
-      esRouteStatus.esRouteObject = {
+      nvRouteStatus.nvRouteObject = {
         path,
         query: {},
         data: null,
       };
-      esRouteStatus.esRouteParmasObject = {};
-      this.watcher = new KeyWatcher(esRouteStatus, 'esRouteObject', this.refresh.bind(this));
+      nvRouteStatus.nvRouteParmasObject = {};
+      this.watcher = new KeyWatcher(nvRouteStatus, 'nvRouteObject', this.refresh.bind(this));
     }
-    this.currentUrl = esRouteStatus.esRouteObject.path || '/';
+    this.currentUrl = nvRouteStatus.nvRouteObject.path || '/';
     this.routesList = [];
     this.renderRouteList = this.currentUrl === '/' ? ['/'] : this.currentUrl.split('/');
     this.renderRouteList[0] = '/';
@@ -148,7 +166,7 @@ export class RouteModule {
   private async distributeRoutes(): Promise<any> {
     if (this.lastRoute && this.lastRoute !== this.currentUrl) {
       // has rendered
-      esRouteStatus.esRouteParmasObject = {};
+      nvRouteStatus.nvRouteParmasObject = {};
       await this.insertRenderRoutes();
     } else {
       // first render
@@ -199,7 +217,7 @@ export class RouteModule {
 
         if (/^\/\:.+/.test(needRenderRoute.path) && !needRenderRoute.redirectTo) {
           const key = needRenderRoute.path.split('/:')[1];
-          esRouteStatus.esRouteParmasObject[key] = path;
+          nvRouteStatus.nvRouteParmasObject[key] = path;
         }
 
         let FindComponent = null;
@@ -211,8 +229,6 @@ export class RouteModule {
         this.routesList.forEach((r, index) => { if (index !== 0) currentUrlPath += r.path; });
 
         if (needRenderRoute.component) {
-          // FindComponent = needRenderRoute.component;
-          // component = await this.instantiateComponent(FindComponent, renderDom, null);
           const findComponentFromModuleResult = this.findComponentFromModule(needRenderRoute.component, currentUrlPath);
           FindComponent = findComponentFromModuleResult.component;
           component = await this.instantiateComponent(FindComponent, renderDom, findComponentFromModuleResult.loadModule);
@@ -243,12 +259,12 @@ export class RouteModule {
         }
       }
 
-      // add parmas in $esRouteParmasObject
+      // add parmas in $nvRouteParmasObject
       if (path === lastRouteList[index]) {
         const needRenderRoute = this.routesList[index];
         if (/^\/\:.+/.test(needRenderRoute.path) && !needRenderRoute.redirectTo) {
           const key = needRenderRoute.path.split('/:')[1];
-          esRouteStatus.esRouteParmasObject[key] = path;
+          nvRouteStatus.nvRouteParmasObject[key] = path;
         }
       }
 
@@ -295,8 +311,6 @@ export class RouteModule {
         currentUrlPath += rootRoute.path;
 
         if (rootRoute.component) {
-          // FindComponent = rootRoute.component;
-          // component = await this.instantiateComponent(FindComponent, rootDom, null);
           const findComponentFromModuleResult = this.findComponentFromModule(rootRoute.component, currentUrlPath);
           FindComponent = findComponentFromModuleResult.component;
           component = await this.instantiateComponent(FindComponent, rootDom, findComponentFromModuleResult.loadModule);
@@ -313,7 +327,7 @@ export class RouteModule {
 
         if (/^\/\:.+/.test(rootRoute.path)) {
           const key = rootRoute.path.split('/:')[1];
-          esRouteStatus.esRouteParmasObject[key] = path;
+          nvRouteStatus.nvRouteParmasObject[key] = path;
         }
 
         if (!utils.isBrowser()) return;
@@ -348,8 +362,6 @@ export class RouteModule {
         currentUrlPath += route.path;
 
         if (route.component) {
-          // FindComponent = route.component;
-          // component = await this.instantiateComponent(FindComponent, renderDom, null);
           const findComponentFromModuleResult = this.findComponentFromModule(route.component, currentUrlPath);
           FindComponent = findComponentFromModuleResult.component;
           component = await this.instantiateComponent(FindComponent, renderDom, findComponentFromModuleResult.loadModule);
@@ -365,7 +377,7 @@ export class RouteModule {
 
         if (/^\/\:.+/.test(route.path)) {
           const key = route.path.split('/:')[1];
-          esRouteStatus.esRouteParmasObject[key] = path;
+          nvRouteStatus.nvRouteParmasObject[key] = path;
         }
         this.routesList.push(route);
 

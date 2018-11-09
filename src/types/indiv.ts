@@ -5,7 +5,7 @@ export interface IMiddleware<ES> {
     bootstrap(vm: ES): void;
 }
 
-export type EsRouteObject = {
+export type NvRouteObject = {
     path: string;
     query?: {
         [props: string]: any;

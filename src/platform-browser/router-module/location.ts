@@ -1,7 +1,7 @@
 import { Injectable } from '../../di/injectable';
 import { Utils } from '../../utils';
 
-import { esRouteStatus } from './index';
+import { nvRouteStatus } from './index';
 
 const utils = new Utils();
 
@@ -10,7 +10,7 @@ export class NvLocation {
   /**
    * getLocation in @Component or @Directive
    *
-   * get $esRouteObject and $esRouteParmasObject in InDiv
+   * get nvRouteObject and nvRouteParmasObject in InDiv
    * 
    * @export
    * @returns {{
@@ -28,17 +28,17 @@ export class NvLocation {
   } {
     if (!utils.isBrowser()) return {};
     return {
-      path: esRouteStatus.esRouteObject.path,
-      query: esRouteStatus.esRouteObject.query,
-      params: esRouteStatus.esRouteParmasObject,
-      data: esRouteStatus.esRouteObject.data,
+      path: nvRouteStatus.nvRouteObject.path,
+      query: nvRouteStatus.nvRouteObject.query,
+      params: nvRouteStatus.nvRouteParmasObject,
+      data: nvRouteStatus.nvRouteObject.data,
     };
   }
 
   /**
    * setLocation in @Component or @Directive
    * 
-   * set $esRouteObject in InDiv
+   * set nvRouteObject in InDiv
    * 
    * @export
    * @param {string} path
@@ -49,12 +49,12 @@ export class NvLocation {
    */
   public setLocation(path: string, query?: any, data?: any, title?: string): void {
     if (!utils.isBrowser()) return;
-    const rootPath = (this as any).$vm.$rootPath === '/' ? '' : (this as any).$vm.$rootPath;
+    const rootPath = nvRouteStatus.nvRootPath === '/' ? '' : nvRouteStatus.nvRootPath;
     history.pushState(
       { path, query, data },
       title,
       `${rootPath}${path}${utils.buildQuery(query)}`,
     );
-    esRouteStatus.esRouteObject = { path, query, data };
+    nvRouteStatus.nvRouteObject = { path, query, data };
   }
 } 

@@ -4,6 +4,8 @@ import { NvModule } from '../../nv-module';
 import { Utils } from '../../utils';
 import { KeyWatcher } from '../../key-watcher';
 import { factoryModule } from '../../nv-module';
+import { InDiv } from '../../indiv';
+import { Injected } from '../../di/injected';
 
 import { NvLocation } from './location';
 
@@ -35,6 +37,7 @@ export type TRouter = {
   loadChild?: TLoadChild | TChildModule;
 };
 
+@Injected
 @NvModule({
   providers: [
     {
@@ -45,7 +48,7 @@ export type TRouter = {
 })
 export class RouteModule {
   public routeChange?: (lastRoute?: string, nextRoute?: string) => void;
-  public $indivInstance: IInDiv;
+  // public indivInstance: IInDiv
   private routes: TRouter[];
   private $rootPath: string;
   private routesList: TRouter[] = [];
@@ -57,12 +60,14 @@ export class RouteModule {
   private renderRouteList: string[] = [];
   private loadModuleMap: Map<string, INvModule> = new Map();
 
-  constructor() {
+  constructor(
+    private indivInstance: InDiv,
+  ) {
     if (!this.routes) this.routes = [];
     if (!this.$rootPath) this.$rootPath = '/';
-    this.$indivInstance.setRootPath(this.$rootPath);
-    this.$indivInstance.$canRenderModule = false;
-    this.$indivInstance.$routeDOMKey = 'router-render';
+    this.indivInstance.setRootPath(this.$rootPath);
+    this.indivInstance.setCanRenderModule(false);
+    this.indivInstance.setRouteDOMKey('router-render');
 
     if (!utils.isBrowser()) return;
     window.addEventListener('load', this.refresh.bind(this), false);
@@ -451,7 +456,7 @@ export class RouteModule {
    * @memberof Router
    */
   private instantiateComponent(FindComponent: Function, renderDom: Element, loadModule: INvModule): Promise<IComponent> {
-    return this.$indivInstance.renderComponent(FindComponent, renderDom, loadModule);
+    return this.indivInstance.renderComponent(FindComponent, renderDom, loadModule);
   }
 
   /**
@@ -475,7 +480,7 @@ export class RouteModule {
 
     if (!loadModule) throw new Error('load child failed, please check your routes.');
 
-    return factoryModule(loadModule, this.$indivInstance);
+    return factoryModule(loadModule, this.indivInstance);
   }
 
   /**
@@ -493,7 +498,7 @@ export class RouteModule {
    */
   private findComponentFromModule(selector: string, currentUrlPath: string): { component: Function, loadModule: INvModule } {
     if (this.loadModuleMap.size === 0) return {
-      component: this.$indivInstance.$rootModule.$components.find((component: any) => component.$selector === selector),
+      component: this.indivInstance.getComponents().find((component: any) => component.$selector === selector),
       loadModule: null,
     };
 
@@ -506,7 +511,7 @@ export class RouteModule {
       }
     });
     if (!component) {
-      component = this.$indivInstance.$rootModule.$components.find((component: any) => component.$selector === selector);
+      component = this.indivInstance.getComponents().find((component: any) => component.$selector === selector);
       loadModule = null;
     }
 

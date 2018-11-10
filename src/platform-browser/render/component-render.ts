@@ -67,7 +67,7 @@ export function mountComponent<State = any, Props = any, Vm = any>(dom: Element,
  */
 export function componentsConstructor<State = any, Props = any, Vm = any>(dom: Element, vm: IComponent<State, Props, Vm>): void {
   vm.$componentList = [];
-  const routerRenderDom = dom.querySelectorAll(vm.$vm.$routeDOMKey)[0];
+  const routerRenderDom = dom.querySelectorAll(vm.$vm.getRouteDOMKey())[0];
   (vm.constructor as any)._injectedComponents.forEach((value: Function, key: string) => {
     if (!vm.$components.find((component: any) => component.$selector === key)) vm.$components.push(value);
   });

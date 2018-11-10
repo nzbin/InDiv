@@ -1,5 +1,3 @@
-import 'reflect-metadata';
-
 export {
   Utils,
 } from './utils';

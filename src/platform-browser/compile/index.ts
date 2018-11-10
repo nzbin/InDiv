@@ -61,7 +61,7 @@ export class Compile {
       return false;
     }
     // 如果为路由渲染层，则停止对比内部元素，交由router diff
-    if (oldVnode.tagName === newVnode.tagName && newVnode.tagName === (this.$vm.$vm.$routeDOMKey as string).toLocaleUpperCase()) return false;
+    if (oldVnode.tagName === newVnode.tagName && newVnode.tagName === (this.$vm.$vm.getRouteDOMKey() as string).toLocaleUpperCase()) return false;
     return true;
   }
 

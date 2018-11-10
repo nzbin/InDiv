@@ -748,8 +748,8 @@ const routes: TRouter[] = [
             children: [
               {
                 path: '/D1',
-                component: 'R2',
-                // redirectTo: '/R2/2',
+                // component: 'R2',
+                redirectTo: '/R2/2',
               },
             ],
           },

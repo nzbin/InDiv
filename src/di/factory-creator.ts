@@ -1,5 +1,7 @@
 import { IComponent } from '../types';
 
+import { InDiv } from '../indiv';
+
 /**
  * injector: build arguments for factoryCreator
  * 
@@ -24,6 +26,9 @@ export function injector(_constructor: Function, rootModule: any, loadModule?: a
     // for ts Dependency Injection
     if ((_constructor as any)._needInjectedClass) {
         (_constructor as any)._needInjectedClass.forEach((key: Function) => {
+            // inject InDiv instance fro NvModule
+            if (key === InDiv && rootModule.$indivInstance) return args.push(rootModule.$indivInstance);
+
             // component injector: find service Class in providerList in Component
             if ((_constructor.prototype as IComponent).$providerList) {
                 const _componentService = (_constructor.prototype as IComponent).$providerList.get(key);
@@ -71,6 +76,9 @@ export function injector(_constructor: Function, rootModule: any, loadModule?: a
     // for js Dependency Injection
     if ((_constructor as any).injectTokens) {
         (_constructor as any).injectTokens.forEach((key: string) => {
+            // inject InDiv instance fro NvModule
+            if (key === 'InDivInstance' && rootModule.$indivInstance) return args.push(rootModule.$indivInstance);
+
             // component injector: find service Class in providerList in Component
             if ((_constructor.prototype as IComponent).$providerList) {
                 const _componentService = (_constructor.prototype as IComponent).$providerList.get(key);

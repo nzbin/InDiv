@@ -52,8 +52,8 @@ export class Router {
   public bootstrap(vm: IInDiv): void {
       this.$vm = vm;
       this.$vm.setRootPath(this.$rootPath);
-      this.$vm.$canRenderModule = false;
-      this.$vm.$routeDOMKey = 'router-render';
+      this.$vm.setCanRenderModule(false);
+      this.$vm.setRouteDOMKey('router-render');
 
       if (!utils.isBrowser()) return;
       window.addEventListener('load', this.refresh.bind(this), false);
@@ -489,7 +489,7 @@ export class Router {
    */
   private findComponentFromModule(selector: string, currentUrlPath: string): { component: Function, loadModule: INvModule } {
     if (this.loadModuleMap.size === 0) return {
-      component: this.$vm.$rootModule.$components.find((component: any) => component.$selector === selector),
+      component: this.$vm.getComponents().find((component: any) => component.$selector === selector),
       loadModule: null,
     };
 
@@ -502,7 +502,7 @@ export class Router {
       }
     });
     if (!component) {
-      component = this.$vm.$rootModule.$components.find((component: any) => component.$selector === selector);
+      component = this.$vm.getComponents().find((component: any) => component.$selector === selector);
       loadModule = null;
     }
 

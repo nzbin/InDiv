@@ -13,15 +13,15 @@ const utils = new Utils();
  * @class InDiv
  */
 export class InDiv {
-  public modalList: IMiddleware<InDiv>[];
-  public rootDom: Element;
-  public $rootPath: string;
-  public $canRenderModule: boolean;
-  public $routeDOMKey: string;
-  public $rootModule: INvModule;
-  public $components: Function[];
-  public render: () => Promise<IComponent>;
-  public reRender: () => Promise<IComponent>;
+  private modalList: IMiddleware<InDiv>[];
+  private rootDom: Element;
+  private $rootPath: string;
+  private $canRenderModule: boolean;
+  private $routeDOMKey: string;
+  private $rootModule: INvModule;
+  private $components: Function[];
+  private render: () => Promise<IComponent>;
+  private reRender: () => Promise<IComponent>;
 
   constructor() {
     this.modalList = [];
@@ -51,7 +51,7 @@ export class InDiv {
   public use(modal: IMiddleware<InDiv>): number {
     modal.bootstrap(this);
     this.modalList.push(modal);
-    return this.modalList.findIndex(md => utils.isEqual(md, modal));
+    return this.modalList.length - 1;
   }
 
   /**
@@ -69,9 +69,19 @@ export class InDiv {
       throw new Error('rootPath is not defined or rootPath must be a String');
     }
   }
+
+  /**
+   * get RootPath for InDiv
+   *
+   * @returns {string}
+   * @memberof InDiv
+   */
+  public getRootPath(): string {
+    return this.$rootPath;
+  }
   
 /**
- * for Middleware set component Render function 
+ * set component Render function 
  *
  * @template R
  * @template Re
@@ -79,9 +89,82 @@ export class InDiv {
  * @param {Re} [reRender]
  * @memberof InDiv
  */
-  public setComponentRender<S = any, P = any, V = any>(render?: () => Promise<IComponent<S, P, V>>, reRender?: () => Promise<IComponent<S, P, V>>): void {
+  public setComponentRender<S = any, P = any, V = any>(render: () => Promise<IComponent<S, P, V>>, reRender?: () => Promise<IComponent<S, P, V>>): void {
     this.render = render;
-    this.reRender = reRender;
+    this.reRender = reRender ? reRender : render;
+  }
+
+  /**
+   * get component Render function 
+   *
+   * @returns {{ render: () => Promise<IComponent>, reRender: () => Promise<IComponent> }}
+   * @memberof InDiv
+   */
+  public getComponentRender(): { render: () => Promise<IComponent>, reRender: () => Promise<IComponent> } {
+    return {
+      render: this.render,
+      reRender: this.reRender,
+    };
+  }
+
+  /**
+   * set InDiv can render module's bootstrap
+   *
+   * @param {boolean} canRenderModule
+   * @memberof InDiv
+   */
+  public setCanRenderModule(canRenderModule: boolean): void {
+    this.$canRenderModule = canRenderModule;
+  }
+
+  /**
+   * get InDiv can render module's bootstrap
+   *
+   * @returns {boolean}
+   * @memberof InDiv
+   */
+  public getCanRenderModule(): boolean {
+    return this.$canRenderModule;
+  }
+
+  /**
+   * set route's DOM tag name
+   *
+   * @param {string} routeDOMKey
+   * @memberof InDiv
+   */
+  public setRouteDOMKey(routeDOMKey: string): void {
+    this.$routeDOMKey = routeDOMKey;
+  }
+  
+  /**
+   * get route's DOM tag name
+   *
+   * @returns {string}
+   * @memberof InDiv
+   */
+  public getRouteDOMKey(): string {
+    return this.$routeDOMKey;
+  }
+
+  /**
+   * get root module in InDiv
+   *
+   * @returns {INvModule}
+   * @memberof InDiv
+   */
+  public getRootModule(): INvModule {
+    return this.$rootModule;
+  }
+
+  /**
+   * get root module in root module
+   *
+   * @returns {Function[]}
+   * @memberof InDiv
+   */
+  public getComponents(): Function[] {
+    return this.$components;
   }
 
   /**
@@ -174,7 +257,7 @@ export class InDiv {
    * @returns {Promise<IComponent>}
    * @memberof InDiv
    */
-  public replaceDom(component: IComponent, renderDOM: Element): Promise<IComponent> {
+  private replaceDom(component: IComponent, renderDOM: Element): Promise<IComponent> {
     component.renderDom = renderDOM;
     return component.render();
   }

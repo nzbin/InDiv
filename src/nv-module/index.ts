@@ -1,5 +1,7 @@
 import { INvModule, TUseClassProvider, TUseValueProvider } from '../types';
 
+import { injected } from '../di/injected';
+
 export { factoryModule } from './utils';
 
 type TNvModuleOptions = {
@@ -21,6 +23,7 @@ type TNvModuleOptions = {
  */
 export function NvModule(options: TNvModuleOptions): (_constructor: Function) => void {
   return function (_constructor: Function): void {
+    injected(_constructor);
     (_constructor as any).nvType = 'nvModule';
     const vm = _constructor.prototype as INvModule;
     vm.$providerList = new Map();

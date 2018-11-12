@@ -11,8 +11,6 @@ export {
   RouteChange,
   ReceiveProps,
   SetState,
-  SetLocation,
-  GetLocation,
 } from './lifecycle';
 export {
   Watcher,
@@ -24,10 +22,9 @@ export {
   Compile,
   CompileUtil,
   CompileUtilForRepeat,
-  Router,
   TRouter,
-  setLocation,
-  getLocation,
+  RouteModule,
+  NvLocation,
 } from './platform-browser';
 export {
   Component,
@@ -48,11 +45,6 @@ export {
 } from './http-client';
 export {
   Injectable,
-  Injected,
   injector,
   factoryCreator,
 } from './di';
-export {
-  NvLocation,
-  RouteModule,
-} from './platform-browser/router-module';

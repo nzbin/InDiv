@@ -1,8 +1,8 @@
-import { TUseClassProvider, TuseValueProvider } from '../types';
+import { TUseClassProvider, TUseValueProvider } from '../types';
 declare type TComponentOptions = {
     selector: string;
     template: string;
-    providers?: (Function | TUseClassProvider | TuseValueProvider)[];
+    providers?: (Function | TUseClassProvider | TUseValueProvider)[];
 };
 /**
  * Decorator @Component

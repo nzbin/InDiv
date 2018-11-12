@@ -1,4 +1,4 @@
-import { INvModule } from '../types';
+import { IInDiv, INvModule } from '../types';
 /**
  * create an NvModule instance with factory method
  *
@@ -9,4 +9,4 @@ import { INvModule } from '../types';
  * @param {Function} NM
  * @returns {INvModule}
  */
-export declare function factoryModule(NM: Function): INvModule;
+export declare function factoryModule(NM: Function, indivInstance?: IInDiv): INvModule;

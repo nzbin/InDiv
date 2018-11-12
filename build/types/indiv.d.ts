@@ -3,7 +3,7 @@ import { INvModule } from './nv-module';
 export interface IMiddleware<ES> {
     bootstrap(vm: ES): void;
 }
-export declare type EsRouteObject = {
+export declare type NvRouteObject = {
     path: string;
     query?: {
         [props: string]: any;
@@ -11,21 +11,21 @@ export declare type EsRouteObject = {
     data?: any;
 };
 export interface IInDiv {
-    modalList: IMiddleware<IInDiv>[];
-    rootDom: Element;
-    $rootPath: string;
-    $canRenderModule: boolean;
-    $routeDOMKey: string;
-    $rootModule: INvModule;
-    $components: Function[];
-    render?: () => Promise<IComponent>;
-    reRender?: () => Promise<IComponent>;
     use(modal: IMiddleware<IInDiv>): number;
     setRootPath(rootPath: string): void;
+    getRootPath(): string;
     setComponentRender<S = any, P = any, V = any>(render?: () => Promise<IComponent<S, P, V>>, reRender?: () => Promise<IComponent<S, P, V>>): void;
+    getComponentRender(): {
+        render: () => Promise<IComponent>;
+        reRender: () => Promise<IComponent>;
+    };
+    setCanRenderModule(canRenderModule: boolean): void;
+    getCanRenderModule(): boolean;
+    setRouteDOMKey(key: string): void;
+    getRouteDOMKey(): string;
+    getRootModule(): INvModule;
+    getComponents(): Function[];
     bootstrapModule(Esmodule: Function): void;
     init(): void;
-    renderModuleBootstrap(): void;
     renderComponent(BootstrapComponent: Function, renderDOM: Element, loadModule?: INvModule): Promise<IComponent>;
-    replaceDom?(component: IComponent, renderDOM: Element): Promise<IComponent>;
 }

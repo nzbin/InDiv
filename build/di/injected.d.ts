@@ -1,8 +1,9 @@
+import 'reflect-metadata';
 /**
- * Decorator @Injected
+ * Decorator @injected or Function injected
  * declare Class which need be injected
  *
  * @export
  * @param {Function} _constructor
  */
-export declare function Injected(_constructor: Function): void;
+export declare function injected(_constructor: Function): void;

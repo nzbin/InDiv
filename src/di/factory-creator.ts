@@ -1,6 +1,6 @@
 import { IComponent } from '../types';
 
-import { InDiv } from '../indiv';
+import { internalDependence } from './factory-utils';
 
 /**
  * injector: build arguments for factoryCreator
@@ -27,7 +27,8 @@ export function injector(_constructor: Function, rootModule: any, loadModule?: a
     if ((_constructor as any)._needInjectedClass) {
         (_constructor as any)._needInjectedClass.forEach((key: Function) => {
             // inject InDiv instance fro NvModule
-            if (key === InDiv && rootModule.$indivInstance) return args.push(rootModule.$indivInstance);
+            const arg = internalDependence(_constructor, key, rootModule, loadModule);
+            if (arg) return args.push(arg);
 
             // component injector: find service Class in providerList in Component
             if ((_constructor.prototype as IComponent).$providerList) {
@@ -55,7 +56,7 @@ export function injector(_constructor: Function, rootModule: any, loadModule?: a
             if (_service && _service.useValue) return args.push(_service.useValue);
 
             if (!findService) throw new Error(`injector injects service error: can't find provide: ${key.name} in Component ${_constructor}`);
-            
+
             // if service isn't a singleton service
             if (findService && !findService.isSingletonMode) args.push(factoryCreator(findService, rootModule, fromModule));
 
@@ -77,7 +78,8 @@ export function injector(_constructor: Function, rootModule: any, loadModule?: a
     if ((_constructor as any).injectTokens) {
         (_constructor as any).injectTokens.forEach((key: string) => {
             // inject InDiv instance fro NvModule
-            if (key === 'InDivInstance' && rootModule.$indivInstance) return args.push(rootModule.$indivInstance);
+            const arg = internalDependence(_constructor, key, rootModule, loadModule);
+            if (arg) return args.push(arg);
 
             // component injector: find service Class in providerList in Component
             if ((_constructor.prototype as IComponent).$providerList) {

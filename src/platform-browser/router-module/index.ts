@@ -1,11 +1,9 @@
-import { IInDiv, IComponent, INvModule, NvRouteObject, ComponentList, TLoadChild, TChildModule } from '../../types';
+import { IComponent, INvModule, NvRouteObject, ComponentList, TLoadChild, TChildModule } from '../../types';
 
-import { NvModule } from '../../nv-module';
 import { Utils } from '../../utils';
 import { KeyWatcher } from '../../key-watcher';
-import { factoryModule } from '../../nv-module';
+import { factoryModule, NvModule } from '../../nv-module';
 import { InDiv } from '../../indiv';
-import { Injected } from '../../di/injected';
 
 import { NvLocation } from './location';
 
@@ -37,7 +35,6 @@ export type TRouter = {
   loadChild?: TLoadChild | TChildModule;
 };
 
-@Injected
 @NvModule({
   providers: [
     {
@@ -48,9 +45,7 @@ export type TRouter = {
 })
 export class RouteModule {
   public routeChange?: (lastRoute?: string, nextRoute?: string) => void;
-  // public indivInstance: IInDiv
   private routes: TRouter[];
-  private $rootPath: string;
   private routesList: TRouter[] = [];
   private currentUrl: string = '';
   private lastRoute: string = null;
@@ -64,8 +59,8 @@ export class RouteModule {
     private indivInstance: InDiv,
   ) {
     if (!this.routes) this.routes = [];
-    if (!this.$rootPath) this.$rootPath = '/';
-    this.indivInstance.setRootPath(this.$rootPath);
+    if (!nvRouteStatus.nvRootPath) nvRouteStatus.nvRootPath = '/';
+    this.indivInstance.setRootPath(nvRouteStatus.nvRootPath);
     this.indivInstance.setCanRenderModule(false);
     this.indivInstance.setRouteDOMKey('router-render');
 
@@ -73,10 +68,10 @@ export class RouteModule {
     window.addEventListener('load', this.refresh.bind(this), false);
     window.addEventListener('popstate', () => {
       let path;
-      if (this.$rootPath === '/') {
+      if (nvRouteStatus.nvRootPath === '/') {
         path = location.pathname || '/';
       } else {
-        path = location.pathname.replace(this.$rootPath, '') === '' ? '/' : location.pathname.replace(this.$rootPath, '');
+        path = location.pathname.replace(nvRouteStatus.nvRootPath, '') === '' ? '/' : location.pathname.replace(nvRouteStatus.nvRootPath, '');
       }
       nvRouteStatus.nvRouteObject = {
         path,
@@ -103,7 +98,7 @@ export class RouteModule {
     rootPath?: string,
     routeChange?: (lastRoute?: string, nextRoute?: string) => void,
   }): Function {
-    if (routeData.rootPath) RouteModule.prototype.$rootPath = routeData.rootPath;
+    if (routeData.rootPath) nvRouteStatus.nvRootPath = routeData.rootPath;
     if (routeData.routeChange) RouteModule.prototype.routeChange = routeData.routeChange;
     if (routeData.routes && routeData.routes instanceof Array) {
       RouteModule.prototype.routes = routeData.routes;
@@ -122,7 +117,7 @@ export class RouteModule {
    * @memberof Router
    */
   private redirectTo(redirectTo: string): void {
-    const rootPath = this.$rootPath === '/' ? '' : this.$rootPath;
+    const rootPath = nvRouteStatus.nvRootPath === '/' ? '' : nvRouteStatus.nvRootPath;
     history.replaceState(null, null, `${rootPath}${redirectTo}`);
     nvRouteStatus.nvRouteObject = {
       path:  redirectTo || '/',
@@ -141,10 +136,10 @@ export class RouteModule {
   private refresh(): void {
     if (!nvRouteStatus.nvRouteObject || !this.watcher) {
       let path;
-      if (this.$rootPath === '/') {
+      if (nvRouteStatus.nvRootPath === '/') {
         path = location.pathname || '/';
       } else {
-        path = location.pathname.replace(this.$rootPath, '') === '' ? '/' : location.pathname.replace(this.$rootPath, '');
+        path = location.pathname.replace(nvRouteStatus.nvRootPath, '') === '' ? '/' : location.pathname.replace(nvRouteStatus.nvRootPath, '');
       }
       nvRouteStatus.nvRouteObject = {
         path,

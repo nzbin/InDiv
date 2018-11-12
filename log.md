@@ -91,3 +91,5 @@
 29. 2018-11-05 add HttpClient
 
 30. 2018-11-10 add RootModule
+
+31. 2018-11-12 remove `@Inject`

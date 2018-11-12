@@ -1,7 +1,8 @@
-import { NvModule, Component, Injected, setLocation, SetLocation, NvLocation } from '../src';
-import { HeroSearchService, HeroSearchService1 } from './index';
+// import { NvModule, Component, Injected, setLocation, SetLocation, NvLocation } from '../src';
+import { NvModule, Component, NvLocation } from '../src';
+import { HeroSearchService } from './index';
 
-@Injected
+// @Injected
 @Component({
   selector: 'test-loadchild-component',
   template: `
@@ -27,7 +28,7 @@ class TestLoadchildComponent {
   }
 }
 
-@Injected
+// @Injected
 @Component({
   selector: 'R2',
   template: `
@@ -41,7 +42,7 @@ class R2 {
   }
 }
 
-@Injected
+// @Injected
 @NvModule({
   // providers: [
   //   HeroSearchService,

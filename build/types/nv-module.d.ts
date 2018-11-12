@@ -1,3 +1,4 @@
+import { IInDiv } from './indiv';
 export declare type TInjectTokenProvider = {
     [props: string]: any | Function;
     provide: any;
@@ -8,14 +9,15 @@ export declare type TUseClassProvider = {
     provide: any;
     useClass: Function;
 };
-export declare type TuseValueProvider = {
+export declare type TUseValueProvider = {
     provide: any;
     useValue: any;
 };
 export interface INvModule {
+    $indivInstance?: IInDiv;
     $imports?: Function[];
     $components?: Function[];
-    $providers?: (Function | TUseClassProvider | TuseValueProvider)[];
+    $providers?: (Function | TUseClassProvider | TUseValueProvider)[];
     $exports?: Function[];
     $exportsList?: Function[];
     $providerList?: Map<Function | string, Function | any>;

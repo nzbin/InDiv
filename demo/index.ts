@@ -1,5 +1,5 @@
-import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, SetState, SetLocation, GetLocation, OnDestory, setState,  setLocation, getLocation, TRouter, NvLocation, RouteModule } from '../src';
-// import { InDiv, Component, Router, Utils, NvModule, Injected, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, OnDestory, SetState, SetLocation, GetLocation, setState, setLocation, getLocation } from '../build';
+import { InDiv, Component, Utils, NvModule, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, SetState, OnDestory, setState, NvLocation, RouteModule, TRouter, HttpClient } from '../src';
+// import { InDiv, Component, Router, Utils, NvModule, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, OnDestory, SetState, SetLocation, GetLocation, setState, setLocation, getLocation } from '../build';
 
 @Injectable()
 export class HeroSearchService1 {
@@ -19,7 +19,7 @@ export class HeroSearchService2 {
   }
 }
 
-@Injected
+// @Injected
 @Injectable()
 export class HeroSearchService {
   public hsr: HeroSearchService1;
@@ -49,7 +49,7 @@ interface Props {
   a: number;
 }
 
-@Injected
+// @Injected
 @Component({
   selector: 'route-child',
   template: (`
@@ -192,7 +192,7 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps, OnDestor
 }
 
 
-@Injected
+// @Injected
 @Component({
   selector: 'pc-component',
   template: (`
@@ -270,7 +270,7 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
   }
 }
 
-@Injected
+// @Injected
 @Component({
   selector: 'R1',
   template: (`
@@ -378,7 +378,7 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
   }
 }
 
-@Injected
+// @Injected
 @Component({
   selector: 'R2',
   template: (`
@@ -480,7 +480,7 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
   }
 }
 
-@Injected
+// @Injected
 @Component({
   selector: 'container-wrap',
   template: (`
@@ -520,11 +520,12 @@ class Container implements OnInit, AfterMount, WatchState {
     private http: NVHttp,
     private value: ValueType,
     private location: NvLocation,
+    private httpClient: HttpClient,
   ) {
     this.setState = setState;
     // this.getLocation = getLocation;
     // this.setLocation = setLocation;
-    console.log(99988, 'from Container');
+    console.log(99988, 'from Container', this.httpClient);
     this.hss.test();
     console.log('http', this.http);
     console.log('value', this.value);
@@ -685,6 +686,7 @@ class Container implements OnInit, AfterMount, WatchState {
   providers: [
     // HeroSearchService2,
     Utils,
+    HttpClient,
     NVHttp,
     HeroSearchService,
     {
@@ -778,7 +780,7 @@ const routes: TRouter[] = [
     ],
   },
 ];
-@Injected
+// @Injected
 @NvModule({
   imports: [
     RouteModule.forRoot({

@@ -5,15 +5,15 @@ import { IMiddleware, INvModule, IComponent } from '../types';
  * @class InDiv
  */
 export declare class InDiv {
-    modalList: IMiddleware<InDiv>[];
-    rootDom: Element;
-    $rootPath: string;
-    $canRenderModule: boolean;
-    $routeDOMKey: string;
-    $rootModule: INvModule;
-    $components: Function[];
-    render: () => Promise<IComponent>;
-    reRender: () => Promise<IComponent>;
+    private modalList;
+    private rootDom;
+    private $rootPath;
+    private $canRenderModule;
+    private $routeDOMKey;
+    private $rootModule;
+    private $components;
+    private render;
+    private reRender;
     constructor();
     /**
      * for using middleware and use bootstrap method of middleware
@@ -33,7 +33,14 @@ export declare class InDiv {
      */
     setRootPath(rootPath: string): void;
     /**
-     * for Middleware set component Render function
+     * get RootPath for InDiv
+     *
+     * @returns {string}
+     * @memberof InDiv
+     */
+    getRootPath(): string;
+    /**
+     * set component Render function
      *
      * @template R
      * @template Re
@@ -41,7 +48,59 @@ export declare class InDiv {
      * @param {Re} [reRender]
      * @memberof InDiv
      */
-    setComponentRender<S = any, P = any, V = any>(render?: () => Promise<IComponent<S, P, V>>, reRender?: () => Promise<IComponent<S, P, V>>): void;
+    setComponentRender<S = any, P = any, V = any>(render: () => Promise<IComponent<S, P, V>>, reRender?: () => Promise<IComponent<S, P, V>>): void;
+    /**
+     * get component Render function
+     *
+     * @returns {{ render: () => Promise<IComponent>, reRender: () => Promise<IComponent> }}
+     * @memberof InDiv
+     */
+    getComponentRender(): {
+        render: () => Promise<IComponent>;
+        reRender: () => Promise<IComponent>;
+    };
+    /**
+     * set InDiv can render module's bootstrap
+     *
+     * @param {boolean} canRenderModule
+     * @memberof InDiv
+     */
+    setCanRenderModule(canRenderModule: boolean): void;
+    /**
+     * get InDiv can render module's bootstrap
+     *
+     * @returns {boolean}
+     * @memberof InDiv
+     */
+    getCanRenderModule(): boolean;
+    /**
+     * set route's DOM tag name
+     *
+     * @param {string} routeDOMKey
+     * @memberof InDiv
+     */
+    setRouteDOMKey(routeDOMKey: string): void;
+    /**
+     * get route's DOM tag name
+     *
+     * @returns {string}
+     * @memberof InDiv
+     */
+    getRouteDOMKey(): string;
+    /**
+     * get root module in InDiv
+     *
+     * @returns {INvModule}
+     * @memberof InDiv
+     */
+    getRootModule(): INvModule;
+    /**
+     * get root module in root module
+     *
+     * @returns {Function[]}
+     * @memberof InDiv
+     */
+    getComponents(): Function[];
     /**
      * bootstrap NvModule
      *
@@ -86,5 +145,5 @@ export declare class InDiv {
      * @returns {Promise<IComponent>}
      * @memberof InDiv
      */
-    replaceDom(component: IComponent, renderDOM: Element): Promise<IComponent>;
+    private replaceDom;
 }

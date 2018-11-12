@@ -2,6 +2,7 @@ import { IComponent, TInjectTokenProvider, TUseClassProvider, TUseValueProvider 
 
 import { Watcher } from '../watcher';
 import { Utils } from '../utils';
+import { injected } from '../di/injected';
 
 type TComponentOptions = {
   selector: string;
@@ -25,6 +26,7 @@ const utils = new Utils();
  */
 export function Component<State = any, Props = any, Vm = any>(options: TComponentOptions): (_constructor: Function) => void {
   return function (_constructor: Function): void {
+    injected(_constructor);
     (_constructor as any).$selector = options.selector;
     (_constructor as any)._injectedComponents = new Map();
     const vm: IComponent<State, Props, Vm> = _constructor.prototype;

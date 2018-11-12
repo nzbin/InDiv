@@ -23,14 +23,3 @@ export interface ReceiveProps {
     nvReceiveProps(nextProps: any): void;
 }
 export declare type SetState = (newState: any) => void;
-export declare type GetLocation = () => {
-    path?: string;
-    query?: {
-        [props: string]: any;
-    };
-    params?: {
-        [props: string]: any;
-    };
-    data?: any;
-};
-export declare type SetLocation = <Q = any, P = any>(path: string, query?: Q, data?: P, title?: string) => void;

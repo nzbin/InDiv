@@ -18,6 +18,7 @@ export class NvLocation {
    *   query?: any;
    *   params?: any;
    *   data?: any;
+   *   rootPath?: string;
    * }}
    */
   public getLocation(): {
@@ -25,6 +26,7 @@ export class NvLocation {
     query?: any;
     params?: any;
     data?: any;
+    rootPath?: string;
   } {
     if (!utils.isBrowser()) return {};
     return {
@@ -32,6 +34,7 @@ export class NvLocation {
       query: nvRouteStatus.nvRouteObject.query,
       params: nvRouteStatus.nvRouteParmasObject,
       data: nvRouteStatus.nvRouteObject.data,
+      rootPath: nvRouteStatus.nvRootPath,
     };
   }
 

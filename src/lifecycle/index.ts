@@ -32,15 +32,15 @@ export interface ReceiveProps {
 
 export type SetState = (newState: any) => void;
 
-export type GetLocation = () => {
-  path?: string;
-  query?: {
-    [props: string]: any;
-  };
-  params?: {
-    [props: string]: any;
-  };
-  data?: any;
-};
+// export type GetLocation = () => {
+//   path?: string;
+//   query?: {
+//     [props: string]: any;
+//   };
+//   params?: {
+//     [props: string]: any;
+//   };
+//   data?: any;
+// };
 
-export type SetLocation = <Q = any, P = any>(path: string, query?: Q, data?: P, title?: string) => void;
+// export type SetLocation = <Q = any, P = any>(path: string, query?: Q, data?: P, title?: string) => void;

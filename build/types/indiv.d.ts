@@ -24,7 +24,7 @@ export interface IInDiv {
     setRouteDOMKey(key: string): void;
     getRouteDOMKey(): string;
     getRootModule(): INvModule;
-    getComponents(): Function[];
+    getDirectives(): Function[];
     bootstrapModule(Esmodule: Function): void;
     init(): void;
     renderComponent(BootstrapComponent: Function, renderDOM: Element, loadModule?: INvModule): Promise<IComponent>;

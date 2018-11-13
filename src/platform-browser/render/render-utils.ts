@@ -50,14 +50,35 @@ export function buildProps<State = any, Props = any, Vm = any>(prop: any, vm: IC
  * @param {IComponent<State, Props, Vm>} vm
  * @returns {IComponent<State, Props, Vm>}
  */
-export function buildScope<State = any, Props = any, Vm = any>(ComponentClass: Function, props: any, dom: Element, vm: IComponent<State, Props, Vm>): IComponent<State, Props, Vm> {
+export function buildComponentScope<State = any, Props = any, Vm = any>(ComponentClass: Function, props: any, dom: Element, vm: IComponent<State, Props, Vm>): IComponent<State, Props, Vm> {
   const _component = factoryCreator(ComponentClass, vm.$vm.$rootModule);
   _component.props = props;
   _component.renderDom = dom;
-  _component.$components = vm.$components;
+  _component.$declarations = vm.$declarations;
 
   _component.render = vm.$vm.render.bind(_component);
   _component.reRender = vm.$vm.reRender.bind(_component);
 
   return _component;
+}
+
+/**
+ * build scope for Directives in Directive
+ *
+ * @template State
+ * @template Props
+ * @template Vm
+ * @param {Function} ComponentClass
+ * @param {*} props
+ * @param {Element} dom
+ * @param {IComponent<State, Props, Vm>} vm
+ * @returns {IComponent<State, Props, Vm>}
+ */
+export function buildDirectiveScope<State = any, Props = any, Vm = any>(DirectiveClass: Function, props: any, dom: Element, vm: IComponent<State, Props, Vm>): IComponent<State, Props, Vm> {
+  const _directive = factoryCreator(DirectiveClass, vm.$vm.$rootModule);
+  _directive.props = props;
+  _directive.renderDom = dom;
+  _directive.$declarations = vm.$declarations;
+
+  return _directive;
 }

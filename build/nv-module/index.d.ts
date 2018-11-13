@@ -2,7 +2,7 @@ import { TUseClassProvider, TUseValueProvider } from '../types';
 export { factoryModule } from './utils';
 declare type TNvModuleOptions = {
     imports?: Function[];
-    components?: Function[];
+    declarations?: Function[];
     providers?: (Function | TUseClassProvider | TUseValueProvider)[];
     exports?: Function[];
     bootstrap?: Function;

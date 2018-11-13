@@ -1,6 +1,6 @@
 import { IComponent, IRenderTaskQueue } from '../../types';
 
-import { renderFunction } from './component-render';
+import { componentRenderFunction } from './component-render';
 
 const PENDING = 'pending';
 const RENDERING = 'rendering';
@@ -52,7 +52,7 @@ export class RenderTaskQueue {
    * @memberof RenderTaskQueue
    */
   public async runTask(): Promise<IComponent> {
-    const component = await renderFunction(this.taskQueue[this.queuePointer], this as IRenderTaskQueue);
+    const component = await componentRenderFunction(this.taskQueue[this.queuePointer], this as IRenderTaskQueue);
     this.nextTask();
     return component;
   }

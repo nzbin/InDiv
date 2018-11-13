@@ -4,6 +4,7 @@ export { Watcher, } from './watcher';
 export { KeyWatcher, } from './key-watcher';
 export { Compile, CompileUtil, CompileUtilForRepeat, TRouter, RouteModule, NvLocation, } from './platform-browser';
 export { Component, setState, } from './component';
+export { Directive, } from './directive';
 export { InDiv, } from './indiv';
 export { NvModule, factoryModule, } from './nv-module';
 export { NVHttp, } from './http';

@@ -57,13 +57,16 @@ function bindNodeType(node: Node): string {
  * bind node attributes and return TAttributes
  *
  * @param {(DocumentFragment | Element)} node
+ * @param {((node: DocumentFragment | Element) => string[])} [shouldDiffAttributes]
  * @returns {TAttributes[]}
  */
-function bindAttributes(node: DocumentFragment | Element): TAttributes[] {
+function bindAttributes(node: DocumentFragment | Element, shouldDiffAttributes?: (node: DocumentFragment | Element) => string[]): TAttributes[] {
   const nodeAttrs: NamedNodeMap = (node as Element).attributes;
   const attributes: TAttributes[] = [];
+  const shouldDiffAttr = shouldDiffAttributes ? shouldDiffAttributes(node) : null;
   if (nodeAttrs) {
     Array.from(nodeAttrs).forEach(attr => {
+      if (shouldDiffAttr && shouldDiffAttr.indexOf(attr.name) === -1) return;
       attributes.push({
         name: attr.name,
         value: attr.value,
@@ -76,21 +79,23 @@ function bindAttributes(node: DocumentFragment | Element): TAttributes[] {
 /**
  * parse node to VNode
  *
+ * @export
  * @param {(DocumentFragment | Element)} node
+ * @param {((node: DocumentFragment | Element) => string[])} [shouldDiffAttributes]
  * @returns {IVnode}
  */
-export function parseToVnode(node: DocumentFragment | Element): IVnode {
+export function parseToVnode(node: DocumentFragment | Element, shouldDiffAttributes?: (node: DocumentFragment | Element) => string[]): IVnode {
   const childNodes: IVnode[] = [];
   if (node.childNodes) {
     Array.from(node.childNodes).forEach((child: Element) => {
-      childNodes.push(parseToVnode(child));
+      childNodes.push(parseToVnode(child, shouldDiffAttributes));
     });
   }
   return new Vnode({
     tagName: (node as Element).tagName,
     node: node,
     parentNode: node.parentNode,
-    attributes: bindAttributes(node),
+    attributes: bindAttributes(node, shouldDiffAttributes),
     childNodes,
     nodeValue: node.nodeValue,
     type: bindNodeType(node),

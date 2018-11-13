@@ -1,4 +1,4 @@
-import { InDiv, Component, Utils, NvModule, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, SetState, OnDestory, setState, NvLocation, RouteModule, TRouter, HttpClient } from '../src';
+import { InDiv, Component, Utils, NvModule, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, SetState, OnDestory, setState, NvLocation, RouteModule, TRouter, HttpClient, Directive } from '../src';
 // import { InDiv, Component, Router, Utils, NvModule, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, OnDestory, SetState, SetLocation, GetLocation, setState, setLocation, getLocation } from '../build';
 
 @Injectable()
@@ -47,6 +47,17 @@ class ValueType {}
 
 interface Props {
   a: number;
+}
+
+@Directive({
+  selector: 'test-directive',
+})
+class TestDirective implements OnInit {
+  public props: number;
+  constructor() {}
+  public nvOnInit() {
+    console.log(5555, 'init TestDirective', this.props);
+  }
 }
 
 // @Injected
@@ -576,13 +587,12 @@ class Container implements OnInit, AfterMount, WatchState {
   }
 
   public nvOnInit() {
-    console.log('nvOnInit Container');
-    // console.log('R1 nvOnInit', this.getLocation());
-    console.log('R1 nvOnInit', this.location.getLocation());
+    console.log('nvOnInit Container', this.location.getLocation());
   }
 
   public nvAfterMount() {
     console.log('nvAfterMount Container');
+    document.getElementById('1').className = '3333';
   }
 
   public go() {
@@ -679,9 +689,11 @@ class Container implements OnInit, AfterMount, WatchState {
 }
 
 @NvModule({
-  components: [
+  // components: [
+  declarations: [
     PCChild,
     RouteChild,
+    TestDirective,
   ],
   providers: [
     // HeroSearchService2,
@@ -702,6 +714,7 @@ class Container implements OnInit, AfterMount, WatchState {
   exports: [
     PCChild,
     RouteChild,
+    TestDirective,
   ],
 })
 class SharedModule {}
@@ -710,7 +723,8 @@ class SharedModule {}
   imports: [
     SharedModule,
   ],
-  components: [
+  // components: [
+  declarations: [
     R2,
   ],
   // providers: [
@@ -789,7 +803,7 @@ const routes: TRouter[] = [
     }),
     M2,
   ],
-  components: [
+  declarations: [
     Container,
     PComponent,
     TestComponent,

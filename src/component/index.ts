@@ -27,8 +27,9 @@ const utils = new Utils();
 export function Component<State = any, Props = any, Vm = any>(options: TComponentOptions): (_constructor: Function) => void {
   return function (_constructor: Function): void {
     injected(_constructor);
+    (_constructor as any).nvType = 'nvComponent';
     (_constructor as any).$selector = options.selector;
-    (_constructor as any)._injectedComponents = new Map();
+    (_constructor as any)._injectedDeclarations = new Map();
     const vm: IComponent<State, Props, Vm> = _constructor.prototype;
     vm.$template = options.template;
 
@@ -46,8 +47,11 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
       }
     }
 
-    vm.$components = [];
+    vm.$declarations = [];
+    // for Component
     vm.$componentList = [];
+    // for Directive
+    vm.$directiveList = [];
 
     vm.watchData = function (): void {
       if (this.state) {

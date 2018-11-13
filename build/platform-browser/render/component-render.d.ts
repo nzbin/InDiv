@@ -24,7 +24,7 @@ export declare function componentsConstructor<State = any, Props = any, Vm = any
  *
  * @export
  * @param {Element} renderDom
- * @param {IRenderTaskQueue} vm
+ * @param {IRenderTaskQueue} RenderTaskQueue
  * @returns {Promise<IComponent>}
  */
-export declare function renderFunction(renderDom: Element, vm: IRenderTaskQueue): Promise<IComponent>;
+export declare function componentRenderFunction(renderDom: Element, RenderTaskQueue: IRenderTaskQueue): Promise<IComponent>;

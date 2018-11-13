@@ -11,7 +11,7 @@ export declare class InDiv {
     private $canRenderModule;
     private $routeDOMKey;
     private $rootModule;
-    private $components;
+    private $declarations;
     private render;
     private reRender;
     constructor();
@@ -100,7 +100,7 @@ export declare class InDiv {
      * @returns {Function[]}
      * @memberof InDiv
      */
-    getComponents(): Function[];
+    getDirectives(): Function[];
     /**
      * bootstrap NvModule
      *

@@ -18,8 +18,8 @@
 - [x] support JavaScript and TypeScript
 - [x] IOC and DI
 - [x] SSR 服务端渲染
-- [ ] route lazy load
+- [x] route lazy load
 - [x] async template render
 - [x] optimize setState
-- [ ] support directive(still in doubt)
+- [x] support directive
 - [x] HTTP client

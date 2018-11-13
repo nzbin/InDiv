@@ -489,7 +489,7 @@ export class Router {
    */
   private findComponentFromModule(selector: string, currentUrlPath: string): { component: Function, loadModule: INvModule } {
     if (this.loadModuleMap.size === 0) return {
-      component: this.$vm.getComponents().find((component: any) => component.$selector === selector),
+      component: this.$vm.getDirectives().find((component: any) => component.$selector === selector && component.nvType === 'nvComponent'),
       loadModule: null,
     };
 
@@ -497,12 +497,12 @@ export class Router {
     let loadModule = null;
     this.loadModuleMap.forEach((value, key) => {
       if (new RegExp(`^${key}.*`).test(currentUrlPath)) {
-        component = value.$components.find((component: any) => component.$selector === selector);
+        component = value.$declarations.find((component: any) => component.$selector === selector && component.nvType === 'nvComponent');
         loadModule = value;
       }
     });
     if (!component) {
-      component = this.$vm.getComponents().find((component: any) => component.$selector === selector);
+      component = this.$vm.getDirectives().find((component: any) => component.$selector === selector && component.nvType === 'nvComponent');
       loadModule = null;
     }
 

@@ -19,7 +19,7 @@ export class InDiv {
   private $canRenderModule: boolean;
   private $routeDOMKey: string;
   private $rootModule: INvModule;
-  private $components: Function[];
+  private $declarations: Function[];
   private render: () => Promise<IComponent>;
   private reRender: () => Promise<IComponent>;
 
@@ -163,8 +163,8 @@ export class InDiv {
    * @returns {Function[]}
    * @memberof InDiv
    */
-  public getComponents(): Function[] {
-    return this.$components;
+  public getDirectives(): Function[] {
+    return this.$declarations;
   }
 
   /**
@@ -180,7 +180,7 @@ export class InDiv {
     if (!Esmodule) throw new Error('must send a root module');
 
     this.$rootModule = factoryModule(Esmodule, this);
-    this.$components = [...this.$rootModule.$components];
+    this.$declarations = [...this.$rootModule.$declarations];
   }
 
   /**
@@ -225,8 +225,8 @@ export class InDiv {
     component.$vm = this;
 
     // component which comes from loadModule can only extends $components from loadModule
-    if (loadModule)  component.$components = loadModule.$components;
-    else component.$components = this.$rootModule.$components;
+    if (loadModule)  component.$declarations = loadModule.$declarations;
+    else component.$declarations = this.$rootModule.$declarations;
 
     component.render = this.render.bind(component);
     component.reRender = this.reRender.bind(component);

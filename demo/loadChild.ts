@@ -48,7 +48,7 @@ class R2 {
   //   HeroSearchService,
   //   HeroSearchService1,
   // ],
-  components: [
+  declarations: [
     TestLoadchildComponent,
     R2,
   ],

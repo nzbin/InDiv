@@ -570,7 +570,7 @@ export class CompileUtil {
           if (updaterFn) (updaterFn as Function).call(this, node, this._getVMRepeatVal(vm, exp), exp, vm);
           break;
       }
-    } else { 
+    } else {
       let value = null;
       // for @Function(arg)
       if (/^(\@)/.test(exp)) {
@@ -609,7 +609,6 @@ export class CompileUtil {
         default:
           this.commonUpdater.call(this, node, value, dir);
       }
-      node.removeAttribute(`nv-${dir}`);
     }
   }
 
@@ -779,11 +778,10 @@ export class CompileUtil {
             const exp = attr.value;
             if (this.isEventDirective(dir)) {
               new CompileUtilForRepeat(this.$fragment).eventHandler(newElement as Element, vm, exp, dir, key, val);
+              (newElement as Element).removeAttribute(attrName);
             } else {
               new CompileUtilForRepeat(this.$fragment).bind(newElement as Element, key, dir, exp, index, vm, value, val);
             }
-
-            (newElement as Element).removeAttribute(attrName);
           }
         });
       }
@@ -809,7 +807,7 @@ export class CompileUtil {
   public repeatChildrenUpdater(node: Element, value: any, expFather: string, index: number, vm: any, watchValue: any): void {
     const key = expFather.split(' ')[1];
     Array.from(node.childNodes).forEach((child: Element) => {
-      if (this.isElementNode(child) && vm.$components.find((component: any) => component.$selector === child.tagName.toLocaleLowerCase())) child.isComponent = true;
+      if (this.isElementNode(child) && vm.$declarations.find((component: any) => component.$selector === child.tagName.toLocaleLowerCase() && component.nvType === 'nvComponent')) child.isComponent = true;
 
       child.repeatData = node.repeatData || {};
       child.repeatData[key] = value;
@@ -829,10 +827,10 @@ export class CompileUtil {
           if (this.isDirective(attrName) && attrName !== 'nv-repeat' && new RegExp(`(^${key})|(^$.)|(^@)`).test(exp)) {
             if (this.isEventDirective(dir)) {
               new CompileUtilForRepeat(node).eventHandler(child, vm, exp, dir, key, value);
+              child.removeAttribute(attrName);
             } else {
               new CompileUtilForRepeat(node).bind(child, key, dir, exp, index, vm, watchValue, value);
             }
-            child.removeAttribute(attrName);
           }
         });
       }
@@ -1003,4 +1001,23 @@ export class CompileUtil {
     if (node.isComponent) newElement.isComponent = true;
     return newElement;
   }
+}
+
+export function shouldDiffAttributes(node: DocumentFragment | Element): string[] {
+  const shouldDiffAttr: string[] = [];
+  const nvDirective = [
+    'nv-model',
+    'nv-text',
+    'nv-html',
+    'nv-if',
+    'nv-key',
+  ];
+  if ((node as Element).attributes) {
+    Array.from((node as Element).attributes).forEach(attr => {
+      if (/^nv\-.*/.test(attr.name) && nvDirective.indexOf(attr.name) === -1) {
+        shouldDiffAttr.push(attr.name.replace('nv-', ''));
+      }
+    });
+  }
+  return shouldDiffAttr;
 }

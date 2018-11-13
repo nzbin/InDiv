@@ -6,7 +6,7 @@ export { factoryModule } from './utils';
 
 type TNvModuleOptions = {
   imports?: Function[];
-  components?: Function[];
+  declarations?: Function[];
   providers?: (Function | TUseClassProvider | TUseValueProvider)[];
   exports?: Function[];
   bootstrap?: Function;
@@ -29,7 +29,7 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
     vm.$providerList = new Map();
     vm.$providerInstances = new Map();
     if (options.imports) vm.$imports = options.imports;
-    if (options.components) vm.$components = options.components;
+    if (options.declarations) vm.$declarations = options.declarations;
     if (options.providers) vm.$providers = options.providers;
     if (options.exports) {
       vm.$exports = options.exports;

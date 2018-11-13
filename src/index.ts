@@ -31,6 +31,9 @@ export {
   setState,
 } from './component';
 export {
+  Directive,
+} from './directive';
+export {
   InDiv,
 } from './indiv';
 export {

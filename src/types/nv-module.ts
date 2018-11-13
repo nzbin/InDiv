@@ -20,7 +20,7 @@ export type TUseValueProvider = {
 export interface INvModule {
   $indivInstance?: IInDiv;
   $imports?: Function[];
-  $components?: Function[];
+  $declarations?: Function[];
   $providers?: (Function | TUseClassProvider | TUseValueProvider)[];
   $exports?: Function[];
   $exportsList?: Function[];

@@ -3,7 +3,9 @@ import { IComponent, ComponentList, IRenderTaskQueue } from '../../types';
 import { Compile } from '../compile';
 import { Utils } from '../../utils';
 import { CompileUtilForRepeat } from '../compile-utils';
-import { getPropsValue, buildProps, buildScope } from './render-utils';
+import { getPropsValue, buildProps, buildComponentScope } from './render-utils';
+import { directiveRenderFunction } from './directive-render';
+import { async } from '_rxjs@6.3.3@rxjs/internal/scheduler/async';
 
 const utils = new Utils();
 
@@ -39,11 +41,11 @@ export function mountComponent<State = any, Props = any, Vm = any>(dom: Element,
       // change hasRender to true
       component.hasRender = true;
     } else {
-      component.scope = buildScope(component.constructorFunction, component.props, component.dom as Element, vm);
+      component.scope = buildComponentScope(component.constructorFunction, component.props, component.dom as Element, vm);
     }
 
     component.scope.$vm = vm.$vm;
-    component.scope.$components = vm.$components;
+    component.scope.$declarations = vm.$declarations;
     if (component.scope.nvOnInit && !cacheComponent) component.scope.nvOnInit();
     if (component.scope.watchData) component.scope.watchData();
     if (component.scope.nvBeforeMount) component.scope.nvBeforeMount();
@@ -68,13 +70,14 @@ export function mountComponent<State = any, Props = any, Vm = any>(dom: Element,
 export function componentsConstructor<State = any, Props = any, Vm = any>(dom: Element, vm: IComponent<State, Props, Vm>): void {
   vm.$componentList = [];
   const routerRenderDom = dom.querySelectorAll(vm.$vm.getRouteDOMKey())[0];
-  (vm.constructor as any)._injectedComponents.forEach((value: Function, key: string) => {
-    if (!vm.$components.find((component: any) => component.$selector === key)) vm.$components.push(value);
+  (vm.constructor as any)._injectedDeclarations.forEach((value: Function, key: string) => {
+    if (!vm.$declarations.find((component: any) => component.$selector === key)) vm.$declarations.push(value);
   });
-  const componentsLength = vm.$components.length;
-  for (let i = 0; i < componentsLength; i++) {
+  const declarationsLength = vm.$declarations.length;
+  for (let i = 0; i < declarationsLength; i++) {
+    if ((vm.$declarations[i] as any).nvType !== 'nvComponent') continue;
 
-    const name = ((vm.$components[i]) as any).$selector;
+    const name = ((vm.$declarations[i]) as any).$selector;
     const tags = dom.getElementsByTagName(name);
     Array.from(tags).forEach(node => {
       //  protect component in <router-render>
@@ -114,7 +117,7 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
             const valueList = prop[1].split('.');
             const key = valueList[0];
             let _prop = null;
-            if (/^(\$\.).*/g.test(prop[1])) {
+            if (/^(\$.).*/g.test(prop[1])) {
               _prop = vm.compileUtil._getVMVal(vm.state, prop[1]);
               props[attrName] = buildProps(_prop, vm);
               return;
@@ -168,7 +171,7 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
         dom: node,
         props,
         scope: null,
-        constructorFunction: vm.$components[i],
+        constructorFunction: vm.$declarations[i],
         // init hasRender false
         hasRender: false,
       });
@@ -183,18 +186,22 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
  *
  * @export
  * @param {Element} renderDom
- * @param {IRenderTaskQueue} vm
+ * @param {IRenderTaskQueue} RenderTaskQueue
  * @returns {Promise<IComponent>}
  */
-export async function renderFunction(renderDom: Element, vm: IRenderTaskQueue): Promise<IComponent> {
+export async function componentRenderFunction(renderDom: Element, RenderTaskQueue: IRenderTaskQueue): Promise<IComponent> {
   return Promise.resolve()
-    .then(() => {
-      const compile = new Compile(renderDom, vm.$vm);
-      mountComponent(renderDom, vm.$vm);
-      const componentListLength = vm.$vm.$componentList.length;
+    .then(async() => {
+      const compile = new Compile(renderDom, RenderTaskQueue.$vm);
+
+      // first mount directive
+      await directiveRenderFunction(renderDom, RenderTaskQueue);
+
+      // then mount component
+      mountComponent(renderDom, RenderTaskQueue.$vm);
+      const componentListLength = RenderTaskQueue.$vm.$componentList.length;
       for (let i = 0; i < componentListLength; i++) {
-        const component = vm.$vm.$componentList[i];
-        // if component has rendered , it will reRender
+        const component = RenderTaskQueue.$vm.$componentList[i];
         if (component.hasRender) {
           component.scope.reRender();
         } else {
@@ -204,10 +211,10 @@ export async function renderFunction(renderDom: Element, vm: IRenderTaskQueue): 
         }
         if (component.scope.nvAfterMount) component.scope.nvAfterMount();
       }
-      if (vm.$vm.nvHasRender) vm.$vm.nvHasRender();
-      return vm.$vm;
+      if (RenderTaskQueue.$vm.nvHasRender) RenderTaskQueue.$vm.nvHasRender();
+      return RenderTaskQueue.$vm;
     })
     .catch(e => {
-      throw new Error(`component ${(vm.$vm.constructor as any).$selector} render failed: ${e}`);
+      throw new Error(`component ${(RenderTaskQueue.$vm.constructor as any).$selector} render failed: ${e}`);
     });
 }

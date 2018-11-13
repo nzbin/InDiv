@@ -2,7 +2,7 @@ import { IPatchList, IVnode } from '../../types';
 
 import { parseToVnode, diffVnode, renderVnode } from '../virtual-dom';
 import { Utils } from '../../utils';
-import { CompileUtil } from '../compile-utils';
+import { CompileUtil, shouldDiffAttributes } from '../compile-utils';
 
 const utils = new Utils();
 
@@ -30,8 +30,8 @@ export class Compile {
       this.$fragment = this.node2Fragment();
       this.init();
 
-      let oldVnode = parseToVnode(this.$el);
-      let newVnode = parseToVnode(this.$fragment);
+      let oldVnode = parseToVnode(this.$el, shouldDiffAttributes);
+      let newVnode = parseToVnode(this.$fragment, shouldDiffAttributes);
       let patchList: IPatchList[] = [];
       diffVnode(oldVnode, newVnode, patchList, this.needDiffChildCallback.bind(this));
       renderVnode(patchList);
@@ -96,7 +96,7 @@ export class Compile {
    */
   public recursiveDOM(childNodes: NodeListOf<Node & ChildNode>, fragment: DocumentFragment | Element): void {
     Array.from(childNodes).forEach((node: Element) => {
-      if (this.isElementNode(node) && this.$vm.$components.find((component: any) => component.$selector === node.tagName.toLocaleLowerCase())) node.isComponent = true;
+      if (this.isElementNode(node) && this.$vm.$declarations.find((component: any) => component.$selector === node.tagName.toLocaleLowerCase() && component.nvType === 'nvComponent')) node.isComponent = true;
 
       if (node.hasChildNodes() && !this.isRepeatNode(node)) this.recursiveDOM(node.childNodes, node);
 

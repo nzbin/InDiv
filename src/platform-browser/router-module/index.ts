@@ -1,4 +1,4 @@
-import { IComponent, INvModule, NvRouteObject, ComponentList, TLoadChild, TChildModule } from '../../types';
+import { IComponent, IDirective, INvModule, NvRouteObject, ComponentList, DirectiveList, TLoadChild, TChildModule } from '../../types';
 
 import { Utils } from '../../utils';
 import { KeyWatcher } from '../../key-watcher';
@@ -403,6 +403,7 @@ export class RouteModule {
   private routerChangeEvent(index: number): void {
     this.hasRenderComponentList.forEach((component, i) => {
       if (component.nvRouteChange) component.nvRouteChange(this.lastRoute, this.currentUrl);
+      // todo
       this.emitComponentEvent(component.$componentList, 'nvRouteChange');
       if (i >= index + 1) {
         if (component.nvOnDestory) component.nvOnDestory();
@@ -493,7 +494,7 @@ export class RouteModule {
    */
   private findComponentFromModule(selector: string, currentUrlPath: string): { component: Function, loadModule: INvModule } {
     if (this.loadModuleMap.size === 0) return {
-      component: this.indivInstance.getComponents().find((component: any) => component.$selector === selector),
+      component: this.indivInstance.getDirectives().find((component: any) => component.$selector === selector && component.nvType === 'nvComponent'),
       loadModule: null,
     };
 
@@ -501,12 +502,12 @@ export class RouteModule {
     let loadModule = null;
     this.loadModuleMap.forEach((value, key) => {
       if (new RegExp(`^${key}.*`).test(currentUrlPath)) {
-        component = value.$components.find((component: any) => component.$selector === selector);
+        component = value.$declarations.find((component: any) => component.$selector === selector && component.nvType === 'nvComponent');
         loadModule = value;
       }
     });
     if (!component) {
-      component = this.indivInstance.getComponents().find((component: any) => component.$selector === selector);
+      component = this.indivInstance.getDirectives().find((component: any) => component.$selector === selector && component.nvType === 'nvComponent');
       loadModule = null;
     }
 

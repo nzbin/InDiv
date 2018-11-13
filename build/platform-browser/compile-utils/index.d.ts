@@ -437,3 +437,4 @@ export declare class CompileUtil {
      */
     cloneNode(node: Element, repeatData?: any): Node;
 }
+export declare function shouldDiffAttributes(node: DocumentFragment | Element): string[];

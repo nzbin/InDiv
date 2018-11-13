@@ -24,21 +24,21 @@ function buildProviderList(moduleInstance: INvModule): void {
 }
 
 /**
- * build provider list for component in module
+ * build provider list for declaration in module
  * 
- * set Map _injectedComponents in component
+ * set Map _injectedDeclarationss in declaration
  *
  * @param {INvModule} moduleInstance
  * @returns {void}
  */
-function buildComponents4Components(moduleInstance: INvModule): void {
-  if (!moduleInstance.$components) return;
-  const length = moduleInstance.$components.length;
+function buildDeclarations4Declarations(moduleInstance: INvModule): void {
+  if (!moduleInstance.$declarations) return;
+  const length = moduleInstance.$declarations.length;
   for (let i = 0; i < length; i++) {
-    const FindComponent: any = moduleInstance.$components[i];
-    if (!FindComponent._injectedComponents) FindComponent._injectedComponents = new Map();
-    moduleInstance.$components.forEach((needInjectComponent: any) => {
-      if (!FindComponent._injectedComponents.has(needInjectComponent.$selector)) FindComponent._injectedComponents.set(needInjectComponent.$selector, needInjectComponent);
+    const FindComponent: any = moduleInstance.$declarations[i];
+    if (!FindComponent._injectedDeclarations) FindComponent._injectedDeclarations = new Map();
+    moduleInstance.$declarations.forEach((needInjectComponent: any) => {
+      if (!FindComponent._injectedDeclarations.has(needInjectComponent.$selector)) FindComponent._injectedDeclarations.set(needInjectComponent.$selector, needInjectComponent);
     });
   }
 }
@@ -61,7 +61,7 @@ function buildImports(moduleInstance: INvModule): void {
       const exportsLength = moduleImport.$exportsList.length;
       for (let i = 0; i < exportsLength; i++) {
         const exportFromModule = moduleImport.$exportsList[i];
-        if (!moduleInstance.$components.find((component: any) => component.$selector === (exportFromModule as any).$selector)) moduleInstance.$components.push(exportFromModule);
+        if (!moduleInstance.$declarations.find((component: any) => component.$selector === (exportFromModule as any).$selector)) moduleInstance.$declarations.push(exportFromModule);
       }
     }
     // export providerList
@@ -114,7 +114,7 @@ function buildExports(moduleInstance: INvModule): void {
 export function factoryModule(NM: Function, indivInstance?: IInDiv): INvModule {
   NM.prototype.$indivInstance = indivInstance;
   buildProviderList(NM.prototype);
-  buildComponents4Components(NM.prototype);
+  buildDeclarations4Declarations(NM.prototype);
   buildImports(NM.prototype);
   buildExports(NM.prototype);
   return factoryCreator(NM, NM.prototype);

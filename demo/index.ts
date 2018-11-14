@@ -1,4 +1,4 @@
-import { InDiv, Component, Utils, NvModule, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, SetState, OnDestory, setState, NvLocation, RouteModule, TRouter, HttpClient, Directive } from '../src';
+import { InDiv, Component, Utils, NvModule, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, SetState, OnDestory, setState, NvLocation, RouteModule, TRouter, HttpClient, Directive } from '../src';
 // import { InDiv, Component, Router, Utils, NvModule, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, OnDestory, SetState, SetLocation, GetLocation, setState, setLocation, getLocation } from '../build';
 
 @Injectable()
@@ -52,11 +52,17 @@ interface Props {
 @Directive({
   selector: 'test-directive',
 })
-class TestDirective implements OnInit {
+class TestDirective implements OnInit, RouteChange {
   public props: number;
-  constructor() {}
+  constructor(
+    private heroSearchService: HeroSearchService,
+  ) {}
   public nvOnInit() {
     console.log(5555, 'init TestDirective', this.props);
+    this.heroSearchService.test();
+  }
+  public nvRouteChange(lastRoute?: string, newRoute?: string) {
+    console.log(5555, 'nvRouteChange TestDirective', newRoute);
   }
 }
 
@@ -528,7 +534,7 @@ class Container implements OnInit, AfterMount, WatchState {
   constructor(
     private hss: HeroSearchService,
     private hss2: HeroSearchService1,
-    private http: NVHttp,
+    // private http: NVHttp,
     private value: ValueType,
     private location: NvLocation,
     private httpClient: HttpClient,
@@ -538,7 +544,7 @@ class Container implements OnInit, AfterMount, WatchState {
     // this.setLocation = setLocation;
     console.log(99988, 'from Container', this.httpClient);
     this.hss.test();
-    console.log('http', this.http);
+    // console.log('http', this.http);
     console.log('value', this.value);
     this.state = {
       a: 1,
@@ -699,7 +705,7 @@ class Container implements OnInit, AfterMount, WatchState {
     // HeroSearchService2,
     Utils,
     HttpClient,
-    NVHttp,
+    // NVHttp,
     HeroSearchService,
     {
       provide: HeroSearchService1,

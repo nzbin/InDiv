@@ -7,6 +7,5 @@ export { Component, setState, } from './component';
 export { Directive, } from './directive';
 export { InDiv, } from './indiv';
 export { NvModule, factoryModule, } from './nv-module';
-export { NVHttp, } from './http';
 export { HttpClient, } from './http-client';
 export { Injectable, injector, factoryCreator, } from './di';

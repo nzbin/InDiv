@@ -106,6 +106,15 @@ export declare class RouteModule {
      */
     private emitComponentEvent;
     /**
+     *
+     *
+     * @private
+     * @param {DirectiveList<IDirective>[]} directiveList
+     * @param {string} event
+     * @memberof RouteModule
+     */
+    private emitDirectiveEvent;
+    /**
      * instantiate Component
      *
      * use InDiv renderComponent

@@ -41,9 +41,6 @@ export {
   factoryModule,
 } from './nv-module';
 export {
-  NVHttp,
-} from './http';
-export {
   HttpClient,
 } from './http-client';
 export {

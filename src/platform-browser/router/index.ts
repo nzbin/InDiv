@@ -1,4 +1,4 @@
-import { TRouter, IInDiv, IComponent, ComponentList, INvModule, TLoadChild, TChildModule, NvRouteObject } from '../../types';
+import { TRouter, IInDiv, IComponent, ComponentList, INvModule, TLoadChild, TChildModule, NvRouteObject, DirectiveList, IDirective } from '../../types';
 
 import { Utils } from '../../utils';
 import { KeyWatcher } from '../../key-watcher';
@@ -420,13 +420,36 @@ export class Router {
     if (event === 'nvRouteChange') {
       componentList.forEach(component => {
         if (component.scope.nvRouteChange) component.scope.nvRouteChange(this.lastRoute, this.currentUrl);
+        this.emitDirectiveEvent(component.scope.$directiveList, event);
         this.emitComponentEvent(component.scope.$componentList, event);
       });
     }
     if (event === 'nvOnDestory') {
       componentList.forEach(component => {
         if (component.scope.nvOnDestory) component.scope.nvOnDestory();
+        this.emitDirectiveEvent(component.scope.$directiveList, event);
         this.emitComponentEvent(component.scope.$componentList, event);
+      });
+    }
+  }
+
+  /**
+   * emit nvRouteChange and nvOnDestory for Directives with recursion
+   *
+   * @private
+   * @param {DirectiveList<IDirective>[]} directiveList
+   * @param {string} event
+   * @memberof RouteModule
+   */
+  private emitDirectiveEvent(directiveList: DirectiveList<IDirective>[], event: string): void {
+    if (event === 'nvRouteChange') {
+      directiveList.forEach(directive => {
+        if (directive.scope.nvRouteChange) directive.scope.nvRouteChange(this.lastRoute, this.currentUrl);
+      });
+    }
+    if (event === 'nvOnDestory') {
+      directiveList.forEach(directive => {
+        if (directive.scope.nvOnDestory) directive.scope.nvOnDestory();
       });
     }
   }

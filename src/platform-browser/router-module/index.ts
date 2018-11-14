@@ -403,10 +403,11 @@ export class RouteModule {
   private routerChangeEvent(index: number): void {
     this.hasRenderComponentList.forEach((component, i) => {
       if (component.nvRouteChange) component.nvRouteChange(this.lastRoute, this.currentUrl);
-      // todo
+      this.emitDirectiveEvent(component.$directiveList, 'nvRouteChange');
       this.emitComponentEvent(component.$componentList, 'nvRouteChange');
       if (i >= index + 1) {
         if (component.nvOnDestory) component.nvOnDestory();
+        this.emitDirectiveEvent(component.$directiveList, 'nvOnDestory');
         this.emitComponentEvent(component.$componentList, 'nvOnDestory');
       }
     });
@@ -425,13 +426,36 @@ export class RouteModule {
     if (event === 'nvRouteChange') {
       componentList.forEach(component => {
         if (component.scope.nvRouteChange) component.scope.nvRouteChange(this.lastRoute, this.currentUrl);
+        this.emitDirectiveEvent(component.scope.$directiveList, event);
         this.emitComponentEvent(component.scope.$componentList, event);
       });
     }
     if (event === 'nvOnDestory') {
       componentList.forEach(component => {
         if (component.scope.nvOnDestory) component.scope.nvOnDestory();
+        this.emitDirectiveEvent(component.scope.$directiveList, event);
         this.emitComponentEvent(component.scope.$componentList, event);
+      });
+    }
+  }
+
+  /**
+   * emit nvRouteChange and nvOnDestory for Directives with recursion
+   *
+   * @private
+   * @param {DirectiveList<IDirective>[]} directiveList
+   * @param {string} event
+   * @memberof RouteModule
+   */
+  private emitDirectiveEvent(directiveList: DirectiveList<IDirective>[], event: string): void {
+    if (event === 'nvRouteChange') {
+      directiveList.forEach(directive => {
+        if (directive.scope.nvRouteChange) directive.scope.nvRouteChange(this.lastRoute, this.currentUrl);
+      });
+    }
+    if (event === 'nvOnDestory') {
+      directiveList.forEach(directive => {
+        if (directive.scope.nvOnDestory) directive.scope.nvOnDestory();
       });
     }
   }

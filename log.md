@@ -93,3 +93,5 @@
 30. 2018-11-10 add RootModule
 
 31. 2018-11-12 remove `@Inject`
+
+32. 2018-11-15 add ElementRef for @Component and @Directive

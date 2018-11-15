@@ -106,7 +106,7 @@ export declare class RouteModule {
      */
     private emitComponentEvent;
     /**
-     *
+     * emit nvRouteChange and nvOnDestory for Directives with recursion
      *
      * @private
      * @param {DirectiveList<IDirective>[]} directiveList

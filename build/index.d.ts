@@ -9,3 +9,4 @@ export { InDiv, } from './indiv';
 export { NvModule, factoryModule, } from './nv-module';
 export { HttpClient, } from './http-client';
 export { Injectable, injector, factoryCreator, } from './di';
+export { ElementRef, } from './internal-type';

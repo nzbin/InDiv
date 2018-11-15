@@ -17,7 +17,7 @@
  * @param {*} [loadModule]
  * @returns {any[]}
  */
-export declare function injector(_constructor: Function, rootModule: any, loadModule?: any): any[];
+export declare function injector(_constructor: Function, rootModule: any, loadModule?: any, internalDependence?: Map<any, any>): any[];
 /**
  * create an instance with factory method
  *
@@ -27,4 +27,4 @@ export declare function injector(_constructor: Function, rootModule: any, loadMo
  * @param {*} [loadModule]
  * @returns {*}
  */
-export declare function factoryCreator(_constructor: Function, rootModule: any, loadModule?: any): any;
+export declare function factoryCreator(_constructor: Function, rootModule: any, loadModule?: any, internalDependence?: Map<any, any>): any;

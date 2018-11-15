@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 export { Utils, } from '../utils';
 export { OnInit, BeforeMount, AfterMount, OnDestory, HasRender, WatchState, RouteChange, ReceiveProps, SetState, } from '../lifecycle';
 export { Watcher, } from '../watcher';
@@ -8,6 +7,6 @@ export { Component, setState, } from '../component';
 export { Directive, } from '../directive';
 export { InDiv, } from '../indiv';
 export { NvModule, factoryModule, } from '../nv-module';
-export { NVHttp, } from '../http';
 export { HttpClient, } from '../http-client';
 export { Injectable, injector, factoryCreator, } from '../di';
+export { ElementRef } from '../internal-type';

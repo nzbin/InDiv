@@ -48,3 +48,6 @@ export {
   injector,
   factoryCreator,
 } from './di';
+export {
+  ElementRef,
+} from './internal-type';

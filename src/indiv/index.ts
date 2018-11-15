@@ -4,6 +4,7 @@ import { Utils } from '../utils';
 import { factoryCreator } from '../di';
 import { factoryModule } from '../nv-module';
 import { render } from '../platform-browser';
+import { ElementRef } from '../internal-type';
 
 const utils = new Utils();
 
@@ -220,7 +221,10 @@ export class InDiv {
    * @memberof InDiv
    */
   public renderComponent(BootstrapComponent: Function, renderDOM: Element, loadModule?: INvModule): Promise<IComponent> {
-    const component: any = factoryCreator(BootstrapComponent, this.$rootModule, loadModule);
+    const internalDependence = new Map();
+    internalDependence.set(InDiv, this);
+    internalDependence.set(ElementRef, renderDOM);
+    const component: any = factoryCreator(BootstrapComponent, this.$rootModule, loadModule, internalDependence);
 
     component.$vm = this;
 

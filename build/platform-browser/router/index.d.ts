@@ -103,6 +103,15 @@ export declare class Router {
      */
     private emitComponentEvent;
     /**
+     * emit nvRouteChange and nvOnDestory for Directives with recursion
+     *
+     * @private
+     * @param {DirectiveList<IDirective>[]} directiveList
+     * @param {string} event
+     * @memberof RouteModule
+     */
+    private emitDirectiveEvent;
+    /**
      * instantiate Component
      *
      * use InDiv renderComponent

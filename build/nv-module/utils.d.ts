@@ -7,6 +7,7 @@ import { IInDiv, INvModule } from '../types';
  *
  * @export
  * @param {Function} NM
+ * @param {IInDiv} [indivInstance]
  * @returns {INvModule}
  */
 export declare function factoryModule(NM: Function, indivInstance?: IInDiv): INvModule;

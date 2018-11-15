@@ -1,6 +1,7 @@
 import { IInDiv, INvModule, TInjectTokenProvider, TUseClassProvider, TUseValueProvider } from '../types';
 
 import { factoryCreator } from '../di';
+import { InDiv } from '../indiv';
 
 /**
  * build provider list in module
@@ -47,15 +48,16 @@ function buildDeclarations4Declarations(moduleInstance: INvModule): void {
  * build $imports for module
  *
  * @param {INvModule} moduleInstance
+ * @param {IInDiv} [indivInstance]
  * @returns {void}
  */
-function buildImports(moduleInstance: INvModule): void {
+function buildImports(moduleInstance: INvModule, indivInstance?: IInDiv): void {
   if (!moduleInstance.$imports) return;
   const length = moduleInstance.$imports.length;
   for (let i = 0; i < length; i++) {
     const ModuleImport = moduleInstance.$imports[i];
     // push InDiv instance
-    const moduleImport = factoryModule(ModuleImport, moduleInstance.$indivInstance);
+    const moduleImport = factoryModule(ModuleImport, indivInstance);
     // build exports
     if (moduleImport.$exportsList) {
       const exportsLength = moduleImport.$exportsList.length;
@@ -77,16 +79,17 @@ function buildImports(moduleInstance: INvModule): void {
  * build $exportsList for module
  *
  * @param {INvModule} moduleInstance
+ * @param {IInDiv} [indivInstance]
  * @returns {void}
  */
-function buildExports(moduleInstance: INvModule): void {
+function buildExports(moduleInstance: INvModule, indivInstance?: IInDiv): void {
   if (!moduleInstance.$exports) return;
   const length = moduleInstance.$exports.length;
   for (let i = 0; i < length; i++) {
     const ModuleExport = moduleInstance.$exports[i];
     // 如果导出的是模块
     if ((ModuleExport as any).nvType === 'nvModule') {
-      const moduleInstanceOfExport = factoryModule(ModuleExport, moduleInstance.$indivInstance);
+      const moduleInstanceOfExport = factoryModule(ModuleExport, indivInstance);
       // 被导出的模块中的导出
       const moduleInstanceOfExportLength = moduleInstanceOfExport.$exportsList.length;
       for (let j = 0; j < moduleInstanceOfExportLength; j++) {
@@ -109,13 +112,15 @@ function buildExports(moduleInstance: INvModule): void {
  *
  * @export
  * @param {Function} NM
+ * @param {IInDiv} [indivInstance]
  * @returns {INvModule}
  */
 export function factoryModule(NM: Function, indivInstance?: IInDiv): INvModule {
-  NM.prototype.$indivInstance = indivInstance;
+  const internalDependence = new Map();
+  if (indivInstance) internalDependence.set(InDiv, indivInstance);
   buildProviderList(NM.prototype);
   buildDeclarations4Declarations(NM.prototype);
-  buildImports(NM.prototype);
-  buildExports(NM.prototype);
-  return factoryCreator(NM, NM.prototype);
+  buildImports(NM.prototype, indivInstance);
+  buildExports(NM.prototype, indivInstance);
+  return factoryCreator(NM, NM.prototype, null, internalDependence);
 }

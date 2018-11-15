@@ -2,6 +2,8 @@ import { IComponent } from '../../types';
 
 import { factoryCreator } from '../../di';
 import { Utils } from '../../utils';
+import { InDiv } from '../../InDiv';
+import { ElementRef } from '../../internal-type';
 
 const utils = new Utils();
 /**
@@ -51,7 +53,10 @@ export function buildProps<State = any, Props = any, Vm = any>(prop: any, vm: IC
  * @returns {IComponent<State, Props, Vm>}
  */
 export function buildComponentScope<State = any, Props = any, Vm = any>(ComponentClass: Function, props: any, dom: Element, vm: IComponent<State, Props, Vm>): IComponent<State, Props, Vm> {
-  const _component = factoryCreator(ComponentClass, vm.$vm.$rootModule);
+  const internalDependence = new Map();
+  if (internalDependence) internalDependence.set(InDiv, vm.$vm);
+  internalDependence.set(ElementRef, dom);
+  const _component = factoryCreator(ComponentClass, vm.$vm.$rootModule, null, internalDependence);
   _component.props = props;
   _component.renderDom = dom;
   _component.$declarations = vm.$declarations;
@@ -75,7 +80,10 @@ export function buildComponentScope<State = any, Props = any, Vm = any>(Componen
  * @returns {IComponent<State, Props, Vm>}
  */
 export function buildDirectiveScope<State = any, Props = any, Vm = any>(DirectiveClass: Function, props: any, dom: Element, vm: IComponent<State, Props, Vm>): IComponent<State, Props, Vm> {
-  const _directive = factoryCreator(DirectiveClass, vm.$vm.$rootModule);
+  const internalDependence = new Map();
+  if (vm.$vm) internalDependence.set(InDiv, vm.$vm);
+  internalDependence.set(ElementRef, dom);
+  const _directive = factoryCreator(DirectiveClass, vm.$vm.$rootModule, null, internalDependence);
   _directive.props = props;
   _directive.renderDom = dom;
   _directive.$declarations = vm.$declarations;

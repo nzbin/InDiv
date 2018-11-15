@@ -1,4 +1,4 @@
-import { InDiv, Component, Utils, NvModule, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, SetState, OnDestory, setState, NvLocation, RouteModule, TRouter, HttpClient, Directive } from '../src';
+import { InDiv, Component, Utils, NvModule, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, SetState, OnDestory, setState, NvLocation, RouteModule, TRouter, HttpClient, Directive, ElementRef } from '../src';
 // import { InDiv, Component, Router, Utils, NvModule, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, OnDestory, SetState, SetLocation, GetLocation, setState, setLocation, getLocation } from '../build';
 
 @Injectable()
@@ -52,17 +52,23 @@ interface Props {
 @Directive({
   selector: 'test-directive',
 })
-class TestDirective implements OnInit, RouteChange {
+class TestDirective implements OnInit, RouteChange, ReceiveProps {
   public props: number;
   constructor(
     private heroSearchService: HeroSearchService,
+    private element: ElementRef,
   ) {}
   public nvOnInit() {
     console.log(5555, 'init TestDirective', this.props);
+    console.log(666666, 'init TestDirective element', this.element);
     this.heroSearchService.test();
+    this.element.style.color = 'red';
   }
   public nvRouteChange(lastRoute?: string, newRoute?: string) {
     console.log(5555, 'nvRouteChange TestDirective', newRoute);
+  }
+  public nvReceiveProps(nextProps: any): void {
+    console.log(33333, 'nvReceiveProps test-directive', nextProps);
   }
 }
 
@@ -538,11 +544,12 @@ class Container implements OnInit, AfterMount, WatchState {
     private value: ValueType,
     private location: NvLocation,
     private httpClient: HttpClient,
+    private element: ElementRef,
   ) {
     this.setState = setState;
     // this.getLocation = getLocation;
     // this.setLocation = setLocation;
-    console.log(99988, 'from Container', this.httpClient);
+    console.log(99988, 'from Container', this.httpClient, this.element);
     this.hss.test();
     // console.log('http', this.http);
     console.log('value', this.value);

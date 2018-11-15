@@ -1,4 +1,6 @@
-import { InDiv, Component, Router, Utils, NvModule, Injectable, NVHttp, getLocation, setLocation, setState } from '../build';
+// import { InDiv, Component, Router, Utils, NvModule, Injectable, NVHttp, getLocation, setLocation, setState, RouteModule } from '../build';
+import { InDiv, Component, Utils, NvModule, Injectable, setState, NvLocation, RouteModule, HttpClient, Directive } from '../build';
+
 
 class HeroSearchService1 {
   constructor() {
@@ -224,11 +226,13 @@ Component({
 class R1 {
   constructor(
     heroSearchService,
-    utils
+    utils,
+    location
   ) {
     this.setState = setState;
-    this.setLocation = setLocation;
-    this.getLocation = getLocation;
+    this.location = location;
+    // this.setLocation = setLocation;
+    // this.getLocation = getLocation;
     this.heroSearchService = heroSearchService;
     this.heroSearchService.test();
     this.utils = utils;
@@ -281,8 +285,10 @@ class R1 {
     console.log('oldState Controller:', oldState);
   }
   showAlert(a) {
-    this.setLocation('/R1/C1', { a: '1' });
-    console.log('this.$location', this.getLocation());
+    // this.setLocation('/R1/C1', { a: '1' });
+    // console.log('this.$location', this.getLocation());
+    this.location.setLocation('/R1/C1', { a: '1' });
+    console.log('this.$location', this.location.getLocation());
   }
   getProps(a) {
     // alert('里面传出来了');
@@ -293,6 +299,7 @@ class R1 {
 R1.injectTokens = [
   'heroSearchService',
   'utils',
+  NvLocation
 ];
 Component({
   selector: 'R1',
@@ -318,16 +325,18 @@ class R2 {
   constructor(
     heroSearchService1,
     heroSearchService,
+    location,
   ) {
     this.heroSearchService1 = heroSearchService1;
     // this.heroSearchService1.test();
     this.state = { a: 1 };
-    this.getLocation = getLocation;
-    this.setLocation = setLocation;
+    this.location = location;
+    // this.getLocation = getLocation;
+    // this.setLocation = setLocation;
     this.setState = setState;
   }
   nvOnInit() {
-    console.log('this.$location222', this.getLocation());
+    console.log('this.$location222', this.location.getLocation());
   }
   nvBeforeMount() {
     // console.log('is nvBeforeMount');
@@ -354,12 +363,13 @@ class R2 {
     console.log('aaa', a);
   }
   showLocation() {
-    this.setLocation('/R1/C1/D1', { b: '1' });
+    this.location.setLocation('/R1/C1/D1', { b: '1' });
   }
 }
 R2.injectTokens = [
   'heroSearchService1',
   'heroSearchService',
+  NvLocation
 ];
 Component({
   selector: 'R2',
@@ -401,15 +411,17 @@ class Container {
   constructor(
     heroSearchService,
     heroSearchService1,
-    nvHttp,
+    // nvHttp,
     value,
     heroSearchService2,
+    location,
   ) {
-    this.getLocation = getLocation;
-    this.setLocation = setLocation;
+    this.location = location;
+    // this.getLocation = getLocation;
+    // this.setLocation = setLocation;
     this.ss = heroSearchService;
     this.ss.test();
-    console.log('nvHttp', nvHttp);
+    // console.log('nvHttp', nvHttp);
     console.log('value', value);
     console.log('heroSearchService2', heroSearchService2);
     this.state = {
@@ -467,8 +479,8 @@ class Container {
   }
 
   go() {
-    this.setLocation('/R1', { b: '1' });
-    console.log('R1 nvOnInit', this.getLocation());
+    this.location.setLocation('/R1', { b: '1' });
+    console.log('R1 nvOnInit', this.location.getLocation());
   }
 
   show(a, index) {
@@ -546,9 +558,10 @@ class Container {
 Container.injectTokens = [
   'heroSearchService',
   'heroSearchService1',
-  'nvHttp',
+  // HttpClient,
   'value',
   'heroSearchService2',
+  NvLocation,
 ];
 Component({
   selector: 'container-wrap',
@@ -582,7 +595,7 @@ Component({
 
 class M2 {}
 NvModule({
-  components: [
+  declarations: [
     R2,
     RouteChild,
     PCChild,
@@ -598,43 +611,6 @@ NvModule({
     RouteChild,
   ],
 })(M2);
-
-class M1 {}
-NvModule({
-  imports: [
-    M2,
-  ],
-  components: [
-    Container,
-    PComponent,
-    TestComponent,
-    R1,
-  ],
-  providers: [
-    {
-      provide: 'utils',
-      useClass: Utils,
-    },
-    {
-      provide: 'heroSearchService',
-      useClass: HeroSearchService,
-    },
-    {
-      provide: 'heroSearchService1',
-      useClass: HeroSearchService1,
-    },
-    {
-      provide: 'nvHttp',
-      useClass: NVHttp,
-    },
-    {
-      provide: 'value',
-      useValue: 1233,
-    }
-  ],
-})(M1);
-
-const router = new Router();
 
 const routes = [
   {
@@ -682,14 +658,104 @@ const routes = [
     ],
   },
 ];
-router.setRootPath('/demo');
-// router.setRootPath('/');
-router.init(routes);
-router.routeChange = (old, next) => {
-  console.log('routeChange', old, next);
-};
+
+class M1 {}
+NvModule({
+  imports: [
+    M2,
+    RouteModule.forRoot({
+      routes: routes,
+      rootPath: '/demo'
+    })
+  ],
+  declarations: [
+    Container,
+    PComponent,
+    TestComponent,
+    R1,
+  ],
+  providers: [
+    {
+      provide: 'utils',
+      useClass: Utils,
+    },
+    {
+      provide: 'heroSearchService',
+      useClass: HeroSearchService,
+    },
+    {
+      provide: 'heroSearchService1',
+      useClass: HeroSearchService1,
+    },
+    NvLocation,
+    HttpClient,
+    // {
+    //   provide: 'nvHttp',
+    //   useClass: NVHttp,
+    // },
+    {
+      provide: 'value',
+      useValue: 1233,
+    }
+  ],
+})(M1);
+
+// const router = new Router();
+
+// const routes = [
+//   {
+//     path: '/',
+//     // redirectTo: '/R1',
+//     component: 'container-wrap',
+//     children: [
+//       {
+//         path: '/R1',
+//         component: 'R1',
+//         // redirectTo: '/R2',
+//         children: [
+//           {
+//             path: '/C1',
+//             component: 'R2',
+//             children: [
+//               {
+//                 path: '/D1',
+//                 redirectTo: '/R2',
+//               },
+//             ],
+//           },
+//           {
+//             path: '/C2',
+//             redirectTo: '/R2',
+//           },
+//         ],
+//       },
+//       {
+//         path: '/R2',
+//         component: 'R2',
+//         children: [
+//           {
+//             path: '/:id',
+//             component: 'R1',
+//             children: [
+//               {
+//                 path: '/D1',
+//                 redirectTo: '/R1/C1',
+//               },
+//             ],
+//           },
+//         ],
+//       },
+//     ],
+//   },
+// ];
+// router.setRootPath('/demo');
+// // router.setRootPath('/');
+// router.init(routes);
+// router.routeChange = (old, next) => {
+//   console.log('routeChange', old, next);
+// };
 
 const inDiv = new InDiv();
 inDiv.bootstrapModule(M1);
-inDiv.use(router);
+// inDiv.use(router);
 inDiv.init();

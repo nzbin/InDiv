@@ -1,4 +1,4 @@
-import { IComponent } from '../../types';
+import { IComponent, IDirective } from '../../types';
 /**
  * get props from value
  *
@@ -43,4 +43,4 @@ export declare function buildComponentScope<State = any, Props = any, Vm = any>(
  * @param {IComponent<State, Props, Vm>} vm
  * @returns {IComponent<State, Props, Vm>}
  */
-export declare function buildDirectiveScope<State = any, Props = any, Vm = any>(DirectiveClass: Function, props: any, dom: Element, vm: IComponent<State, Props, Vm>): IComponent<State, Props, Vm>;
+export declare function buildDirectiveScope<State = any, Props = any, Vm = any>(DirectiveClass: Function, props: any, dom: Element, vm: IDirective<State, Props, Vm>): IComponent<State, Props, Vm>;

@@ -112,7 +112,7 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
             const valueList = prop[1].split('.');
             const key = valueList[0];
             let _prop = null;
-            if (/^(\$.).*/g.test(prop[1])) {
+            if (vm.compileUtil.isFromState(vm.state, prop[1])) {
               _prop = vm.compileUtil._getVMVal(vm.state, prop[1]);
               props[attrName] = buildProps(_prop, vm);
               return;
@@ -126,7 +126,7 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
                 if (arg === '') return false;
                 if (arg === '$element') return argsList.push(node);
                 if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
-                if (/(\$\.).*/g.test(arg)) return argsList.push(utilVm._getVMVal(vm.state, arg));
+                if (utilVm.isFromState(vm.state, arg)) return argsList.push(utilVm._getVMVal(vm.state, arg));
                 if (/\'.*\'/g.test(arg)) return argsList.push(arg.match(/\'(.*)\'/)[1]);
                 if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
                 if (node.repeatData) {

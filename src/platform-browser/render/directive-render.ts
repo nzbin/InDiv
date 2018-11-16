@@ -82,10 +82,9 @@ export function directivesConstructor<State = any, Props = any, Vm = any>(dom: E
       const key = valueList[0];
 
       // build props
-      if (/^(\$.).*/g.test(attrValue)) {
+      if (vm.compileUtil.isFromState(vm.state, attrValue)) {
         props = vm.compileUtil._getVMVal(vm.state, attrValue);
-      }
-      if (/^(\@.).*\(.*\)$/g.test(attrValue)) {
+      } else if (/^(\@.).*\(.*\)$/g.test(attrValue)) {
         const utilVm = new CompileUtilForRepeat();
         const fn = utilVm._getVMFunction(vm, attrValue);
         const args = attrValue.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
@@ -94,7 +93,7 @@ export function directivesConstructor<State = any, Props = any, Vm = any>(dom: E
           if (arg === '') return false;
           if (arg === '$element') return argsList.push(node);
           if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
-          if (/(\$\.).*/g.test(arg)) return argsList.push(utilVm._getVMVal(vm.state, arg));
+          if (utilVm.isFromState(vm.state, arg)) return argsList.push(utilVm._getVMVal(vm.state, arg));
           if (/\'.*\'/g.test(arg)) return argsList.push(arg.match(/\'(.*)\'/)[1]);
           if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
           if (node.repeatData) {
@@ -106,11 +105,9 @@ export function directivesConstructor<State = any, Props = any, Vm = any>(dom: E
         });
         const value = fn.apply(vm, argsList);
         props = value;
-      }
-      if (/^(\@.).*[^\(.*\)]$/g.test(attrValue)) {
+      } else if (/^(\@.).*[^\(.*\)]$/g.test(attrValue)) {
         props = vm.compileUtil._getVMVal(vm, attrValue.replace(/^(\@)/, ''));
-      }
-      if (node.repeatData && node.repeatData[key] !== null) {
+      } else if (node.repeatData && node.repeatData[key] !== null) {
         props = vm.compileUtil._getValueByValue(node.repeatData[key], attrValue, key);
       }
 

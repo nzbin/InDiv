@@ -156,6 +156,15 @@ export declare class CompileUtilForRepeat {
      */
     ifUpdater(node: Element, value: any): void;
     /**
+     * find exp is member of vm.state
+     *
+     * @param {*} vm
+     * @param {string} exp
+     * @returns {boolean}
+     * @memberof CompileUtil
+     */
+    isFromState(state: any, exp: string): boolean;
+    /**
      * update class for nv-class
      *
      * @param {Element} node
@@ -424,6 +433,15 @@ export declare class CompileUtil {
      */
     isTextNode(node: Element): boolean;
     /**
+     * find exp is member of vm.state
+     *
+     * @param {*} vm
+     * @param {string} exp
+     * @returns {boolean}
+     * @memberof CompileUtil
+     */
+    isFromState(state: any, exp: string): boolean;
+    /**
      * clone Node and clone it event
      *
      * event by attribute in DOM: eventTypes
@@ -437,4 +455,11 @@ export declare class CompileUtil {
      */
     cloneNode(node: Element, repeatData?: any): Node;
 }
+/**
+ * for virtual-DOM to diff attributes of nv-directive
+ *
+ * @export
+ * @param {(DocumentFragment | Element)} node
+ * @returns {string[]}
+ */
 export declare function shouldDiffAttributes(node: DocumentFragment | Element): string[];

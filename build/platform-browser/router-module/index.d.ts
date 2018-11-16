@@ -28,6 +28,7 @@ export declare class RouteModule {
     private watcher;
     private renderRouteList;
     private loadModuleMap;
+    private canWatch;
     constructor(indivInstance: InDiv);
     /**
      * init root data

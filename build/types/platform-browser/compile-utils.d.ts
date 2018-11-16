@@ -24,5 +24,6 @@ export interface ICompileUtil {
     isRepeatNode(node: Element): boolean;
     isRepeatProp(node: Element): boolean;
     isTextNode(node: Element): boolean;
+    isFromState(state: any, exp: string): boolean;
     cloneNode(node: Element, repeatData?: any): Node;
 }

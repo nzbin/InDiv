@@ -6,7 +6,7 @@ import { HeroSearchService, SharedModule } from './index';
   selector: 'test-loadchild-component',
   template: `
     <div>
-      <p router-to="$.to">test loadChild</p>
+      <p router-to="to">test loadChild</p>
       <router-render></router-render>
     </div>
   `,

@@ -1,6 +1,15 @@
 import { ElementRef } from '../../internal-type';
 import { OnInit, ReceiveProps, RouteChange } from '../../lifecycle';
 import { NvLocation } from './location';
+/**
+ * @Directive can be used as `router-to=""`
+ *
+ * @export
+ * @class RouterTo
+ * @implements {OnInit}
+ * @implements {ReceiveProps}
+ * @implements {RouteChange}
+ */
 export declare class RouterTo implements OnInit, ReceiveProps, RouteChange {
     private element;
     private location;
@@ -15,6 +24,14 @@ export declare class RouterTo implements OnInit, ReceiveProps, RouteChange {
     private routeTo;
     private resetState;
 }
+/**
+ * @Directive can be used as `router-from=""`
+ *
+ * @export
+ * @class RouterFrom
+ * @implements {OnInit}
+ * @implements {ReceiveProps}
+ */
 export declare class RouterFrom implements OnInit, ReceiveProps {
     private element;
     private props;
@@ -22,6 +39,14 @@ export declare class RouterFrom implements OnInit, ReceiveProps {
     nvOnInit(): void;
     nvReceiveProps(nextProps: string): void;
 }
+/**
+ * @Directive can be used as `router-active=""`
+ *
+ * @export
+ * @class RouterActive
+ * @implements {OnInit}
+ * @implements {ReceiveProps}
+ */
 export declare class RouterActive implements OnInit, ReceiveProps {
     private element;
     private props;

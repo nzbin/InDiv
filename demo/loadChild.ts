@@ -1,30 +1,26 @@
-// import { NvModule, Component, Injected, setLocation, SetLocation, NvLocation } from '../src';
-import { NvModule, Component, NvLocation } from '../src';
-import { HeroSearchService } from './index';
+import { NvModule, Component } from '../src';
+import { HeroSearchService, SharedModule } from './index';
 
 // @Injected
 @Component({
   selector: 'test-loadchild-component',
   template: `
     <div>
-      <p nv-on:click="@jump()">test loadChild</p>
+      <p router-to="$.to">test loadChild</p>
       <router-render></router-render>
     </div>
   `,
 })
 class TestLoadchildComponent {
-  // private setLocation: SetLocation;
+  public state: any;
   constructor(
     private sss: HeroSearchService,
-    private location: NvLocation,
   ) {
+    this.state = {
+      to: '/R1/C1/D1', 
+    };
     console.log(99999, 'from TestLoadchildModule');
     this.sss.test();
-    // this.setLocation = setLocation;
-  }
-  public jump() {
-    // this.setLocation('/R1/C1/D1');
-    this.location.setLocation('/R1/C1/D1');
   }
 }
 
@@ -42,12 +38,10 @@ class R2 {
   }
 }
 
-// @Injected
 @NvModule({
-  // providers: [
-  //   HeroSearchService,
-  //   HeroSearchService1,
-  // ],
+  imports: [
+    SharedModule,
+  ],
   declarations: [
     TestLoadchildComponent,
     R2,

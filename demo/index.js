@@ -1,4 +1,3 @@
-// import { InDiv, Component, Router, Utils, NvModule, Injectable, NVHttp, getLocation, setLocation, setState, RouteModule } from '../build';
 import { InDiv, Component, Utils, NvModule, Injectable, setState, NvLocation, RouteModule, HttpClient, Directive } from '../build';
 
 
@@ -231,8 +230,6 @@ class R1 {
   ) {
     this.setState = setState;
     this.location = location;
-    // this.setLocation = setLocation;
-    // this.getLocation = getLocation;
     this.heroSearchService = heroSearchService;
     this.heroSearchService.test();
     this.utils = utils;
@@ -285,10 +282,8 @@ class R1 {
     console.log('oldState Controller:', oldState);
   }
   showAlert(a) {
-    // this.setLocation('/R1/C1', { a: '1' });
-    // console.log('this.$location', this.getLocation());
-    this.location.setLocation('/R1/C1', { a: '1' });
-    console.log('this.$location', this.location.getLocation());
+    this.location.set('/R1/C1', { a: '1' });
+    console.log('this.$location', this.location.get());
   }
   getProps(a) {
     // alert('里面传出来了');
@@ -331,12 +326,10 @@ class R2 {
     // this.heroSearchService1.test();
     this.state = { a: 1 };
     this.location = location;
-    // this.getLocation = getLocation;
-    // this.setLocation = setLocation;
     this.setState = setState;
   }
   nvOnInit() {
-    console.log('this.$location222', this.location.getLocation());
+    console.log('this.$location222', this.location.get());
   }
   nvBeforeMount() {
     // console.log('is nvBeforeMount');
@@ -363,7 +356,7 @@ class R2 {
     console.log('aaa', a);
   }
   showLocation() {
-    this.location.setLocation('/R1/C1/D1', { b: '1' });
+    this.location.set('/R1/C1/D1', { b: '1' });
   }
 }
 R2.injectTokens = [
@@ -417,8 +410,6 @@ class Container {
     location,
   ) {
     this.location = location;
-    // this.getLocation = getLocation;
-    // this.setLocation = setLocation;
     this.ss = heroSearchService;
     this.ss.test();
     // console.log('nvHttp', nvHttp);
@@ -479,8 +470,8 @@ class Container {
   }
 
   go() {
-    this.location.setLocation('/R1', { b: '1' });
-    console.log('R1 nvOnInit', this.location.getLocation());
+    this.location.set('/R1', { b: '1' });
+    console.log('R1 nvOnInit', this.location.get());
   }
 
   show(a, index) {

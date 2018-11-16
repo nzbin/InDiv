@@ -5,7 +5,6 @@ import { Utils } from '../../utils';
 import { CompileUtilForRepeat } from '../compile-utils';
 import { getPropsValue, buildProps, buildComponentScope } from './render-utils';
 import { directiveRenderFunction } from './directive-render';
-import { async } from '_rxjs@6.3.3@rxjs/internal/scheduler/async';
 
 const utils = new Utils();
 
@@ -45,7 +44,7 @@ export function mountComponent<State = any, Props = any, Vm = any>(dom: Element,
     }
 
     component.scope.$vm = vm.$vm;
-    component.scope.$declarations = vm.$declarations;
+
     if (component.scope.nvOnInit && !cacheComponent) component.scope.nvOnInit();
     if (component.scope.watchData) component.scope.watchData();
     if (component.scope.nvBeforeMount) component.scope.nvBeforeMount();
@@ -70,14 +69,10 @@ export function mountComponent<State = any, Props = any, Vm = any>(dom: Element,
 export function componentsConstructor<State = any, Props = any, Vm = any>(dom: Element, vm: IComponent<State, Props, Vm>): void {
   vm.$componentList = [];
   const routerRenderDom = dom.querySelectorAll(vm.$vm.getRouteDOMKey())[0];
-  (vm.constructor as any)._injectedDeclarations.forEach((value: Function, key: string) => {
-    if (!vm.$declarations.find((component: any) => component.$selector === key)) vm.$declarations.push(value);
-  });
-  const declarationsLength = vm.$declarations.length;
-  for (let i = 0; i < declarationsLength; i++) {
-    if ((vm.$declarations[i] as any).nvType !== 'nvComponent') continue;
 
-    const name = ((vm.$declarations[i]) as any).$selector;
+  vm.$declarationMap.forEach((declaration, name) => {
+    if ((declaration as any).nvType !== 'nvComponent') return;
+
     const tags = dom.getElementsByTagName(name);
     Array.from(tags).forEach(node => {
       //  protect component in <router-render>
@@ -171,14 +166,14 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
         dom: node,
         props,
         scope: null,
-        constructorFunction: vm.$declarations[i],
+        constructorFunction: declaration,
         // init hasRender false
         hasRender: false,
       });
       // after construct instance remove isComponent
       node.isComponent = false;
     });
-  }
+  });
 }
 
 /**

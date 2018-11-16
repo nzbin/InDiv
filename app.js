@@ -16,6 +16,18 @@ app.use('/demo', (req, res, next) => {
   res.render('index-app.html');
 });
 
+app.get('/success', (req, res, next) => {
+  res.send({
+    message: 1
+  });
+});
+
+app.get('/error', (req, res, next) => {
+  res.send({
+    message: 1
+  });
+});
+
 app.listen(1234);
 console.log(`listening port 1234`);
 

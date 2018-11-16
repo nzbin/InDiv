@@ -6,8 +6,10 @@ import { factoryModule, NvModule } from '../../nv-module';
 import { InDiv } from '../../indiv';
 
 import { NvLocation } from './location';
+import { RouterTo, RouterFrom, RouterActive } from './directives';
 
 export { NvLocation } from './location';
+export { RouterTo, RouterFrom, RouterActive } from './directives';
 
 const utils = new Utils();
 
@@ -36,11 +38,21 @@ export type TRouter = {
 };
 
 @NvModule({
+  declarations: [
+    RouterTo,
+    RouterFrom,
+    RouterActive,
+  ],
   providers: [
     {
       useClass: NvLocation,
       provide: NvLocation,
-    },
+    }, 
+  ],
+  exports: [
+    RouterTo,
+    RouterFrom,
+    RouterActive,
   ],
 })
 export class RouteModule {
@@ -54,10 +66,17 @@ export class RouteModule {
   private watcher: KeyWatcher = null;
   private renderRouteList: string[] = [];
   private loadModuleMap: Map<string, INvModule> = new Map();
+  private canWatch: boolean = false;
 
   constructor(
     private indivInstance: InDiv,
   ) {
+    // if don't use static function forRoot, RouteModule.prototype.canWatch is false
+    // if RouteModule.prototype.canWatch is false, don't watch router
+    // if RouteModule.prototype.canWatch is true, watch router and reset RouteModule.prototype.canWatch
+    if (!RouteModule.prototype.canWatch) return;
+    RouteModule.prototype.canWatch = false;
+
     if (!this.routes) this.routes = [];
     if (!nvRouteStatus.nvRootPath) nvRouteStatus.nvRootPath = '/';
     this.indivInstance.setRootPath(nvRouteStatus.nvRootPath);
@@ -106,6 +125,7 @@ export class RouteModule {
       throw new Error(`route error: no routes exit`);
     }
     if (!utils.isBrowser()) return;
+    RouteModule.prototype.canWatch = true;
     return RouteModule;
   }
 

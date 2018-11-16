@@ -25,6 +25,9 @@ export {
   TRouter,
   RouteModule,
   NvLocation,
+  RouterTo,
+  RouterFrom,
+  RouterActive,
 } from './platform-browser';
 export {
   Component,
@@ -42,6 +45,9 @@ export {
 } from './nv-module';
 export {
   HttpClient,
+  HttpClientRequestConfig,
+  HttpClientResponse,
+  HttpClientRequestInstance,
 } from './http-client';
 export {
   Injectable,

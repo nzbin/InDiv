@@ -1,5 +1,7 @@
-import { InDiv, Component, Utils, NvModule, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, SetState, OnDestory, setState, NvLocation, RouteModule, TRouter, HttpClient, Directive, ElementRef } from '../src';
-// import { InDiv, Component, Router, Utils, NvModule, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, NVHttp, OnDestory, SetState, SetLocation, GetLocation, setState, setLocation, getLocation } from '../build';
+import { InDiv, Component, Utils, NvModule, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, SetState, OnDestory, setState, NvLocation, RouteModule, TRouter, HttpClient, Directive, ElementRef, HttpClientResponse, RouterTo, RouterFrom, RouterActive } from '../src';
+// import { InDiv, Component, Utils, NvModule, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, SetState, OnDestory, setState, NvLocation, RouteModule, TRouter, HttpClient, Directive, ElementRef, HttpClientResponse } from '../build';
+
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class HeroSearchService1 {
@@ -325,8 +327,6 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
     private utils: Utils,
     private location: NvLocation,
   ) {
-    // this.setLocation = setLocation;
-    // this.getLocation = getLocation;
     this.setState = setState;
     console.log(9999888777, 'from R1');
     this.heroSearchService.test();
@@ -363,8 +363,7 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
       name: 'gerry',
       github: 'https://github.com/DimaLiLongJi',
     }, { expires: 7 });
-    // console.log('R1 nvOnInit', this.getLocation());
-    console.log('R1 nvOnInit', this.location.getLocation());
+    console.log('R1 nvOnInit', this.location.get());
   }
   public nvBeforeMount() {
     const cookie = this.utils.getCookie('tutor');
@@ -382,10 +381,8 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
     console.log('oldState Controller:', oldState);
   }
   public showAlert(a: any) {
-    this.location.setLocation('/R1/C1', { a: '1' });
-    console.log('this.$location', this.location.getLocation());
-    // this.setLocation('/R1/C1', { a: '1' });
-    // console.log('this.$location', this.getLocation());
+    this.location.set('/R1/C1', { a: '1' });
+    console.log('this.$location', this.location.get());
     // a.show = false;
   }
   public getProps(a: any) {
@@ -396,8 +393,7 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
   }
 
   public nvOnDestory() {
-    // console.log(this.getLocation(), 'R1 is nvOnDestory');
-    console.log(this.location.getLocation(), 'R1 is nvOnDestory');
+    console.log(this.location.get(), 'R1 is nvOnDestory');
   }
 }
 
@@ -432,8 +428,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
     this.state = { a: 1 };
   }
   public nvOnInit() {
-    // console.log('this.getLocation', this.getLocation());
-    console.log('this.getLocation', this.location.getLocation());
+    console.log('this.getLocation', this.location.get());
   }
   public nvBeforeMount() {
     // console.log('is nvBeforeMount');
@@ -453,8 +448,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
   }
 
   public nvOnDestory() {
-    // console.log(this.getLocation(), 'R2 is nvOnDestory');
-    console.log(this.location.getLocation(), 'R2 is nvOnDestory');
+    console.log(this.location.get(), 'R2 is nvOnDestory');
   }
 
   public showAlert() {
@@ -466,9 +460,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
     console.log('aaa', a);
   }
   public showLocation() {
-    // this.setLocation('/R1/C1/D1', { b: '1' });
-    this.location.setLocation('/R1/C1/D1', { b: '1' });
-    // this.setLocation('/R2/2', { b: '1' });
+    this.location.set('/R1/C1/D1', { b: '1' });
   }
 }
 
@@ -482,6 +474,14 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
 class TestComponent implements OnInit, OnDestory, ReceiveProps {
   public state: any;
   public props: any;
+
+  constructor(
+    private httpClient: HttpClient,
+  ) {
+    this.httpClient.get('/success').subscribe({
+      next: (value: any) => {console.log(4444, value); },
+    });
+  }
 
   public nvOnInit() {
     this.state = {
@@ -536,20 +536,26 @@ class Container implements OnInit, AfterMount, WatchState {
   // public setLocation: SetLocation;
   // public getLocation: GetLocation;
   public setState: SetState;
+  public http$: Observable<HttpClientResponse>;
 
   constructor(
     private hss: HeroSearchService,
     private hss2: HeroSearchService1,
-    // private http: NVHttp,
     private value: ValueType,
     private location: NvLocation,
     private httpClient: HttpClient,
     private element: ElementRef,
   ) {
     this.setState = setState;
-    // this.getLocation = getLocation;
-    // this.setLocation = setLocation;
-    console.log(99988, 'from Container', this.httpClient, this.element);
+    console.log(99988, 'from Container', this.element);
+    this.httpClient.createResponseInterceptor((value: HttpClientResponse) => {
+      return {
+        data: value.data,
+      }; });
+    this.http$ = this.httpClient.get('/success');
+    this.http$.subscribe({
+      next: this.httpHandler,
+    });
     this.hss.test();
     // console.log('http', this.http);
     console.log('value', this.value);
@@ -600,7 +606,7 @@ class Container implements OnInit, AfterMount, WatchState {
   }
 
   public nvOnInit() {
-    console.log('nvOnInit Container', this.location.getLocation());
+    console.log('nvOnInit Container', this.location.get());
   }
 
   public nvAfterMount() {
@@ -609,8 +615,7 @@ class Container implements OnInit, AfterMount, WatchState {
   }
 
   public go() {
-    // this.setLocation('/R1', { b: '1' });
-    this.location.setLocation('/R1', { b: '1' });
+    this.location.redirectTo('/R1', { b: '1' });
   }
   public countState(a: any, index: number): any {
     if (!a) return 'false';
@@ -699,20 +704,24 @@ class Container implements OnInit, AfterMount, WatchState {
     this.state.a = 5;
     console.log(9999999999);
   }
+
+  private httpHandler(value: any) {
+    console.log(33333, 'from container', value);
+  }
 }
 
 @NvModule({
-  // components: [
+  imports : [
+    RouteModule,
+  ],
   declarations: [
     PCChild,
     RouteChild,
     TestDirective,
   ],
   providers: [
-    // HeroSearchService2,
     Utils,
     HttpClient,
-    // NVHttp,
     HeroSearchService,
     {
       provide: HeroSearchService1,
@@ -723,26 +732,24 @@ class Container implements OnInit, AfterMount, WatchState {
       provide: ValueType,
       useValue: 1123,
     },
+    NvLocation,
   ],
   exports: [
     PCChild,
     RouteChild,
     TestDirective,
+    RouteModule,
   ],
 })
-class SharedModule {}
+export class SharedModule {}
 
 @NvModule({
   imports: [
     SharedModule,
   ],
-  // components: [
   declarations: [
     R2,
   ],
-  // providers: [
-  //   HeroSearchService2,
-  // ],
   exports: [
     R2,
     SharedModule,
@@ -822,20 +829,9 @@ const routes: TRouter[] = [
     TestComponent,
     R1,
   ],
-  // providers: [
-  //   Utils,
-  //   NVHttp,
-  //   HeroSearchService,
-  //   {
-  //     provide: HeroSearchService1,
-  //     useClass: HeroSearchService1,
-  //   },
-  //   HeroSearchService2,
-  //   {
-  //     provide: ValueType,
-  //     useValue: 1123,
-  //   },
-  // ],
+  exports: [
+    RouteModule,
+  ],
 })
 class M1 {
   constructor (

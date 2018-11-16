@@ -123,7 +123,10 @@ export class HttpClient {
    * @returns {number}
    * @memberof HttpClient
    */
-  public createRequestInterceptor(onFulfilled?: (value: HttpClientRequestConfig) => HttpClientRequestConfig | Promise<HttpClientRequestConfig>, onRejected?: (error: any) => any): number {
+  public createRequestInterceptor(
+    onFulfilled?: (value: HttpClientRequestConfig) => HttpClientRequestConfig | Promise<HttpClientRequestConfig> | any,
+    onRejected?: (error: any) => any,
+  ): number {
     return axios.interceptors.request.use(onFulfilled, onRejected);
   }
 
@@ -149,7 +152,10 @@ export class HttpClient {
    * @returns {number}
    * @memberof HttpClient
    */
-  public createResponseInterceptor(onFulfilled?: (value: HttpClientResponse) => HttpClientResponse | Promise<HttpClientResponse>, onRejected?: (error: any) => any): number {
+  public createResponseInterceptor(
+    onFulfilled?: (value: HttpClientResponse) => HttpClientResponse | Promise<HttpClientResponse> | any,
+    onRejected?: (error: any) => any,
+  ): number {
     return axios.interceptors.response.use(onFulfilled, onRejected);
   }
 

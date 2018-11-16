@@ -91,7 +91,7 @@ export declare class HttpClient {
      * @returns {number}
      * @memberof HttpClient
      */
-    createRequestInterceptor(onFulfilled?: (value: HttpClientRequestConfig) => HttpClientRequestConfig | Promise<HttpClientRequestConfig>, onRejected?: (error: any) => any): number;
+    createRequestInterceptor(onFulfilled?: (value: HttpClientRequestConfig) => HttpClientRequestConfig | Promise<HttpClientRequestConfig> | any, onRejected?: (error: any) => any): number;
     /**
      * remove a global request interceptor with requestInterceptor's id
      *
@@ -111,7 +111,7 @@ export declare class HttpClient {
      * @returns {number}
      * @memberof HttpClient
      */
-    createResponseInterceptor(onFulfilled?: (value: HttpClientResponse) => HttpClientResponse | Promise<HttpClientResponse>, onRejected?: (error: any) => any): number;
+    createResponseInterceptor(onFulfilled?: (value: HttpClientResponse) => HttpClientResponse | Promise<HttpClientResponse> | any, onRejected?: (error: any) => any): number;
     /**
      * remove a global response interceptor with responseInterceptor's id
      *

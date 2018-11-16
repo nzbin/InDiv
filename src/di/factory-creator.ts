@@ -21,7 +21,7 @@ import { IComponent } from '../types';
  */
 export function injector(_constructor: Function, rootModule: any, loadModule?: any, internalDependence?: Map<any, any>): any[] {
     const args: any[] = [];
-    // for ts Dependency Injection
+
     let _needInjectedClass: any[] = [];
     if ((_constructor as any)._needInjectedClass) _needInjectedClass = (_constructor as any)._needInjectedClass;
     if ((_constructor as any).injectTokens) _needInjectedClass = (_constructor as any).injectTokens;

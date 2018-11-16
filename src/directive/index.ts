@@ -1,14 +1,11 @@
-import { IComponent, TInjectTokenProvider, TUseClassProvider, TUseValueProvider } from '../types';
+import { IDirective, TInjectTokenProvider, TUseClassProvider, TUseValueProvider } from '../types';
 
-import { Utils } from '../utils';
 import { injected } from '../di/injected';
 
 type TDirectiveOptions = {
   selector: string;
   providers?: (Function | TUseClassProvider | TUseValueProvider)[];
 };
-
-const utils = new Utils();
 
 /**
  * Decorator @Directive
@@ -26,8 +23,7 @@ export function Directive<Props = any, Vm = any>(options: TDirectiveOptions): (_
     injected(_constructor);
     (_constructor as any).nvType = 'nvDirective';
     (_constructor as any).$selector = options.selector;
-    (_constructor as any)._injectedDeclarations = new Map();
-    const vm: any = _constructor.prototype;
+    const vm: IDirective = _constructor.prototype;
 
     // component $providerList for injector
     if (options.providers && options.providers.length > 0) {
@@ -43,7 +39,7 @@ export function Directive<Props = any, Vm = any>(options: TDirectiveOptions): (_
       }
     }
 
-    vm.$declarations = [];
+    vm.$declarationMap = new Map();
   };
 }
 

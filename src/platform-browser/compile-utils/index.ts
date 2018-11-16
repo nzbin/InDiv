@@ -807,7 +807,11 @@ export class CompileUtil {
   public repeatChildrenUpdater(node: Element, value: any, expFather: string, index: number, vm: any, watchValue: any): void {
     const key = expFather.split(' ')[1];
     Array.from(node.childNodes).forEach((child: Element) => {
-      if (this.isElementNode(child) && vm.$declarations.find((component: any) => component.$selector === child.tagName.toLocaleLowerCase() && component.nvType === 'nvComponent')) child.isComponent = true;
+      // mark for container of @Component
+      if (this.isElementNode(child)) {
+        const findDeclaration = vm.$declarationMap.get(child.tagName.toLocaleLowerCase());
+        if (findDeclaration && findDeclaration.nvType === 'nvComponent') child.isComponent = true;
+      }
 
       child.repeatData = node.repeatData || {};
       child.repeatData[key] = value;

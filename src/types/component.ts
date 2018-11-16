@@ -22,7 +22,7 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     stateWatcher?: IWatcher;
 
     $template?: string;
-    $declarations?: Function[];
+    $declarationMap?: Map<string, Function>;
     $providerList?: Map<Function | string, Function | any>;
     $componentList?: ComponentList<IComponent<any, any, any>>[];
     $directiveList?: DirectiveList<IDirective<any, any, any>>[];

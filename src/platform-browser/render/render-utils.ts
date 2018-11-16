@@ -1,4 +1,4 @@
-import { IComponent } from '../../types';
+import { IComponent, IDirective } from '../../types';
 
 import { factoryCreator } from '../../di';
 import { Utils } from '../../utils';
@@ -56,10 +56,12 @@ export function buildComponentScope<State = any, Props = any, Vm = any>(Componen
   const internalDependence = new Map();
   if (internalDependence) internalDependence.set(InDiv, vm.$vm);
   internalDependence.set(ElementRef, dom);
-  const _component = factoryCreator(ComponentClass, vm.$vm.$rootModule, null, internalDependence);
+  const _component: IComponent = factoryCreator(ComponentClass, vm.$vm.$rootModule, null, internalDependence);
   _component.props = props;
   _component.renderDom = dom;
-  _component.$declarations = vm.$declarations;
+  vm.$declarationMap.forEach((declaration, key) => {
+    if (!_component.$declarationMap.has(key)) _component.$declarationMap.set(key, declaration);
+  });
 
   _component.render = vm.$vm.render.bind(_component);
   _component.reRender = vm.$vm.reRender.bind(_component);
@@ -79,14 +81,16 @@ export function buildComponentScope<State = any, Props = any, Vm = any>(Componen
  * @param {IComponent<State, Props, Vm>} vm
  * @returns {IComponent<State, Props, Vm>}
  */
-export function buildDirectiveScope<State = any, Props = any, Vm = any>(DirectiveClass: Function, props: any, dom: Element, vm: IComponent<State, Props, Vm>): IComponent<State, Props, Vm> {
+export function buildDirectiveScope<State = any, Props = any, Vm = any>(DirectiveClass: Function, props: any, dom: Element, vm: IDirective<State, Props, Vm>): IComponent<State, Props, Vm> {
   const internalDependence = new Map();
   if (vm.$vm) internalDependence.set(InDiv, vm.$vm);
   internalDependence.set(ElementRef, dom);
-  const _directive = factoryCreator(DirectiveClass, vm.$vm.$rootModule, null, internalDependence);
+  const _directive: IDirective = factoryCreator(DirectiveClass, vm.$vm.$rootModule, null, internalDependence);
   _directive.props = props;
   _directive.renderDom = dom;
-  _directive.$declarations = vm.$declarations;
+  vm.$declarationMap.forEach((declaration, key) => {
+    if (!_directive.$declarationMap.has(key)) _directive.$declarationMap.set(key, declaration);
+  });
 
   return _directive;
 }

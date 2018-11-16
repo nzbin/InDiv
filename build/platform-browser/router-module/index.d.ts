@@ -1,6 +1,7 @@
 import { NvRouteObject, TLoadChild, TChildModule } from '../../types';
 import { InDiv } from '../../indiv';
 export { NvLocation } from './location';
+export { RouterTo, RouterFrom, RouterActive } from './directives';
 export declare const nvRouteStatus: {
     nvRouteObject: NvRouteObject;
     nvRouteParmasObject: {

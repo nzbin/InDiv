@@ -1,6 +1,6 @@
 export declare class NvLocation {
     /**
-     * getLocation in @Component or @Directive
+     * get route in @Component or @Directive
      *
      * get nvRouteObject and nvRouteParmasObject in InDiv
      *
@@ -13,7 +13,7 @@ export declare class NvLocation {
      *   rootPath?: string;
      * }}
      */
-    getLocation(): {
+    get(): {
         path?: string;
         query?: any;
         params?: any;
@@ -21,7 +21,7 @@ export declare class NvLocation {
         rootPath?: string;
     };
     /**
-     * setLocation in @Component or @Directive
+     * set route in @Component or @Directive
      *
      * set nvRouteObject in InDiv
      *
@@ -32,5 +32,17 @@ export declare class NvLocation {
      * @param {string} [title]
      * @returns {void}
      */
-    setLocation(path: string, query?: any, data?: any, title?: string): void;
+    set(path: string, query?: any, data?: any, title?: string): void;
+    /**
+     * redirect route in @Component or @Directive
+     *
+     * set nvRouteObject in InDiv
+     *
+     * @param {string} path
+     * @param {*} [query]
+     * @param {*} [data]
+     * @param {string} [title]
+     * @memberof NvLocation
+     */
+    redirectTo(path: string, query?: any, data?: any, title?: string): void;
 }

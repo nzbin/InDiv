@@ -96,7 +96,11 @@ export class Compile {
    */
   public recursiveDOM(childNodes: NodeListOf<Node & ChildNode>, fragment: DocumentFragment | Element): void {
     Array.from(childNodes).forEach((node: Element) => {
-      if (this.isElementNode(node) && this.$vm.$declarations.find((component: any) => component.$selector === node.tagName.toLocaleLowerCase() && component.nvType === 'nvComponent')) node.isComponent = true;
+      // mark for container of @Component
+      if (this.isElementNode(node)) {
+        const findDeclaration = this.$vm.$declarationMap.get(node.tagName.toLocaleLowerCase());
+        if (findDeclaration && findDeclaration.nvType === 'nvComponent') node.isComponent = true;
+      }
 
       if (node.hasChildNodes() && !this.isRepeatNode(node)) this.recursiveDOM(node.childNodes, node);
 

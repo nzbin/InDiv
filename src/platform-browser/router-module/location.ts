@@ -8,7 +8,7 @@ const utils = new Utils();
 @Injectable()
 export class NvLocation {
   /**
-   * getLocation in @Component or @Directive
+   * get route in @Component or @Directive
    *
    * get nvRouteObject and nvRouteParmasObject in InDiv
    * 
@@ -21,7 +21,7 @@ export class NvLocation {
    *   rootPath?: string;
    * }}
    */
-  public getLocation(): {
+  public get(): {
     path?: string;
     query?: any;
     params?: any;
@@ -39,7 +39,7 @@ export class NvLocation {
   }
 
   /**
-   * setLocation in @Component or @Directive
+   * set route in @Component or @Directive
    * 
    * set nvRouteObject in InDiv
    * 
@@ -50,7 +50,7 @@ export class NvLocation {
    * @param {string} [title]
    * @returns {void}
    */
-  public setLocation(path: string, query?: any, data?: any, title?: string): void {
+  public set(path: string, query?: any, data?: any, title?: string): void {
     if (!utils.isBrowser()) return;
     const rootPath = nvRouteStatus.nvRootPath === '/' ? '' : nvRouteStatus.nvRootPath;
     history.pushState(
@@ -59,5 +59,27 @@ export class NvLocation {
       `${rootPath}${path}${utils.buildQuery(query)}`,
     );
     nvRouteStatus.nvRouteObject = { path, query, data };
+  }
+
+  /**
+   * redirect route in @Component or @Directive
+   *
+   * set nvRouteObject in InDiv
+   * 
+   * @param {string} path
+   * @param {*} [query]
+   * @param {*} [data]
+   * @param {string} [title]
+   * @memberof NvLocation
+   */
+  public redirectTo(path: string, query?: any, data?: any, title?: string): void {
+    const rootPath = nvRouteStatus.nvRootPath === '/' ? '' : nvRouteStatus.nvRootPath;
+    history.replaceState(
+      { path, query, data },
+      title,
+      `${rootPath}${path}${utils.buildQuery(query)}`,
+    );
+    nvRouteStatus.nvRouteObject = { path, query, data };
+    nvRouteStatus.nvRouteParmasObject = {};
   }
 } 

@@ -1,4 +1,4 @@
-import { IDirective, DirectiveList, IRenderTaskQueue } from '../../types';
+import { IDirective, DirectiveList, IRenderTaskQueue, IInDiv } from '../../types';
 
 import { Utils } from '../../utils';
 import { CompileUtilForRepeat } from '../compile-utils';
@@ -40,7 +40,7 @@ export function mountDirective<State = any, Props = any, Vm = any>(dom: Element,
     }
 
     directive.scope.$vm = vm.$vm;
-    directive.scope.$declarations = vm.$declarations;
+
     if (directive.scope.nvOnInit && !cacheDirective) directive.scope.nvOnInit();
     if (directive.scope.nvBeforeMount) directive.scope.nvBeforeMount();
   }
@@ -64,14 +64,10 @@ export function mountDirective<State = any, Props = any, Vm = any>(dom: Element,
 export function directivesConstructor<State = any, Props = any, Vm = any>(dom: Element, vm: IDirective<State, Props, Vm>): void {
   vm.$directiveList = [];
   const routerRenderDom = dom.querySelectorAll(vm.$vm.getRouteDOMKey())[0];
-  (vm.constructor as any)._injectedDeclarations.forEach((value: Function, key: string) => {
-    if (!vm.$declarations.find((directive: any) => directive.$selector === key)) vm.$declarations.push(value);
-  });
-  const declarationsLength = vm.$declarations.length;
-  for (let i = 0; i < declarationsLength; i++) {
-    if ((vm.$declarations[i] as any).nvType !== 'nvDirective') continue;
 
-    const name = ((vm.$declarations[i]) as any).$selector;
+  vm.$declarationMap.forEach((declaration, name) => {
+    if ((declaration as any).nvType !== 'nvDirective') return;
+
     const tags = dom.querySelectorAll(`*[${name}]`);
     Array.from(tags).forEach(node => {
       //  protect component in <router-render>
@@ -122,10 +118,10 @@ export function directivesConstructor<State = any, Props = any, Vm = any>(dom: E
         dom: node,
         props,
         scope: null,
-        constructorFunction: vm.$declarations[i],
+        constructorFunction: declaration,
       });
     });
-  }
+  });
 }
 
 /**

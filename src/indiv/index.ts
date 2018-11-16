@@ -228,9 +228,15 @@ export class InDiv {
 
     component.$vm = this;
 
-    // component which comes from loadModule can only extends $components from loadModule
-    if (loadModule)  component.$declarations = loadModule.$declarations;
-    else component.$declarations = this.$rootModule.$declarations;
+    if (loadModule) {
+      loadModule.$declarations.forEach((findDeclaration: Function) => {
+        if (!component.$declarationMap.has((findDeclaration as any).$selector)) component.$declarationMap.set((findDeclaration as any).$selector, findDeclaration);
+      });
+    } else {
+      this.$rootModule.$declarations.forEach((findDeclaration: Function) => {
+        if (!component.$declarationMap.has((findDeclaration as any).$selector)) component.$declarationMap.set((findDeclaration as any).$selector, findDeclaration);
+      });
+    }
 
     component.render = this.render.bind(component);
     component.reRender = this.reRender.bind(component);

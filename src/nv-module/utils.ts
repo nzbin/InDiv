@@ -25,26 +25,6 @@ function buildProviderList(moduleInstance: INvModule): void {
 }
 
 /**
- * build provider list for declaration in module
- * 
- * set Map _injectedDeclarationss in declaration
- *
- * @param {INvModule} moduleInstance
- * @returns {void}
- */
-function buildDeclarations4Declarations(moduleInstance: INvModule): void {
-  if (!moduleInstance.$declarations) return;
-  const length = moduleInstance.$declarations.length;
-  for (let i = 0; i < length; i++) {
-    const FindComponent: any = moduleInstance.$declarations[i];
-    if (!FindComponent._injectedDeclarations) FindComponent._injectedDeclarations = new Map();
-    moduleInstance.$declarations.forEach((needInjectComponent: any) => {
-      if (!FindComponent._injectedDeclarations.has(needInjectComponent.$selector)) FindComponent._injectedDeclarations.set(needInjectComponent.$selector, needInjectComponent);
-    });
-  }
-}
-
-/**
  * build $imports for module
  *
  * @param {INvModule} moduleInstance
@@ -72,6 +52,25 @@ function buildImports(moduleInstance: INvModule, indivInstance?: IInDiv): void {
         if (!moduleInstance.$providerList.has(key)) moduleInstance.$providerList.set(key, value);
       });
     }
+  }
+}
+
+/**
+ * build provider list for declaration in module
+ * 
+ * set static $declarations: [] in declaration
+ *
+ * @param {INvModule} moduleInstance
+ * @returns {void}
+ */
+function buildDeclarations4Declarations(moduleInstance: INvModule): void {
+  if (!moduleInstance.$declarations) return;
+  const length = moduleInstance.$declarations.length;
+  for (let i = 0; i < length; i++) {
+    const FindDeclaration: any = moduleInstance.$declarations[i];
+    moduleInstance.$declarations.forEach((needInjectDeclaration: any) => {
+      if (!FindDeclaration.prototype.$declarationMap.has(needInjectDeclaration.$selector)) FindDeclaration.prototype.$declarationMap.set(needInjectDeclaration.$selector, needInjectDeclaration);
+    });
   }
 }
 
@@ -119,8 +118,8 @@ export function factoryModule(NM: Function, indivInstance?: IInDiv): INvModule {
   const internalDependence = new Map();
   if (indivInstance) internalDependence.set(InDiv, indivInstance);
   buildProviderList(NM.prototype);
-  buildDeclarations4Declarations(NM.prototype);
   buildImports(NM.prototype, indivInstance);
+  buildDeclarations4Declarations(NM.prototype);
   buildExports(NM.prototype, indivInstance);
   return factoryCreator(NM, NM.prototype, null, internalDependence);
 }

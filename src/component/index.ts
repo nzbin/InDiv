@@ -29,7 +29,6 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
     injected(_constructor);
     (_constructor as any).nvType = 'nvComponent';
     (_constructor as any).$selector = options.selector;
-    (_constructor as any)._injectedDeclarations = new Map();
     const vm: IComponent<State, Props, Vm> = _constructor.prototype;
     vm.$template = options.template;
 
@@ -47,7 +46,7 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
       }
     }
 
-    vm.$declarations = [];
+    vm.$declarationMap = new Map();
     // for Component
     vm.$componentList = [];
     // for Directive

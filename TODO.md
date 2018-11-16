@@ -23,3 +23,4 @@
 - [x] optimize setState
 - [x] support directive
 - [x] HTTP client
+- [ ] rewrite IOC container

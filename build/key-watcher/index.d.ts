@@ -5,9 +5,9 @@ import { TFnWatcher } from '../types';
  * @class KeyWatcher
  */
 export declare class KeyWatcher {
-    data: any;
-    watcher?: TFnWatcher;
-    key: string;
+    private data;
+    private watcher?;
+    private key;
     constructor(data: any, key: string, watcher?: TFnWatcher);
-    watchData(data: any, key: string): void;
+    private watchData;
 }

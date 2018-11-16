@@ -10,9 +10,9 @@ const utils = new Utils();
  * @class Watcher
  */
 export class Watcher {
-  public data: any;
-  public watcher: TFnWatcher;
-  public render: TFnRender;
+  private data: any;
+  private watcher: TFnWatcher;
+  private render: TFnRender;
 
   /**
    * Creates an instance of Watcher.
@@ -37,7 +37,7 @@ export class Watcher {
     this.watchData(this.data);
   }
 
-  public watchData(data: any): void {
+  private watchData(data: any): void {
     if (!data || typeof data !== 'object') return;
     const vm = this;
     for (const key in data) {

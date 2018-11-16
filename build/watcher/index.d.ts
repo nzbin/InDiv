@@ -5,9 +5,9 @@ import { TFnWatcher, TFnRender } from '../types';
  * @class Watcher
  */
 export declare class Watcher {
-    data: any;
-    watcher: TFnWatcher;
-    render: TFnRender;
+    private data;
+    private watcher;
+    private render;
     /**
      * Creates an instance of Watcher.
      *
@@ -21,5 +21,5 @@ export declare class Watcher {
      * @memberof Watcher
      */
     constructor(data: any, watcher?: TFnWatcher, render?: TFnRender);
-    watchData(data: any): void;
+    private watchData;
 }

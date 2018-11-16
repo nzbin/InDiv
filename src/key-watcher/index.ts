@@ -10,9 +10,9 @@ const utils = new Utils();
  * @class KeyWatcher
  */
 export class KeyWatcher {
-  public data: any;
-  public watcher?: TFnWatcher;
-  public key: string;
+  private data: any;
+  private watcher?: TFnWatcher;
+  private key: string;
 
   constructor(data: any, key: string, watcher?: TFnWatcher) {
     this.data = data;
@@ -21,7 +21,7 @@ export class KeyWatcher {
     this.watchData(this.data, this.key);
   }
 
-  public watchData(data: any, key: string): void {
+  private watchData(data: any, key: string): void {
     if (!data || typeof data !== 'object' || !data[key]) return;
     const vm = this;
     let val = data[key];

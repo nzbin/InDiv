@@ -1,4 +1,4 @@
-import { IDirective, DirectiveList, IRenderTaskQueue, IInDiv } from '../../types';
+import { IDirective, DirectiveList, IRenderTaskQueue, IComponent } from '../../types';
 
 import { Utils } from '../../utils';
 import { CompileUtilForRepeat } from '../compile-utils';
@@ -13,9 +13,10 @@ const utils = new Utils();
  * @template Props
  * @template Vm
  * @param {Element} dom
- * @param {IDirective<State, Props, Vm>} vm
+ * @param {IComponent<State, Props, Vm>} vm
  */
-export function mountDirective<State = any, Props = any, Vm = any>(dom: Element, vm: IDirective<State, Props, Vm>): void {
+// todo
+export function mountDirective<State = any, Props = any, Vm = any>(dom: Element, vm: IComponent<State, Props, Vm>): void {
   const cacheStates: DirectiveList<IDirective<State, Props, Vm>>[] = [ ...vm.$directiveList ];
   directivesConstructor(dom, vm);
   const directiveListLength = vm.$directiveList.length;
@@ -59,9 +60,9 @@ export function mountDirective<State = any, Props = any, Vm = any>(dom: Element,
  * @template Props
  * @template Vm
  * @param {Element} dom
- * @param {IDirective<State, Props, Vm>} vm
+ * @param {IComponent<State, Props, Vm>} vm
  */
-export function directivesConstructor<State = any, Props = any, Vm = any>(dom: Element, vm: IDirective<State, Props, Vm>): void {
+export function directivesConstructor<State = any, Props = any, Vm = any>(dom: Element, vm: IComponent<State, Props, Vm>): void {
   vm.$directiveList = [];
   const routerRenderDom = dom.querySelectorAll(vm.$vm.getRouteDOMKey())[0];
 

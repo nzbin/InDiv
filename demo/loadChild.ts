@@ -1,5 +1,5 @@
 import { NvModule, Component } from '../src';
-import { HeroSearchService, SharedModule } from './index';
+import { HeroSearchService, SharedModule, HeroSearchService1, HeroSearchService2 } from './index';
 
 // @Injected
 @Component({
@@ -45,6 +45,9 @@ class R2 {
   declarations: [
     TestLoadchildComponent,
     R2,
+  ],
+  providers: [
+    HeroSearchService1, HeroSearchService2, HeroSearchService,
   ],
   exports: [
     TestLoadchildComponent,

@@ -1,8 +1,8 @@
 import { IMiddleware, INvModule, IComponent } from '../types';
 
 import { Utils } from '../utils';
-import { factoryCreator } from '../di';
-import { factoryModule } from '../nv-module';
+import { factoryCreator, factoryCreator2, Injector } from '../di';
+import { factoryModule, factoryModule2 } from '../nv-module';
 import { render } from '../platform-browser';
 import { ElementRef } from '../internal-type';
 
@@ -180,7 +180,8 @@ export class InDiv {
   public bootstrapModule(Esmodule: Function): void {
     if (!Esmodule) throw new Error('must send a root module');
 
-    this.$rootModule = factoryModule(Esmodule, this);
+    // this.$rootModule = factoryModule(Esmodule, this);
+    this.$rootModule = factoryModule2(Esmodule, null, this);
     this.$declarations = [...this.$rootModule.$declarations];
   }
 
@@ -217,14 +218,17 @@ export class InDiv {
    * @param {Function} BootstrapComponent
    * @param {Element} renderDOM
    * @param {INvModule} [loadModule]
+   * @param {Injector} [otherInjector]
    * @returns {Promise<IComponent>}
    * @memberof InDiv
    */
-  public renderComponent(BootstrapComponent: Function, renderDOM: Element, loadModule?: INvModule): Promise<IComponent> {
+  public renderComponent(BootstrapComponent: Function, renderDOM: Element, loadModule?: INvModule, otherInjector?: Injector): Promise<IComponent> {
     const internalDependence = new Map();
     internalDependence.set(InDiv, this);
     internalDependence.set(ElementRef, renderDOM);
-    const component: any = factoryCreator(BootstrapComponent, this.$rootModule, loadModule, internalDependence);
+    // todo
+    // const component: any = factoryCreator(BootstrapComponent, this.$rootModule, loadModule, internalDependence);
+    const component: any = factoryCreator2(BootstrapComponent, otherInjector, internalDependence);
 
     component.$vm = this;
 
@@ -240,6 +244,7 @@ export class InDiv {
 
     component.render = this.render.bind(component);
     component.reRender = this.reRender.bind(component);
+    component.otherInjector = otherInjector;
 
     if (component.nvOnInit) component.nvOnInit();
     if (component.watchData) component.watchData();

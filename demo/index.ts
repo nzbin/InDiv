@@ -719,21 +719,6 @@ class Container implements OnInit, AfterMount, WatchState {
     RouteChild,
     TestDirective,
   ],
-  providers: [
-    Utils,
-    HttpClient,
-    HeroSearchService,
-    {
-      provide: HeroSearchService1,
-      useClass: HeroSearchService1,
-    },
-    HeroSearchService2,
-    {
-      provide: ValueType,
-      useValue: 1123,
-    },
-    NvLocation,
-  ],
   exports: [
     PCChild,
     RouteChild,
@@ -749,6 +734,21 @@ export class SharedModule {}
   ],
   declarations: [
     R2,
+  ],
+  providers: [
+    Utils,
+    HttpClient,
+    HeroSearchService,
+    {
+      provide: HeroSearchService1,
+      useClass: HeroSearchService1,
+    },
+    HeroSearchService2,
+    {
+      provide: ValueType,
+      useValue: 1123,
+    },
+    NvLocation,
   ],
   exports: [
     R2,

@@ -3,6 +3,8 @@ import { ICompileUtil } from './platform-browser/compile-utils';
 import { IRenderTaskQueue } from './platform-browser/render-task';
 import { DirectiveList, IDirective } from './directive';
 
+import { Injector } from '../di';
+
 export type ComponentList<C> = {
     dom: Node;
     props: any;
@@ -26,6 +28,7 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     $providerList?: Map<Function | string, Function | any>;
     $componentList?: ComponentList<IComponent<any, any, any>>[];
     $directiveList?: DirectiveList<IDirective<any, any, any>>[];
+    otherInjector?: Injector;
 
     renderTaskQueue?: IRenderTaskQueue;
 

@@ -1,5 +1,6 @@
 import { IWatcher } from './watcher';
 import { ICompileUtil } from './platform-browser/compile-utils';
+import { Injector } from '../di';
 
 export type DirectiveList<C> = {
     dom: Node;
@@ -21,6 +22,7 @@ export interface IDirective<State = any, Props = any, Vm = any> {
     $declarationMap?: Map<string, Function>;
     $providerList?: Map<Function | string, Function | any>;
     $directiveList?: DirectiveList<IDirective<any, any, any>>[];
+    otherInjector?: Injector;
 
     nvOnInit?(): void;
     nvBeforeMount?(): void;

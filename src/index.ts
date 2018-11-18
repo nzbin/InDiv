@@ -51,7 +51,9 @@ export {
 } from './http-client';
 export {
   Injectable,
-  injector,
+  inject,
+  Injector,
+  rootInjector,
   factoryCreator,
 } from './di';
 export {

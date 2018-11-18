@@ -6,16 +6,16 @@
  * @export
  * @class IOCContainer
  */
-export class IOCContainer {
-  private containerMap: Map<any, any> = new Map();
+export class Injector {
+  private providerMap: Map<any, any> = new Map();
   private instanceMap: Map<any, any> = new Map();
 
-  public pushContainer(key: any, value: any): void {
-    this.containerMap.set(key, value);
+  public setProvider(key: any, value: any): void {
+    this.providerMap.set(key, value);
   }
 
-  public getContainer(key: any): any {
-    return this.containerMap.get(key);
+  public getProvider(key: any): any {
+    return this.providerMap.get(key);
   }
 
   public getInstance(key: any): any {
@@ -23,7 +23,9 @@ export class IOCContainer {
     return null;
   }
 
-  public pushInstance(key: any, value: any): void {
+  public setInstance(key: any, value: any): void {
     this.instanceMap.set(key, value);
   }
 }
+
+export const rootInjector = new Injector();

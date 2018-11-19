@@ -1,12 +1,15 @@
-import { IInDiv, INvModule, TInjectTokenProvider, TUseClassProvider, TUseValueProvider } from '../types';
+import { INvModule, TInjectTokenProvider, TUseClassProvider, TUseValueProvider } from '../types';
 
-import { factoryCreator, factoryCreator2, rootInjector, Injector } from '../di';
+import { factoryCreator, rootInjector, Injector } from '../di';
 import { InDiv } from '../indiv';
 
 /**
  * build provider list in module
  * 
  * set Map $providerList in module
+ * 
+ * otherInjector first
+ * rootInjector second
  *
  * @param {INvModule} moduleInstance
  * @param {Injector} otherInjector
@@ -30,34 +33,36 @@ function buildProviderList(moduleInstance: INvModule, otherInjector?: Injector):
 
 /**
  * build $imports for module
+ * 
+ * otherInjector first
+ * rootInjector second
  *
  * @param {INvModule} moduleInstance
- * @param {IInDiv} [indivInstance]
+ * @param {InDiv} [indivInstance]
  * @param {Injector} [otherInjector]
  * @returns {void}
  */
-function buildImports(moduleInstance: INvModule, indivInstance?: IInDiv, otherInjector?: Injector): void {
+function buildImports(moduleInstance: INvModule, indivInstance?: InDiv, otherInjector?: Injector): void {
   if (!moduleInstance.$imports) return;
   const injector = otherInjector ? otherInjector : rootInjector;
   const length = moduleInstance.$imports.length;
   for (let i = 0; i < length; i++) {
     const ModuleImport = moduleInstance.$imports[i];
     // push InDiv instance
-    // const moduleImport = factoryModule(ModuleImport, indivInstance);
-    const moduleImport = factoryModule2(ModuleImport, otherInjector, indivInstance);
+    const moduleImport = factoryModule(ModuleImport, otherInjector, indivInstance);
     // build exports
     if (moduleImport.$exportsList) {
       const exportsLength = moduleImport.$exportsList.length;
       for (let i = 0; i < exportsLength; i++) {
         const exportFromModule = moduleImport.$exportsList[i];
-        if (!moduleInstance.$declarations.find((component: any) => component.$selector === (exportFromModule as any).$selector)) moduleInstance.$declarations.push(exportFromModule);
+        if (!moduleInstance.$declarations.find((declaration: any) => declaration.$selector === (exportFromModule as any).$selector)) moduleInstance.$declarations.push(exportFromModule);
       }
     }
     // export providerList
     if (moduleImport.$providerList) {
       moduleImport.$providerList.forEach((value, key) => {
         if (!moduleInstance.$providerList.has(key)) moduleInstance.$providerList.set(key, value);
-        if (!injector.getProvider(key)) injector.setProvider(key, value);
+        injector.setProvider(key, value);
       });
     }
   }
@@ -67,6 +72,9 @@ function buildImports(moduleInstance: INvModule, indivInstance?: IInDiv, otherIn
  * build provider list for declaration in module
  * 
  * set static $declarations: [] in declaration
+ *
+ * otherInjector first
+ * rootInjector second
  *
  * @param {INvModule} moduleInstance
  * @returns {void}
@@ -86,29 +94,27 @@ function buildDeclarations4Declarations(moduleInstance: INvModule): void {
  * build $exportsList for module
  *
  * @param {INvModule} moduleInstance
- * @param {IInDiv} [indivInstance]
+ * @param {InDiv} [indivInstance]
  * @param {Injector} [otherInjector]
  * @returns {void}
  */
-function buildExports(moduleInstance: INvModule, indivInstance?: IInDiv, otherInjector?: Injector): void {
+function buildExports(moduleInstance: INvModule, indivInstance?: InDiv, otherInjector?: Injector): void {
   if (!moduleInstance.$exports) return;
   const length = moduleInstance.$exports.length;
   for (let i = 0; i < length; i++) {
     const ModuleExport = moduleInstance.$exports[i];
-    // 如果导出的是模块
+    // if export is NvModule, exports from NvModule will be exported again from this module
     if ((ModuleExport as any).nvType === 'nvModule') {
-      // const moduleInstanceOfExport = factoryModule(ModuleExport, indivInstance);
-      const moduleInstanceOfExport = factoryModule2(ModuleExport, otherInjector, indivInstance);
-      // 被导出的模块中的导出
+      const moduleInstanceOfExport = factoryModule(ModuleExport, otherInjector, indivInstance);
       const moduleInstanceOfExportLength = moduleInstanceOfExport.$exportsList.length;
       for (let j = 0; j < moduleInstanceOfExportLength; j++) {
         const moduleExportFromModuleOfExport = moduleInstanceOfExport.$exportsList[j];
-        if (!moduleInstance.$exportsList.find((component: any) => component.$selector === (moduleExportFromModuleOfExport as any).$selector)) moduleInstance.$exportsList.push(moduleExportFromModuleOfExport);
+        if (!moduleInstance.$exportsList.find((declaration: any) => declaration.$selector === (moduleExportFromModuleOfExport as any).$selector)) moduleInstance.$exportsList.push(moduleExportFromModuleOfExport);
       }
     }
-    // 如果导出的是组件
+
     if ((ModuleExport as any).nvType !== 'nvModule') {
-      if (!moduleInstance.$exportsList.find((component: any) => component.$selector === (ModuleExport as any).$selector)) moduleInstance.$exportsList.push(ModuleExport);
+      if (!moduleInstance.$exportsList.find((declaration: any) => declaration.$selector === (ModuleExport as any).$selector)) moduleInstance.$exportsList.push(ModuleExport);
     }
   }
 }
@@ -121,26 +127,16 @@ function buildExports(moduleInstance: INvModule, indivInstance?: IInDiv, otherIn
  *
  * @export
  * @param {Function} NM
- * @param {IInDiv} [indivInstance]
+ * @param {Injector} [otherInjector]
+ * @param {InDiv} [indivInstance]
  * @returns {INvModule}
  */
-export function factoryModule(NM: Function, indivInstance?: IInDiv): INvModule {
-  const internalDependence = new Map();
-  if (indivInstance) internalDependence.set(InDiv, indivInstance);
-  buildProviderList(NM.prototype);
-  buildImports(NM.prototype, indivInstance);
-  buildDeclarations4Declarations(NM.prototype);
-  buildExports(NM.prototype, indivInstance);
-  return factoryCreator(NM, NM.prototype, null, internalDependence);
-}
-// todo
-export function factoryModule2(NM: Function, otherInjector?: Injector, indivInstance?: IInDiv): INvModule {
-  console.log(88888, NM, otherInjector);
-  const internalDependence = new Map();
-  if (indivInstance) internalDependence.set(InDiv, indivInstance);
+export function factoryModule(NM: Function, otherInjector?: Injector, indivInstance?: InDiv): INvModule {
+  const provideAndInstanceMap = new Map();
+  if (indivInstance) provideAndInstanceMap.set(InDiv, indivInstance);
   buildProviderList(NM.prototype, otherInjector);
   buildImports(NM.prototype, indivInstance, otherInjector);
   buildDeclarations4Declarations(NM.prototype);
   buildExports(NM.prototype, indivInstance, otherInjector);
-  return factoryCreator2(NM, otherInjector, internalDependence);
+  return factoryCreator(NM, otherInjector, provideAndInstanceMap);
 }

@@ -1,21 +1,22 @@
-import { IDirective, DirectiveList, IRenderTaskQueue, IComponent } from '../../types';
+import { IDirective, DirectiveList, IComponent } from '../../types';
 
 import { Utils } from '../../utils';
 import { CompileUtilForRepeat } from '../compile-utils';
 import { buildDirectiveScope } from './render-utils';
+import { RenderTaskQueue } from './render-task-queue';
 
 const utils = new Utils();
 
 /**
  * mountDirective for Directives in Component
  *
+ * @export
  * @template State
  * @template Props
  * @template Vm
  * @param {Element} dom
  * @param {IComponent<State, Props, Vm>} vm
  */
-// todo
 export function mountDirective<State = any, Props = any, Vm = any>(dom: Element, vm: IComponent<State, Props, Vm>): void {
   const cacheStates: DirectiveList<IDirective<State, Props, Vm>>[] = [ ...vm.$directiveList ];
   directivesConstructor(dom, vm);
@@ -30,8 +31,8 @@ export function mountDirective<State = any, Props = any, Vm = any>(dom: Element,
     if (cacheDirectiveIndex !== -1) cacheStates.splice(cacheDirectiveIndex, 1);
     if (cacheDirective) {
       directive.scope = cacheDirective.scope;
-      // old props: component.scope.props
-      // new props: component.props
+      // old props: directive.scope.props
+      // new props: directive.props
       if (!utils.isEqual(directive.scope.props, directive.props)) {
         if (directive.scope.nvReceiveProps) directive.scope.nvReceiveProps(directive.props);
         directive.scope.props = directive.props;
@@ -71,7 +72,7 @@ export function directivesConstructor<State = any, Props = any, Vm = any>(dom: E
 
     const tags = dom.querySelectorAll(`*[${name}]`);
     Array.from(tags).forEach(node => {
-      //  protect component in <router-render>
+      //  protect directive in <router-render>
       if (routerRenderDom && routerRenderDom.contains(node)) return;
 
       const attrValue = node.getAttribute(name);
@@ -123,14 +124,14 @@ export function directivesConstructor<State = any, Props = any, Vm = any>(dom: E
 }
 
 /**
- * render Component with using renderDom and RenderTask instance
+ * render Directive with using renderDom and RenderTask instance
  *
  * @export
  * @param {Element} renderDom
- * @param {IRenderTaskQueue} RenderTaskQueue
+ * @param {RenderTaskQueue} RenderTaskQueue
  * @returns {Promise<IDirective>}
  */
-export async function directiveRenderFunction(renderDom: Element, RenderTaskQueue: IRenderTaskQueue): Promise<IDirective> {
+export async function directiveRenderFunction(renderDom: Element, RenderTaskQueue: RenderTaskQueue): Promise<IDirective> {
   return Promise.resolve()
     .then(() => {
       mountDirective(renderDom, RenderTaskQueue.$vm);

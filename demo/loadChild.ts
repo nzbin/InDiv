@@ -1,4 +1,5 @@
 import { NvModule, Component } from '../src';
+// import { NvModule, Component } from '../build';
 import { HeroSearchService, SharedModule, HeroSearchService1, HeroSearchService2 } from './index';
 
 // @Injected

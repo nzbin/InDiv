@@ -10,3 +10,10 @@ export declare type TRouter = {
     children?: TRouter[];
     loadChild?: TLoadChild | TChildModule;
 };
+export declare type NvRouteObject = {
+    path: string;
+    query?: {
+        [props: string]: any;
+    };
+    data?: any;
+};

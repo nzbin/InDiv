@@ -12,3 +12,11 @@ export type TRouter = {
     children?: TRouter[];
     loadChild?: TLoadChild | TChildModule;
 };
+
+export type NvRouteObject = {
+    path: string;
+    query?: {
+        [props: string]: any;
+    };
+    data?: any;
+};

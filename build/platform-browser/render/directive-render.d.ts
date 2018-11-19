@@ -1,14 +1,16 @@
-import { IDirective, IRenderTaskQueue } from '../../types';
+import { IDirective, IComponent } from '../../types';
+import { RenderTaskQueue } from './render-task-queue';
 /**
  * mountDirective for Directives in Component
  *
+ * @export
  * @template State
  * @template Props
  * @template Vm
  * @param {Element} dom
- * @param {IDirective<State, Props, Vm>} vm
+ * @param {IComponent<State, Props, Vm>} vm
  */
-export declare function mountDirective<State = any, Props = any, Vm = any>(dom: Element, vm: IDirective<State, Props, Vm>): void;
+export declare function mountDirective<State = any, Props = any, Vm = any>(dom: Element, vm: IComponent<State, Props, Vm>): void;
 /**
  * construct Directives in Directive
  *
@@ -16,15 +18,15 @@ export declare function mountDirective<State = any, Props = any, Vm = any>(dom: 
  * @template Props
  * @template Vm
  * @param {Element} dom
- * @param {IDirective<State, Props, Vm>} vm
+ * @param {IComponent<State, Props, Vm>} vm
  */
-export declare function directivesConstructor<State = any, Props = any, Vm = any>(dom: Element, vm: IDirective<State, Props, Vm>): void;
+export declare function directivesConstructor<State = any, Props = any, Vm = any>(dom: Element, vm: IComponent<State, Props, Vm>): void;
 /**
- * render Component with using renderDom and RenderTask instance
+ * render Directive with using renderDom and RenderTask instance
  *
  * @export
  * @param {Element} renderDom
- * @param {IRenderTaskQueue} RenderTaskQueue
+ * @param {RenderTaskQueue} RenderTaskQueue
  * @returns {Promise<IDirective>}
  */
-export declare function directiveRenderFunction(renderDom: Element, RenderTaskQueue: IRenderTaskQueue): Promise<IDirective>;
+export declare function directiveRenderFunction(renderDom: Element, RenderTaskQueue: RenderTaskQueue): Promise<IDirective>;

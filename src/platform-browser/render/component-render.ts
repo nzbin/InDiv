@@ -1,16 +1,18 @@
-import { IComponent, ComponentList, IRenderTaskQueue } from '../../types';
+import { IComponent, ComponentList } from '../../types';
 
 import { Compile } from '../compile';
 import { Utils } from '../../utils';
 import { CompileUtilForRepeat } from '../compile-utils';
 import { getPropsValue, buildProps, buildComponentScope } from './render-utils';
 import { directiveRenderFunction } from './directive-render';
+import { RenderTaskQueue } from './render-task-queue';
 
 const utils = new Utils();
 
 /**
  * mountComponent for Components in Component
  *
+ * @export
  * @template State
  * @template Props
  * @template Vm
@@ -60,6 +62,7 @@ export function mountComponent<State = any, Props = any, Vm = any>(dom: Element,
 /**
  * construct Components in Component
  *
+ * @export
  * @template State
  * @template Props
  * @template Vm
@@ -181,10 +184,10 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
  *
  * @export
  * @param {Element} renderDom
- * @param {IRenderTaskQueue} RenderTaskQueue
+ * @param {RenderTaskQueue} RenderTaskQueue
  * @returns {Promise<IComponent>}
  */
-export async function componentRenderFunction(renderDom: Element, RenderTaskQueue: IRenderTaskQueue): Promise<IComponent> {
+export async function componentRenderFunction(renderDom: Element, RenderTaskQueue: RenderTaskQueue): Promise<IComponent> {
   return Promise.resolve()
     .then(async() => {
       const compile = new Compile(renderDom, RenderTaskQueue.$vm);

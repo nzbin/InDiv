@@ -1,6 +1,6 @@
-import { IWatcher } from './watcher';
-import { ICompileUtil } from './platform-browser/compile-utils';
+import { CompileUtil } from '../platform-browser';
 import { Injector } from '../di';
+import { Watcher } from '../watcher';
 
 export type DirectiveList<C> = {
     dom: Node;
@@ -13,10 +13,10 @@ export type DirectiveList<C> = {
 export interface IDirective<State = any, Props = any, Vm = any> {
     state?: State | any;
     props?: Props | any;
-    compileUtil: ICompileUtil;
+    compileUtil: CompileUtil;
     renderDom?: Element;
     $vm?: Vm | any;
-    stateWatcher?: IWatcher;
+    stateWatcher?: Watcher;
 
     $template?: string;
     $declarationMap?: Map<string, Function>;

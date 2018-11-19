@@ -8,5 +8,5 @@ export { Directive, } from '../directive';
 export { InDiv, } from '../indiv';
 export { NvModule, factoryModule, } from '../nv-module';
 export { HttpClient, HttpClientRequestConfig, HttpClientResponse, HttpClientRequestInstance, } from '../http-client';
-export { Injectable, injector, factoryCreator, } from '../di';
+export { Injectable, inject, Injector, rootInjector, factoryCreator, } from '../di';
 export { ElementRef, } from '../internal-type';

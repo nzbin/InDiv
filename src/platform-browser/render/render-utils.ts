@@ -1,11 +1,12 @@
 import { IComponent, IDirective } from '../../types';
 
-import { factoryCreator, factoryCreator2 } from '../../di';
+import { factoryCreator } from '../../di';
 import { Utils } from '../../utils';
 import { InDiv } from '../../InDiv';
 import { ElementRef } from '../../internal-type';
 
 const utils = new Utils();
+
 /**
  * get props from value
  *
@@ -56,12 +57,11 @@ export function buildProps<State = any, Props = any, Vm = any>(prop: any, vm: IC
  * @returns {IComponent<State, Props, Vm>}
  */
 export function buildComponentScope<State = any, Props = any, Vm = any>(ComponentClass: Function, props: any, dom: Element, vm: IComponent<State, Props, Vm>): IComponent<State, Props, Vm> {
-  const internalDependence = new Map();
-  if (internalDependence) internalDependence.set(InDiv, vm.$vm);
-  internalDependence.set(ElementRef, dom);
-  // todo
-  // const _component: IComponent = factoryCreator(ComponentClass, vm.$vm.$rootModule, null, internalDependence);
-  const _component: IComponent = factoryCreator2(ComponentClass, vm.otherInjector, internalDependence);
+  const provideAndInstanceMap = new Map();
+  if (provideAndInstanceMap) provideAndInstanceMap.set(InDiv, vm.$vm);
+  provideAndInstanceMap.set(ElementRef, dom);
+
+  const _component: IComponent = factoryCreator(ComponentClass, vm.otherInjector, provideAndInstanceMap);
   _component.props = props;
   _component.renderDom = dom;
   vm.$declarationMap.forEach((declaration, key) => {
@@ -89,12 +89,12 @@ export function buildComponentScope<State = any, Props = any, Vm = any>(Componen
  * @returns {IComponent<State, Props, Vm>}
  */
 export function buildDirectiveScope<State = any, Props = any, Vm = any>(DirectiveClass: Function, props: any, dom: Element, vm: IComponent<State, Props, Vm>): IComponent<State, Props, Vm> {
-  const internalDependence = new Map();
-  if (vm.$vm) internalDependence.set(InDiv, vm.$vm);
-  internalDependence.set(ElementRef, dom);
-  // todo
-  // const _directive: IDirective = factoryCreator(DirectiveClass, vm.$vm.$rootModule, null, internalDependence);
-  const _directive: IDirective = factoryCreator2(DirectiveClass, vm.otherInjector, internalDependence);
+  const provideAndInstanceMap = new Map();
+  if (vm.$vm) provideAndInstanceMap.set(InDiv, vm.$vm);
+  provideAndInstanceMap.set(ElementRef, dom);
+
+  const _directive: IDirective = factoryCreator(DirectiveClass, vm.otherInjector, provideAndInstanceMap);
+
   _directive.props = props;
   _directive.renderDom = dom;
   _directive.otherInjector = vm.otherInjector;

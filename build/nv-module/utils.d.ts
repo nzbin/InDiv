@@ -1,4 +1,6 @@
-import { IInDiv, INvModule } from '../types';
+import { INvModule } from '../types';
+import { Injector } from '../di';
+import { InDiv } from '../indiv';
 /**
  * create an NvModule instance with factory method
  *
@@ -7,7 +9,8 @@ import { IInDiv, INvModule } from '../types';
  *
  * @export
  * @param {Function} NM
- * @param {IInDiv} [indivInstance]
+ * @param {Injector} [otherInjector]
+ * @param {InDiv} [indivInstance]
  * @returns {INvModule}
  */
-export declare function factoryModule(NM: Function, indivInstance?: IInDiv): INvModule;
+export declare function factoryModule(NM: Function, otherInjector?: Injector, indivInstance?: InDiv): INvModule;

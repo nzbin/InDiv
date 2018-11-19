@@ -58,28 +58,6 @@ export class CompileUtilForRepeat {
   }
 
   /**
-   * set value by key and anthor value
-   *
-   * @param {*} vm
-   * @param {string} exp
-   * @param {string} key
-   * @param {*} setValue
-   * @returns {*}
-   * @memberof CompileUtilForRepeat
-   */
-  public _setValueByValue(vm: any, exp: string, key: string, setValue: any): any {
-    const valueList = exp.replace('()', '').split('.');
-    let value = vm;
-    let lastKey;
-    valueList.forEach((v, index) => {
-      if (v === key && index === 0) return lastKey = v;
-      if (index < valueList.length) lastKey = v;
-      if (index < valueList.length - 1 ) value = value[v];
-    });
-    if (lastKey) value[lastKey] = setValue;
-  }
-
-  /**
    * get value of VM
    *
    * @param {*} vm
@@ -166,6 +144,49 @@ export class CompileUtilForRepeat {
       }
     });
     return argsList;
+  }
+
+  /**
+   * set value by key and anthor value
+   *
+   * @param {*} vm
+   * @param {string} exp
+   * @param {string} key
+   * @param {*} setValue
+   * @returns {*}
+   * @memberof CompileUtilForRepeat
+   */
+  public _setValueByValue(vm: any, exp: string, key: string, setValue: any): any {
+    const valueList = exp.replace('()', '').split('.');
+    let value = vm;
+    let lastKey;
+    valueList.forEach((v, index) => {
+      if (v === key && index === 0) return lastKey = v;
+      if (index < valueList.length) lastKey = v;
+      if (index < valueList.length - 1 ) value = value[v];
+    });
+    if (lastKey) value[lastKey] = setValue;
+  }
+
+  /**
+   * set value from vm.state
+   *
+   * @param {*} vm
+   * @param {string} exp
+   * @param {*} value
+   * @memberof CompileUtilForRepeat
+   */
+  public _setVMVal(vm: any, exp: string, value: any): void {
+    let stateValue: any = null;
+    const keyList = exp.split('.');
+    if (keyList.length === 1) vm.state[exp] = value;
+    else {
+      keyList.forEach((key, index) => {
+        if (index === 0) stateValue = vm.state[key];
+        if (index !== 0 && index !== keyList.length - 1) stateValue = stateValue[key];
+        if (index === keyList.length - 1) stateValue[key] = value;
+      });
+    }
   }
 
   /**
@@ -286,12 +307,9 @@ export class CompileUtilForRepeat {
     const utilVm = this;
     const func = function(event: Event): void {
       event.preventDefault();
-      // todo
       if (utilVm.isFromState(vm.state, exp)) {
         if ((event.target as HTMLInputElement).value === watchData) return;
-        vm.state[exp] = (event.target as HTMLInputElement).value;
-        // value = this._getVMVal(vm.state, exp);
-        // value = (event.target as HTMLInputElement).value;
+        utilVm._setVMVal(vm, exp, (event.target as HTMLInputElement).value);
       } else if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
         if (typeof watchData[index] !== 'object') watchData[index] = (event.target as HTMLInputElement).value;
         if (typeof watchData[index] === 'object') {
@@ -565,6 +583,27 @@ export class CompileUtil {
   }
 
   /**
+   * set value from vm.state
+   *
+   * @param {*} vm
+   * @param {string} exp
+   * @param {*} value
+   * @memberof CompileUtil
+   */
+  public _setVMVal(vm: any, exp: string, value: any): void {
+    let stateValue: any = null;
+    const keyList = exp.split('.');
+    if (keyList.length === 1) vm.state[exp] = value;
+    else {
+      keyList.forEach((key, index) => {
+        if (index === 0) stateValue = vm.state[key];
+        if (index !== 0 && index !== keyList.length - 1) stateValue = stateValue[key];
+        if (index === keyList.length - 1) stateValue[key] = value;
+      });
+    }
+  }
+
+  /**
    * bind handler for nv irective
    *
    * if node is repeat node and it will break compile and into CompileUtilForRepeat
@@ -664,8 +703,7 @@ export class CompileUtil {
 
     const func = (event: Event) => {
       event.preventDefault();
-      // todo
-      if (this.isFromState(vm.state, exp)) vm.state[exp] = (event.target as HTMLInputElement).value;
+      if (this.isFromState(vm.state, exp)) this._setVMVal(vm, exp, (event.target as HTMLInputElement).value);
     };
 
     (node as any).oninput = func;

@@ -11,7 +11,7 @@ export class Injector {
   private instanceMap: Map<any, any> = new Map();
 
   public setProvider(key: any, value: any): void {
-    this.providerMap.set(key, value);
+    if (!this.providerMap.has(key)) this.providerMap.set(key, value);
   }
 
   public getProvider(key: any): any {
@@ -24,7 +24,7 @@ export class Injector {
   }
 
   public setInstance(key: any, value: any): void {
-    this.instanceMap.set(key, value);
+    if (!this.instanceMap.has(key)) this.instanceMap.set(key, value);
   }
 }
 

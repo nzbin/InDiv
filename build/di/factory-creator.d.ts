@@ -1,9 +1,10 @@
+import { Injector } from './injector';
 /**
  * injector: build arguments for factoryCreator
  *
  * 1. provider Component's providers
- * 2. provider loadModule's providers
- * 3. provider rootModule's providers
+ * 2. provider rootInjector
+ * 3. provider otherInjector
  *
  * first: check _constructor has Component providers or not
  * secend: find service in loadModule or rootModule
@@ -13,18 +14,20 @@
  *
  * @export
  * @param {Function} _constructor
- * @param {*} rootModule
- * @param {*} [loadModule]
+ * @param {Injector} [otherInjector]
+ * @param {Map<any, any>} [provideAndInstanceMap]
  * @returns {any[]}
  */
-export declare function injector(_constructor: Function, rootModule: any, loadModule?: any, internalDependence?: Map<any, any>): any[];
+export declare function inject(_constructor: Function, otherInjector?: Injector, provideAndInstanceMap?: Map<any, any>): any[];
 /**
  * create an instance with factory method
  *
  * @export
+ * @template K
+ * @template V
  * @param {Function} _constructor
- * @param {*} rootModule
- * @param {*} [loadModule]
+ * @param {Injector} [otherInjector]
+ * @param {Map<K, V>} [provideAndInstanceMap]
  * @returns {*}
  */
-export declare function factoryCreator(_constructor: Function, rootModule: any, loadModule?: any, internalDependence?: Map<any, any>): any;
+export declare function factoryCreator<K = any, V = any>(_constructor: Function, otherInjector?: Injector, provideAndInstanceMap?: Map<K, V>): any;

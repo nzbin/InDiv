@@ -1,4 +1,5 @@
 import { IMiddleware, INvModule, IComponent } from '../types';
+import { Injector } from '../di';
 /**
  * main: for new InDiv
  *
@@ -128,15 +129,18 @@ export declare class InDiv {
     /**
      * expose function for render Component
      *
-     * if loadModule don't has use rootModule
+     * if otherModule don't has use rootModule
+     *
+     * if has otherInjector, build component will use otherInjector instead of rootInjector
      *
      * @param {Function} BootstrapComponent
      * @param {Element} renderDOM
-     * @param {INvModule} [loadModule]
+     * @param {INvModule} [otherModule]
+     * @param {Injector} [otherInjector]
      * @returns {Promise<IComponent>}
      * @memberof InDiv
      */
-    renderComponent(BootstrapComponent: Function, renderDOM: Element, loadModule?: INvModule): Promise<IComponent>;
+    renderComponent(BootstrapComponent: Function, renderDOM: Element, otherModule?: INvModule, otherInjector?: Injector): Promise<IComponent>;
     /**
      * render adn replace DOM
      *

@@ -1,8 +1,7 @@
-import { IWatcher } from './watcher';
-import { ICompileUtil } from './platform-browser/compile-utils';
-import { IRenderTaskQueue } from './platform-browser/render-task';
+import { RenderTaskQueue } from '../platform-browser/render/render-task-queue';
 import { DirectiveList, IDirective } from './directive';
-
+import { Watcher } from '../watcher';
+import { CompileUtil } from '../platform-browser';
 import { Injector } from '../di';
 
 export type ComponentList<C> = {
@@ -18,10 +17,10 @@ export type SetState = (newState: any) => void;
 export interface IComponent<State = any, Props = any, Vm = any> {
     state?: State | any;
     props?: Props | any;
-    compileUtil: ICompileUtil;
+    compileUtil: CompileUtil;
     renderDom?: Element;
     $vm?: Vm | any;
-    stateWatcher?: IWatcher;
+    stateWatcher?: Watcher;
 
     $template?: string;
     $declarationMap?: Map<string, Function>;
@@ -30,7 +29,7 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     $directiveList?: DirectiveList<IDirective<any, any, any>>[];
     otherInjector?: Injector;
 
-    renderTaskQueue?: IRenderTaskQueue;
+    renderTaskQueue?: RenderTaskQueue;
 
     nvOnInit?(): void;
     watchData?(): void;

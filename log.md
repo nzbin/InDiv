@@ -97,3 +97,5 @@
 32. 2018-11-15 add ElementRef for @Component and @Directive
 
 33. 2018-11-16 remove `$.` in template syntax
+
+34. 2018-11-19 change to new Injector

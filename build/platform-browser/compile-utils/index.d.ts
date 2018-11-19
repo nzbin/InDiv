@@ -44,17 +44,6 @@ export declare class CompileUtilForRepeat {
      */
     _getValueByValue(vm: any, exp: string, key: string): any;
     /**
-     * set value by key and anthor value
-     *
-     * @param {*} vm
-     * @param {string} exp
-     * @param {string} key
-     * @param {*} setValue
-     * @returns {*}
-     * @memberof CompileUtilForRepeat
-     */
-    _setValueByValue(vm: any, exp: string, key: string, setValue: any): any;
-    /**
      * get value of VM
      *
      * @param {*} vm
@@ -94,6 +83,26 @@ export declare class CompileUtilForRepeat {
      * @memberof CompileUtilForRepeat
      */
     _getVMFunctionArguments(vm: any, exp: string, node: Element, key?: string, val?: any): any[];
+    /**
+     * set value by key and anthor value
+     *
+     * @param {*} vm
+     * @param {string} exp
+     * @param {string} key
+     * @param {*} setValue
+     * @returns {*}
+     * @memberof CompileUtilForRepeat
+     */
+    _setValueByValue(vm: any, exp: string, key: string, setValue: any): any;
+    /**
+     * set value from vm.state
+     *
+     * @param {*} vm
+     * @param {string} exp
+     * @param {*} value
+     * @memberof CompileUtilForRepeat
+     */
+    _setVMVal(vm: any, exp: string, value: any): void;
     /**
      * bind handler for nv irective
      *
@@ -266,6 +275,15 @@ export declare class CompileUtil {
      * @memberof CompileUtil
      */
     _getVMFunctionArguments(vm: any, exp: string, node: Element): any[];
+    /**
+     * set value from vm.state
+     *
+     * @param {*} vm
+     * @param {string} exp
+     * @param {*} value
+     * @memberof CompileUtil
+     */
+    _setVMVal(vm: any, exp: string, value: any): void;
     /**
      * bind handler for nv irective
      *

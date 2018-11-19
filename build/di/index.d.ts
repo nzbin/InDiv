@@ -1,2 +1,3 @@
 export { Injectable } from './injectable';
-export { injector, factoryCreator } from './factory-creator';
+export { inject, factoryCreator } from './factory-creator';
+export { Injector, rootInjector } from './injector';

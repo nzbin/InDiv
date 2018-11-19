@@ -1,8 +1,8 @@
 import { IMiddleware, INvModule, IComponent } from '../types';
 
 import { Utils } from '../utils';
-import { factoryCreator, factoryCreator2, Injector } from '../di';
-import { factoryModule, factoryModule2 } from '../nv-module';
+import { factoryCreator, Injector } from '../di';
+import { factoryModule } from '../nv-module';
 import { render } from '../platform-browser';
 import { ElementRef } from '../internal-type';
 
@@ -180,8 +180,7 @@ export class InDiv {
   public bootstrapModule(Esmodule: Function): void {
     if (!Esmodule) throw new Error('must send a root module');
 
-    // this.$rootModule = factoryModule(Esmodule, this);
-    this.$rootModule = factoryModule2(Esmodule, null, this);
+    this.$rootModule = factoryModule(Esmodule, null, this);
     this.$declarations = [...this.$rootModule.$declarations];
   }
 
@@ -213,27 +212,28 @@ export class InDiv {
   /**
    * expose function for render Component
    * 
-   * if loadModule don't has use rootModule
+   * if otherModule don't has use rootModule
+   * 
+   * if has otherInjector, build component will use otherInjector instead of rootInjector
    *
    * @param {Function} BootstrapComponent
    * @param {Element} renderDOM
-   * @param {INvModule} [loadModule]
+   * @param {INvModule} [otherModule]
    * @param {Injector} [otherInjector]
    * @returns {Promise<IComponent>}
    * @memberof InDiv
    */
-  public renderComponent(BootstrapComponent: Function, renderDOM: Element, loadModule?: INvModule, otherInjector?: Injector): Promise<IComponent> {
-    const internalDependence = new Map();
-    internalDependence.set(InDiv, this);
-    internalDependence.set(ElementRef, renderDOM);
-    // todo
-    // const component: any = factoryCreator(BootstrapComponent, this.$rootModule, loadModule, internalDependence);
-    const component: any = factoryCreator2(BootstrapComponent, otherInjector, internalDependence);
+  public renderComponent(BootstrapComponent: Function, renderDOM: Element, otherModule?: INvModule, otherInjector?: Injector): Promise<IComponent> {
+    const provideAndInstanceMap = new Map();
+    provideAndInstanceMap.set(InDiv, this);
+    provideAndInstanceMap.set(ElementRef, renderDOM);
+
+    const component: any = factoryCreator(BootstrapComponent, otherInjector, provideAndInstanceMap);
 
     component.$vm = this;
 
-    if (loadModule) {
-      loadModule.$declarations.forEach((findDeclaration: Function) => {
+    if (otherModule) {
+      otherModule.$declarations.forEach((findDeclaration: Function) => {
         if (!component.$declarationMap.has((findDeclaration as any).$selector)) component.$declarationMap.set((findDeclaration as any).$selector, findDeclaration);
       });
     } else {

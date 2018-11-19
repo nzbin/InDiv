@@ -1,5 +1,5 @@
 import { InDiv, Component, Utils, NvModule, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, SetState, OnDestory, setState, NvLocation, RouteModule, TRouter, HttpClient, Directive, ElementRef, HttpClientResponse, RouterTo, RouterFrom, RouterActive } from '../src';
-// import { InDiv, Component, Utils, NvModule, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, SetState, OnDestory, setState, NvLocation, RouteModule, TRouter, HttpClient, Directive, ElementRef, HttpClientResponse } from '../build';
+// import { InDiv, Component, Utils, NvModule, Injectable, HasRender, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, SetState, OnDestory, setState, NvLocation, RouteModule, TRouter, HttpClient, Directive, ElementRef, HttpClientResponse, RouterTo, RouterFrom, RouterActive } from '../build';
 
 import { Observable } from 'rxjs';
 
@@ -508,6 +508,7 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
   selector: 'container-wrap',
   template: (`
     <div>
+      <input nv-model="test.a" nv-on:click="@show(test)" />
       <p test-directive="a" nv-id="@countState(a)" nv-if="@countState(a)" nv-on:click="@changeInput()">{{a}}</p>
       <test-component nv-repeat="let man in testArray" nv-key="man.name" man="{@countState(man.name)}" nv-if="a"></test-component>
       <p nv-on:click="@go()">container: {{@countState(a)}}</p>
@@ -519,6 +520,7 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
           <img nv-src="man.sex" nv-alt="man.sex" />
           <test-component nv-key="man.name" man="{@countState(man.name)}"></test-component>
           <input nv-on:click="@show(b, $index)" nv-repeat="let b in testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
+          <input nv-model="test.a"/>
           <div class="fuck" nv-repeat="let c in man.job" nv-key="c.id">
             <input nv-on:click="@show(c, $index)" nv-model="c.name" nv-class="c.id" />
           </div>
@@ -560,6 +562,9 @@ class Container implements OnInit, AfterMount, WatchState {
     // console.log('http', this.http);
     console.log('value', this.value);
     this.state = {
+      test: {
+        a: 3,
+      },
       a: 1,
       b: 3,
       // testArray: [],
@@ -784,8 +789,8 @@ const routes: TRouter[] = [
             children: [
               {
                 path: '/D1',
-                // component: 'R2',
-                redirectTo: '/R2/2',
+                component: 'R2',
+                // redirectTo: '/R2/2',
               },
             ],
           },

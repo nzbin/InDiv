@@ -1,10 +1,10 @@
-import { IComponent, IDirective, INvModule, NvRouteObject, ComponentList, DirectiveList, TLoadChild, TChildModule } from '../../types';
+import { IComponent, IDirective, INvModule, NvRouteObject, ComponentList, DirectiveList, TLoadChild, TChildModule } from '../types';
 
-import { Utils } from '../../utils';
-import { KeyWatcher } from '../../key-watcher';
-import { factoryModule, NvModule } from '../../nv-module';
-import { InDiv } from '../../indiv';
-import { Injector } from '../../di';
+import { Utils } from '../utils';
+import { KeyWatcher } from '../key-watcher';
+import { factoryModule, NvModule } from '../nv-module';
+import { InDiv } from '../indiv';
+import { Injector } from '../di';
 
 import { NvLocation } from './location';
 import { RouterTo, RouterFrom, RouterActive } from './directives';
@@ -13,6 +13,10 @@ export { NvLocation } from './location';
 export { RouterTo, RouterFrom, RouterActive } from './directives';
 
 const utils = new Utils();
+
+export interface RouteChange {
+  nvRouteChange(lastRoute?: string, newRoute?: string): void;
+}
 
 export const nvRouteStatus: {
   nvRouteObject: NvRouteObject,
@@ -351,7 +355,6 @@ export class RouteModule {
 
         this.routesList.push(rootRoute);
 
-        // 因为没有 所有要push进去
         if (component) this.hasRenderComponentList.push(component);
 
         if (index === this.renderRouteList.length - 1) this.routerChangeEvent(index);

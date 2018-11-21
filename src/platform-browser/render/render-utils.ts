@@ -1,9 +1,8 @@
-import { IComponent, IDirective } from '../../types';
+import { IComponent, IDirective, ElementRef } from '../../types';
 
 import { factoryCreator } from '../../di';
 import { Utils } from '../../utils';
 import { InDiv } from '../../InDiv';
-import { ElementRef } from '../../internal-type';
 
 const utils = new Utils();
 

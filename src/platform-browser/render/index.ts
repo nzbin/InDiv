@@ -1,6 +1,6 @@
 import { IComponent } from '../../types';
 
-import { CompileUtil } from '../compile-utils';
+import { CompileUtil } from '../compile';
 import { RenderTaskQueue } from './render-task-queue';
 
 /**

@@ -1,4 +1,4 @@
-import { NvModule, Component } from '../src';
+import { NvModule, Component, ElementRef, InDiv } from '../src';
 // import { NvModule, Component } from '../build';
 import { HeroSearchService, SharedModule, HeroSearchService1, HeroSearchService2 } from './index';
 
@@ -33,8 +33,12 @@ class TestLoadchildComponent {
     `,
 })
 class R2 {
-  constructor(private sss: HeroSearchService) {
-    console.log(100000, 'from R2 LoadModule', this.sss);
+  constructor(
+    private sss: HeroSearchService,
+    private element: ElementRef,
+    private indiv: InDiv,
+  ) {
+    console.log(100000, 'from R2 LoadModule', this.sss, this.element, this.indiv);
     this.sss.test();
   }
 }

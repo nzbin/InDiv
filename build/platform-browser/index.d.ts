@@ -1,4 +1,2 @@
-export { Compile } from './compile';
-export { CompileUtilForRepeat, CompileUtil } from './compile-utils';
+export { Compile, CompileUtilForRepeat, CompileUtil } from './compile';
 export { render } from './render';
-export { NvLocation, RouteModule, TRouter, RouterTo, RouterFrom, RouterActive } from './router-module';

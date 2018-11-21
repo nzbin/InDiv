@@ -1,5 +1,6 @@
 import { IVnode } from '../../types';
 import { Utils } from '../../utils';
+export { CompileUtil, CompileUtilForRepeat } from './utils';
 /**
  * main compiler
  *

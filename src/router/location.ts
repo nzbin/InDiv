@@ -1,5 +1,5 @@
-import { Injectable } from '../../di/injectable';
-import { Utils } from '../../utils';
+import { Injectable } from '../di/injectable';
+import { Utils } from '../utils';
 
 import { nvRouteStatus } from './index';
 

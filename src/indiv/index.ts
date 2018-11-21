@@ -1,10 +1,11 @@
-import { IMiddleware, INvModule, IComponent } from '../types';
+import { IMiddleware, INvModule, IComponent, ElementRef } from '../types';
 
 import { Utils } from '../utils';
 import { factoryCreator, Injector } from '../di';
 import { factoryModule } from '../nv-module';
 import { render } from '../platform-browser';
-import { ElementRef } from '../internal-type';
+
+export { ElementRef } from '../types';
 
 const utils = new Utils();
 

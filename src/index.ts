@@ -8,9 +8,7 @@ export {
   OnDestory,
   HasRender,
   WatchState,
-  RouteChange,
   ReceiveProps,
-  SetState,
 } from './lifecycle';
 export {
   Watcher,
@@ -22,22 +20,18 @@ export {
   Compile,
   CompileUtil,
   CompileUtilForRepeat,
-  TRouter,
-  RouteModule,
-  NvLocation,
-  RouterTo,
-  RouterFrom,
-  RouterActive,
 } from './platform-browser';
 export {
   Component,
   setState,
+  SetState,
 } from './component';
 export {
   Directive,
 } from './directive';
 export {
   InDiv,
+  ElementRef,
 } from './indiv';
 export {
   NvModule,
@@ -57,5 +51,11 @@ export {
   factoryCreator,
 } from './di';
 export {
-  ElementRef,
-} from './internal-type';
+  RouteChange,
+  TRouter,
+  RouteModule,
+  NvLocation,
+  RouterTo,
+  RouterFrom,
+  RouterActive,
+} from './router';

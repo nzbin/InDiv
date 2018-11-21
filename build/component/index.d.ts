@@ -17,5 +17,6 @@ declare type TComponentOptions = {
  * @returns {(_constructor: Function) => void}
  */
 export declare function Component<State = any, Props = any, Vm = any>(options: TComponentOptions): (_constructor: Function) => void;
+export declare type SetState = (newState: any) => void;
 export declare function setState(newState: any): void;
 export {};

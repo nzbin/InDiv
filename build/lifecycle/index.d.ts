@@ -16,10 +16,6 @@ export interface HasRender {
 export interface WatchState {
     nvWatchState(oldState?: any): void;
 }
-export interface RouteChange {
-    nvRouteChange(lastRoute?: string, newRoute?: string): void;
-}
 export interface ReceiveProps {
     nvReceiveProps(nextProps: any): void;
 }
-export declare type SetState = (newState: any) => void;

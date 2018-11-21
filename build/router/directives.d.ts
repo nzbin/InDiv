@@ -1,6 +1,7 @@
-import { ElementRef } from '../../internal-type';
-import { OnInit, ReceiveProps, RouteChange, OnDestory } from '../../lifecycle';
+import { ElementRef } from '../types';
+import { OnInit, ReceiveProps, OnDestory } from '../lifecycle';
 import { NvLocation } from './location';
+import { RouteChange } from './index';
 /**
  * @Directive can be used as `router-to=""`
  *

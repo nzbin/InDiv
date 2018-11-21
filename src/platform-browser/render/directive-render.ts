@@ -1,7 +1,7 @@
 import { IDirective, DirectiveList, IComponent } from '../../types';
 
 import { Utils } from '../../utils';
-import { CompileUtilForRepeat } from '../compile-utils';
+import { CompileUtilForRepeat } from '../compile';
 import { buildDirectiveScope } from './render-utils';
 import { RenderTaskQueue } from './render-task-queue';
 

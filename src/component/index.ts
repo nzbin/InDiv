@@ -61,6 +61,8 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
   };
 }
 
+export type SetState = (newState: any) => void;
+
 export function setState(newState: any): void {
   if (newState && utils.isFunction(newState)) {
     const _newState = newState();

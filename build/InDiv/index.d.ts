@@ -1,5 +1,6 @@
 import { IMiddleware, INvModule, IComponent } from '../types';
 import { Injector } from '../di';
+export { ElementRef } from '../types';
 /**
  * main: for new InDiv
  *

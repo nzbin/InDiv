@@ -1,8 +1,10 @@
-import { Utils } from '../../utils';
-import { Directive } from '../../directive';
-import { ElementRef } from '../../internal-type';
-import { OnInit, ReceiveProps, RouteChange, OnDestory } from '../../lifecycle';
+import { ElementRef } from '../types';
+
+import { Utils } from '../utils';
+import { Directive } from '../directive';
+import { OnInit, ReceiveProps, OnDestory } from '../lifecycle';
 import { NvLocation } from './location';
+import { RouteChange } from './index';
 
 const utils = new Utils();
 
@@ -83,9 +85,7 @@ export class RouterTo implements OnInit, ReceiveProps, RouteChange, OnDestory {
 export class RouterFrom implements OnInit, ReceiveProps {
   private props: string;
 
-  constructor(
-    private element: ElementRef,
-  ) {}
+  constructor(private element: ElementRef) {}
 
   public nvOnInit() {
     this.element.setAttribute('router-link-from', this.props);
@@ -110,9 +110,7 @@ export class RouterFrom implements OnInit, ReceiveProps {
 export class RouterActive implements OnInit, ReceiveProps {
   private props: string;
 
-  constructor(
-    private element: ElementRef,
-  ) {}
+  constructor(private element: ElementRef) {}
 
   public nvOnInit() {
     this.element.setAttribute('router-link-active', this.props);

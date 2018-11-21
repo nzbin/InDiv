@@ -559,9 +559,10 @@ class Container implements OnInit, AfterMount, WatchState {
     private location: NvLocation,
     private httpClient: HttpClient,
     private element: ElementRef,
+    private indiv: InDiv,
   ) {
     this.setState = setState;
-    console.log(99988, 'from Container', this.element);
+    console.log(99988, 'from Container', this.element, this.indiv);
     this.httpClient.createResponseInterceptor((value: HttpClientResponse) => {
       return {
         data: value.data,
@@ -833,7 +834,7 @@ const routes: TRouter[] = [
     ],
   },
 ];
-// @Injected
+
 @NvModule({
   imports: [
     RouteModule.forRoot({
@@ -860,72 +861,6 @@ class M1 {
   }
 }
 
-// const router = new Router();
-
-// const routes: TRouter[] = [
-//   {
-//     path: '/',
-//     // redirectTo: '/R1',
-//     component: 'container-wrap',
-//     children: [
-//       {
-//         path: '/R1',
-//         component: 'R1',
-//         // redirectTo: '/R2',
-//         // loadChild: {
-//         //   name: 'TestLoadchildModule',
-//         //   module: () => import('./loadChild'),
-//         // },
-//         children: [
-//           {
-//             path: '/C1',
-//             // component: 'R2',
-//             loadChild: {
-//               name: 'TestLoadchildModule',
-//               child: () => import('./loadChild'),
-//             },
-//             // redirectTo: '/R1/C1/D1',
-//             children: [
-//               {
-//                 path: '/D1',
-//                 component: 'R2',
-//                 // redirectTo: '/R2/2',
-//               },
-//             ],
-//           },
-//           {
-//             path: '/C2',
-//             redirectTo: '/R2',
-//           },
-//         ],
-//       },
-//       {
-//         path: '/R2',
-//         component: 'R2',
-//         children: [
-//           {
-//             path: '/:id',
-//             component: 'R1',
-//             children: [
-//               {
-//                 path: '/D1',
-//                 redirectTo: '/R1/C1',
-//               },
-//             ],
-//           },
-//         ],
-//       },
-//     ],
-//   },
-// ];
-// router.setRootPath('/demo');
-// // router.setRootPath('/');
-// router.init(routes);
-// router.routeChange = (old: string, next: string) => {
-//   console.log('nvRouteChange', old, next);
-// };
-
 const inDiv = new InDiv();
 inDiv.bootstrapModule(M1);
-// inDiv.use(router);
 inDiv.init();

@@ -78,7 +78,16 @@ export function directivesConstructor<State = any, Props = any, Vm = any>(dom: E
       const attrValue = node.getAttribute(name);
       let props: any = null;
 
-      if (!attrValue) return;
+      // only attribute return
+      if (!attrValue) {
+        vm.$directiveList.push({
+          dom: node,
+          props,
+          scope: null,
+          constructorFunction: declaration,
+        });
+        return;
+      }
 
       const valueList = attrValue.split('.');
       const key = valueList[0];
@@ -86,7 +95,7 @@ export function directivesConstructor<State = any, Props = any, Vm = any>(dom: E
       // build props
       if (vm.compileUtil.isFromState(vm.state, attrValue)) {
         props = vm.compileUtil._getVMVal(vm.state, attrValue);
-      } else if (/^(\@.).*\(.*\)$/g.test(attrValue)) {
+      } else if (/^(\@.).*\(.*\)$/.test(attrValue)) {
         const utilVm = new CompileUtilForRepeat();
         const fn = utilVm._getVMFunction(vm, attrValue);
         const args = attrValue.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
@@ -95,9 +104,11 @@ export function directivesConstructor<State = any, Props = any, Vm = any>(dom: E
           if (arg === '') return false;
           if (arg === '$element') return argsList.push(node);
           if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
+          if (arg === 'null') return argsList.push(null);
+          if (arg === 'undefined') return argsList.push(undefined);
           if (utilVm.isFromState(vm.state, arg)) return argsList.push(utilVm._getVMVal(vm.state, arg));
-          if (/\'.*\'/g.test(arg)) return argsList.push(arg.match(/\'(.*)\'/)[1]);
-          if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
+          if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
+          if (!/^\'.*\'$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
           if (node.repeatData) {
             // $index in this
             Object.keys(node.repeatData).forEach(data => {
@@ -107,11 +118,13 @@ export function directivesConstructor<State = any, Props = any, Vm = any>(dom: E
         });
         const value = fn.apply(vm, argsList);
         props = value;
-      } else if (/^(\@.).*[^\(.*\)]$/g.test(attrValue)) {
-        props = vm.compileUtil._getVMVal(vm, attrValue.replace(/^(\@)/, ''));
-      } else if (node.repeatData && node.repeatData[key] !== null) {
-        props = vm.compileUtil._getValueByValue(node.repeatData[key], attrValue, key);
-      }
+      } else if (/^(\@.).*[^\(.*\)]$/g.test(attrValue)) props = vm.compileUtil._getVMVal(vm, attrValue.replace(/^(\@)/, ''));
+      else if (node.repeatData && node.repeatData[key] !== null) props = vm.compileUtil._getValueByValue(node.repeatData[key], attrValue, key);
+      else if (/^\'.*\'$/.test(attrValue)) props = attrValue.match(/^\'(.*)\'$/)[1];
+      else if (!/^\'.*\'$/.test(attrValue) && /^[0-9]*$/.test(attrValue)) props = Number(attrValue);
+      else if (attrValue === 'true' || attrValue === 'false') props = (attrValue === 'true');
+      else if (attrValue === 'null') props = null;
+      else if (attrValue === 'undefined') props = undefined;
 
       vm.$directiveList.push({
         dom: node,

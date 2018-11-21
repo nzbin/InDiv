@@ -132,9 +132,11 @@ export class CompileUtilForRepeat {
       if (arg === '') return false;
       if (arg === '$element') return argsList.push(node);
       if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
+      if (arg === 'null') return argsList.push(null);
+      if (arg === 'undefined') return argsList.push(undefined);
       if (utilVm.isFromState(vm.state, arg)) return argsList.push(utilVm._getVMVal(vm.state, arg));
-      if (/\'.*\'/g.test(arg)) return argsList.push(arg.match(/\'(.*)\'/)[1]);
-      if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
+      if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
+      if (!/^\'.*\'$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
       if (arg.indexOf(key) === 0 || arg.indexOf(`${key}.`) === 0) return argsList.push(utilVm._getVMRepeatVal(val, arg, key));
       if (node.repeatData) {
         // $index in this
@@ -210,17 +212,17 @@ export class CompileUtilForRepeat {
       const fn = this._getVMFunction(vm, exp);
       const argsList = this._getVMFunctionArguments(vm, exp, node, key, val);
       value = fn.apply(vm, argsList);
-    } else if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
-      // repeat value
-      value = this._getVMRepeatVal(repeatValue, exp, key);
-    } else if (this.isFromState(vm.state, exp)) {
-      // normal value
-      value = this._getVMVal(vm.state, exp);
-    } else if (exp === '$index') {
-      value = index;
-    } else {
-      throw new Error(`directive: nv-${dir} can't use recognize this value ${exp}`);
-    }
+    // repeat value
+    } else if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) value = this._getVMRepeatVal(repeatValue, exp, key);
+    // normal value
+    else if (this.isFromState(vm.state, exp)) value = this._getVMVal(vm.state, exp);
+    else if (exp === '$index') value = index;
+    else if (/^\'.*\'$/.test(exp)) value = exp.match(/^\'(.*)\'$/)[1];
+    else if (!/^\'.*\'$/.test(exp) && /^[0-9]*$/g.test(exp)) value = Number(exp);
+    else if (exp === 'true' || exp === 'false') value = (exp === 'true');
+    else if (exp === 'null') value = null;
+    else if (exp === 'undefined') value = undefined;
+    else throw new Error(`directive: nv-${dir} can't use recognize this value ${exp}`);
 
     if (!node.hasChildNodes()) this.templateUpdater(node, repeatValue, key, vm);
 
@@ -436,7 +438,7 @@ export class CompileUtilForRepeat {
 
     const fn = this._getVMFunction(vm, exp);
 
-    const args = exp.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/ /g, '').split(',');
+    const args = exp.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
 
     const utilVm = this;
     const func = function(event: Event): any {
@@ -446,9 +448,11 @@ export class CompileUtilForRepeat {
         if (arg === '$event') return argsList.push(event);
         if (arg === '$element') return argsList.push(node);
         if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
+        if (arg === 'null') return argsList.push(null);
+        if (arg === 'undefined') return argsList.push(undefined);
         if (utilVm.isFromState(vm.state, arg)) return argsList.push(utilVm._getVMVal(vm.state, arg));
-        if (/\'.*\'/g.test(arg)) return argsList.push(arg.match(/\'(.*)\'/)[1]);
-        if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
+        if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
+        if (!/^\'.*\'$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
         if (arg.indexOf(key) === 0 || arg.indexOf(`${key}.`) === 0) return argsList.push(utilVm._getVMRepeatVal(val, arg, key));
         if (this.repeatData) {
           // $index in this
@@ -575,9 +579,11 @@ export class CompileUtil {
       if (arg === '') return false;
       if (arg === '$element') return argsList.push(node);
       if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
+      if (arg === 'null') return argsList.push(null);
+      if (arg === 'undefined') return argsList.push(undefined);
       if (this.isFromState(vm.state, arg)) return argsList.push(this._getVMVal(vm.state, arg));
-      if (/\'.*\'/g.test(arg)) return argsList.push(arg.match(/\'(.*)\'/)[1]);
-      if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
+      if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
+      if (!/^\'.*\'$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
     });
     return argsList;
   }
@@ -633,12 +639,14 @@ export class CompileUtil {
         const fn = this._getVMFunction(vm, exp);
         const argsList = this._getVMFunctionArguments(vm, exp, node);
         value = fn.apply(vm, argsList);
-      } else if (this.isFromState(vm.state, exp)) {
-        // normal value
-        value = this._getVMVal(vm.state, exp);
-      } else {
-        throw new Error(`directive: nv-${dir} can't use recognize this value ${exp}`);
-      }
+      // normal value
+      } else if (this.isFromState(vm.state, exp)) value = this._getVMVal(vm.state, exp);
+      else if (/^\'.*\'$/.test(exp)) value = exp.match(/^\'(.*)\'$/)[1];
+      else if (!/^\'.*\'$/.test(exp) && /^[0-9]*$/g.test(exp)) value = Number(exp);
+      else if (exp === 'true' || exp === 'false') value = (exp === 'true');
+      else if (exp === 'null') value = null;
+      else if (exp === 'undefined') value = undefined;
+      else throw new Error(`directive: nv-${dir} can't use recognize this value ${exp}`);
 
       // compile unrepeatNode's attributes
       switch (dir) {
@@ -939,9 +947,11 @@ export class CompileUtil {
         if (arg === '$event') return argsList.push(event);
         if (arg === '$element') return argsList.push(node);
         if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
+        if (arg === 'null') return argsList.push(null);
+        if (arg === 'undefined') return argsList.push(undefined);
         if (vmUtils.isFromState(vm.state, arg)) return argsList.push(vmUtils._getVMVal(vm.state, arg));
-        if (/\'.*\'/g.test(arg)) return argsList.push(arg.match(/\'(.*)\'/)[1]);
-        if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
+        if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
+        if (!/^\'.*\'$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
       });
       fn.apply(vm, argsList);
     };

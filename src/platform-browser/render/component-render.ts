@@ -120,7 +120,7 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
               props[attrName] = buildProps(_prop, vm);
               return;
             }
-            if (/^(\@.).*\(.*\)$/g.test(prop[1])) {
+            if (/^(\@.).*\(.*\)$/.test(prop[1])) {
               const utilVm = new CompileUtilForRepeat();
               const fn = utilVm._getVMFunction(vm, prop[1]);
               const args = prop[1].replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
@@ -129,9 +129,11 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
                 if (arg === '') return false;
                 if (arg === '$element') return argsList.push(node);
                 if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
+                if (arg === 'null') return argsList.push(null);
+                if (arg === 'undefined') return argsList.push(undefined);
                 if (utilVm.isFromState(vm.state, arg)) return argsList.push(utilVm._getVMVal(vm.state, arg));
-                if (/\'.*\'/g.test(arg)) return argsList.push(arg.match(/\'(.*)\'/)[1]);
-                if (!/\'.*\'/g.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
+                if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
+                if (!/^\'.*\'$/.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
                 if (node.repeatData) {
                   // $index in this
                   Object.keys(node.repeatData).forEach(data => {
@@ -158,6 +160,11 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
               props[attrName] = buildProps(_prop, vm);
               return;
             }
+            if (/^\'.*\'$/.test(prop[1])) return props[attrName] = prop[1].match(/^\'(.*)\'$/)[1];
+            if (!/^\'.*\'$/.test(prop[1]) && /^[0-9]*$/.test(prop[1])) return props[attrName] = Number(prop[1]);
+            if (prop[1] === 'true' || prop[1] === 'false') return props[attrName] = (prop[1] === 'true');
+            if (prop[1] === 'null') return props[attrName] = null;
+            if (prop[1] === 'undefined') return props[attrName] = undefined;
           }
 
           // can't remove indiv_repeat_key

@@ -23,4 +23,6 @@
 - [x] optimize setState
 - [x] support directive
 - [x] HTTP client
-- [ ] rewrite IOC container
+- [x] rewrite IOC container
+- [ ] 模板可以接受字符串及数字等
+- [ ] 指令可以不接受props

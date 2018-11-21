@@ -55,7 +55,7 @@ interface Props {
   selector: 'test-directive',
 })
 class TestDirective implements OnInit, RouteChange, ReceiveProps {
-  public props: number;
+  public props: string;
   constructor(
     private heroSearchService: HeroSearchService,
     private element: ElementRef,
@@ -64,13 +64,23 @@ class TestDirective implements OnInit, RouteChange, ReceiveProps {
     console.log(5555, 'init TestDirective', this.props);
     console.log(666666, 'init TestDirective element', this.element);
     this.heroSearchService.test();
-    this.element.style.color = 'red';
+    // this.element.style.color = 'red';
+    this.element.addEventListener('mouseover', this.changeColor);
+    this.element.addEventListener('mouseout', this.removeColor);
   }
   public nvRouteChange(lastRoute?: string, newRoute?: string) {
     console.log(5555, 'nvRouteChange TestDirective', newRoute);
   }
   public nvReceiveProps(nextProps: any): void {
     console.log(33333, 'nvReceiveProps test-directive', nextProps);
+  }
+
+  public changeColor = () => {
+    // this.element.style.color = this.props ? this.props : 'red';
+    this.element.style.color = 'red';
+  }
+  public removeColor = () => {
+    this.element.style.color = 'black';
   }
 }
 
@@ -420,12 +430,14 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
   constructor(
     private heroSearchService1: HeroSearchService1,
     private location: NvLocation,
+    private sss: HeroSearchService,
   ) {
     // this.setLocation = setLocation;
     // this.getLocation = getLocation;
     this.heroSearchService1.test();
     console.log('this.heroSearchService1', this.heroSearchService1);
     this.state = { a: 1 };
+    this.sss.test();
   }
   public nvOnInit() {
     console.log('this.getLocation', this.location.get());
@@ -509,7 +521,7 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
   template: (`
     <div>
       <input nv-model="test.a" nv-on:click="@show(test)" />
-      <p test-directive="a" nv-id="@countState(a)" nv-if="@countState(a)" nv-on:click="@changeInput()">{{a}}</p>
+      <p test-directive="'123'" nv-id="@countState(a)" nv-if="@countState(a)" nv-on:click="@changeInput()">{{a}}</p>
       <test-component nv-repeat="let man in testArray" nv-key="man.name" man="{@countState(man.name)}" nv-if="a"></test-component>
       <p nv-on:click="@go()">container: {{@countState(a)}}</p>
       <input nv-model="a" />
@@ -562,6 +574,7 @@ class Container implements OnInit, AfterMount, WatchState {
     // console.log('http', this.http);
     console.log('value', this.value);
     this.state = {
+      color: 'red',
       test: {
         a: 3,
       },
@@ -649,6 +662,7 @@ class Container implements OnInit, AfterMount, WatchState {
 
   public changeInput() {
     this.state.a = 4;
+    this.state.color = 'green';
     this.setState({
       testArray: [
         {

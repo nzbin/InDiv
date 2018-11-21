@@ -1,7 +1,7 @@
 import { Utils } from '../../utils';
 import { Directive } from '../../directive';
 import { ElementRef } from '../../internal-type';
-import { OnInit, ReceiveProps, RouteChange } from '../../lifecycle';
+import { OnInit, ReceiveProps, RouteChange, OnDestory } from '../../lifecycle';
 import { NvLocation } from './location';
 
 const utils = new Utils();
@@ -18,7 +18,7 @@ const utils = new Utils();
 @Directive({
   selector: 'router-to',
 })
-export class RouterTo implements OnInit, ReceiveProps, RouteChange {
+export class RouterTo implements OnInit, ReceiveProps, RouteChange, OnDestory {
   private to: string;
   private props: string;
   private from: string;
@@ -31,7 +31,7 @@ export class RouterTo implements OnInit, ReceiveProps, RouteChange {
 
   public nvOnInit() {
     this.resetState(this.props);
-    this.element.addEventListener('click', this.routeTo.bind(this), false);
+    this.element.addEventListener('click', this.routeTo, false);
   }
 
   public nvReceiveProps(nextProps: string) {
@@ -45,11 +45,18 @@ export class RouterTo implements OnInit, ReceiveProps, RouteChange {
     if (newRoute !== this.to && this.element.classList.contains(this.activeClass)) this.element.classList.remove(this.activeClass);
   }
 
-  private routeTo() {
+  public nvOnDestory() {
+    this.element.removeEventListener('click', this.routeTo, false);
+  }
+
+  private routeTo = () => {
     this.resetState(this.props);
     const location = this.location.get();
     const currentUrl = `${location.path}${utils.buildQuery(location.query)}`;
-    if (!this.to) throw new Error('Directive route-to need a prop: to');
+    if (!this.to) {
+      console.error('Directive router-to on element', this.element, 'need a prop');
+      return;
+    }
     if (this.from && currentUrl === this.from) this.location.set(this.to);
     if (!this.from) this.location.set(this.to);
   }

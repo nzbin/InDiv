@@ -1,7 +1,6 @@
 export { Utils, } from './utils';
 export { OnInit, BeforeMount, AfterMount, OnDestory, HasRender, WatchState, ReceiveProps, } from './lifecycle';
 export { Watcher, } from './watcher';
-export { KeyWatcher, } from './key-watcher';
 export { Compile, CompileUtil, CompileUtilForRepeat, } from './platform-browser';
 export { Component, setState, SetState, } from './component';
 export { Directive, } from './directive';

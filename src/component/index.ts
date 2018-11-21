@@ -33,8 +33,9 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
     vm.$template = options.template;
 
     // component $providerList for injector
+    vm.$providerList = new Map();
+    vm.$providerList.set(setState, { provide: setState, useValue: setState });
     if (options.providers && options.providers.length > 0) {
-      vm.$providerList = new Map();
       const length = options.providers.length;
       for (let i = 0; i < length; i++) {
         const service = options.providers[i];

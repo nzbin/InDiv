@@ -2,11 +2,11 @@ import { Injector } from './injector';
 /**
  * injector: build arguments for factoryCreator
  *
- * 1. provider Component's providers
+ * 1. provider constructor's providers
  * 2. provider rootInjector
  * 3. provider otherInjector
  *
- * first: check _constructor has Component providers or not
+ * first: check _constructor has constructor providers or not
  * secend: find service in loadModule or rootModule
  * third: find service is a singleton service or not
  * forth: if service is a singleton service, find in rootModule's $providerInstances. If not use factoryCreator instance and return

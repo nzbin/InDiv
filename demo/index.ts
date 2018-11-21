@@ -515,7 +515,6 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
   }
 }
 
-// @Injected
 @Component({
   selector: 'container-wrap',
   template: (`
@@ -804,8 +803,8 @@ const routes: TRouter[] = [
             children: [
               {
                 path: '/D1',
-                component: 'R2',
-                // redirectTo: '/R2/2',
+                // component: 'R2',
+                redirectTo: '/R2/2',
               },
             ],
           },

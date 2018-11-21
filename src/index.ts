@@ -14,9 +14,6 @@ export {
   Watcher,
 } from './watcher';
 export {
-  KeyWatcher,
-} from './key-watcher';
-export {
   Compile,
   CompileUtil,
   CompileUtilForRepeat,

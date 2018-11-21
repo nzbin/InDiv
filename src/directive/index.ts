@@ -26,8 +26,8 @@ export function Directive<Props = any, Vm = any>(options: TDirectiveOptions): (_
     const vm: IDirective = _constructor.prototype;
 
     // component $providerList for injector
+    vm.$providerList = new Map();
     if (options.providers && options.providers.length > 0) {
-      vm.$providerList = new Map();
       const length = options.providers.length;
       for (let i = 0; i < length; i++) {
         const service = options.providers[i];

@@ -1,7 +1,6 @@
 import { IComponent, IDirective, INvModule, NvRouteObject, ComponentList, DirectiveList, TLoadChild, TChildModule } from '../types';
 
 import { Utils } from '../utils';
-import { KeyWatcher } from '../key-watcher';
 import { factoryModule, NvModule } from '../nv-module';
 import { InDiv } from '../indiv';
 import { Injector } from '../di';
@@ -68,7 +67,7 @@ export class RouteModule {
   private lastRoute: string = null;
   private hasRenderComponentList: IComponent[] = [];
   private needRedirectPath: string = null;
-  private watcher: KeyWatcher = null;
+  private watcher: boolean = false;
   private renderRouteList: string[] = [];
   private loadModuleMap: Map<string, INvModule> = new Map();
   private loadModuleInjectorMap: Map<string, Injector> = new Map();
@@ -170,13 +169,31 @@ export class RouteModule {
         data: null,
       };
       nvRouteStatus.nvRouteParmasObject = {};
-      this.watcher = new KeyWatcher(nvRouteStatus, 'nvRouteObject', this.refresh.bind(this));
+      this.routeWatcher();
+      this.watcher = true;
     }
     this.currentUrl = nvRouteStatus.nvRouteObject.path || '/';
     this.routesList = [];
     this.renderRouteList = this.currentUrl === '/' ? ['/'] : this.currentUrl.split('/');
     this.renderRouteList[0] = '/';
     this.distributeRoutes();
+  }
+
+  private routeWatcher() {
+    const vm = this;
+    let val = nvRouteStatus.nvRouteObject;
+    Object.defineProperty(nvRouteStatus, 'nvRouteObject', {
+      configurable: true,
+      enumerable: true,
+      get() {
+        return val;
+      },
+      set(newVal: any) {
+        if (utils.isEqual(newVal, val)) return;
+        val = newVal;
+        vm.refresh();
+      },
+    });
   }
 
   /**

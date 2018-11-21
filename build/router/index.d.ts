@@ -66,6 +66,7 @@ export declare class RouteModule {
      * @memberof Router
      */
     private refresh;
+    private routeWatcher;
     /**
      * distribute routes and decide insert or general Routes
      *

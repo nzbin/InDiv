@@ -89,7 +89,10 @@ export class RouteModule {
     this.indivInstance.setRouteDOMKey('router-render');
 
     if (!utils.isBrowser()) return;
-    window.addEventListener('load', this.refresh.bind(this), false);
+
+    this.refresh = this.refresh.bind(this);
+
+    window.addEventListener('load', this.refresh, false);
     window.addEventListener('popstate', () => {
       let path;
       if (nvRouteStatus.nvRootPath === '/') {
@@ -179,8 +182,15 @@ export class RouteModule {
     this.distributeRoutes();
   }
 
+  /**
+   * open watcher on nvRouteStatus.nvRouteObject
+   *
+   * @private
+   * @returns
+   * @memberof RouteModule
+   */
   private routeWatcher() {
-    const vm = this;
+    const routeModuleInstance = this;
     let val = nvRouteStatus.nvRouteObject;
     Object.defineProperty(nvRouteStatus, 'nvRouteObject', {
       configurable: true,
@@ -191,7 +201,7 @@ export class RouteModule {
       set(newVal: any) {
         if (utils.isEqual(newVal, val)) return;
         val = newVal;
-        vm.refresh();
+        routeModuleInstance.refresh();
       },
     });
   }

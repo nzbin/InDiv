@@ -66,6 +66,13 @@ export declare class RouteModule {
      * @memberof Router
      */
     private refresh;
+    /**
+     * open watcher on nvRouteStatus.nvRouteObject
+     *
+     * @private
+     * @returns
+     * @memberof RouteModule
+     */
     private routeWatcher;
     /**
      * distribute routes and decide insert or general Routes

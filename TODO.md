@@ -24,5 +24,6 @@
 - [x] support directive
 - [x] HTTP client
 - [x] rewrite IOC container
-- [ ] 模板可以接受字符串及数字等
-- [ ] 指令可以不接受props
+- [x] 模板可以接受字符串及数字等
+- [x] 指令可以不接受props
+- [x] 优化编译 存储上次 Vnode 结构

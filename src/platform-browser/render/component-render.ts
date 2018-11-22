@@ -196,7 +196,9 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
 export async function componentRenderFunction(renderDom: Element, RenderTaskQueue: RenderTaskQueue): Promise<IComponent> {
   return Promise.resolve()
     .then(async() => {
-      const compile = new Compile(renderDom, RenderTaskQueue.$vm);
+      // compile has been added into Component instance by dirty method
+      if (!(RenderTaskQueue.$vm as any).compile) ((RenderTaskQueue.$vm as any).compile as Compile) = new Compile(renderDom, RenderTaskQueue.$vm);
+      ((RenderTaskQueue.$vm as any).compile as Compile).startCompile();
 
       // first mount directive
       await directiveRenderFunction(renderDom, RenderTaskQueue);

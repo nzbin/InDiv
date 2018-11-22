@@ -1,4 +1,4 @@
-import { IVnode } from '../../types';
+import { Vnode } from '../virtual-dom';
 import { Utils } from '../../utils';
 export { CompileUtil, CompileUtilForRepeat } from './utils';
 /**
@@ -11,6 +11,7 @@ export declare class Compile {
     $vm: any;
     $el: Element;
     $fragment: DocumentFragment;
+    saveVnode: Vnode;
     /**
      * Creates an instance of Compile.
      * @param {(string | Element)} el
@@ -18,18 +19,19 @@ export declare class Compile {
      * @memberof Compile
      */
     constructor(el: string | Element, vm: any);
+    startCompile(): void;
     /**
      * needDiffChildCallback for Virtual DOM diff
      *
      * if newVnode.node.isComponent no need diff children
      * if newVnode.tagName and oldVnode.tagName no need diff children
      *
-     * @param {IVnode} oldVnode
-     * @param {IVnode} newVnode
+     * @param {Vnode} oldVnode
+     * @param {Vnode} newVnode
      * @returns {boolean}
      * @memberof Compile
      */
-    needDiffChildCallback(oldVnode: IVnode, newVnode: IVnode): boolean;
+    needDiffChildCallback: (oldVnode: Vnode, newVnode: Vnode) => boolean;
     /**
      * init compile
      *

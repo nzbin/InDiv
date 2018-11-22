@@ -1,4 +1,4 @@
-import { IVnode, IPatchList } from '../../types';
+import { Vnode, IPatchList } from './parse';
 
 /**
  * diff childNodes for diff VNode
@@ -6,47 +6,55 @@ import { IVnode, IPatchList } from '../../types';
  * type: 0 removeChild
  * type: 1 change Child index
  *
- * @param {IVnode} newVnode
- * @param {IVnode} oldVnode
+ * @param {Vnode} newVnode
+ * @param {Vnode} oldVnode
  * @param {IPatchList[]} patchList
- * @param {(oldVnode: IVnode, newVnode: IVnode) => boolean} needDiffChildCallback
+ * @param {(oldVnode: Vnode, newVnode: Vnode) => boolean} needDiffChildCallback
  */
-function diffChildNodes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[], needDiffChildCallback?: (oldVnode: IVnode, newVnode: IVnode) => boolean): void {
+function diffChildNodes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[], needDiffChildCallback?: (oldVnode: Vnode, newVnode: Vnode) => boolean): void {
   if (oldVnode.childNodes.length > 0) {
-    (oldVnode.childNodes as IVnode[]).forEach((oChild, index) => {
-      if (oChild.checked) return;
-      const sameCode = newVnode.childNodes.find(nChild => (nChild.node.isEqualNode(oChild.node) && nChild.key === oChild.key && !nChild.checked) || (nChild.tagName === oChild.tagName && nChild.key === oChild.key && !nChild.checked));
-      if (sameCode) {
-        const sameCodeIndex = newVnode.childNodes.findIndex(nChild => nChild === sameCode);
-        if (sameCodeIndex !== index) {
+    (oldVnode.childNodes as Vnode[]).forEach((oChild, index) => {
+      const sameCodeFromNewCode = (newVnode.childNodes as Vnode[]).find(nChild => (nChild.node.isEqualNode(oChild.node) && nChild.key === oChild.key && !nChild.checked) || (nChild.tagName === oChild.tagName && nChild.key === oChild.key && !nChild.checked));
+      if (sameCodeFromNewCode) {
+        const sameCodeIndexFromNewCode = (newVnode.childNodes as Vnode[]).findIndex(nChild => nChild === sameCodeFromNewCode);
+        if (sameCodeIndexFromNewCode !== index) {
           patchList.push({
             type: 1,
-            newIndex: sameCodeIndex,
+            newIndex: sameCodeIndexFromNewCode,
             oldVnode: oChild.node,
             parentNode: oldVnode.node,
+
+            originVnode: oldVnode,
+            changedVnode: oChild,
           });
         }
-        diffVnode(oChild, sameCode, patchList, needDiffChildCallback);
-        sameCode.checked = true;
-      } else {
+        diffVnode(oChild, sameCodeFromNewCode, patchList, needDiffChildCallback);
+        sameCodeFromNewCode.checked = true;
+      }
+      if (!sameCodeFromNewCode) {
         patchList.push({
           type: 0,
           node: oChild.node,
           parentNode: oldVnode.node,
+
+          originVnode: oldVnode,
+          changedVnode: oChild,
         });
       }
-      oChild.checked = true;
     });
   }
 
   if (newVnode.childNodes.length > 0) {
-    (newVnode.childNodes as IVnode[]).forEach((nChild, index) => {
+    (newVnode.childNodes as Vnode[]).forEach((nChild, index) => {
       if (nChild.checked) return;
       patchList.push({
         type: 1,
         newIndex: index,
         oldVnode: nChild.node,
         parentNode: oldVnode.node,
+
+        originVnode: oldVnode,
+        changedVnode: nChild,
       });
       nChild.checked = true;
     });
@@ -59,29 +67,35 @@ function diffChildNodes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
  * type: 2 setAttribute
  * type: 3 removeAttribute
  *
- * @param {IVnode} oldVnode
- * @param {IVnode} newVnode
+ * @param {Vnode} oldVnode
+ * @param {Vnode} newVnode
  * @param {IPatchList[]} patchList
  */
-function diffAttributes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
+function diffAttributes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[]): void {
   newVnode.attributes.forEach((attr) => {
-    const oldVnodeAttr = oldVnode.attributes.find(at => at.name === attr.name);
+    const oldVnodeAttr = oldVnode.attributes.find(oldAttr => oldAttr.name === attr.name);
     if (!oldVnodeAttr || oldVnodeAttr.value !== attr.value) {
       patchList.push({
         type: 2,
         node: oldVnode.node,
         newValue: attr,
         oldValue: oldVnodeAttr,
+
+        originVnode: oldVnode,
+        changedValue: attr,
       });
     }
   });
   oldVnode.attributes.forEach((attr) => {
-    const newVnodeAttr = newVnode.attributes.find(at => at.name === attr.name);
+    const newVnodeAttr = newVnode.attributes.find(newAttr => newAttr.name === attr.name);
     if (!newVnodeAttr) {
       patchList.push({
         type: 3,
         node: oldVnode.node,
         oldValue: attr,
+
+        originVnode: oldVnode,
+        changedValue: attr,
       });
     }
   });
@@ -92,18 +106,21 @@ function diffAttributes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
  * 
  * type: 4 change text for node
  *
- * @param {IVnode} oldVnode
- * @param {IVnode} newVnode
+ * @param {Vnode} oldVnode
+ * @param {Vnode} newVnode
  * @param {IPatchList[]} patchList
  * @returns {void}
  */
-function diffNodeValue(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
+function diffNodeValue(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[]): void {
   if (oldVnode.nodeValue !== newVnode.nodeValue) {
     patchList.push({
       type: 4,
       node: oldVnode.node,
       newValue: newVnode.nodeValue,
       oldValue: oldVnode.nodeValue,
+
+      originVnode: oldVnode,
+      changedValue: newVnode.nodeValue,
     });
   }
 }
@@ -113,18 +130,22 @@ function diffNodeValue(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList
  * 
  * type: 5 change value of input
  *
- * @param {IVnode} newVnode
- * @param {IVnode} oldVnode
+ * @param {Vnode} newVnode
+ * @param {Vnode} oldVnode
  * @param {IPatchList[]} patchList
  * @returns {void}
  */
-function diffInputValue(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
+function diffInputValue(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[]): void {
   if (oldVnode.value !== newVnode.value) {
     patchList.push({
       type: 5,
       node: oldVnode.node,
       newValue: newVnode.value,
       oldValue: oldVnode.value,
+
+
+      originVnode: oldVnode,
+      changedValue: newVnode.value,
     });
   }
 }
@@ -134,16 +155,19 @@ function diffInputValue(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
  * 
  * type: 6 change repeatData of node
  *
- * @param {IVnode} newVnode
- * @param {IVnode} oldVnode
+ * @param {Vnode} newVnode
+ * @param {Vnode} oldVnode
  * @param {IPatchList[]} patchList
  * @returns {void}
  */
-function diffRepeatData(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
+function diffRepeatData(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[]): void {
   patchList.push({
     type: 6,
     node: oldVnode.node,
     newValue: newVnode.repeatData,
+
+    originVnode: oldVnode,
+    changedValue: newVnode.repeatData,
   });
 }
 
@@ -153,43 +177,43 @@ function diffRepeatData(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
  * type: 7 change event of node
  * type: 8 change eventTypes of node
  * 
- * @param {IVnode} oldVnode
- * @param {IVnode} newVnode
+ * @param {Vnode} oldVnode
+ * @param {Vnode} newVnode
  * @param {IPatchList[]} patchList
  */
-function diffEventTypes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[]): void {
+function diffEventTypes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[]): void {
   const oEventTypes: string[] = JSON.parse(oldVnode.eventTypes);
   const nEventTypes: string[] = JSON.parse(newVnode.eventTypes);
 
   // 全部更新为新的事件
   if (nEventTypes && nEventTypes.length > 0) {
-    nEventTypes.forEach(neventType => {
+    nEventTypes.forEach(nEventType => {
       patchList.push({
         type: 7,
         node: oldVnode.node,
-        eventType: neventType,
-        newValue: (newVnode.node as any)[`event${neventType}`],
+        eventType: nEventType,
+        newValue: (newVnode.node as any)[`event${nEventType}`],
       });
     });
   }
 
   if (oEventTypes && oEventTypes.length > 0) {
-    // 如果新事件不存在，则删除事件
-    // 如果新事件找不到旧事件中的事件，则把旧事件的事件删除
-    oEventTypes.forEach(oeventType => {
+    oEventTypes.forEach(oEventType => {
+      // 如果新事件不存在，则删除事件
       if (!nEventTypes || nEventTypes.length <= 0) {
         patchList.push({
           type: 7,
           node: oldVnode.node,
-          eventType: oeventType,
+          eventType: oEventType,
           newValue: null,
         });
       }
-      if (nEventTypes && nEventTypes.length > 0 && !nEventTypes.find(neventType => neventType === oeventType)) {
+      // 如果新事件找不到旧事件中的事件，则把旧事件的事件删除
+      if (nEventTypes && nEventTypes.length > 0 && !nEventTypes.find(nEventType => nEventType === oEventType)) {
         patchList.push({
           type: 7,
           node: oldVnode.node,
-          eventType: oeventType,
+          eventType: oEventType,
           newValue: null,
         });
       }
@@ -200,7 +224,10 @@ function diffEventTypes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
     type: 8,
     node: oldVnode.node,
     newValue: newVnode.eventTypes,
-  });
+
+    originVnode: oldVnode,
+    changedValue: newVnode.eventTypes,
+  }); 
 }
 
 /**
@@ -208,16 +235,17 @@ function diffEventTypes(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchLis
  *
  * if needDiffChildCallback return false, then stop diff childNodes 
  * 
- * @param {IVnode} oldVnode
- * @param {IVnode} newVnode
+ * @param {Vnode} oldVnode
+ * @param {Vnode} newVnode
  * @param {IPatchList[]} patchList
- * @param {(oldVnode: IVnode, newVnode: IVnode) => boolean} needDiffChildCallback
+ * @param {(oldVnode: Vnode, newVnode: Vnode) => boolean} needDiffChildCallback
  * @returns {void}
  */
-export function diffVnode(oldVnode: IVnode, newVnode: IVnode, patchList: IPatchList[], needDiffChildCallback?: (oldVnode: IVnode, newVnode: IVnode) => boolean): void {
+export function diffVnode(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[], needDiffChildCallback?: (oldVnode: Vnode, newVnode: Vnode) => boolean): void {
   if (!patchList) throw new Error('patchList can not be null, diffVnode must need an Array');
 
   if (newVnode.type === 'document-fragment') {
+    newVnode.childNodes.forEach(child => { child.parentNode = oldVnode.node; });
     diffChildNodes(oldVnode, newVnode, patchList, needDiffChildCallback);
     return;
   }

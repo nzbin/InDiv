@@ -1,4 +1,4 @@
-import { IPatchList } from '../../types';
+import { IPatchList } from './parse';
 /**
  * renderVnode 对比完render node
  *
@@ -12,6 +12,9 @@ import { IPatchList } from '../../types';
  * value: 7, 更改 node 的 event: 7, 修改事件
  * value: 8, 更改 node 的 eventTypes: 8, 修改node的eventTypes
  *
- * @param [] patchList
+ * keep order from 0 delete to 8
+ *
+ * @export
+ * @param {IPatchList[]} patchList
  */
 export declare function renderVnode(patchList: IPatchList[]): void;

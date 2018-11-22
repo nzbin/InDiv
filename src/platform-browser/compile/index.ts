@@ -1,6 +1,4 @@
-import { IPatchList, IVnode } from '../../types';
-
-import { parseToVnode, diffVnode, renderVnode } from '../virtual-dom';
+import { parseToVnode, diffVnode, renderVnode, Vnode, IPatchList } from '../virtual-dom';
 import { Utils } from '../../utils';
 import { CompileUtil, shouldDiffAttributes } from './utils';
 
@@ -18,6 +16,7 @@ export class Compile {
   public $vm: any;
   public $el: Element;
   public $fragment: DocumentFragment;
+  public saveVnode: Vnode;
 
   /**
    * Creates an instance of Compile.
@@ -28,21 +27,21 @@ export class Compile {
   constructor(el: string | Element, vm: any) {
     this.$vm = vm;
     this.$el = this.isElementNode(el) ? el as Element : document.querySelector(el as string);
+  }
+
+  public startCompile(): void {
     if (this.$el) {
       this.$fragment = this.node2Fragment();
       this.init();
 
-      let oldVnode = parseToVnode(this.$el, shouldDiffAttributes);
-      let newVnode = parseToVnode(this.$fragment, shouldDiffAttributes);
-      let patchList: IPatchList[] = [];
-      diffVnode(oldVnode, newVnode, patchList, this.needDiffChildCallback.bind(this));
+      if (!this.saveVnode) this.saveVnode = parseToVnode(this.$el, shouldDiffAttributes);
+      const newVnode = parseToVnode(this.$fragment, shouldDiffAttributes);
+      const patchList: IPatchList[] = [];
+      diffVnode(this.saveVnode, newVnode, patchList, this.needDiffChildCallback);
       renderVnode(patchList);
 
       this.$fragment = null;
-      oldVnode = null;
-      newVnode = null;
-      patchList = null;
-    }
+    } else throw new Error('class Compile need el in constructor');
   }
 
   /**
@@ -51,12 +50,12 @@ export class Compile {
    * if newVnode.node.isComponent no need diff children
    * if newVnode.tagName and oldVnode.tagName no need diff children
    *
-   * @param {IVnode} oldVnode
-   * @param {IVnode} newVnode
+   * @param {Vnode} oldVnode
+   * @param {Vnode} newVnode
    * @returns {boolean}
    * @memberof Compile
    */
-  public needDiffChildCallback(oldVnode: IVnode, newVnode: IVnode): boolean {
+  public needDiffChildCallback = (oldVnode: Vnode, newVnode: Vnode): boolean => {
     // 如果为组件，则停止对比内部元素，交由对应组件diff
     if (newVnode.node.isComponent && oldVnode.node) {
       oldVnode.node.isComponent = true;

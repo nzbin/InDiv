@@ -1,17 +1,35 @@
-import { IVnode, TAttributes } from '../../types';
+export type TAttributes = {
+  name: string;
+  value: string;
+};
+
+export interface IPatchList {
+  type?: number;
+  node?: DocumentFragment | Element;
+  parentNode?: Node;
+  newNode?: DocumentFragment | Element;
+  oldVnode?: DocumentFragment | Element;
+  newValue?: TAttributes | string | number | boolean | Function;
+  oldValue?: TAttributes | string | number | boolean | Function;
+  eventType?: string;
+  newIndex?: number;
+  originVnode?: Vnode;
+  changedVnode?: Vnode;
+  changedValue?: TAttributes | string | number | boolean | Function;
+}
 
 /**
  * Vnode
  *
  * @class Vnode
  */
-class Vnode {
+export class Vnode {
   public tagName?: string;
   public node?: DocumentFragment | Element;
   public parentNode?: Node;
   public attributes?: TAttributes[];
   public nodeValue?: string | null;
-  public childNodes?: IVnode[] | any[];
+  public childNodes?: Vnode[];
   public type?: string;
   public value?: string | number;
   public repeatData?: any;
@@ -21,10 +39,10 @@ class Vnode {
 
   /**
    * Creates an instance of Vnode.
-   * @param {IVnode} info
+   * @param {Vnode} info
    * @memberof Vnode
    */
-  constructor(info: IVnode) {
+  constructor(info: Vnode) {
     this.tagName = info.tagName;
     this.node = info.node;
     this.parentNode = info.parentNode;
@@ -82,10 +100,10 @@ function bindAttributes(node: DocumentFragment | Element, shouldDiffAttributes?:
  * @export
  * @param {(DocumentFragment | Element)} node
  * @param {((node: DocumentFragment | Element) => string[])} [shouldDiffAttributes]
- * @returns {IVnode}
+ * @returns {Vnode}
  */
-export function parseToVnode(node: DocumentFragment | Element, shouldDiffAttributes?: (node: DocumentFragment | Element) => string[]): IVnode {
-  const childNodes: IVnode[] = [];
+export function parseToVnode(node: DocumentFragment | Element, shouldDiffAttributes?: (node: DocumentFragment | Element) => string[]): Vnode {
+  const childNodes: Vnode[] = [];
   if (node.childNodes) {
     Array.from(node.childNodes).forEach((child: Element) => {
       childNodes.push(parseToVnode(child, shouldDiffAttributes));

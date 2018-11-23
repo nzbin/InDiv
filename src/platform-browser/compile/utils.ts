@@ -324,7 +324,7 @@ export class CompileUtilForRepeat {
       }
     };
 
-    (node as any).oninput = func;
+    (node as Node).addEventListener('input', func);
     (node as any).eventinput = func;
     if (node.eventTypes) {
       const eventlist = JSON.parse(node.eventTypes);
@@ -464,7 +464,7 @@ export class CompileUtilForRepeat {
       fn.apply(vm, argsList);
     };
     if (eventType && fn) {
-      (node as any)[`on${eventType}`] = func;
+      (node as Node).addEventListener(eventType, func);
       (node as any)[`event${eventType}`] = func;
       if (node.eventTypes) {
         const eventlist = JSON.parse(node.eventTypes);
@@ -714,7 +714,7 @@ export class CompileUtil {
       if (this.isFromState(vm.state, exp)) this._setVMVal(vm, exp, (event.target as HTMLInputElement).value);
     };
 
-    (node as any).oninput = func;
+    (node as Node).addEventListener('input', func);
     (node as any).eventinput = func;
     if (node.eventTypes) {
       const eventlist = JSON.parse(node.eventTypes);
@@ -826,8 +826,6 @@ export class CompileUtil {
 
       this.$fragment.insertBefore(newElement, node);
 
-      (newElement as Element).removeAttribute('nv-repeat');
-
       if (this.isTextNode((newElement as Element)) && reg.test(text)) new CompileUtilForRepeat(this.$fragment).templateUpdater(newElement as Element, val, key, vm);
 
       if (nodeAttrs) {
@@ -836,12 +834,8 @@ export class CompileUtil {
           if (this.isDirective(attrName) && attrName !== 'nv-repeat') {
             const dir = attrName.substring(3);
             const exp = attr.value;
-            if (this.isEventDirective(dir)) {
-              new CompileUtilForRepeat(this.$fragment).eventHandler(newElement as Element, vm, exp, dir, key, val);
-              (newElement as Element).removeAttribute(attrName);
-            } else {
-              new CompileUtilForRepeat(this.$fragment).bind(newElement as Element, key, dir, exp, index, vm, value, val);
-            }
+            if (this.isEventDirective(dir)) new CompileUtilForRepeat(this.$fragment).eventHandler(newElement as Element, vm, exp, dir, key, val);
+            else new CompileUtilForRepeat(this.$fragment).bind(newElement as Element, key, dir, exp, index, vm, value, val);
           }
         });
       }
@@ -889,12 +883,8 @@ export class CompileUtil {
           const exp = attr.value;
           const dir = attrName.substring(3);
           if (this.isDirective(attrName) && attrName !== 'nv-repeat' && (new RegExp(`(^${key})|(^@)`).test(exp) || this.isFromState(vm.state, exp))) {
-            if (this.isEventDirective(dir)) {
-              new CompileUtilForRepeat(node).eventHandler(child, vm, exp, dir, key, value);
-              child.removeAttribute(attrName);
-            } else {
-              new CompileUtilForRepeat(node).bind(child, key, dir, exp, index, vm, watchValue, value);
-            }
+            if (this.isEventDirective(dir)) new CompileUtilForRepeat(node).eventHandler(child, vm, exp, dir, key, value);
+            else new CompileUtilForRepeat(node).bind(child, key, dir, exp, index, vm, watchValue, value);
           }
         });
       }
@@ -915,8 +905,6 @@ export class CompileUtil {
             new CompileUtil(node).repeatUpdater(child, this._getValueByValue(value, newWatchData, key), restRepeat.value, vm);
             if (node.contains(child)) node.removeChild(child);
           }
-
-          node.removeAttribute('nv-repeat');
         }
       }
     });
@@ -956,7 +944,7 @@ export class CompileUtil {
       fn.apply(vm, argsList);
     };
     if (eventType && fn) {
-      (node as any)[`on${eventType}`] = func;
+      (node as Node).addEventListener(eventType, func);
       (node as any)[`event${eventType}`] = func;
       if (node.eventTypes) {
         const eventlist = JSON.parse(node.eventTypes);
@@ -1073,7 +1061,7 @@ export class CompileUtil {
     const newElement = node.cloneNode(true);
     if (node.eventTypes) {
       JSON.parse(node.eventTypes).forEach((eventType: string) => {
-        (newElement as any)[`on${eventType}`] = (node as any)[`event${eventType}`];
+        (newElement as Node).addEventListener(eventType, (node as any)[`event${eventType}`]);
         (newElement as any)[`event${eventType}`] = (node as any)[`event${eventType}`];
       });
       newElement.eventTypes = node.eventTypes;

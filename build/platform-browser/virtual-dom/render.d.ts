@@ -9,8 +9,9 @@ import { IPatchList } from './parse';
  * TEXT: 4, 更改文字: 4
  * value: 5, 更改 input textarea select value 的值: 5
  * value: 6, 更改 node 的 repeatData: 6, render过来的的被复制的值
- * value: 7, 更改 node 的 event: 7, 修改事件
- * value: 8, 更改 node 的 eventTypes: 8, 修改node的eventTypes
+ * value: 7, 移除 node 事件
+ * value: 8, 添加 node 事件
+ * value: 9, 更改 node 的 eventTypes: 9, 修改node的eventTypes
  *
  * keep order from 0 delete to 8
  *

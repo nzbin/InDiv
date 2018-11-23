@@ -55,7 +55,7 @@ function buildImports(moduleInstance: INvModule, indivInstance?: InDiv, otherInj
       const exportsLength = moduleImport.$exportsList.length;
       for (let i = 0; i < exportsLength; i++) {
         const exportFromModule = moduleImport.$exportsList[i];
-        if (!moduleInstance.$declarations.find((declaration: any) => declaration.$selector === (exportFromModule as any).$selector)) moduleInstance.$declarations.push(exportFromModule);
+        if (moduleInstance.$declarations && !moduleInstance.$declarations.find((declaration: any) => declaration.$selector === (exportFromModule as any).$selector)) moduleInstance.$declarations.push(exportFromModule);
       }
     }
     // export providerList

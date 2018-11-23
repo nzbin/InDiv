@@ -142,12 +142,8 @@ export class Compile {
           const dir = attrName.substring(3);
           const exp = attr.value;
           const compileUtil = new CompileUtil(fragment);
-          if (this.isEventDirective(dir)) {
-            compileUtil.eventHandler(node, this.$vm, exp, dir);
-            node.removeAttribute(attrName);
-          } else {
-            compileUtil.bind(node, this.$vm, exp, dir);
-          }
+          if (this.isEventDirective(dir)) compileUtil.eventHandler(node, this.$vm, exp, dir);
+          else compileUtil.bind(node, this.$vm, exp, dir);
         }
       });
     }

@@ -724,7 +724,8 @@ class Container implements OnInit, AfterMount, WatchState {
     console.log(9999999999);
   }
 
-  private httpHandler(value: any) {
+  private httpHandler = (value: any) => {
+    this.state.a = 100;
     console.log(33333, 'from container', value);
   }
 }

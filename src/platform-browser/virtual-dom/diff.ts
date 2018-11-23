@@ -23,7 +23,6 @@ function diffChildNodes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
             newIndex: sameCodeIndexFromNewCode,
             oldVnode: oChild.node,
             parentNode: oldVnode.node,
-
             originVnode: oldVnode,
             changedVnode: oChild,
           });
@@ -36,7 +35,6 @@ function diffChildNodes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
           type: 0,
           node: oChild.node,
           parentNode: oldVnode.node,
-
           originVnode: oldVnode,
           changedVnode: oChild,
         });
@@ -52,7 +50,6 @@ function diffChildNodes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
         newIndex: index,
         oldVnode: nChild.node,
         parentNode: oldVnode.node,
-
         originVnode: oldVnode,
         changedVnode: nChild,
       });
@@ -80,7 +77,6 @@ function diffAttributes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
         node: oldVnode.node,
         newValue: attr,
         oldValue: oldVnodeAttr,
-
         originVnode: oldVnode,
         changedValue: attr,
       });
@@ -93,7 +89,6 @@ function diffAttributes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
         type: 3,
         node: oldVnode.node,
         oldValue: attr,
-
         originVnode: oldVnode,
         changedValue: attr,
       });
@@ -118,7 +113,6 @@ function diffNodeValue(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[]
       node: oldVnode.node,
       newValue: newVnode.nodeValue,
       oldValue: oldVnode.nodeValue,
-
       originVnode: oldVnode,
       changedValue: newVnode.nodeValue,
     });
@@ -142,8 +136,6 @@ function diffInputValue(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
       node: oldVnode.node,
       newValue: newVnode.value,
       oldValue: oldVnode.value,
-
-
       originVnode: oldVnode,
       changedValue: newVnode.value,
     });
@@ -165,7 +157,6 @@ function diffRepeatData(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
     type: 6,
     node: oldVnode.node,
     newValue: newVnode.repeatData,
-
     originVnode: oldVnode,
     changedValue: newVnode.repeatData,
   });
@@ -174,8 +165,9 @@ function diffRepeatData(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
 /**
  * diff event of node
  *
- * type: 7 change event of node
- * type: 8 change eventTypes of node
+ * type: 7 remove event of node
+ * type: 8 add event of node
+ * type: 9 change eventTypes of node
  * 
  * @param {Vnode} oldVnode
  * @param {Vnode} newVnode
@@ -185,18 +177,6 @@ function diffEventTypes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
   const oEventTypes: string[] = JSON.parse(oldVnode.eventTypes);
   const nEventTypes: string[] = JSON.parse(newVnode.eventTypes);
 
-  // 全部更新为新的事件
-  if (nEventTypes && nEventTypes.length > 0) {
-    nEventTypes.forEach(nEventType => {
-      patchList.push({
-        type: 7,
-        node: oldVnode.node,
-        eventType: nEventType,
-        newValue: (newVnode.node as any)[`event${nEventType}`],
-      });
-    });
-  }
-
   if (oEventTypes && oEventTypes.length > 0) {
     oEventTypes.forEach(oEventType => {
       // 如果新事件不存在，则删除事件
@@ -205,7 +185,7 @@ function diffEventTypes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
           type: 7,
           node: oldVnode.node,
           eventType: oEventType,
-          newValue: null,
+          newValue: (oldVnode.node as any)[`event${oEventType}`],
         });
       }
       // 如果新事件找不到旧事件中的事件，则把旧事件的事件删除
@@ -214,20 +194,64 @@ function diffEventTypes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
           type: 7,
           node: oldVnode.node,
           eventType: oEventType,
-          newValue: null,
+          newValue: (oldVnode.node as any)[`event${oEventType}`],
         });
       }
     });
   }
-  // 最后要更新下 eventTypes，否则下次 oldVnode.eventTypes 将为最开始的eventTypes
-  patchList.push({
-    type: 8,
-    node: oldVnode.node,
-    newValue: newVnode.eventTypes,
 
-    originVnode: oldVnode,
-    changedValue: newVnode.eventTypes,
-  }); 
+  if (nEventTypes && nEventTypes.length > 0) {
+    nEventTypes.forEach(nEventType => {
+      // 如果旧的不存在直接增加新的类型
+      if (!oEventTypes || oEventTypes.length <= 0) {
+        patchList.push({
+          type: 8,
+          node: oldVnode.node,
+          eventType: nEventType,
+          newValue: (newVnode.node as any)[`event${nEventType}`],
+        });
+      }
+
+      if (oEventTypes && oEventTypes.length > 0) {
+        const sameEventType = oEventTypes.find(oEventType => oEventType === nEventType);
+        // 如果旧的存在但是不存在新的类型，直接增加新的类型
+        if (!sameEventType) {
+          patchList.push({
+            type: 8,
+            node: oldVnode.node,
+            eventType: nEventType,
+            newValue: (newVnode.node as any)[`event${nEventType}`],
+          });
+        }
+        // 如果旧的存在并且新的类型相同，对比 nv-on 的属性，如果相同则忽略，如果不同则先移除事件再增加新事件
+        if (sameEventType && (oldVnode.node as Element).getAttribute(`nv-on:${sameEventType}`) !== (newVnode.node as Element).getAttribute(`nv-on:${sameEventType}`) ) {
+          patchList.push({
+            type: 7,
+            node: oldVnode.node,
+            eventType: nEventType,
+            newValue: (oldVnode.node as any)[`event${nEventType}`],
+          });
+          patchList.push({
+            type: 8,
+            node: oldVnode.node,
+            eventType: nEventType,
+            newValue: (newVnode.node as any)[`event${nEventType}`],
+          });
+        }
+      }
+    });
+  }
+
+  // 最后要更新下 eventTypes，否则下次 oldVnode.eventTypes 将为最开始的eventTypes
+  if (newVnode.eventTypes !== oldVnode.eventTypes) {
+    patchList.push({
+      type: 9,
+      node: oldVnode.node,
+      newValue: newVnode.eventTypes,
+      originVnode: oldVnode,
+      changedValue: newVnode.eventTypes,
+    });
+  }
 }
 
 /**

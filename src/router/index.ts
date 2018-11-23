@@ -108,6 +108,7 @@ export class RouteModule {
       nvRouteStatus.nvRouteParmasObject = {};
     }, false);
   }
+
   /**
    * init root data
    *

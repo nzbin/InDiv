@@ -17,9 +17,11 @@ app.use('/demo', (req, res, next) => {
 });
 
 app.get('/success', (req, res, next) => {
-  res.send({
-    message: 1
-  });
+  setTimeout(() => {
+    res.send({
+      message: 1
+    });
+  }, 2000);
 });
 
 app.get('/error', (req, res, next) => {

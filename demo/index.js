@@ -1,4 +1,4 @@
-import { InDiv, Component, Utils, NvModule, Injectable, setState, NvLocation, RouteModule, HttpClient, Directive } from '../build';
+import { InDiv, Component, Utils, NvModule, Injectable, setState, NvLocation, RouteModule, HttpClient } from '../build';
 
 
 class HeroSearchService1 {
@@ -607,7 +607,6 @@ const routes = [
   {
     path: '/',
     // redirectTo: '/R1',
-    component: 'container-wrap',
     children: [
       {
         path: '/R1',
@@ -680,10 +679,6 @@ NvModule({
     },
     NvLocation,
     HttpClient,
-    // {
-    //   provide: 'nvHttp',
-    //   useClass: NVHttp,
-    // },
     {
       provide: 'value',
       useValue: 1233,
@@ -691,62 +686,6 @@ NvModule({
   ],
 })(M1);
 
-// const router = new Router();
-
-// const routes = [
-//   {
-//     path: '/',
-//     // redirectTo: '/R1',
-//     component: 'container-wrap',
-//     children: [
-//       {
-//         path: '/R1',
-//         component: 'R1',
-//         // redirectTo: '/R2',
-//         children: [
-//           {
-//             path: '/C1',
-//             component: 'R2',
-//             children: [
-//               {
-//                 path: '/D1',
-//                 redirectTo: '/R2',
-//               },
-//             ],
-//           },
-//           {
-//             path: '/C2',
-//             redirectTo: '/R2',
-//           },
-//         ],
-//       },
-//       {
-//         path: '/R2',
-//         component: 'R2',
-//         children: [
-//           {
-//             path: '/:id',
-//             component: 'R1',
-//             children: [
-//               {
-//                 path: '/D1',
-//                 redirectTo: '/R1/C1',
-//               },
-//             ],
-//           },
-//         ],
-//       },
-//     ],
-//   },
-// ];
-// router.setRootPath('/demo');
-// // router.setRootPath('/');
-// router.init(routes);
-// router.routeChange = (old, next) => {
-//   console.log('routeChange', old, next);
-// };
-
 const inDiv = new InDiv();
 inDiv.bootstrapModule(M1);
-// inDiv.use(router);
 inDiv.init();

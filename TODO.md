@@ -27,3 +27,4 @@
 - [x] 模板可以接受字符串及数字等
 - [x] 指令可以不接受props
 - [x] 优化编译 存储上次 Vnode 结构
+- [x] 移除 InDiv 实例中 setRenderModule 和 getRenderModule，RouteModule直接使用 InDiv 实例中 getBootstrapComponent 方法获得初始化的组件

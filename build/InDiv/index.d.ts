@@ -10,10 +10,10 @@ export declare class InDiv {
     private modalList;
     private rootDom;
     private $rootPath;
-    private $canRenderModule;
     private $routeDOMKey;
     private $rootModule;
     private $declarations;
+    private bootstrapComponent;
     private render;
     private reRender;
     constructor();
@@ -62,19 +62,12 @@ export declare class InDiv {
         reRender: () => Promise<IComponent>;
     };
     /**
-     * set InDiv can render module's bootstrap
+     * return component instance of root module's bootstrap
      *
-     * @param {boolean} canRenderModule
+     * @returns {IComponent}
      * @memberof InDiv
      */
-    setCanRenderModule(canRenderModule: boolean): void;
-    /**
-     * get InDiv can render module's bootstrap
-     *
-     * @returns {boolean}
-     * @memberof InDiv
-     */
-    getCanRenderModule(): boolean;
+    getBootstrapComponent(): IComponent;
     /**
      * set route's DOM tag name
      *
@@ -126,7 +119,7 @@ export declare class InDiv {
      * @returns {void}
      * @memberof InDiv
      */
-    renderModuleBootstrap(): void;
+    renderModuleBootstrap(): Promise<IComponent>;
     /**
      * expose function for render Component
      *

@@ -2,7 +2,7 @@ import { IComponent, IDirective, ElementRef } from '../../types';
 
 import { factoryCreator } from '../../di';
 import { Utils } from '../../utils';
-import { InDiv } from '../../InDiv';
+import { InDiv } from '../../indiv';
 
 const utils = new Utils();
 

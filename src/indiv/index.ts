@@ -18,10 +18,10 @@ export class InDiv {
   private modalList: IMiddleware<InDiv>[];
   private rootDom: Element;
   private $rootPath: string;
-  private $canRenderModule: boolean;
   private $routeDOMKey: string;
   private $rootModule: INvModule;
   private $declarations: Function[];
+  private bootstrapComponent: IComponent;
   private render: () => Promise<IComponent>;
   private reRender: () => Promise<IComponent>;
 
@@ -32,7 +32,6 @@ export class InDiv {
 
     this.rootDom = document.querySelector('#root');
     this.$rootPath = '/';
-    this.$canRenderModule = true;
     this.$routeDOMKey = 'router-render';
 
     this.$rootModule = null;
@@ -110,23 +109,13 @@ export class InDiv {
   }
 
   /**
-   * set InDiv can render module's bootstrap
+   * return component instance of root module's bootstrap
    *
-   * @param {boolean} canRenderModule
+   * @returns {IComponent}
    * @memberof InDiv
    */
-  public setCanRenderModule(canRenderModule: boolean): void {
-    this.$canRenderModule = canRenderModule;
-  }
-
-  /**
-   * get InDiv can render module's bootstrap
-   *
-   * @returns {boolean}
-   * @memberof InDiv
-   */
-  public getCanRenderModule(): boolean {
-    return this.$canRenderModule;
+  public getBootstrapComponent(): IComponent {
+    return this.bootstrapComponent;
   }
 
   /**
@@ -195,7 +184,7 @@ export class InDiv {
     if (!utils.isBrowser()) return;
 
     if (!this.$rootModule) throw new Error('must use bootstrapModule to declare a root NvModule before init');
-    if (this.$canRenderModule) this.renderModuleBootstrap();
+    this.renderModuleBootstrap();
   }
 
   /**
@@ -204,10 +193,11 @@ export class InDiv {
    * @returns {void}
    * @memberof InDiv
    */
-  public renderModuleBootstrap(): void {
+  public async renderModuleBootstrap(): Promise<IComponent> {
     if (!this.$rootModule.$bootstrap) throw new Error('need bootstrap for render Module Bootstrap');
     const BootstrapComponent = this.$rootModule.$bootstrap;
-    this.renderComponent(BootstrapComponent, this.rootDom);
+    this.bootstrapComponent = await this.renderComponent(BootstrapComponent, this.rootDom);
+    return this.bootstrapComponent;
   }
 
   /**

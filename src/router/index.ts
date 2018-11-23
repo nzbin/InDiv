@@ -85,7 +85,6 @@ export class RouteModule {
     if (!this.routes) this.routes = [];
     if (!nvRouteStatus.nvRootPath) nvRouteStatus.nvRootPath = '/';
     this.indivInstance.setRootPath(nvRouteStatus.nvRootPath);
-    this.indivInstance.setCanRenderModule(false);
     this.indivInstance.setRouteDOMKey('router-render');
 
     if (!utils.isBrowser()) return;
@@ -349,31 +348,6 @@ export class RouteModule {
         const rootRoute = this.routes.find(route => route.path === `${path}` || /^\/\:.+/.test(route.path));
         if (!rootRoute) throw new Error(`route error: wrong route instantiation in generalDistributeRoutes: ${this.currentUrl}`);
 
-        const rootDom = document.querySelector('#root');
-
-        let FindComponent = null;
-        let component = null;
-        let currentUrlPath = '';
-
-        // build current url with route.path
-        // because rootRoute hasn't been pushed to this.routesList, we need to += route.path
-        this.routesList.forEach((r, index) => { if (index !== 0) currentUrlPath += r.path; });
-        currentUrlPath += rootRoute.path;
-
-        if (rootRoute.component) {
-          const findComponentFromModuleResult = this.findComponentFromModule(rootRoute.component, currentUrlPath);
-          FindComponent = findComponentFromModuleResult.component;
-          component = await this.instantiateComponent(FindComponent, rootDom, findComponentFromModuleResult.loadModule, currentUrlPath);
-        }
-        if (rootRoute.loadChild) {
-          const loadModule = await this.NvModuleFactoryLoader(rootRoute.loadChild, currentUrlPath);
-          FindComponent = loadModule.$bootstrap;
-          component = await this.instantiateComponent(FindComponent, rootDom, loadModule, currentUrlPath);
-        }
-
-        if (!FindComponent) throw new Error(`route error: root route's path: ${rootRoute.path} need a component`);
-
-
         if (/^\/\:.+/.test(rootRoute.path)) {
           const key = rootRoute.path.split('/:')[1];
           nvRouteStatus.nvRouteParmasObject[key] = path;
@@ -383,7 +357,8 @@ export class RouteModule {
 
         this.routesList.push(rootRoute);
 
-        if (component) this.hasRenderComponentList.push(component);
+        // push root component in InDiv instance
+        this.hasRenderComponentList.push(this.indivInstance.getBootstrapComponent());
 
         if (index === this.renderRouteList.length - 1) this.routerChangeEvent(index);
 

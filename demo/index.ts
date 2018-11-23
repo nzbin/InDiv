@@ -59,10 +59,12 @@ class TestDirective implements OnInit, RouteChange, ReceiveProps {
   constructor(
     private heroSearchService: HeroSearchService,
     private element: ElementRef,
+    private indiv: InDiv,
   ) {}
   public nvOnInit() {
     console.log(5555, 'init TestDirective', this.props);
     console.log(666666, 'init TestDirective element', this.element);
+    console.log(777777, 'init TestDirective indiv', this.indiv);
     this.heroSearchService.test();
     // this.element.style.color = 'red';
     this.element.addEventListener('mouseover', this.changeColor);
@@ -489,7 +491,10 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
 
   constructor(
     private httpClient: HttpClient,
+    private indiv: InDiv,
+    private element: ElementRef,
   ) {
+    console.log(55544333, this.indiv, this.element);
     this.httpClient.get('/success').subscribe({
       next: (value: any) => {console.log(4444, value); },
     });
@@ -782,7 +787,6 @@ const routes: TRouter[] = [
   {
     path: '/',
     // redirectTo: '/R1',
-    component: 'container-wrap',
     children: [
       {
         path: '/R1',
@@ -852,6 +856,7 @@ const routes: TRouter[] = [
   exports: [
     RouteModule,
   ],
+  bootstrap: Container,
 })
 class M1 {
   constructor (

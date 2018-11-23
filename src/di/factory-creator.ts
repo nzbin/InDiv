@@ -29,7 +29,7 @@ export function inject(_constructor: Function, otherInjector?: Injector, provide
     if (_needInjectedClass.length === 0) return args;
 
     _needInjectedClass.forEach((key: Function) => {
-        // inject InDiv instance fro NvModule
+        // inject internal type for NvModule
         if (provideAndInstanceMap && provideAndInstanceMap.has(key)) return args.push(provideAndInstanceMap.get(key));
 
         // constructor injector: find service Class in providerList in _constructor

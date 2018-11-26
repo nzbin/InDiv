@@ -5,8 +5,8 @@ export {
   OnInit,
   BeforeMount,
   AfterMount,
-  OnDestory,
   HasRender,
+  OnDestory,
   WatchState,
   ReceiveProps,
 } from './lifecycle';

@@ -66,12 +66,12 @@ export default class AppModule {}
 
 例如 InDiv 提供的 `RouteModule` 就作为一个共享模块导出了一些指令，组件和注入到 根Injector 的服务。
 
+> indiv/route/index.ts
+
 ```typescript
 import { NvModule} from 'indiv';
 import { NvLocation } from './location';
 import { RouterTo, RouterFrom, RouterActive } from './directives'
-
-> root.module.ts
 
 @NvModule({
   declarations: [

@@ -1,4 +1,4 @@
-import { Injectable } from '../di/injectable';
+import { Injectable } from '../di';
 import { Utils } from '../utils';
 
 import { nvRouteStatus } from './index';

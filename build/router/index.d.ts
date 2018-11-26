@@ -1,10 +1,21 @@
-import { NvRouteObject, TLoadChild, TChildModule } from '../types';
 import { InDiv } from '../indiv';
 export { NvLocation } from './location';
 export { RouterTo, RouterFrom, RouterActive } from './directives';
 export interface RouteChange {
     nvRouteChange(lastRoute?: string, newRoute?: string): void;
 }
+export declare type TChildModule = () => Promise<any>;
+export declare type TLoadChild = {
+    name: string;
+    child: TChildModule;
+};
+export declare type NvRouteObject = {
+    path: string;
+    query?: {
+        [props: string]: any;
+    };
+    data?: any;
+};
 export declare const nvRouteStatus: {
     nvRouteObject: NvRouteObject;
     nvRouteParmasObject: {

@@ -26,7 +26,7 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     $declarationMap?: Map<string, Function>;
     $providerList?: Map<Function | string, Function | any>;
     $componentList?: ComponentList<IComponent<any, any, any>>[];
-    $directiveList?: DirectiveList<IDirective<any, any, any>>[];
+    $directiveList?: DirectiveList<IDirective<any, any>>[];
     otherInjector?: Injector;
 
     renderTaskQueue?: RenderTaskQueue;

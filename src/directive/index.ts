@@ -23,9 +23,9 @@ export function Directive<Props = any, Vm = any>(options: TDirectiveOptions): (_
     injected(_constructor);
     (_constructor as any).nvType = 'nvDirective';
     (_constructor as any).$selector = options.selector;
-    const vm: IDirective = _constructor.prototype;
+    const vm: IDirective<Props, Vm> = _constructor.prototype;
 
-    // component $providerList for injector
+    // Directive $providerList for injector
     vm.$providerList = new Map();
     if (options.providers && options.providers.length > 0) {
       const length = options.providers.length;

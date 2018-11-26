@@ -1,6 +1,7 @@
-import { TFnWatcher, TFnRender } from '../types';
-
 import { Utils } from '../utils';
+
+export type TFnWatcher = (oldData?: any) => void;
+export type TFnRender = () => any;
 
 const utils = new Utils();
 

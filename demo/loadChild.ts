@@ -1,8 +1,9 @@
 import { NvModule, Component, ElementRef, InDiv } from '../src';
 // import { NvModule, Component, ElementRef, InDiv } from '../build';
-import { HeroSearchService, SharedModule, HeroSearchService1, HeroSearchService2 } from './index';
 
-// @Injected
+import { HeroSearchService, HeroSearchService1, HeroSearchService2 } from './service';
+import { SharedModule } from './share.module';
+
 @Component({
   selector: 'test-loadchild-component',
   template: `
@@ -20,12 +21,11 @@ class TestLoadchildComponent {
     this.state = {
       to: '/R1/C1/D1', 
     };
-    console.log(99999, 'from TestLoadchildModule');
+    console.log(99999, 'from TestLoadchildComponent');
     this.sss.test();
   }
 }
 
-// @Injected
 @Component({
   selector: 'R2',
   template: `

@@ -1,4 +1,4 @@
-import { IMiddleware, INvModule, IComponent, ElementRef } from '../types';
+import { INvModule, IComponent, ElementRef } from '../types';
 
 import { Utils } from '../utils';
 import { factoryCreator, Injector } from '../di';
@@ -6,6 +6,10 @@ import { factoryModule } from '../nv-module';
 import { render } from '../platform-browser';
 
 export { ElementRef } from '../types';
+
+export interface IMiddleware<ES> {
+  bootstrap(vm: ES): void;
+}
 
 const utils = new Utils();
 
@@ -15,26 +19,19 @@ const utils = new Utils();
  * @class InDiv
  */
 export class InDiv {
-  private modalList: IMiddleware<InDiv>[];
+  private modalList: IMiddleware<InDiv>[] = [];
   private rootDom: Element;
-  private $rootPath: string;
-  private $routeDOMKey: string;
-  private $rootModule: INvModule;
+  private $routeDOMKey: string = 'router-render';
+  private $rootModule: INvModule = null;
   private $declarations: Function[];
   private bootstrapComponent: IComponent;
   private render: () => Promise<IComponent>;
   private reRender: () => Promise<IComponent>;
 
   constructor() {
-    this.modalList = [];
-
     if (!utils.isBrowser()) return;
 
     this.rootDom = document.querySelector('#root');
-    this.$rootPath = '/';
-    this.$routeDOMKey = 'router-render';
-
-    this.$rootModule = null;
 
     // render,reRender for Component
     // developer can use function use(modal: IMiddleware<InDiv>): number to change render and reRender
@@ -53,32 +50,6 @@ export class InDiv {
     modal.bootstrap(this);
     this.modalList.push(modal);
     return this.modalList.length - 1;
-  }
-
-  /**
-   * for Middleware set RootPath
-   * 
-   * if not use, rootPath will be <router-render />
-   *
-   * @param {string} rootPath
-   * @memberof InDiv
-   */
-  public setRootPath(rootPath: string): void {
-    if (rootPath && typeof rootPath === 'string') {
-      this.$rootPath = rootPath;
-    } else {
-      throw new Error('rootPath is not defined or rootPath must be a String');
-    }
-  }
-
-  /**
-   * get RootPath for InDiv
-   *
-   * @returns {string}
-   * @memberof InDiv
-   */
-  public getRootPath(): string {
-    return this.$rootPath;
   }
   
 /**
@@ -154,7 +125,7 @@ export class InDiv {
    * @returns {Function[]}
    * @memberof InDiv
    */
-  public getDirectives(): Function[] {
+  public getDeclarations(): Function[] {
     return this.$declarations;
   }
 
@@ -188,19 +159,6 @@ export class InDiv {
   }
 
   /**
-   * render NvModule Bootstrap
-   *
-   * @returns {void}
-   * @memberof InDiv
-   */
-  public async renderModuleBootstrap(): Promise<IComponent> {
-    if (!this.$rootModule.$bootstrap) throw new Error('need bootstrap for render Module Bootstrap');
-    const BootstrapComponent = this.$rootModule.$bootstrap;
-    this.bootstrapComponent = await this.renderComponent(BootstrapComponent, this.rootDom);
-    return this.bootstrapComponent;
-  }
-
-  /**
    * expose function for render Component
    * 
    * if otherModule don't has use rootModule
@@ -214,7 +172,7 @@ export class InDiv {
    * @returns {Promise<IComponent>}
    * @memberof InDiv
    */
-  public renderComponent(BootstrapComponent: Function, renderDOM: Element, otherModule?: INvModule, otherInjector?: Injector): Promise<IComponent> {
+  public async renderComponent(BootstrapComponent: Function, renderDOM: Element, otherModule?: INvModule, otherInjector?: Injector): Promise<IComponent> {
     const provideAndInstanceMap = new Map();
     provideAndInstanceMap.set(InDiv, this);
     provideAndInstanceMap.set(ElementRef, renderDOM);
@@ -244,15 +202,26 @@ export class InDiv {
     if (template && typeof template === 'string' && renderDOM) {
       if (component.nvBeforeMount) component.nvBeforeMount();
 
-      return this.replaceDom(component, renderDOM)
-      .then((_component) => {
-        if (_component.nvAfterMount) _component.nvAfterMount();
-        return _component;
-      });
+      const _component = await this.replaceDom(component, renderDOM);
+      if (_component.nvAfterMount) _component.nvAfterMount();
+      return _component;
 
     } else {
       throw new Error('renderBootstrap failed: template or rootDom is not exit');
     }
+  }
+
+  /**
+   * render NvModule Bootstrap
+   *
+   * @returns {void}
+   * @memberof InDiv
+   */
+  private async renderModuleBootstrap(): Promise<IComponent> {
+    if (!this.$rootModule.$bootstrap) throw new Error('need bootstrap for render Module Bootstrap');
+    const BootstrapComponent = this.$rootModule.$bootstrap;
+    this.bootstrapComponent = await this.renderComponent(BootstrapComponent, this.rootDom);
+    return this.bootstrapComponent;
   }
 
   /**

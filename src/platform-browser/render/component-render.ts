@@ -77,7 +77,7 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
 
     const tags = dom.getElementsByTagName(name);
     Array.from(tags).forEach(node => {
-      //  protect component in <router-render>
+      // protect component in <router-render>
       if (routerRenderDom && routerRenderDom.contains(node)) return;
       // protect Component in Component
       if (!node.isComponent) return;

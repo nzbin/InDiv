@@ -1,6 +1,9 @@
-import { IMiddleware, INvModule, IComponent } from '../types';
+import { INvModule, IComponent } from '../types';
 import { Injector } from '../di';
 export { ElementRef } from '../types';
+export interface IMiddleware<ES> {
+    bootstrap(vm: ES): void;
+}
 /**
  * main: for new InDiv
  *
@@ -9,7 +12,6 @@ export { ElementRef } from '../types';
 export declare class InDiv {
     private modalList;
     private rootDom;
-    private $rootPath;
     private $routeDOMKey;
     private $rootModule;
     private $declarations;
@@ -25,22 +27,6 @@ export declare class InDiv {
      * @memberof InDiv
      */
     use(modal: IMiddleware<InDiv>): number;
-    /**
-     * for Middleware set RootPath
-     *
-     * if not use, rootPath will be <router-render />
-     *
-     * @param {string} rootPath
-     * @memberof InDiv
-     */
-    setRootPath(rootPath: string): void;
-    /**
-     * get RootPath for InDiv
-     *
-     * @returns {string}
-     * @memberof InDiv
-     */
-    getRootPath(): string;
     /**
      * set component Render function
      *
@@ -95,7 +81,7 @@ export declare class InDiv {
      * @returns {Function[]}
      * @memberof InDiv
      */
-    getDirectives(): Function[];
+    getDeclarations(): Function[];
     /**
      * bootstrap NvModule
      *
@@ -114,13 +100,6 @@ export declare class InDiv {
      */
     init(): void;
     /**
-     * render NvModule Bootstrap
-     *
-     * @returns {void}
-     * @memberof InDiv
-     */
-    renderModuleBootstrap(): Promise<IComponent>;
-    /**
      * expose function for render Component
      *
      * if otherModule don't has use rootModule
@@ -135,6 +114,13 @@ export declare class InDiv {
      * @memberof InDiv
      */
     renderComponent(BootstrapComponent: Function, renderDOM: Element, otherModule?: INvModule, otherInjector?: Injector): Promise<IComponent>;
+    /**
+     * render NvModule Bootstrap
+     *
+     * @returns {void}
+     * @memberof InDiv
+     */
+    private renderModuleBootstrap;
     /**
      * render adn replace DOM
      *

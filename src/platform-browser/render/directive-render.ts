@@ -18,7 +18,7 @@ const utils = new Utils();
  * @param {IComponent<State, Props, Vm>} vm
  */
 export function mountDirective<State = any, Props = any, Vm = any>(dom: Element, vm: IComponent<State, Props, Vm>): void {
-  const cacheStates: DirectiveList<IDirective<State, Props, Vm>>[] = [ ...vm.$directiveList ];
+  const cacheStates: DirectiveList<IDirective<Props, Vm>>[] = [ ...vm.$directiveList ];
   directivesConstructor(dom, vm);
   const directiveListLength = vm.$directiveList.length;
   for (let i = 0; i < directiveListLength; i ++) {

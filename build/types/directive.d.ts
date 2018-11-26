@@ -7,8 +7,7 @@ export declare type DirectiveList<C> = {
     scope: C;
     constructorFunction: Function;
 };
-export interface IDirective<State = any, Props = any, Vm = any> {
-    state?: State | any;
+export interface IDirective<Props = any, Vm = any> {
     props?: Props | any;
     compileUtil: CompileUtil;
     renderDom?: Element;
@@ -17,7 +16,7 @@ export interface IDirective<State = any, Props = any, Vm = any> {
     $template?: string;
     $declarationMap?: Map<string, Function>;
     $providerList?: Map<Function | string, Function | any>;
-    $directiveList?: DirectiveList<IDirective<any, any, any>>[];
+    $directiveList?: DirectiveList<IDirective<any, any>>[];
     otherInjector?: Injector;
     nvOnInit?(): void;
     nvBeforeMount?(): void;

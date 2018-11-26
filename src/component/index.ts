@@ -32,7 +32,7 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
     const vm: IComponent<State, Props, Vm> = _constructor.prototype;
     vm.$template = options.template;
 
-    // component $providerList for injector
+    // Component $providerList for injector
     vm.$providerList = new Map();
     vm.$providerList.set(setState, { provide: setState, useValue: setState });
     if (options.providers && options.providers.length > 0) {

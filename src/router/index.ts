@@ -1,4 +1,4 @@
-import { IComponent, IDirective, INvModule, NvRouteObject, ComponentList, DirectiveList, TLoadChild, TChildModule } from '../types';
+import { IComponent, IDirective, INvModule, ComponentList, DirectiveList } from '../types';
 
 import { Utils } from '../utils';
 import { factoryModule, NvModule } from '../nv-module';
@@ -16,6 +16,21 @@ const utils = new Utils();
 export interface RouteChange {
   nvRouteChange(lastRoute?: string, newRoute?: string): void;
 }
+
+export type TChildModule = () => Promise<any>;
+
+export type TLoadChild = {
+    name: string;
+    child: TChildModule;
+};
+
+export type NvRouteObject = {
+    path: string;
+    query?: {
+        [props: string]: any;
+    };
+    data?: any;
+};
 
 export const nvRouteStatus: {
   nvRouteObject: NvRouteObject,
@@ -84,7 +99,6 @@ export class RouteModule {
 
     if (!this.routes) this.routes = [];
     if (!nvRouteStatus.nvRootPath) nvRouteStatus.nvRootPath = '/';
-    this.indivInstance.setRootPath(nvRouteStatus.nvRootPath);
     this.indivInstance.setRouteDOMKey('router-render');
 
     if (!utils.isBrowser()) return;
@@ -548,7 +562,7 @@ export class RouteModule {
    */
   private findComponentFromModule(selector: string, currentUrlPath: string): { component: Function, loadModule: INvModule } {
     if (this.loadModuleMap.size === 0) return {
-      component: this.indivInstance.getDirectives().find((component: any) => component.$selector === selector && component.nvType === 'nvComponent'),
+      component: this.indivInstance.getDeclarations().find((component: any) => component.$selector === selector && component.nvType === 'nvComponent'),
       loadModule: null,
     };
 
@@ -561,7 +575,7 @@ export class RouteModule {
       }
     });
     if (!component) {
-      component = this.indivInstance.getDirectives().find((component: any) => component.$selector === selector && component.nvType === 'nvComponent');
+      component = this.indivInstance.getDeclarations().find((component: any) => component.$selector === selector && component.nvType === 'nvComponent');
       loadModule = null;
     }
 

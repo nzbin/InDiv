@@ -1,5 +1,5 @@
 export { Utils, } from '../utils';
-export { OnInit, BeforeMount, AfterMount, OnDestory, HasRender, WatchState, ReceiveProps, } from '../lifecycle';
+export { OnInit, BeforeMount, AfterMount, HasRender, OnDestory, WatchState, ReceiveProps, } from '../lifecycle';
 export { Watcher, } from '../watcher';
 export { Compile, CompileUtil, CompileUtilForRepeat, } from '../platform-browser';
 export { Component, setState, SetState, } from '../component';

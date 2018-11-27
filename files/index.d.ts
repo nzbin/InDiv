@@ -7,5 +7,5 @@ export { Directive, } from '../directive';
 export { InDiv, ElementRef, } from '../indiv';
 export { NvModule, factoryModule, } from '../nv-module';
 export { HttpClient, HttpClientRequestConfig, HttpClientResponse, HttpClientRequestInstance, } from '../http-client';
-export { Injectable, inject, Injector, rootInjector, factoryCreator, } from '../di';
+export { Injectable, inject, Injector, rootInjector, factoryCreator, injected, } from '../di';
 export { RouteChange, TRouter, RouteModule, NvLocation, RouterTo, RouterFrom, RouterActive, } from '../router';

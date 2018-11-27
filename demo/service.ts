@@ -1,4 +1,17 @@
 import { Injectable, InDiv } from '../src';
+// import { TestLoadchildModule } from './loadChild';
+
+@Injectable({
+  isSingletonMode: true,
+  providedIn: 'root',
+})
+export class PrivateService {
+  public isPrivate: boolean = true;
+
+  public change() {
+    this.isPrivate = false;
+  }
+}
 
 @Injectable()
 export class HeroSearchService1 {

@@ -59,7 +59,7 @@ export function inject(_constructor: Function, otherInjector?: Injector, provide
         if (!findService) throw new Error(`injector injects service error: can't find provide: ${key.name} in constructor ${_constructor}`);
 
         // if service isn't a singleton service
-        if (!findService.isSingletonMode) args.push(factoryCreator(findService, otherInjector, provideAndInstanceMap));
+        if (!findService.isSingletonMode) return args.push(factoryCreator(findService, otherInjector, provideAndInstanceMap));
 
         // if service is a singleton service
         if (findService.isSingletonMode) {

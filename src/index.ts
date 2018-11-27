@@ -46,6 +46,7 @@ export {
   Injector,
   rootInjector,
   factoryCreator,
+  injected,
 } from './di';
 export {
   RouteChange,

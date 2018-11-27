@@ -1,5 +1,4 @@
-import { ElementRef } from '../types';
-
+import { ElementRef } from '../indiv';
 import { Utils } from '../utils';
 import { Directive } from '../directive';
 import { OnInit, ReceiveProps, OnDestory } from '../lifecycle';

@@ -1,11 +1,11 @@
-import { INvModule, IComponent, ElementRef } from '../types';
+import { INvModule, IComponent } from '../types';
 
 import { Utils } from '../utils';
-import { factoryCreator, Injector } from '../di';
+import { factoryCreator } from '../di';
 import { factoryModule } from '../nv-module';
 import { render } from '../platform-browser';
 
-export { ElementRef } from '../types';
+export class ElementRef extends HTMLElement {}
 
 export interface IMiddleware<ES> {
   bootstrap(vm: ES): void;
@@ -163,21 +163,21 @@ export class InDiv {
    * 
    * if otherModule don't has use rootModule
    * 
-   * if has otherInjector, build component will use otherInjector instead of rootInjector
+   * if has otherModule, build component will use privateInjector from loadModule instead of rootInjector
    *
    * @param {Function} BootstrapComponent
    * @param {Element} renderDOM
    * @param {INvModule} [otherModule]
-   * @param {Injector} [otherInjector]
    * @returns {Promise<IComponent>}
    * @memberof InDiv
    */
-  public async renderComponent(BootstrapComponent: Function, renderDOM: Element, otherModule?: INvModule, otherInjector?: Injector): Promise<IComponent> {
+  public async renderComponent(BootstrapComponent: Function, renderDOM: Element, otherModule?: INvModule): Promise<IComponent> {
     const provideAndInstanceMap = new Map();
     provideAndInstanceMap.set(InDiv, this);
     provideAndInstanceMap.set(ElementRef, renderDOM);
 
-    const component: any = factoryCreator(BootstrapComponent, otherInjector, provideAndInstanceMap);
+    const otherInjector = otherModule ? otherModule.privateInjector : null;
+    const component: IComponent = factoryCreator(BootstrapComponent, otherInjector, provideAndInstanceMap);
 
     component.$vm = this;
 
@@ -193,6 +193,7 @@ export class InDiv {
 
     component.render = this.render.bind(component);
     component.reRender = this.reRender.bind(component);
+    // set otherInjector for components from loadModule to be used
     component.otherInjector = otherInjector;
 
     if (component.nvOnInit) component.nvOnInit();

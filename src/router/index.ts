@@ -3,7 +3,6 @@ import { IComponent, IDirective, INvModule, ComponentList, DirectiveList } from 
 import { Utils } from '../utils';
 import { factoryModule, NvModule } from '../nv-module';
 import { InDiv } from '../indiv';
-import { Injector } from '../di';
 
 import { NvLocation } from './location';
 import { RouterTo, RouterFrom, RouterActive } from './directives';
@@ -85,7 +84,6 @@ export class RouteModule {
   private watcher: boolean = false;
   private renderRouteList: string[] = [];
   private loadModuleMap: Map<string, INvModule> = new Map();
-  private loadModuleInjectorMap: Map<string, Injector> = new Map();
   private canWatch: boolean = false;
 
   constructor(
@@ -295,12 +293,12 @@ export class RouteModule {
         if (needRenderRoute.component) {
           const findComponentFromModuleResult = this.findComponentFromModule(needRenderRoute.component, currentUrlPath);
           FindComponent = findComponentFromModuleResult.component;
-          component = await this.instantiateComponent(FindComponent, renderDom, findComponentFromModuleResult.loadModule, currentUrlPath);
+          component = await this.instantiateComponent(FindComponent, renderDom, findComponentFromModuleResult.loadModule);
         }
         if (needRenderRoute.loadChild) {
           const loadModule = await this.NvModuleFactoryLoader(needRenderRoute.loadChild, currentUrlPath);
           FindComponent = loadModule.$bootstrap;
-          component = await this.instantiateComponent(FindComponent, renderDom, loadModule, currentUrlPath);
+          component = await this.instantiateComponent(FindComponent, renderDom, loadModule);
         }
 
         if (FindComponent) {
@@ -401,12 +399,12 @@ export class RouteModule {
         if (route.component) {
           const findComponentFromModuleResult = this.findComponentFromModule(route.component, currentUrlPath);
           FindComponent = findComponentFromModuleResult.component;
-          component = await this.instantiateComponent(FindComponent, renderDom, findComponentFromModuleResult.loadModule, currentUrlPath);
+          component = await this.instantiateComponent(FindComponent, renderDom, findComponentFromModuleResult.loadModule);
         }
         if (route.loadChild) {
           const loadModule = await this.NvModuleFactoryLoader(route.loadChild, currentUrlPath);
           FindComponent = loadModule.$bootstrap;
-          component = await this.instantiateComponent(FindComponent, renderDom, loadModule, currentUrlPath);
+          component = await this.instantiateComponent(FindComponent, renderDom, loadModule);
         }
 
         if (!route.component && !route.redirectTo && !route.loadChild) throw new Error(`route error: path ${route.path} need a component which has children path or need a  redirectTo which has't children path`);
@@ -511,8 +509,8 @@ export class RouteModule {
    * @returns {Promise<IComponent>}
    * @memberof Router
    */
-  private instantiateComponent(FindComponent: Function, renderDom: Element, loadModule: INvModule, currentUrlPath: string): Promise<IComponent> {
-    return this.indivInstance.renderComponent(FindComponent, renderDom, loadModule, this.loadModuleInjectorMap.get(currentUrlPath));
+  private instantiateComponent(FindComponent: Function, renderDom: Element, loadModule: INvModule): Promise<IComponent> {
+    return this.indivInstance.renderComponent(FindComponent, renderDom, loadModule);
   }
 
   /**
@@ -538,10 +536,7 @@ export class RouteModule {
 
     if (!loadModule) throw new Error('load child failed, please check your routes.');
 
-    const otherInjector = new Injector();
-    this.loadModuleInjectorMap.set(currentUrlPath, otherInjector);
-
-    const loadModuleInstance = factoryModule(loadModule, otherInjector, this.indivInstance);
+    const loadModuleInstance = factoryModule(loadModule, loadModule.prototype.privateInjector, this.indivInstance);
     this.loadModuleMap.set(currentUrlPath, loadModuleInstance);
 
     return loadModuleInstance;

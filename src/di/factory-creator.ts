@@ -7,8 +7,8 @@ import { rootInjector, Injector } from './injector';
  * 2. provider rootInjector
  * 3. provider otherInjector
  *
- * first: check _constructor has constructor providers or not
- * secend: find service in loadModule or rootModule
+ * first: check _constructor has constructor private Injector($providerList) or not
+ * secend: find service in otherInjector or rootInjector
  * third: find service is a singleton service or not
  * forth: if service is a singleton service, find in rootModule's $providerInstances. If not use factoryCreator instance and return
  * last: if service is a singleton service, and can't be found in rootModule's $providerInstances, then factoryCreator instance and push in rootModule's $providerInstances
@@ -32,15 +32,14 @@ export function inject(_constructor: Function, otherInjector?: Injector, provide
         // inject internal type for NvModule
         if (provideAndInstanceMap && provideAndInstanceMap.has(key)) return args.push(provideAndInstanceMap.get(key));
 
-        // constructor injector: find service Class in providerList in _constructor
-        if ((_constructor.prototype as any).$providerList) {
-            const _constructorService = (_constructor.prototype as any).$providerList.get(key);
+        if ((_constructor.prototype as any).privateInjector as Injector) {
+            const _constructorService = ((_constructor.prototype as any).privateInjector as Injector).getProvider(key);
             if (_constructorService && !_constructorService.useClass && !_constructorService.useValue) return args.push(factoryCreator(_constructorService, otherInjector, provideAndInstanceMap));
             if (_constructorService && _constructorService.useClass) return args.push(factoryCreator(_constructorService.useClass, otherInjector, provideAndInstanceMap));
             if (_constructorService && _constructorService.useValue) return args.push(_constructorService.useValue);
         }
 
-        // root injector: find service Class in otherInjector or rootInjector
+        // injector: find service Class in otherInjector or rootInjector
         let _service = null;
         let fromInjector = null;
         // otherInjector first
@@ -60,10 +59,10 @@ export function inject(_constructor: Function, otherInjector?: Injector, provide
         if (!findService) throw new Error(`injector injects service error: can't find provide: ${key.name} in constructor ${_constructor}`);
 
         // if service isn't a singleton service
-        if (findService && !findService.isSingletonMode) args.push(factoryCreator(findService, otherInjector, provideAndInstanceMap));
+        if (!findService.isSingletonMode) args.push(factoryCreator(findService, otherInjector, provideAndInstanceMap));
 
         // if service is a singleton service
-        if (findService && findService.isSingletonMode) {
+        if (findService.isSingletonMode) {
             const findServiceInStance = fromInjector.getInstance(key) ? fromInjector.getInstance(key) : null;
             if (findServiceInStance) args.push(findServiceInStance);
             if (!findServiceInStance) {

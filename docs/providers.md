@@ -35,9 +35,16 @@ src
 
 这是一个 TestService 仅仅带有`count`一个属性的基本类。唯一的新特点是它使用 @Injectable() 装饰器。该 @Injectable() 附加的元数据，从而 InDiv 知道这个类是一个 InDiv 提供者。
 
-`@Injectable` 接收 一个参数: `{isSingletonMode?: boolean;}`, 默认为 true。
+Injectable 符号，并且给服务类添加了 @Injectable() 装饰器。 它把这个类标记为依赖注入系统的参与者之一。标志着服务类类将会提供一个可注入的服务，并且它还可以拥有自己的待注入的依赖。
+
+`@Injectable` 接收 1个参数: `{ isSingletonMode?: boolean; providedIn?: Type<any> | 'root' | null; }`, 默认为 true。
 
 当 `isSingletonMode` 为 `false`时，IOC容器将不会创建单例服务。
+
+`providedIn`: 服务被直接注入哪个 Injector。
+
+  1. 如果是`'root'`，该服务将直接被注入至根注入器 `rootInjector`，全局都可以直接使用该服务。
+  2. 如果是一个具体的类，那么该服务将被注入该具体类的私有注入器`privateInjector`中并且只对该类的实例负责，不会成为单例服务
 
 > providers/test.service.ts
 

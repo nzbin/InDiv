@@ -22,10 +22,8 @@ function buildProviderList(moduleInstance: INvModule, otherInjector?: Injector):
   for (let i = 0; i < length; i++) {
     const service = moduleInstance.$providers[i];
     if ((service as TInjectTokenProvider).provide) {
-      if ((service as TUseClassProvider).useClass || (service as TUseValueProvider).useValue) moduleInstance.$providerList.set((service as TInjectTokenProvider).provide, service);
       if ((service as TUseClassProvider).useClass || (service as TUseValueProvider).useValue) injector.setProvider((service as TInjectTokenProvider).provide, service);
     } else {
-      moduleInstance.$providerList.set(service as Function, service as Function);
       injector.setProvider(service as Function, service as Function);
     }
   }
@@ -44,7 +42,6 @@ function buildProviderList(moduleInstance: INvModule, otherInjector?: Injector):
  */
 function buildImports(moduleInstance: INvModule, indivInstance?: InDiv, otherInjector?: Injector): void {
   if (!moduleInstance.$imports) return;
-  const injector = otherInjector ? otherInjector : rootInjector;
   const length = moduleInstance.$imports.length;
   for (let i = 0; i < length; i++) {
     const ModuleImport = moduleInstance.$imports[i];
@@ -57,13 +54,6 @@ function buildImports(moduleInstance: INvModule, indivInstance?: InDiv, otherInj
         const exportFromModule = moduleImport.$exportsList[i];
         if (moduleInstance.$declarations && !moduleInstance.$declarations.find((declaration: any) => declaration.$selector === (exportFromModule as any).$selector)) moduleInstance.$declarations.push(exportFromModule);
       }
-    }
-    // export providerList
-    if (moduleImport.$providerList) {
-      moduleImport.$providerList.forEach((value, key) => {
-        if (!moduleInstance.$providerList.has(key)) moduleInstance.$providerList.set(key, value);
-        injector.setProvider(key, value);
-      });
     }
   }
 }

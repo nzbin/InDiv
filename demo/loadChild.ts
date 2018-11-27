@@ -17,12 +17,14 @@ class TestLoadchildComponent {
   public state: any;
   constructor(
     private sss: HeroSearchService,
+    private element: ElementRef,
+    private indiv: InDiv,
   ) {
     this.state = {
       to: '/R1/C1/D1', 
     };
-    console.log(99999, 'from TestLoadchildComponent');
-    this.sss.test();
+    console.log(99999, 'from TestLoadchildComponent', this.element, this.indiv);
+    this.sss.test(5);
   }
 }
 
@@ -39,7 +41,7 @@ class R2 {
     private indiv: InDiv,
   ) {
     console.log(100000, 'from R2 LoadModule', this.sss, this.element, this.indiv);
-    this.sss.test();
+    this.sss.test(6);
   }
 }
 
@@ -59,4 +61,10 @@ class R2 {
   ],
   bootstrap: TestLoadchildComponent,
 })
-export class TestLoadchildModule {}
+export class TestLoadchildModule {
+  constructor (
+    private indiv: InDiv,
+  ) {
+    console.log(999999888777, '来自懒加载的模块 TestLoadchildModule', this.indiv);
+  }
+}

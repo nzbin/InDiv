@@ -42,7 +42,6 @@ export declare class RouteModule {
     private watcher;
     private renderRouteList;
     private loadModuleMap;
-    private loadModuleInjectorMap;
     private canWatch;
     constructor(indivInstance: InDiv);
     /**

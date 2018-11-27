@@ -1,5 +1,9 @@
+interface Type<T> extends Function {
+    new (...args: any[]): T;
+}
 declare type TInjectableOptions = {
     isSingletonMode?: boolean;
+    providedIn?: Type<any> | 'root' | null;
 };
 /**
  * Decorator @Injectable

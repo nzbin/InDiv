@@ -1,8 +1,8 @@
-import { IComponent, IDirective, ElementRef } from '../../types';
+import { IComponent, IDirective } from '../../types';
 
 import { factoryCreator } from '../../di';
 import { Utils } from '../../utils';
-import { InDiv } from '../../indiv';
+import { InDiv, ElementRef } from '../../indiv';
 
 const utils = new Utils();
 
@@ -63,6 +63,7 @@ export function buildComponentScope<State = any, Props = any, Vm = any>(Componen
   const _component: IComponent = factoryCreator(ComponentClass, vm.otherInjector, provideAndInstanceMap);
   _component.props = props;
   _component.renderDom = dom;
+
   vm.$declarationMap.forEach((declaration, key) => {
     if (!_component.$declarationMap.has(key)) _component.$declarationMap.set(key, declaration);
   });
@@ -96,11 +97,12 @@ export function buildDirectiveScope<State = any, Props = any, Vm = any>(Directiv
 
   _directive.props = props;
   _directive.renderDom = dom;
-  _directive.otherInjector = vm.otherInjector;
 
   vm.$declarationMap.forEach((declaration, key) => {
     if (!_directive.$declarationMap.has(key)) _directive.$declarationMap.set(key, declaration);
   });
+
+  _directive.otherInjector = vm.otherInjector;
 
   return _directive;
 }

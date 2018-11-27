@@ -1,6 +1,6 @@
 import { INvModule, IComponent } from '../types';
-import { Injector } from '../di';
-export { ElementRef } from '../types';
+export declare class ElementRef extends HTMLElement {
+}
 export interface IMiddleware<ES> {
     bootstrap(vm: ES): void;
 }
@@ -104,16 +104,15 @@ export declare class InDiv {
      *
      * if otherModule don't has use rootModule
      *
-     * if has otherInjector, build component will use otherInjector instead of rootInjector
+     * if has otherModule, build component will use privateInjector from loadModule instead of rootInjector
      *
      * @param {Function} BootstrapComponent
      * @param {Element} renderDOM
      * @param {INvModule} [otherModule]
-     * @param {Injector} [otherInjector]
      * @returns {Promise<IComponent>}
      * @memberof InDiv
      */
-    renderComponent(BootstrapComponent: Function, renderDOM: Element, otherModule?: INvModule, otherInjector?: Injector): Promise<IComponent>;
+    renderComponent(BootstrapComponent: Function, renderDOM: Element, otherModule?: INvModule): Promise<IComponent>;
     /**
      * render NvModule Bootstrap
      *

@@ -1,6 +1,6 @@
 import { INvModule, TUseClassProvider, TUseValueProvider } from '../types';
 
-import { injected } from '../di/injected';
+import { injected, Injector } from '../di';
 
 export { factoryModule } from './utils';
 
@@ -26,8 +26,7 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
     injected(_constructor);
     (_constructor as any).nvType = 'nvModule';
     const vm = _constructor.prototype as INvModule;
-    vm.$providerList = new Map();
-    vm.$providerInstances = new Map();
+    vm.privateInjector = new Injector();
     if (options.imports) vm.$imports = options.imports;
     if (options.declarations) vm.$declarations = options.declarations;
     if (options.providers) vm.$providers = options.providers;

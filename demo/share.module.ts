@@ -21,8 +21,9 @@ class RouteChild implements OnInit, HasRender, ReceiveProps, OnDestory {
   public props: Readonly<Props>;
   constructor(
     private heroSearchService2: HeroSearchService2,
+    private element: ElementRef,
   ) {
-    console.log('fuck this.heroSearchService2', this.heroSearchService2);
+    console.log('fuck this.heroSearchService2', this.heroSearchService2, this.element);
     this.heroSearchService2.test();
     this.state = {
       a: 'a',
@@ -42,12 +43,6 @@ class RouteChild implements OnInit, HasRender, ReceiveProps, OnDestory {
   }
 
   public nvOnInit() {
-    // this.setState({
-    //   b: this.props.a,
-    // });
-    // this.setState({
-    //   c: this.props.ax,
-    // });
     this.state.b = this.props.a;
     console.log(555, 'PCChild nvOnInit props11', this.props);
     // this.props.b(3);
@@ -60,9 +55,6 @@ class RouteChild implements OnInit, HasRender, ReceiveProps, OnDestory {
   public nvReceiveProps(nextProps: any) {
     console.log(3333, nextProps);
     this.state.b = nextProps.a;
-    // this.setState({
-    //   b: nextProps.a,
-    // });
   }
 
   public nvOnDestory() {
@@ -84,7 +76,9 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps, OnDestor
   public props: any;
   public state: any;
   public setState: SetState;
-  constructor() {
+  constructor(
+    private element: ElementRef,
+  ) {
     this.state = {
       a: 'a',
       b: null,
@@ -103,16 +97,13 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps, OnDestor
   }
 
   public nvHasRender() {
-    console.log('PCChild hasRender : this.props.ax', this.props, this.state);
+    console.log('PCChild hasRender : this.props.ax', this.props, this.state, this.element);
   }
 
   public nvOnInit() {
     this.setState({
       b: this.props.ax,
     });
-    // this.setState({
-    //   c: this.props.ax,
-    // });
     console.log(555, 'PCChild nvOnInit props11', this.props);
     // this.props.b(3);
   }
@@ -172,8 +163,8 @@ const routes: TRouter[] = [
             children: [
               {
                 path: '/D1',
-                // component: 'R2',
-                redirectTo: '/R2/2',
+                component: 'R2',
+                // redirectTo: '/R2/2',
               },
             ],
           },
@@ -219,7 +210,6 @@ class TestDirective implements OnInit, RouteChange, ReceiveProps {
     console.log(666666, 'init TestDirective element', this.element);
     console.log(777777, 'init TestDirective indiv', this.indiv);
     this.hss.test();
-    // this.element.style.color = 'red';
     this.element.addEventListener('mouseover', this.changeColor);
     this.element.addEventListener('mouseout', this.removeColor);
   }
@@ -231,7 +221,6 @@ class TestDirective implements OnInit, RouteChange, ReceiveProps {
   }
 
   public changeColor = () => {
-    // this.element.style.color = this.props ? this.props : 'red';
     this.element.style.color = 'red';
   }
   public removeColor = () => {

@@ -1,4 +1,5 @@
 import { InDiv } from '../indiv';
+import { Injector } from '../di';
 export declare type TInjectTokenProvider = {
     [props: string]: any | Function;
     provide: any;
@@ -20,7 +21,6 @@ export interface INvModule {
     $providers?: (Function | TUseClassProvider | TUseValueProvider)[];
     $exports?: Function[];
     $exportsList?: Function[];
-    $providerList?: Map<Function | string, Function | any>;
-    $providerInstances?: Map<Function | string, any>;
     $bootstrap?: Function;
+    privateInjector?: Injector;
 }

@@ -29,3 +29,4 @@
 - [x] 优化编译 存储上次 Vnode 结构
 - [x] 移除 InDiv 实例中 setRenderModule 和 getRenderModule，RouteModule直接使用 InDiv 实例中 getBootstrapComponent 方法获得初始化的组件
 - [ ] @indiv/cli
+- [ ] Injectable provideIn

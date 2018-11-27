@@ -1,4 +1,4 @@
-import { ElementRef } from '../types';
+import { ElementRef } from '../indiv';
 import { OnInit, ReceiveProps, OnDestory } from '../lifecycle';
 import { NvLocation } from './location';
 import { RouteChange } from './index';

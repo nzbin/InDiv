@@ -23,7 +23,9 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
   public state: any;
   public props: any;
 
-  constructor() {
+  constructor(
+    private element: ElementRef,
+  ) {
     this.setState = setState;
   }
 
@@ -45,7 +47,7 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
       e: true,
       ax: this.props.ax,
     };
-    console.log('nvOnInit props11', this.props);
+    console.log('nvOnInit props11', this.props, this.element);
   }
 
   public nvBeforeMount() {
@@ -56,12 +58,6 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
     console.log('nvAfterMount props11', this.props);
   }
   public componentClick(a: any) {
-    // alert('点击了组件');
-    // console.log('this.props.ax', this.props.ax);
-    // this.setState({ b: 2 });
-    // // this.setProps({ ax: 5 });
-    // this.props.b(3);
-    // this.a = 1;
     console.log('aa', a);
   }
   public sendProps(ax: any) {
@@ -105,8 +101,6 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
 })
 class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, OnDestory {
   public hSr: HeroSearchService;
-  // public getLocation: GetLocation;
-  // public setLocation: SetLocation;
   public setState: SetState;
   public props: any;
   public state: any;
@@ -115,9 +109,11 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
     private heroSearchService: HeroSearchService,
     private utils: Utils,
     private location: NvLocation,
+    private element: ElementRef,
+    private indiv: InDiv,
   ) {
     this.setState = setState;
-    console.log(9999888777, 'from R1');
+    console.log(9999888777, 'from R1', this.element, this.indiv);
     this.heroSearchService.test();
     this.state = {
       a: 'a11',
@@ -172,13 +168,10 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
   public showAlert(a: any) {
     this.location.set('/R1/C1', { a: '1' });
     console.log('this.$location', this.location.get());
-    // a.show = false;
   }
   public getProps(a: any) {
-    // alert('里面传出来了');
     console.log('被触发了！', a);
     this.setState({ a: a });
-    // this.state.a = a;
   }
 
   public nvOnDestory() {
@@ -202,19 +195,16 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
   `),
 })
 class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, OnDestory {
-  // public getLocation: GetLocation;
-  // public setLocation: SetLocation;
   public state: any;
 
   constructor(
     private heroSearchService1: HeroSearchService1,
     private location: NvLocation,
     private sss: HeroSearchService,
+    private element: ElementRef,
   ) {
-    // this.setLocation = setLocation;
-    // this.getLocation = getLocation;
     this.heroSearchService1.test();
-    console.log('this.heroSearchService1', this.heroSearchService1);
+    console.log('this.heroSearchService1', this.heroSearchService1, this.element);
     this.state = { a: 1 };
     this.sss.test();
   }
@@ -328,14 +318,11 @@ class Container implements OnInit, AfterMount, WatchState {
   public ss2: HeroSearchService1;
   public state: any;
   public props: any;
-  // public setLocation: SetLocation;
-  // public getLocation: GetLocation;
   public setState: SetState;
   public http$: Observable<HttpClientResponse>;
 
   constructor(
     private hss: HeroSearchService,
-    private hss2: HeroSearchService1,
     private value: ValueType,
     private location: NvLocation,
     private httpClient: HttpClient,
@@ -353,7 +340,6 @@ class Container implements OnInit, AfterMount, WatchState {
       next: this.httpHandler,
     });
     this.hss.test();
-    // console.log('http', this.http);
     console.log('value', this.value);
     this.state = {
       color: 'red',
@@ -428,13 +414,6 @@ class Container implements OnInit, AfterMount, WatchState {
   }
 
   public showInput(event: any, index: number) {
-    console.log(1111, event.target.value);
-    console.log(2222, this.state.testArray2);
-    // const testArray2 = this.state.testArray2;
-    // testArray2[index] = event.target.value;
-    // this.setState({
-    //   testArray2,
-    // });
     this.state.testArray2[index] = event.target.value;
   }
 
@@ -503,7 +482,6 @@ class Container implements OnInit, AfterMount, WatchState {
         }],
     });
     this.state.a = 5;
-    console.log(9999999999);
   }
 
   private httpHandler = (value: any) => {
@@ -539,7 +517,13 @@ class Container implements OnInit, AfterMount, WatchState {
     SharedModule,
   ],
 })
-class M2 {}
+class M2 {
+  constructor (
+    private indiv: InDiv,
+  ) {
+    console.log(99999988866666, '来自注入的模块 M2', this.indiv);
+  }
+}
 
 
 @NvModule({
@@ -560,8 +544,9 @@ class M2 {}
 class M1 {
   constructor (
     private hsr: HeroSearchService,
+    private indiv: InDiv,
   ) {
-    console.log(999999888777, '来自注入的模块 M1', this.hsr);
+    console.log(999999888777, '来自注入的模块 M1', this.hsr, this.indiv);
   }
 }
 

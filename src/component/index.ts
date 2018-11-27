@@ -2,7 +2,7 @@ import { IComponent, TInjectTokenProvider, TUseClassProvider, TUseValueProvider 
 
 import { Watcher } from '../watcher';
 import { Utils } from '../utils';
-import { injected } from '../di/injected';
+import { injected, Injector } from '../di';
 
 type TComponentOptions = {
   selector: string;
@@ -32,17 +32,15 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
     const vm: IComponent<State, Props, Vm> = _constructor.prototype;
     vm.$template = options.template;
 
-    // Component $providerList for injector
-    vm.$providerList = new Map();
-    vm.$providerList.set(setState, { provide: setState, useValue: setState });
+    vm.privateInjector = new Injector();
     if (options.providers && options.providers.length > 0) {
       const length = options.providers.length;
       for (let i = 0; i < length; i++) {
         const service = options.providers[i];
         if ((service as TInjectTokenProvider).provide) {
-          if ((service as TUseClassProvider).useClass || (service as TUseValueProvider).useValue) vm.$providerList.set((service as TInjectTokenProvider).provide, service);
+          if ((service as TUseClassProvider).useClass || (service as TUseValueProvider).useValue) vm.privateInjector.setProvider((service as TInjectTokenProvider).provide, service);
         } else {
-          vm.$providerList.set(service as Function, service as Function);
+          vm.privateInjector.setProvider(service as Function, service as Function);
         }
       }
     }
@@ -72,9 +70,9 @@ export function setState(newState: any): void {
       const _state = JSON.parse(JSON.stringify(this.state));
       Object.assign(_state, _newState);
       this.state = _state;
-      if ((this as any).nvWatchState) (this as any).stateWatcher = new Watcher((this as any).state, (this as any).nvWatchState.bind(this as any), (this as any).reRender.bind(this as any));
-      if (!(this as any).nvWatchState) (this as any).stateWatcher = new Watcher((this as any).state, null, (this as any).reRender.bind(this as any));
-      (this as any).reRender();
+      if ((this as IComponent).nvWatchState) (this as IComponent).stateWatcher = new Watcher((this as IComponent).state, (this as IComponent).nvWatchState.bind(this as IComponent), (this as IComponent).reRender.bind(this as IComponent));
+      if (!(this as IComponent).nvWatchState) (this as IComponent).stateWatcher = new Watcher((this as IComponent).state, null, (this as IComponent).reRender.bind(this as IComponent));
+      (this as IComponent).reRender();
     }
   }
   if (newState && newState instanceof Object) {
@@ -82,8 +80,8 @@ export function setState(newState: any): void {
     const _state = JSON.parse(JSON.stringify(this.state));
     Object.assign(_state, newState);
     this.state = _state;
-    if ((this as any).nvWatchState) (this as any).stateWatcher = new Watcher((this as any).state, (this as any).nvWatchState.bind(this as any), (this as any).reRender.bind(this as any));
-    if (!(this as any).nvWatchState) (this as any).stateWatcher = new Watcher((this as any).state, null, (this as any).reRender.bind(this as any));
-    (this as any).reRender();
+    if ((this as IComponent).nvWatchState) (this as IComponent).stateWatcher = new Watcher((this as IComponent).state, (this as IComponent).nvWatchState.bind(this as IComponent), (this as IComponent).reRender.bind(this as IComponent));
+    if (!(this as IComponent).nvWatchState) (this as IComponent).stateWatcher = new Watcher((this as IComponent).state, null, (this as IComponent).reRender.bind(this as IComponent));
+    (this as IComponent).reRender();
   }
 }

@@ -38,3 +38,4 @@ export {
   factoryCreator,
   injected,
 } from './di';
+export * from './types';

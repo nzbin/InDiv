@@ -1,4 +1,4 @@
-import { IDirective, IComponent } from '../../types';
+import { IDirective, IComponent } from '@indiv/core';
 import { RenderTaskQueue } from './render-task-queue';
 /**
  * mountDirective for Directives in Component

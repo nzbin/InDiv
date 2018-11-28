@@ -1,4 +1,4 @@
-import { InDiv } from '../indiv';
+import { InDiv } from '@indiv/core';
 import { render } from './render';
 
 export { Compile, CompileUtilForRepeat, CompileUtil } from './compile';

@@ -26,8 +26,19 @@
     "start-ts": "parcel ./demo/index-ts.html -d dist --open",
     "start-js": "parcel ./demo/index.html -d dist --open",
     "start-docs": "docsify serve ./docs --port 2334",
-    "build": "rm -rf build && rollup --config rollup.typescript.config.js && rollup --config rollup.without-polyfill.config.js && rollup -c && rm -rf build/bundle.js && cp -r files/index.d.ts build/without-polyfill",
-    "pub-prod": "npm run build && npm publish"
+    "build-v1": "rm -rf build && rollup --config rollup.typescript.config.js && rollup --config rollup.without-polyfill.config.js && rollup -c && rm -rf build/bundle.js && cp -r files/index.d.ts build/without-polyfill",
+    "pub-prod-v1": "npm run build && npm publish",
+    "clean": "rm -rf build && rm -rf node_modules/@indiv",
+    "build":
+      "npm run clean && npm run build:core && npm run build:platform-browser && npm run build:common && npm run build:router",
+    "build:core":
+      "rm -rf build/core && rm -rf node_modules/@indiv/core && rollup --config packages/core/rollup.typescript.config.js && rollup --config packages/core/rollup.config.js && rm -rf build/core/bundle.js && cp -r build node_modules/@indiv",
+    "build:platform-browser":
+      "rm -rf build/platform-browser && rm -rf node_modules/@indiv/platform-browser && rollup --config packages/platform-browser/rollup.typescript.config.js && rollup --config packages/platform-browser/rollup.config.js && rm -rf build/platform-browser/bundle.js && cp -r ./build/* node_modules/@indiv",
+    "build:common":
+      "rm -rf build/common && rm -rf node_modules/@indiv/common && rollup --config packages/common/rollup.typescript.config.js && rollup --config packages/common/rollup.config.js && rm -rf build/common/bundle.js && cp -r ./build/* node_modules/@indiv",
+    "build:router":
+      "rm -rf build/router && rm -rf node_modules/@indiv/router && rollup --config packages/router/rollup.typescript.config.js && rollup --config packages/router/rollup.config.js && rm -rf build/router/bundle.js && cp -r ./build/* node_modules/@indiv"
   },
   "repository": {
     "type": "git",

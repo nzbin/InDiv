@@ -1,4 +1,4 @@
-import { InDiv } from '../indiv';
+import { InDiv } from '@indiv/core';
 export interface RouteChange {
     nvRouteChange(lastRoute?: string, newRoute?: string): void;
 }

@@ -1,4 +1,4 @@
-import { IComponent } from '../../types';
+import { IComponent } from '@indiv/core';
 export declare type TRenderStatus = 'pending' | 'rendering';
 export declare class RenderTaskQueue {
     $vm: IComponent;

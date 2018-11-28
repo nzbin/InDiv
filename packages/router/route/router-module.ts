@@ -1,8 +1,4 @@
-import { IComponent, IDirective, INvModule, ComponentList, DirectiveList } from '../types';
-
-import { Utils } from '../utils';
-import { factoryModule, NvModule } from '../nv-module';
-import { InDiv } from '../indiv';
+import { IComponent, IDirective, INvModule, ComponentList, DirectiveList, Utils, factoryModule, NvModule, InDiv } from '@indiv/core';
 
 import { NvLocation } from './location';
 import { RouterTo, RouterFrom, RouterActive } from './directives';

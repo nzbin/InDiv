@@ -1,4 +1,8 @@
-import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, SetState, OnDestory, setState, NvLocation, RouteModule, HttpClient, ElementRef, HttpClientResponse, PlatformBrowser } from '../src';
+import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, ReceiveProps, SetState, OnDestory, setState, ElementRef } from '@indiv/core';
+import { RouteChange, NvLocation, RouteModule } from '@indiv/router';
+import { PlatformBrowser } from '@indiv/platform-browser';
+import { HttpClient, HttpClientResponse } from '@indiv/common';
+// import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, SetState, OnDestory, setState, NvLocation, RouteModule, HttpClient, ElementRef, HttpClientResponse, PlatformBrowser } from '../src';
 // import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, SetState, OnDestory, setState, NvLocation, RouteModule, HttpClient, ElementRef, HttpClientResponse, PlatformBrowser } from '../build';
 
 import { Observable } from 'rxjs';

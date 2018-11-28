@@ -1,0 +1,32 @@
+{
+  "name": "@indiv/common",
+  "version": "0.0.0",
+  "description": "一个 web mvvm 库。A web mvvm library.",
+  "main": "build/common/index.js",
+  "types": "build/common/index.d.ts",
+  "files": [
+    "build/common"
+  ],
+  "keywords": [
+    "mvvm",
+    "http",
+    "front-end",
+    "httpClient",
+    "common"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DimaLiLongJi/InDiv.git"
+  },
+  "author": "DimaLiLongJi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DimaLiLongJi/InDiv/issues"
+  },
+  "homepage": "https://github.com/DimaLiLongJi/InDiv#readme",
+  "dependencies": {
+    "@babel/runtime-corejs2": "^7.1.2",
+    "axios": "^0.18.0",
+    "rxjs": "^6.3.3"
+  }
+}

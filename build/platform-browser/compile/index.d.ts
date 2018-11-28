@@ -1,5 +1,5 @@
 import { Vnode } from '../virtual-dom';
-import { Utils } from '../../utils';
+import { Utils } from '@indiv/core';
 export { CompileUtil, CompileUtilForRepeat } from './utils';
 /**
  * main compiler

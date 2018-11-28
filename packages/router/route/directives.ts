@@ -1,7 +1,4 @@
-import { ElementRef } from '../indiv';
-import { Utils } from '../utils';
-import { Directive } from '../directive';
-import { OnInit, ReceiveProps, OnDestory } from '../lifecycle';
+import { ElementRef, Utils, Directive, OnInit, ReceiveProps, OnDestory } from '@indiv/core';
 import { NvLocation } from './location';
 import { RouteChange } from './router-module';
 

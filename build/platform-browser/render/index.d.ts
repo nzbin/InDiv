@@ -1,4 +1,4 @@
-import { IComponent } from '../../types';
+import { IComponent } from '@indiv/core';
 /**
  * render function for Component
  *

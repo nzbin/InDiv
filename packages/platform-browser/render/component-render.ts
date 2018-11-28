@@ -1,7 +1,6 @@
-import { IComponent, ComponentList } from '../../types';
+import { IComponent, ComponentList, Utils } from '@indiv/core';
 
 import { Compile, CompileUtilForRepeat, CompileUtil } from '../compile';
-import { Utils } from '../../utils';
 import { getPropsValue, buildProps, buildComponentScope } from './render-utils';
 import { directiveRenderFunction } from './directive-render';
 import { RenderTaskQueue } from './render-task-queue';

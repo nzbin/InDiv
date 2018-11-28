@@ -1,0 +1,36 @@
+{
+  "name": "@indiv/core",
+  "version": "0.0.0",
+  "description": "一个 web mvvm 库。A web mvvm library.",
+  "main": "build/core/index.js",
+  "types": "build/core/index.d.ts",
+  "files": [
+    "build/core"
+  ],
+  "keywords": [
+    "mvvm",
+    "core",
+    "view",
+    "component",
+    "front-end",
+    "framework",
+    "Dependency Injection",
+    "DI",
+    "IOC"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DimaLiLongJi/InDiv.git"
+  },
+  "author": "DimaLiLongJi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DimaLiLongJi/InDiv/issues"
+  },
+  "homepage": "https://github.com/DimaLiLongJi/InDiv#readme",
+  "dependencies": {
+    "@babel/runtime-corejs2": "^7.1.2",
+    "easier-cookie": "^1.1.1",
+    "reflect-metadata": "^0.1.12"
+  }
+}

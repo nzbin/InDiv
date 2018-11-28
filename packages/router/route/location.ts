@@ -1,5 +1,4 @@
-import { Injectable } from '../di';
-import { Utils } from '../utils';
+import { Injectable, Utils } from '@indiv/core';
 
 import { nvRouteStatus } from './location-status';
 

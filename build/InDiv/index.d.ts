@@ -1,8 +1,11 @@
 import { INvModule, IComponent } from '../types';
 export declare class ElementRef extends HTMLElement {
 }
-export interface IMiddleware<ES> {
-    bootstrap(vm: ES): void;
+interface Type<T = any> extends Function {
+    new (...args: any[]): T;
+}
+export interface IMiddleware {
+    bootstrap(vm: InDiv): void;
 }
 /**
  * main: for new InDiv
@@ -10,8 +13,8 @@ export interface IMiddleware<ES> {
  * @class InDiv
  */
 export declare class InDiv {
-    private modalList;
-    private rootDom;
+    private readonly middlewareList;
+    private readonly rootDom;
     private $routeDOMKey;
     private $rootModule;
     private $declarations;
@@ -22,11 +25,11 @@ export declare class InDiv {
     /**
      * for using middleware and use bootstrap method of middleware
      *
-     * @param {IMiddleware<InDiv>} modal
+     * @param {Type<IMiddleware>} Modal
      * @returns {number}
      * @memberof InDiv
      */
-    use(modal: IMiddleware<InDiv>): number;
+    use(Middleware: Type<IMiddleware>): number;
     /**
      * set component Render function
      *
@@ -130,3 +133,4 @@ export declare class InDiv {
      */
     private replaceDom;
 }
+export {};

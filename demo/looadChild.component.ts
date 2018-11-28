@@ -1,7 +1,8 @@
 import { Component, ElementRef, InDiv } from '../src';
 // import { Component, ElementRef, InDiv } from '../build';
 
-import { HeroSearchService, PrivateService } from './service';
+import { HeroSearchService } from './service';
+import { PrivateService } from './private.service';
 
 @Component({
   selector: 'test-loadchild-component',
@@ -25,14 +26,15 @@ export class TestLoadchildComponent {
     };
     console.log(99999, 'from TestLoadchildComponent', this.element, this.indiv);
     this.sss.test(5);
-    this.pss.change();
+    // this.pss.change();
   }
 }
 
 @Component({
   selector: 'R2',
   template: `
-    <p>我是R22222</p>
+    <p router-to="'/R2'">我是R22222</p>
+    <pp-childs ax={3}></pp-childs>
     `,
 })
 export class R2 {
@@ -44,5 +46,9 @@ export class R2 {
   ) {
     console.log(100000, 'from R2 LoadModule', this.sss, this.element, this.indiv, this.priSS);
     this.sss.test(6);
+  }
+
+  public click() {
+
   }
 }

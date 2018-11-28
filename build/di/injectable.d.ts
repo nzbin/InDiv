@@ -1,4 +1,4 @@
-interface Type<T> extends Function {
+interface Type<T = any> extends Function {
     new (...args: any[]): T;
 }
 declare type TInjectableOptions = {
@@ -13,7 +13,7 @@ declare type TInjectableOptions = {
  * options Object has two key-values:
  * 1. isSingletonMode?: boolean; To show InDiv this service is a singleton service or not. Defalut value is true.
  * 2. providedIn?: Type<any> | 'root' | null;
- *   If is NvModule, to show InDiv this service can be injected in which NvModule's privateInjector.PrivateInjector is always used in LazyLoad Module.
+ *   If is NvModule, to show InDiv this service can be injected in which providers of NvModule's meta data. PrivateInjector is always used in LazyLoad Module.
  *   if is 'root', it will be injected into rootInjector.
  *
  * @param {TInjectableOptions} [options]

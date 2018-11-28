@@ -1,7 +1,7 @@
 export { Utils, } from './utils';
 export { OnInit, BeforeMount, AfterMount, HasRender, OnDestory, WatchState, ReceiveProps, } from './lifecycle';
 export { Watcher, } from './watcher';
-export { Compile, CompileUtil, CompileUtilForRepeat, } from './platform-browser';
+export { Compile, CompileUtil, CompileUtilForRepeat, PlatformBrowser, } from './platform-browser';
 export { Component, setState, SetState, } from './component';
 export { Directive, } from './directive';
 export { InDiv, ElementRef, } from './indiv';

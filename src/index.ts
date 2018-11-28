@@ -17,6 +17,7 @@ export {
   Compile,
   CompileUtil,
   CompileUtilForRepeat,
+  PlatformBrowser,
 } from './platform-browser';
 export {
   Component,

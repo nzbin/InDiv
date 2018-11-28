@@ -7,8 +7,8 @@
  * @class IOCContainer
  */
 export declare class Injector {
-    private providerMap;
-    private instanceMap;
+    private readonly providerMap;
+    private readonly instanceMap;
     /**
      * set Provider(Map) for save provide
      *

@@ -156,8 +156,8 @@ const routes: TRouter[] = [
             path: '/C1',
             // component: 'R2',
             loadChild: {
-              name: 'TestLoadchildModule',
-              child: () => import('./loadChild'),
+              name: 'LoadchildModule',
+              child: () => import('./loadChild.module'),
             },
             // redirectTo: '/R1/C1/D1',
             children: [

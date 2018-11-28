@@ -1,10 +1,11 @@
-import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, SetState, OnDestory, setState, NvLocation, RouteModule, HttpClient, ElementRef, HttpClientResponse } from '../src';
-// import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, SetState, OnDestory, setState, NvLocation, RouteModule, HttpClient, ElementRef, HttpClientResponse } from '../build';
+import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, SetState, OnDestory, setState, NvLocation, RouteModule, HttpClient, ElementRef, HttpClientResponse, PlatformBrowser } from '../src';
+// import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, SetState, OnDestory, setState, NvLocation, RouteModule, HttpClient, ElementRef, HttpClientResponse, PlatformBrowser } from '../build';
 
 import { Observable } from 'rxjs';
 
 import { SharedModule } from './share.module';
 import { HeroSearchService, HeroSearchService1, HeroSearchService2 } from './service';
+import { PrivateService } from './private.service';
 
 class ValueType {}
 
@@ -328,9 +329,11 @@ class Container implements OnInit, AfterMount, WatchState {
     private httpClient: HttpClient,
     private element: ElementRef,
     private indiv: InDiv,
+    private privateService: PrivateService,
   ) {
+    this.privateService.change();
     this.setState = setState;
-    console.log(99988, 'from Container', this.element, this.indiv);
+    console.log(99988, 'from Container', this.element, this.indiv, this.privateService.isPrivate);
     this.httpClient.createResponseInterceptor((value: HttpClientResponse) => {
       return {
         data: value.data,
@@ -552,4 +555,5 @@ class M1 {
 
 const inDiv = new InDiv();
 inDiv.bootstrapModule(M1);
+inDiv.use(PlatformBrowser);
 inDiv.init();

@@ -27,9 +27,10 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
     (_constructor as any).nvType = 'nvModule';
     const vm = _constructor.prototype as INvModule;
     vm.privateInjector = new Injector();
+    vm.$providers = [];
     if (options.imports) vm.$imports = options.imports;
     if (options.declarations) vm.$declarations = options.declarations;
-    if (options.providers) vm.$providers = options.providers;
+    if (options.providers) vm.$providers = vm.$providers.concat(options.providers);
     if (options.exports) {
       vm.$exports = options.exports;
       vm.$exportsList = [];

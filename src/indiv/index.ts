@@ -3,12 +3,15 @@ import { INvModule, IComponent } from '../types';
 import { Utils } from '../utils';
 import { factoryCreator } from '../di';
 import { factoryModule } from '../nv-module';
-import { render } from '../platform-browser';
 
 export class ElementRef extends HTMLElement {}
 
-export interface IMiddleware<ES> {
-  bootstrap(vm: ES): void;
+interface Type<T = any> extends Function {
+  new (...args: any[]): T;
+}
+
+export interface IMiddleware {
+  bootstrap(vm: InDiv): void;
 }
 
 const utils = new Utils();
@@ -19,8 +22,8 @@ const utils = new Utils();
  * @class InDiv
  */
 export class InDiv {
-  private modalList: IMiddleware<InDiv>[] = [];
-  private rootDom: Element;
+  private readonly middlewareList: IMiddleware[] = [];
+  private readonly rootDom: Element;
   private $routeDOMKey: string = 'router-render';
   private $rootModule: INvModule = null;
   private $declarations: Function[];
@@ -30,26 +33,21 @@ export class InDiv {
 
   constructor() {
     if (!utils.isBrowser()) return;
-
     this.rootDom = document.querySelector('#root');
-
-    // render,reRender for Component
-    // developer can use function use(modal: IMiddleware<InDiv>): number to change render and reRender
-    this.render = render;
-    this.reRender = render;
   }
 
   /**
    * for using middleware and use bootstrap method of middleware
    *
-   * @param {IMiddleware<InDiv>} modal
+   * @param {Type<IMiddleware>} Modal
    * @returns {number}
    * @memberof InDiv
    */
-  public use(modal: IMiddleware<InDiv>): number {
-    modal.bootstrap(this);
-    this.modalList.push(modal);
-    return this.modalList.length - 1;
+  public use(Middleware: Type<IMiddleware>): number {
+    const newMiddleware = new Middleware();
+    newMiddleware.bootstrap(this);
+    this.middlewareList.push(newMiddleware);
+    return this.middlewareList.length - 1;
   }
   
 /**
@@ -155,6 +153,7 @@ export class InDiv {
     if (!utils.isBrowser()) return;
 
     if (!this.$rootModule) throw new Error('must use bootstrapModule to declare a root NvModule before init');
+    if (!this.render) throw new Error('must use middleware to set a render in InDiv!');
     this.renderModuleBootstrap();
   }
 

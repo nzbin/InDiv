@@ -5,7 +5,7 @@ import { HeroSearchService, HeroSearchService1, HeroSearchService2 } from './ser
 import { SharedModule } from './share.module';
 import { TestLoadchildComponent, R2 } from './looadChild.component';
 
-
+import './private.service';
 
 @NvModule({
   imports: [
@@ -23,7 +23,7 @@ import { TestLoadchildComponent, R2 } from './looadChild.component';
   ],
   bootstrap: TestLoadchildComponent,
 })
-export class TestLoadchildModule {
+export class LoadchildModule {
   constructor (
     private indiv: InDiv,
   ) {

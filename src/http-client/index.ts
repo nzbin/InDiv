@@ -63,6 +63,15 @@ export interface HttpClientRequestInstance {
   patch<T = any>(url: string, data?: any, config?: HttpClientRequestConfig): AxiosPromise<T>;
 }
 
+/**
+ * HttpClient for InDiv
+ * 
+ * via package axios
+ * use it as a singleton service
+ *
+ * @export
+ * @class HttpClient
+ */
 @Injectable()
 export class HttpClient {
   /**

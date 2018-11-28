@@ -378,6 +378,7 @@ export class CompileUtilForRepeat {
    * @memberof CompileUtil
    */
   public isFromState(state: any, exp: string): boolean {
+    if (!state) return false;
     const value = exp.replace('()', '').split('.')[0];
     return state.hasOwnProperty(value);
   }
@@ -1041,6 +1042,7 @@ export class CompileUtil {
    * @memberof CompileUtil
    */
   public isFromState(state: any, exp: string): boolean {
+    if (!state) return false;
     const value = exp.replace('()', '').split('.')[0];
     return state.hasOwnProperty(value);
   }

@@ -3,7 +3,7 @@ import { Utils } from '../utils';
 import { Directive } from '../directive';
 import { OnInit, ReceiveProps, OnDestory } from '../lifecycle';
 import { NvLocation } from './location';
-import { RouteChange } from './index';
+import { RouteChange } from './router-module';
 
 const utils = new Utils();
 

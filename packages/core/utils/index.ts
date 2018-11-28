@@ -188,7 +188,7 @@ export class Utils {
       if (Object.keys(b).length !== length) return false;
       while (length--) {
         key = keys[length];
-        if (!(b.hasOwnProperty(key) && this.isEqual(a[key], b[key], aStack, bStack))) return false;
+        if (b && !(b.hasOwnProperty(key) && this.isEqual(a[key], b[key], aStack, bStack))) return false;
       }
     }
     aStack.pop();

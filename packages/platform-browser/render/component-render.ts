@@ -1,13 +1,14 @@
-import { IComponent, ComponentList } from '../../core';
+import { IComponent, ComponentList } from '../../types';
 
-import { Compile, CompileUtilForRepeat } from '../compile';
-import { Utils } from '../../core';
+import { Compile, CompileUtilForRepeat, CompileUtil } from '../compile';
+import { Utils } from '../../utils';
 import { getPropsValue, buildProps, buildComponentScope } from './render-utils';
 import { directiveRenderFunction } from './directive-render';
 import { RenderTaskQueue } from './render-task-queue';
 
 const utils = new Utils();
 
+const compileUtil = new CompileUtil();
 /**
  * mountComponent for Components in Component
  *
@@ -114,8 +115,8 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
             const valueList = prop[1].split('.');
             const key = valueList[0];
             let _prop = null;
-            if (vm.compileUtil.isFromState(vm.state, prop[1])) {
-              _prop = vm.compileUtil._getVMVal(vm.state, prop[1]);
+            if (compileUtil.isFromState(vm.state, prop[1])) {
+              _prop = compileUtil._getVMVal(vm.state, prop[1]);
               props[attrName] = buildProps(_prop, vm);
               return;
             }
@@ -145,7 +146,7 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
               return;
             }
             if (/^(\@.).*[^\(.*\)]$/g.test(prop[1])) {
-              _prop = vm.compileUtil._getVMVal(vm, prop[1].replace(/^(\@)/, ''));
+              _prop = compileUtil._getVMVal(vm, prop[1].replace(/^(\@)/, ''));
               props[attrName] = buildProps(_prop, vm);
               return;
             }
@@ -155,7 +156,7 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
               return;
             }
             if (node.repeatData && node.repeatData[key] !== null) {
-              _prop = vm.compileUtil._getValueByValue(node.repeatData[key], prop[1], key);
+              _prop = compileUtil._getValueByValue(node.repeatData[key], prop[1], key);
               props[attrName] = buildProps(_prop, vm);
               return;
             }

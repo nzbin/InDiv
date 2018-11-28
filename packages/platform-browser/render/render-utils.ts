@@ -1,8 +1,8 @@
-import { IComponent, IDirective } from '../../core';
+import { IComponent, IDirective } from '../../types';
 
-import { factoryCreator } from '../../core';
-import { Utils } from '../../core';
-import { InDiv, ElementRef } from '../../core';
+import { factoryCreator } from '../../di';
+import { Utils } from '../../utils';
+import { InDiv, ElementRef } from '../../indiv';
 
 const utils = new Utils();
 

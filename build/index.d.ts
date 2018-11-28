@@ -4,7 +4,7 @@ export { Watcher, } from './watcher';
 export { Compile, CompileUtil, CompileUtilForRepeat, PlatformBrowser, } from './platform-browser';
 export { Component, setState, SetState, } from './component';
 export { Directive, } from './directive';
-export { InDiv, ElementRef, } from './indiv';
+export { InDiv, ElementRef, IMiddleware, } from './indiv';
 export { NvModule, factoryModule, } from './nv-module';
 export { HttpClient, HttpClientRequestConfig, HttpClientResponse, HttpClientRequestInstance, } from './http-client';
 export { Injectable, inject, Injector, rootInjector, factoryCreator, injected, } from './di';

@@ -1,4 +1,4 @@
-import { Utils } from '../../core/utils';
+import { Utils } from '../utils';
 
 export type TFnWatcher = (oldData?: any) => void;
 export type TFnRender = () => any;

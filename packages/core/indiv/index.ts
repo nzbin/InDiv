@@ -3,11 +3,10 @@ import { INvModule, IComponent } from '../types';
 import { Utils } from '../utils';
 import { factoryCreator } from '../di';
 import { factoryModule } from '../nv-module';
-// import { render } from '../platform-browser';
 
 export class ElementRef extends HTMLElement {}
 
-interface Type<T> extends Function {
+interface Type<T = any> extends Function {
   new (...args: any[]): T;
 }
 
@@ -34,19 +33,13 @@ export class InDiv {
 
   constructor() {
     if (!utils.isBrowser()) return;
-
     this.rootDom = document.querySelector('#root');
-
-    // render,reRender for Component
-    // developer can use function use(modal: IMiddleware<InDiv>): number to change render and reRender
-    // this.render = render;
-    // this.reRender = render;
   }
 
   /**
    * for using middleware and use bootstrap method of middleware
    *
-   * @param {IMiddleware<InDiv>} Modal
+   * @param {Type<IMiddleware>} Modal
    * @returns {number}
    * @memberof InDiv
    */
@@ -58,7 +51,10 @@ export class InDiv {
   }
   
 /**
- * set component Render function 
+ * set component Render function
+ * 
+ * render and rerender will be a method in Component instance,
+ * so you can use this in render and rerender
  *
  * @template R
  * @template Re

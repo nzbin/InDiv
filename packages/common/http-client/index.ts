@@ -8,7 +8,7 @@ import axios, {
   AxiosInterceptorManager,
 } from 'axios';
 import { from, Observable } from 'rxjs';
-import { Injectable } from '../../core/di';
+import { Injectable } from '../di';
 
 export interface HttpClientRequestConfig {
   method?: string;

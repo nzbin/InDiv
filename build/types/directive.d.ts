@@ -1,4 +1,3 @@
-import { CompileUtil } from '../platform-browser';
 import { Injector } from '../di';
 export declare type DirectiveList<C> = {
     dom: Node;
@@ -8,7 +7,6 @@ export declare type DirectiveList<C> = {
 };
 export interface IDirective<Props = any, Vm = any> {
     props?: Props | any;
-    compileUtil: CompileUtil;
     renderDom?: Element;
     $vm?: Vm | any;
     $declarationMap?: Map<string, Function>;

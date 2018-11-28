@@ -51,7 +51,10 @@ export class InDiv {
   }
   
 /**
- * set component Render function 
+ * set component Render function
+ * 
+ * render and rerender will be a method in Component instance,
+ * so you can use this in render and rerender
  *
  * @template R
  * @template Re

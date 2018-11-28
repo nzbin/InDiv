@@ -17,7 +17,6 @@ import { InDiv } from '../indiv';
  */
 function buildProviderList(moduleInstance: INvModule, otherInjector?: Injector): void {
   if (!moduleInstance.$providers) return;
-  console.log(66666666, moduleInstance.$providers, moduleInstance);
   const injector = otherInjector ? otherInjector : rootInjector;
   const length = moduleInstance.$providers.length;
   for (let i = 0; i < length; i++) {

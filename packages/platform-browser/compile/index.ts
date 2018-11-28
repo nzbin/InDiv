@@ -1,5 +1,5 @@
 import { parseToVnode, diffVnode, renderVnode, Vnode, IPatchList } from '../virtual-dom';
-import { Utils } from '../../core';
+import { Utils } from '../../utils';
 import { CompileUtil, shouldDiffAttributes } from './utils';
 
 export { CompileUtil, CompileUtilForRepeat } from './utils';

@@ -30,6 +30,7 @@ export {
 export {
   InDiv,
   ElementRef,
+  IMiddleware,
 } from './indiv';
 export {
   NvModule,

@@ -1,7 +1,7 @@
 import { Injectable } from '../di';
 import { Utils } from '../utils';
 
-import { nvRouteStatus } from './index';
+import { nvRouteStatus } from './location-status';
 
 const utils = new Utils();
 

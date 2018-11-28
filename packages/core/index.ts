@@ -24,6 +24,7 @@ export {
 export {
   InDiv,
   ElementRef,
+  IMiddleware,
 } from './indiv';
 export {
   NvModule,
@@ -37,4 +38,3 @@ export {
   factoryCreator,
   injected,
 } from './di';
-export * from './types';

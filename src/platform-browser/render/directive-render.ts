@@ -1,12 +1,13 @@
 import { IDirective, DirectiveList, IComponent } from '../../types';
 
 import { Utils } from '../../utils';
-import { CompileUtilForRepeat } from '../compile';
+import { CompileUtilForRepeat, CompileUtil } from '../compile';
 import { buildDirectiveScope } from './render-utils';
 import { RenderTaskQueue } from './render-task-queue';
 
 const utils = new Utils();
 
+const compileUtil = new CompileUtil();
 /**
  * mountDirective for Directives in Component
  *
@@ -93,8 +94,8 @@ export function directivesConstructor<State = any, Props = any, Vm = any>(dom: E
       const key = valueList[0];
 
       // build props
-      if (vm.compileUtil.isFromState(vm.state, attrValue)) {
-        props = vm.compileUtil._getVMVal(vm.state, attrValue);
+      if (compileUtil.isFromState(vm.state, attrValue)) {
+        props = compileUtil._getVMVal(vm.state, attrValue);
       } else if (/^(\@.).*\(.*\)$/.test(attrValue)) {
         const utilVm = new CompileUtilForRepeat();
         const fn = utilVm._getVMFunction(vm, attrValue);
@@ -118,8 +119,8 @@ export function directivesConstructor<State = any, Props = any, Vm = any>(dom: E
         });
         const value = fn.apply(vm, argsList);
         props = value;
-      } else if (/^(\@.).*[^\(.*\)]$/g.test(attrValue)) props = vm.compileUtil._getVMVal(vm, attrValue.replace(/^(\@)/, ''));
-      else if (node.repeatData && node.repeatData[key] !== null) props = vm.compileUtil._getValueByValue(node.repeatData[key], attrValue, key);
+      } else if (/^(\@.).*[^\(.*\)]$/g.test(attrValue)) props = compileUtil._getVMVal(vm, attrValue.replace(/^(\@)/, ''));
+      else if (node.repeatData && node.repeatData[key] !== null) props = compileUtil._getValueByValue(node.repeatData[key], attrValue, key);
       else if (/^\'.*\'$/.test(attrValue)) props = attrValue.match(/^\'(.*)\'$/)[1];
       else if (!/^\'.*\'$/.test(attrValue) && /^[0-9]*$/.test(attrValue)) props = Number(attrValue);
       else if (attrValue === 'true' || attrValue === 'false') props = (attrValue === 'true');

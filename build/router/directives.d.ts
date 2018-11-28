@@ -1,7 +1,7 @@
 import { ElementRef } from '../indiv';
 import { OnInit, ReceiveProps, OnDestory } from '../lifecycle';
 import { NvLocation } from './location';
-import { RouteChange } from './index';
+import { RouteChange } from './router-module';
 /**
  * @Directive can be used as `router-to=""`
  *

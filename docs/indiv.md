@@ -5,18 +5,17 @@
 
 ## 公开方法
 
-1. `public use(modal: IMiddleware<InDiv>): number` InDiv实例调用 中间件 的入口，传入中间件实例，并将在方法中调用中间件实例的的方法 `bootstrap(indivInstance: InDiv)` 将 InDiv 实例传入中间件(将在中间件中详细讲解)。
+1. `public use(Middleware: Type<IMiddleware>): number` InDiv实例调用 中间件 的入口，传入实现了`IMiddleware`的类，InDiv 负责实例化中间件并将在调用中间件实例的的方法 `bootstrap(indivInstance: InDiv)` 将 InDiv 实例传入中间件(将在中间件中详细讲解)。
 
-2. `bootstrapModule(Esmodule: Function): void` InDiv实例启动引导 根模块app.module.ts 的入口。传入 根模块 并开始相关初始化。
+2. `bootstrapModule(Nvmodule: Function): void` InDiv实例启动引导 根模块app.module.ts 的入口。传入根模块并开始相关模块的初始化。
 
 3. `init(): void` 初始化 InDiv 应用，整个应用中的初始化方法。
 
-4. `renderComponent(BootstrapComponent: Function, renderDOM: Element, otherModule?: INvModule, otherInjector?: Injector): Promise<IComponent>` 渲染组件的公共方法，`RouteModule` 多次使用。
+4. `renderComponent(BootstrapComponent: Function, renderDOM: Element, otherModule?: INvModule): Promise<IComponent>` 渲染组件的公共方法，`RouteModule`中 多次使用。
 
   - `BootstrapComponent: Function` 需要实例化的组件类
   - `renderDOM: Element` 实例化的地方
-  - `otherModule?: INvModule` 如果来自非根组件，在这里指定
-  - `otherInjector?: Injector` 如果 IOC 容器不是 `rootInjector`，需要在此指定
+  - `otherModule?: INvModule` 如果来自非根模块，在这里指定，并使用`otherModule`的 IOC容器`injector` 去注入服务给组件
   - 返回 `Promise<IComponent>` 返回 promise 组件实例
 
 5. `setComponentRender<S = any, P = any, V = any>(render: () => Promise<IComponent<S, P, V>>, reRender?: () => Promise<IComponent<S, P, V>>): void` 重置 InDiv 组件渲染方法，该方法接收2个参数，第一个是渲染方法，第二个是重新渲染调用的方法。如果没有传第二个参数 `reRender`，则无论怎么渲染都将调用 `render`。该方法可用于 **跨平台渲染** 修改渲染方法。

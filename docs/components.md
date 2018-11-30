@@ -33,7 +33,7 @@ src
 > app.component.ts
 
 ```typescript
-import { Component } from 'indiv';
+import { Component } from '@indiv/core';
 
 @Component({
     selector: 'app-component',
@@ -55,7 +55,7 @@ export default class AppComponent {}
 > app.module.ts
 
 ```typescript
-import { NvModule } from 'indiv';
+import { NvModule } from '@indiv/core';
 import AppComponent from './app.component';
 
 @NvModule({
@@ -78,7 +78,7 @@ export default class AppModule {}
 > app.component.ts
 
 ```typescript
-import { Component } from 'indiv';
+import { Component } from '@indiv/core';
 
 @Component({
     selector: 'app-component',
@@ -100,7 +100,7 @@ export default class AppComponent {
 > app.component.ts
 
 ```typescript
-import { Component } from 'indiv';
+import { Component } from '@indiv/core';
 
 @Component({
     selector: 'app-component',
@@ -125,7 +125,7 @@ export default class AppComponent {
 > app.component.ts
 
 ```typescript
-import { Component, setState, SetState } from 'indiv';
+import { Component, setState, SetState } from '@indiv/core';
 
 @Component({
     selector: 'app-component',
@@ -177,7 +177,7 @@ export default class AppComponent {
 > components/show-age/show-age.component.ts
 
 ```typescript
-import { Component, setState, SetState, nvReceiveProps } from 'indiv';
+import { Component, setState, SetState, nvReceiveProps } from '@indiv/core';
 
 @Component({
     selector: 'show-age',
@@ -207,7 +207,7 @@ export default class ShowAgeComponent implements nvReceiveProps {
 > components/show-age/show-age.component.ts
 
 ```typescript
-import { Component, setState, SetState, nvReceiveProps } from 'indiv';
+import { Component, setState, SetState, nvReceiveProps } from '@indiv/core';
 
 @Component({
     selector: 'show-age',
@@ -242,7 +242,7 @@ export default class ShowAgeComponent implements nvReceiveProps {
 > app.component.ts
 
 ```typescript
-import { Component, setState, SetState } from 'indiv';
+import { Component, setState, SetState } from '@indiv/core';
 
 @Component({
     selector: 'app-component',

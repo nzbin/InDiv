@@ -32,7 +32,7 @@ src
 > app.module.ts
 
 ```typescript
-import { NvModule } from 'indiv';
+import { NvModule } from '@indiv/core';
 
 @NvModule({
   imports: [],
@@ -69,7 +69,7 @@ export default class AppModule {}
 > indiv/route/index.ts
 
 ```typescript
-import { NvModule} from 'indiv';
+import { NvModule} from '@indiv/core';
 import { NvLocation } from './location';
 import { RouterTo, RouterFrom, RouterActive } from './directives'
 

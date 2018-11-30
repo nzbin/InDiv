@@ -22,23 +22,16 @@
     "SSR"
   ],
   "scripts": {
-    "start": "parcel watch ./demo/index.ts -d dist & nodemon app.js",
+    "start": "rm -rf dist && webpack --watch --mode=development & nodemon app.js",
+    "start-docs": "docsify serve ./docs --port 2334",
     "start-ts": "parcel ./demo/index-ts.html -d dist --open",
     "start-js": "parcel ./demo/index.html -d dist --open",
-    "start-docs": "docsify serve ./docs --port 2334",
-    "build-v1": "rm -rf build && rollup --config rollup.typescript.config.js && rollup --config rollup.without-polyfill.config.js && rollup -c && rm -rf build/bundle.js && cp -r files/index.d.ts build/without-polyfill",
-    "pub-prod-v1": "npm run build && npm publish",
-    "clean": "rm -rf build && rm -rf node_modules/@indiv",
-    "build":
-      "npm run clean && npm run build:core && npm run build:platform-browser && npm run build:common && npm run build:router",
-    "build:core":
-      "rm -rf build/core && rm -rf node_modules/@indiv/core && rollup --config packages/core/rollup.typescript.config.js && rollup --config packages/core/rollup.config.js && rm -rf build/core/bundle.js && cp -r build node_modules/@indiv",
-    "build:platform-browser":
-      "rm -rf build/platform-browser && rm -rf node_modules/@indiv/platform-browser && rollup --config packages/platform-browser/rollup.typescript.config.js && rollup --config packages/platform-browser/rollup.config.js && rm -rf build/platform-browser/bundle.js && cp -r ./build/* node_modules/@indiv",
-    "build:common":
-      "rm -rf build/common && rm -rf node_modules/@indiv/common && rollup --config packages/common/rollup.typescript.config.js && rollup --config packages/common/rollup.config.js && rm -rf build/common/bundle.js && cp -r ./build/* node_modules/@indiv",
-    "build:router":
-      "rm -rf build/router && rm -rf node_modules/@indiv/router && rollup --config packages/router/rollup.typescript.config.js && rollup --config packages/router/rollup.config.js && rm -rf build/router/bundle.js && cp -r ./build/* node_modules/@indiv"
+    "clean": "rm -rf build",
+    "build": "npm run clean && npm run build:core && npm run build:platform-browser && npm run build:common && npm run build:router",
+    "build:core": "rm -rf build/core && rollup --config packages/core/rollup.typescript.config.js && rollup --config packages/core/rollup.config.js && rm -rf build/core/bundle.js",
+    "build:platform-browser": "rm -rf build/platform-browser && rollup --config packages/platform-browser/rollup.typescript.config.js && rollup --config packages/platform-browser/rollup.config.js && rm -rf build/platform-browser/bundle.js",
+    "build:common": "rm -rf build/common && rollup --config packages/common/rollup.typescript.config.js && rollup --config packages/common/rollup.config.js && rm -rf build/common/bundle.js && rm -rf build/platform-browser/bundle.js",
+    "build:router": "rm -rf build/router && rollup --config packages/router/rollup.typescript.config.js && rollup --config packages/router/rollup.config.js && rm -rf build/router/bundle.js"
   },
   "repository": {
     "type": "git",
@@ -52,9 +45,14 @@
   "homepage": "https://github.com/DimaLiLongJi/InDiv#readme",
   "devDependencies": {
     "@babel/core": "^7.1.2",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
     "@babel/plugin-transform-runtime": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
+    "awesome-typescript-loader": "^5.2.1",
     "babel-eslint": "^8.2.0",
+    "babel-loader": "^8.0.4",
+    "babel-plugin-dynamic-import-webpack": "^1.1.0",
+    "css-loader": "^1.0.1",
     "ejs": "^2.6.1",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^11.1.1",
@@ -64,17 +62,22 @@
     "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-react": "^7.5.1",
     "express": "^4.16.3",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "lerna": "^3.5.0",
+    "less-loader": "^4.1.0",
     "nodemon": "^1.17.5",
-    "parcel-bundler": "1.9.7",
+    "parcel-bundler": "^1.10.3",
     "rollup": "^0.66.6",
     "rollup-plugin-babel": "^4.0.3",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-typescript2": "^0.17.1",
     "rollup-plugin-uglify": "^6.0.0",
+    "style-loader": "^0.23.1",
     "tslint": "^5.11.0",
-    "typescript": "^3.1.3"
+    "typescript": "^3.1.3",
+    "webpack": "^4.26.1",
+    "webpack-cli": "^3.1.2"
   },
   "dependencies": {
     "@babel/runtime-corejs2": "^7.1.2",

@@ -12,15 +12,29 @@
 
  请确保您的操作系统上安装了 [Node.js](http://nodejs.cn/download/)（> = 6.11.0）。
 
-## 建立
+## 开始
 
 只要确保你已经安装了 npm，然后在你的 OS 终端中使用以下命令：
 
-
 ```
-$ npm i --save indiv
+$ npm i --save @indiv/core @indiv/common @indiv/platform-browser @indiv/router
 ```
 
+关于 `@indiv/core` `@indiv/common` `@indiv/platform-browser` `@indiv/router` 等npm包，
+
+在 InDiv v2.0.0 开始，将使用分包代替原来的 `indiv` npm包，因此 npm包`indiv` 最高的版本号只到 v1.2.1。
+
+而新的分包 `@indiv/core` `@indiv/common` `@indiv/platform-browser` `@indiv/router` 为保持版本号统一将从 v2.0.0 开始迭代。
+
+关于新的包：
+
+  1. `@indiv/core` InDiv 核心，几乎所有基本都来自该包的导出
+  2. `@indiv/common` InDiv 提供的一些普通组件指令服务模块等，目前仅含有 `HttpClient`
+  3. `@indiv/platform-browser` InDiv 的 render 方法，compile类及一些浏览器平台核心特性，`InDiv`实例需要使用该包的 `PlatformBrowser` 中间件完成一个浏览器应用的初始化
+  4. `@indiv/router` InDiv 路由，提供基础的 `RouteModule`模块，`NvLocation`服务，和其他一些组件指令
+
+
+## 建立
 
  项目的`src` 目录中应该包含几个核心文件。
 
@@ -50,15 +64,22 @@ src
 > main.ts
 
 ```typescript
-import { InDiv } from 'indiv';
+import { InDiv } from from '@indiv/core';
+import { PlatformBrowser } from '@indiv/platform-browser';
 
 import RootModule from './modules';
 
 const inDiv = new InDiv();
 inDiv.bootstrapModule(RootModule);
+inDiv.use(PlatformBrowser);
 inDiv.init();
 ```
 
 
+要创建一个 InDiv 应用实例，我们使用了 `bootstrapModule`  和 `init`。
+ 
+`bootstrapModule(RootModule)` 方法引导了根模块创建。
+ 
+`use()` 方法实例中间件，比如实现一个浏览器应用，我们必须实现`PlatformBrowser`这个中间件。
 
- 要创建一个 InDiv 应用实例，我们使用了 `bootstrapModule`  和 `init`。 `bootstrapModule(RootModule)` 方法引导了根模块创建, `init()` 将在创建完根模块之后初始化整个应用并将组件渲染到页面中，在后面的章节中将对此进行详细描述。
+`init()` 将在创建完根模块之后初始化整个应用并将组件渲染到页面中，在后面的章节中将对此进行详细描述。

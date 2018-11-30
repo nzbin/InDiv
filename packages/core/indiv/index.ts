@@ -135,14 +135,14 @@ export class InDiv {
    * 
    * if not use Route it will be used
    *
-   * @param {Function} Esmodule
+   * @param {Function} Nvmodule
    * @returns {void}
    * @memberof InDiv
    */
-  public bootstrapModule(Esmodule: Function): void {
-    if (!Esmodule) throw new Error('must send a root module');
+  public bootstrapModule(Nvmodule: Function): void {
+    if (!Nvmodule) throw new Error('must send a root module');
 
-    this.$rootModule = factoryModule(Esmodule, null, this);
+    this.$rootModule = factoryModule(Nvmodule, null, this);
     this.$declarations = [...this.$rootModule.$declarations];
   }
 

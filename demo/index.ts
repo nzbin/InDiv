@@ -2,6 +2,10 @@ import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, Aft
 import { RouteChange, NvLocation, RouteModule } from '@indiv/router';
 import { PlatformBrowser } from '@indiv/platform-browser';
 import { HttpClient, HttpClientResponse } from '@indiv/common';
+// import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, ReceiveProps, SetState, OnDestory, setState, ElementRef } from '../packages/core';
+// import { RouteChange, NvLocation, RouteModule } from '../packages/router';
+// import { PlatformBrowser } from '../packages/platform-browser';
+// import { HttpClient, HttpClientResponse } from '../packages/common';
 // import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, SetState, OnDestory, setState, NvLocation, RouteModule, HttpClient, ElementRef, HttpClientResponse, PlatformBrowser } from '../src';
 // import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, SetState, OnDestory, setState, NvLocation, RouteModule, HttpClient, ElementRef, HttpClientResponse, PlatformBrowser } from '../build';
 
@@ -11,7 +15,7 @@ import { SharedModule } from './share.module';
 import { HeroSearchService, HeroSearchService1, HeroSearchService2 } from './service';
 import { PrivateService } from './private.service';
 
-class ValueType {}
+class ValueType { }
 
 @Component({
   selector: 'pc-component',
@@ -268,7 +272,7 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
   ) {
     console.log(55544333, this.indiv, this.element);
     this.httpClient.get('/success').subscribe({
-      next: (value: any) => {console.log(4444, value); },
+      next: (value: any) => { console.log(4444, value); },
     });
   }
 
@@ -341,7 +345,8 @@ class Container implements OnInit, AfterMount, WatchState {
     this.httpClient.createResponseInterceptor((value: HttpClientResponse) => {
       return {
         data: value.data,
-      }; });
+      };
+    });
     this.http$ = this.httpClient.get('/success');
     this.http$.subscribe({
       next: this.httpHandler,
@@ -525,7 +530,7 @@ class Container implements OnInit, AfterMount, WatchState {
   ],
 })
 class M2 {
-  constructor (
+  constructor(
     private indiv: InDiv,
   ) {
     console.log(99999988866666, '来自注入的模块 M2', this.indiv);
@@ -549,7 +554,7 @@ class M2 {
   bootstrap: Container,
 })
 class M1 {
-  constructor (
+  constructor(
     private hsr: HeroSearchService,
     private indiv: InDiv,
   ) {

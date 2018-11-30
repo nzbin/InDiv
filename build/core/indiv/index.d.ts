@@ -93,11 +93,11 @@ export declare class InDiv {
      *
      * if not use Route it will be used
      *
-     * @param {Function} Esmodule
+     * @param {Function} Nvmodule
      * @returns {void}
      * @memberof InDiv
      */
-    bootstrapModule(Esmodule: Function): void;
+    bootstrapModule(Nvmodule: Function): void;
     /**
      * init InDiv and renderModuleBootstrap()
      *

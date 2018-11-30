@@ -1,6 +1,8 @@
-import { HeroSearchService, HeroSearchService2 } from './service';
 import { InDiv, Component, NvModule, HasRender, OnInit, BeforeMount, AfterMount, ReceiveProps, SetState, OnDestory, setState, Directive, ElementRef } from '@indiv/core';
 import { RouteChange, RouteModule, TRouter } from '@indiv/router'; 
+// import { InDiv, Component, NvModule, HasRender, OnInit, BeforeMount, AfterMount, ReceiveProps, SetState, OnDestory, setState, Directive, ElementRef } from '../packages/core';
+// import { RouteChange, RouteModule, TRouter } from '../packages/router'; 
+import { HeroSearchService, HeroSearchService2 } from './service';
 
 interface Props {
   a: number;

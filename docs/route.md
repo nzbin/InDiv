@@ -24,7 +24,8 @@ InDiv 2.0.0+ 开始使用 NvModule 重构路由系统。
 > app.module.ts
 
 ```typescript
-import { NvModule, TRouter, RouteModule } from 'indiv';
+import { NvModule } from '@indiv/core';
+import { RouteModule, TRouter } from '@indiv/router';
 import AppComponent from './app.component';
 import ShowAgeComponent from './components/show-age/show-age.component';
 import ChangeColorDirective from './directives/change-color.directive';
@@ -82,7 +83,7 @@ export default class AppModule {}
 > components/page-a/page-a.component.ts
 
 ```typescript
-import { Component, setState, SetState, nvReceiveProps } from 'indiv';
+import { Component, setState, SetState, nvReceiveProps } from '@indiv/core';
 
 @Component({
     selector: 'page-a',
@@ -94,7 +95,8 @@ export default class PageAComponent {}
 > app.module.ts
 
 ```typescript
-import { NvModule, TRouter, RouteModule } from 'indiv';
+import { NvModule } from '@indiv/core';
+import { RouteModule, TRouter } from '@indiv/router';
 import AppComponent from './app.component';
 import ShowAgeComponent from './components/show-age/show-age.component';
 import ChangeColorDirective from './directives/change-color.directive';
@@ -140,7 +142,7 @@ export default class AppModule {}
 > app.component.ts
 
 ```typescript
-import { Component, setState, SetState } from 'indiv';
+import { Component, setState, SetState } from '@indiv/core';
 import TestService from './provides/test.service';
 
 @Component({
@@ -205,7 +207,8 @@ interface NvLocation {
 > app.component.ts
 
 ```typescript
-import { Component, setState, SetState, NvLocation } from 'indiv';
+import { Component, setState, SetState } from '@indiv/core';
+import { NvLocation } from '@indiv/router';
 import TestService from './provides/test.service';
 
 @Component({
@@ -258,7 +261,7 @@ export default class AppComponent {
 > app.component.ts
 
 ```typescript
-import { Component, setState, SetState } from 'indiv';
+import { Component, setState, SetState } from '@indiv/core';
 import TestService from './provides/test.service';
 
 @Component({
@@ -320,7 +323,8 @@ export default class AppComponent {
 > app.module.ts
 
 ```typescript
-import { NvModule, TRouter, RouteModule } from 'indiv';
+import { NvModule } from '@indiv/core';
+import { RouteModule, TRouter } from '@indiv/router';
 import AppComponent from './app.component';
 import ShowAgeComponent from './components/show-age/show-age.component';
 import ChangeColorDirective from './directives/change-color.directive';
@@ -369,7 +373,7 @@ export default class AppModule {}
 > modules/page-a/page-a.lazy.module.ts
 
 ```typescript
-import { NvModule } from 'indiv';
+import { NvModule } from '@indiv/core';
 import PageAComponent from '../../components/page-a/page-a.component';
 
 @NvModule({
@@ -386,7 +390,8 @@ export default class PageALazyModule {}
 > app.module.ts
 
 ```typescript
-import { NvModule, TRouter, RouteModule } from 'indiv';
+import { NvModule } from '@indiv/core';
+import { TRouter, RouteModule } from '@indiv/router';
 import AppComponent from './app.component';
 import ShowAgeComponent from './components/show-age/show-age.component';
 import ChangeColorDirective from './directives/change-color.directive';

@@ -38,7 +38,7 @@ src
 > directives/change-color.directive.ts
 
 ```typescript
-import { Directive, ElementRef } from 'indiv';
+import { Directive, ElementRef } from '@indiv/core';
 
 @Directive({
     selector: 'change-color',
@@ -67,7 +67,7 @@ export default class ChangeColorDirective {
 > app.module.ts
 
 ```typescript
-import { NvModule } from 'indiv';
+import { NvModule } from '@indiv/core';
 import AppComponent from './app.component';
 import ShowAgeComponent from './components/show-age/show-age.component';
 import ChangeColorDirective from './directives/change-color.directive';
@@ -87,7 +87,7 @@ export default class AppModule {}
 > app.component.ts
 
 ```typescript
-import { Component, setState, SetState } from 'indiv';
+import { Component, setState, SetState } from '@indiv/core';
 
 @Component({
     selector: 'app-component',
@@ -134,7 +134,7 @@ export default class AppComponent {
 > directives/change-color.directive.ts
 
 ```typescript
-import { Directive, ElementRef, ReceiveProps } from 'indiv';
+import { Directive, ElementRef, ReceiveProps } from '@indiv/core';
 
 @Directive({
     selector: 'change-color',
@@ -166,7 +166,7 @@ export default class ChangeColorDirective implements ReceiveProps {
 > app.component.ts
 
 ```typescript
-import { Component, setState, SetState } from 'indiv';
+import { Component, setState, SetState } from '@indiv/core';
 
 @Component({
     selector: 'app-component',

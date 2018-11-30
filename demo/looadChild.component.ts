@@ -1,4 +1,5 @@
 import { Component, ElementRef, InDiv } from '@indiv/core';
+// import { Component, ElementRef, InDiv } from '../packages/core';
 // import { Component, ElementRef, InDiv } from '../build';
 
 import { HeroSearchService } from './service';

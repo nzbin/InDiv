@@ -1,4 +1,5 @@
 import { NvModule, InDiv } from '@indiv/core';
+// import { NvModule, InDiv } from '../packages/core';
 // import { NvModule, InDiv } from '../build';
 
 import { HeroSearchService, HeroSearchService1, HeroSearchService2 } from './service';

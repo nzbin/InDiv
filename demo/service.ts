@@ -1,4 +1,5 @@
 import { Injectable, InDiv } from '@indiv/core';
+// import { Injectable, InDiv } from '../packages/core';
 
 @Injectable()
 export class HeroSearchService1 {

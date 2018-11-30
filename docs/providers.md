@@ -53,7 +53,7 @@ Injectable 符号，并且给服务类添加了 @Injectable() 装饰器。 它�
 > providers/test.service.ts
 
 ```typescript
-import { Injectable } from 'indiv';
+import { Injectable } from '@indiv/core';
 
 @Injectable()
 export class TestService {
@@ -72,7 +72,7 @@ export class TestService {
 > app.module.ts
 
 ```typescript
-import { NvModule } from 'indiv';
+import { NvModule } from '@indiv/core';
 import AppComponent from './app.component';
 import ShowAgeComponent from './components/show-age/show-age.component';
 import ChangeColorDirective from './directives/change-color.directive';
@@ -91,7 +91,7 @@ export default class AppModule {}
 > app.component.ts
 
 ```typescript
-import { Component, setState, SetState } from 'indiv';
+import { Component, setState, SetState } from '@indiv/core';
 import TestService from './provides/test.service';
 
 @Component({
@@ -144,7 +144,7 @@ export default class AppComponent {
 > components/show-age/show-age.component.ts
 
 ```typescript
-import { Component, setState, SetState, nvReceiveProps } from 'indiv';
+import { Component, setState, SetState, nvReceiveProps } from '@indiv/core';
 import TestService from '../provides/test.service';
 
 @Component({
@@ -195,7 +195,7 @@ DI 令牌一种用来查阅的令牌，它关联到一个依赖提供商，用�
 > app.module.ts
 
 ```typescript
-import { NvModule } from 'indiv';
+import { NvModule } from '@indiv/core';
 import AppComponent from './app.component';
 import ShowAgeComponent from './components/show-age/show-age.component';
 import ChangeColorDirective from './directives/change-color.directive';
@@ -239,7 +239,7 @@ constructor(private testService: TestService)
 > components/show-age/show-age.component.ts
 
 ```javascript
-import { Component } from 'indiv';
+import { Component } from '@indiv/core';
 import TestService from '../provides/test.service';
 
 @Component({

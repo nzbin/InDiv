@@ -8,7 +8,7 @@ import pkg from './package.json'
 export default {
   input: 'build/common/bundle.js',
   output: [{
-    file: pkg.main,
+    file: 'build/common/index.js',
     format: 'cjs',
     exports: 'named',
   }, ],

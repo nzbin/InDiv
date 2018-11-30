@@ -1,6 +1,5 @@
 import { NvModule, InDiv } from '@indiv/core';
-// import { NvModule, InDiv } from '../packages/core';
-// import { NvModule, InDiv } from '../build';
+// import { NvModule, InDiv } from '../build/core';
 
 import { HeroSearchService, HeroSearchService1, HeroSearchService2 } from './service';
 import { SharedModule } from './share.module';

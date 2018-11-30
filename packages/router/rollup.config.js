@@ -8,7 +8,7 @@ import pkg from './package.json'
 export default {
   input: 'build/router/bundle.js',
   output: [{
-    file: pkg.main,
+    file: 'build/router/index.js',
     format: 'cjs',
     exports: 'named',
   }, ],

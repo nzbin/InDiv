@@ -150,7 +150,7 @@ export class RouteModule {
       else path = location.pathname.replace(nvRouteStatus.nvRootPath, '') === '' ? '/' : location.pathname.replace(nvRouteStatus.nvRootPath, '');
       nvRouteStatus.nvRouteObject = {
         path,
-        query: {},
+        query: utils.buildObjectFromLocationSearch(),
         data: null,
       };
       nvRouteStatus.nvRouteParmasObject = {};

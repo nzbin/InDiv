@@ -1,5 +1,5 @@
 import { Injectable } from '@indiv/core';
-// import { Injectable } from '../packages/core';
+// import { Injectable } from '../build/core';
 import { SharedModule } from './share.module';
 
 @Injectable({

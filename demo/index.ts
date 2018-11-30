@@ -2,12 +2,11 @@ import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, Aft
 import { RouteChange, NvLocation, RouteModule } from '@indiv/router';
 import { PlatformBrowser } from '@indiv/platform-browser';
 import { HttpClient, HttpClientResponse } from '@indiv/common';
-// import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, ReceiveProps, SetState, OnDestory, setState, ElementRef } from '../packages/core';
-// import { RouteChange, NvLocation, RouteModule } from '../packages/router';
-// import { PlatformBrowser } from '../packages/platform-browser';
-// import { HttpClient, HttpClientResponse } from '../packages/common';
-// import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, SetState, OnDestory, setState, NvLocation, RouteModule, HttpClient, ElementRef, HttpClientResponse, PlatformBrowser } from '../src';
-// import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, RouteChange, ReceiveProps, SetState, OnDestory, setState, NvLocation, RouteModule, HttpClient, ElementRef, HttpClientResponse, PlatformBrowser } from '../build';
+// import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, ReceiveProps, SetState, OnDestory, setState, ElementRef } from '../build/core';
+// import { RouteChange, NvLocation, RouteModule } from '../build/router';
+// import { PlatformBrowser } from '../build/platform-browser';
+// import { HttpClient, HttpClientResponse } from '../build/common';
+
 
 import { Observable } from 'rxjs';
 

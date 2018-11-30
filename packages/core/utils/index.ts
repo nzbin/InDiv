@@ -90,6 +90,22 @@ export class Utils {
   }
 
   /**
+   * build object by location.search
+   *
+   * @returns
+   * @memberof Utils
+   */
+  public buildObjectFromLocationSearch() {
+    if (!location.search) return {};
+    const returnValue: any = {};
+    const queryList = location.search.split('?')[1].split('&');
+    queryList.forEach(query => {
+      returnValue[query.split('=')[0]] = query.split('=')[1];
+    });
+    return returnValue;
+  }
+
+  /**
    * judge something is Function or not
    *
    * @param {*} func

@@ -78,7 +78,7 @@ export class RouterTo implements OnInit, ReceiveProps, RouteChange, OnDestory {
 @Directive({
   selector: 'router-from',
 })
-export class RouterFrom implements OnInit, ReceiveProps {
+export class RouterFrom implements OnInit, ReceiveProps, OnDestory {
   private props: string;
 
   constructor(private element: ElementRef) {}
@@ -89,6 +89,10 @@ export class RouterFrom implements OnInit, ReceiveProps {
 
   public nvReceiveProps(nextProps: string) {
     this.element.setAttribute('router-link-from', nextProps);
+  }
+
+  public nvOnDestory() {
+    this.element.removeAttribute('router-link-from');
   }
 }
 
@@ -103,17 +107,31 @@ export class RouterFrom implements OnInit, ReceiveProps {
 @Directive({
   selector: 'router-active',
 })
-export class RouterActive implements OnInit, ReceiveProps {
+export class RouterActive implements OnInit, ReceiveProps, OnDestory {
   private props: string;
-
+  // todo 不知道怎么用
   constructor(private element: ElementRef) {}
 
   public nvOnInit() {
     this.element.setAttribute('router-link-active', this.props);
+    this.setActive(this.props);
   }
 
   public nvReceiveProps(nextProps: string) {
     this.element.setAttribute('router-link-active', nextProps);
+    this.setActive(nextProps);
+  }
+
+  public nvRouteChange(lastRoute?: string, newRoute?: string) {
+    this.setActive(this.props);
+  }
+
+  public nvOnDestory() {
+    this.element.removeAttribute('router-link-active');
+  }
+
+  public setActive(props: string) {
+
   }
 }
 

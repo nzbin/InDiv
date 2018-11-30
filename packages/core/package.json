@@ -2,10 +2,10 @@
   "name": "@indiv/core",
   "version": "0.0.0",
   "description": "一个 web mvvm 库。A web mvvm library.",
-  "main": "build/core/index.js",
-  "types": "build/core/index.d.ts",
+  "main": "../../build/core/index.js",
+  "types": "../../build/core/index.d.ts",
   "files": [
-    "build/core"
+    "../../build/core"
   ],
   "keywords": [
     "mvvm",

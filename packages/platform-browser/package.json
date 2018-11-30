@@ -2,10 +2,10 @@
   "name": "@indiv/platform-browser",
   "version": "0.0.0",
   "description": "一个 web mvvm 库。A web mvvm library.",
-  "main": "build/platform-browser/index.js",
-  "types": "build/platform-browser/index.d.ts",
+  "main": "../../build/platform-browser/index.js",
+  "types": "../../build/platform-browser/index.d.ts",
   "files": [
-    "build/platform-browser"
+    "../../build/platform-browser"
   ],
   "keywords": [
     "mvvm",

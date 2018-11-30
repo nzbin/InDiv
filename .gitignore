@@ -4,6 +4,7 @@
 /dist
 /tmp
 /out-tsc
+/build/*
 .cache
 .rpt2_cache
 

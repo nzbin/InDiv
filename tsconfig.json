@@ -2,8 +2,8 @@
   "compileOnSave": false,
   "buildOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
-    "outDir": "dist",
+    "baseUrl": ".",
+    "outDir": "build",
     "module": "esNext",
     "moduleResolution": "node",
     "target": "es5",

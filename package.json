@@ -28,10 +28,10 @@
     "start-js": "parcel ./demo/index.html -d dist --open",
     "clean": "rm -rf build",
     "build": "npm run clean && npm run build:core && npm run build:platform-browser && npm run build:common && npm run build:router",
-    "build:core": "rm -rf build/core && rollup --config packages/core/rollup.typescript.config.js && rollup --config packages/core/rollup.config.js && rm -rf build/core/bundle.js",
-    "build:platform-browser": "rm -rf build/platform-browser && rollup --config packages/platform-browser/rollup.typescript.config.js && rollup --config packages/platform-browser/rollup.config.js && rm -rf build/platform-browser/bundle.js",
-    "build:common": "rm -rf build/common && rollup --config packages/common/rollup.typescript.config.js && rollup --config packages/common/rollup.config.js && rm -rf build/common/bundle.js && rm -rf build/platform-browser/bundle.js",
-    "build:router": "rm -rf build/router && rollup --config packages/router/rollup.typescript.config.js && rollup --config packages/router/rollup.config.js && rm -rf build/router/bundle.js"
+    "build:core": "rm -rf build/core && rollup --config packages/core/rollup.typescript.config.js && rollup --config packages/core/rollup.config.js && rm -rf build/core/bundle.js && cp -r build node_modules/@indiv",
+    "build:platform-browser": "rm -rf build/platform-browser && rollup --config packages/platform-browser/rollup.typescript.config.js && rollup --config packages/platform-browser/rollup.config.js && rm -rf build/platform-browser/bundle.js && cp -r build/* node_modules/@indiv",
+    "build:common": "rm -rf build/common && rollup --config packages/common/rollup.typescript.config.js && rollup --config packages/common/rollup.config.js && rm -rf build/common/bundle.js && rm -rf build/platform-browser/bundle.js && cp -r build/* node_modules/@indiv",
+    "build:router": "rm -rf build/router && rollup --config packages/router/rollup.typescript.config.js && rollup --config packages/router/rollup.config.js && rm -rf build/router/bundle.js && cp -r build/* node_modules/@indiv"
   },
   "repository": {
     "type": "git",

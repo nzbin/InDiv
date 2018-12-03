@@ -34,7 +34,7 @@ export function buildProps<State = any, Props = any, Vm = any>(prop: any, vm: IC
   if (utils.isFunction(prop)) {
     return prop.bind(vm);
   } else {
-    return prop;
+    return JSON.parse(JSON.stringify(prop));
   }
 }
 

@@ -4,7 +4,7 @@ import { Watcher } from '../watcher';
 import { Utils } from '../utils';
 import { injected, Injector } from '../di';
 
-type TComponentOptions = {
+export type TComponentOptions = {
   selector: string;
   template: string;
   providers?: (Function | TUseClassProvider | TUseValueProvider)[];

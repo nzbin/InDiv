@@ -4,7 +4,7 @@
  * methods: push, find, get
  *
  * @export
- * @class IOCContainer
+ * @class Injector
  */
 export class Injector {
   private readonly providerMap: Map<any, any> = new Map();

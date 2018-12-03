@@ -10,8 +10,6 @@ export type ComponentList<C> = {
     hasRender: boolean;
 };
 
-export type SetState = (newState: any) => void;
-
 export interface IComponent<State = any, Props = any, Vm = any> {
     state?: State | any;
     props?: Props | any;

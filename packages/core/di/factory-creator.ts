@@ -1,7 +1,7 @@
 import { rootInjector, Injector } from './injector';
 
 /**
- * injector: build arguments for factoryCreator
+ * injectionCreator: build arguments for factoryCreator
  * 
  * 1. provider constructor's providers
  * 2. provider rootInjector
@@ -19,7 +19,7 @@ import { rootInjector, Injector } from './injector';
  * @param {Map<any, any>} [provideAndInstanceMap]
  * @returns {any[]}
  */
-export function inject(_constructor: Function, otherInjector?: Injector, provideAndInstanceMap?: Map<any, any>): any[] {
+export function injectionCreator(_constructor: Function, otherInjector?: Injector, provideAndInstanceMap?: Map<any, any>): any[] {
     const args: any[] = [];
 
     let _needInjectedClass: any[] = [];
@@ -78,6 +78,8 @@ export function inject(_constructor: Function, otherInjector?: Injector, provide
 
 /**
  * create an instance with factory method
+ * 
+ * use injectedServiceCreator to create arguments from Injector
  *
  * @export
  * @template K
@@ -88,7 +90,7 @@ export function inject(_constructor: Function, otherInjector?: Injector, provide
  * @returns {*}
  */
 export function factoryCreator<K = any, V = any>(_constructor: Function, otherInjector?: Injector, provideAndInstanceMap?: Map<K, V>): any {
-    const args = inject(_constructor, otherInjector, provideAndInstanceMap);
-    const factoryInstance = Reflect.construct(_constructor, args);
+    const args = injectionCreator(_constructor, otherInjector, provideAndInstanceMap);
+    const factoryInstance = new (_constructor as any)(...args);
     return factoryInstance;
 }

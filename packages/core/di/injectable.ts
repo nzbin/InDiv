@@ -6,7 +6,7 @@ interface Type<T = any> extends Function {
   new (...args: any[]): T;
 }
 
-type TInjectableOptions = {
+export type TInjectableOptions = {
   isSingletonMode?: boolean;
   providedIn?: Type<any> | 'root' | null;
 };

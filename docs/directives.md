@@ -214,7 +214,7 @@ export default class AppComponent {
 生命周期钩子其实就是定义在实例中的一些方法，在 InDiv 中，通过不同的时刻调用不同的生命周期钩子，赋予你在它们发生时采取行动的能力。
 在 TypeScript 中，引用 InDiv 提供的 interface，通过 implements 的方式让类去实现被预先定义好的生命周期，而在 JavaScript 中，你只能自己手动去定义应该实现的生命周期方法。
 
-之前我们已经通过认识 `props` 认识了 `nvReceiveProps` 的生命周期，而下面将介绍其他生命周期钩子。
+之前我们已经通过认识 <a href="#/components?id=组件通信-props-与-actions" target="_blank">`props`</a> 认识了 `nvReceiveProps` 的生命周期，而下面将介绍其他生命周期钩子。
 
 * `constructor` 在类被实例化的时候回触发，你可以在这里预先定义你的 state
 * `nvOnInit(): void;` constructor 之后，在这个生命周期中，可以通过 this.props 获取 props，并定义 state，此生命周期会在开启监听前被触发，并且之后再也不会触发

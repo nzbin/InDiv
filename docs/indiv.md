@@ -5,7 +5,7 @@
 
 ## 公开方法
 
-1. `public use(Middleware: Type<IMiddleware>): number` InDiv实例调用 中间件 的入口，传入实现了`IMiddleware`的类，InDiv 负责实例化中间件并将在调用中间件实例的的方法 `bootstrap(indivInstance: InDiv)` 将 InDiv 实例传入中间件(将在中间件中详细讲解)。
+1. `public use(Plugin: Type<IPlugin>): number` InDiv实例调用 插件 的入口，传入实现了`IPlugin`的类，InDiv 负责实例化插件并将在调用插件实例的的方法 `bootstrap(indivInstance: InDiv)` 将 InDiv 实例传入插件(将在插件中详细讲解)。
 
 2. `bootstrapModule(Nvmodule: Function): void` InDiv实例启动引导 根模块app.module.ts 的入口。传入根模块并开始相关模块的初始化。
 

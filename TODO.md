@@ -31,3 +31,7 @@
 - [ ] @indiv/cli
 - [x] Injectable provideIn
 - [x] module: @indiv/core @indiv/common @indiv/router @indiv/platform-browser
+- [ ] support Pipe
+- [ ] props deep copy
+- [ ] 注入器冒泡至父组件注入器
+- [ ] remove DOM api in @indiv/core

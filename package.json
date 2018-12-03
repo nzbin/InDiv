@@ -22,11 +22,9 @@
     "SSR"
   ],
   "scripts": {
-    "start": "rm -rf dist node_modules/@indiv && webpack --watch --mode=development & nodemon app.js",
-    "start-docs": "docsify serve ./docs --port 2334",
-    "start-ts": "parcel ./demo/index-ts.html -d dist --open",
-    "start-js": "parcel ./demo/index.html -d dist --open",
-    "clean": "rm -rf build",
+    "start": "npm run clean && webpack --watch --mode=development & nodemon app.js",
+    "start:docs": "docsify serve ./docs --port 2334",
+    "clean": "rm -rf build dist .rpt2_cache",
     "build": "npm run clean && npm run build:core && npm run build:platform-browser && npm run build:common && npm run build:router",
     "build:core": "rm -rf build/core && rollup --config packages/core/rollup.typescript.config.js && rollup --config packages/core/rollup.config.js && rm -rf build/core/bundle.js",
     "build:platform-browser": "rm -rf build/platform-browser && rollup --config packages/platform-browser/rollup.typescript.config.js && rollup --config packages/platform-browser/rollup.config.js && rm -rf build/platform-browser/bundle.js",
@@ -66,7 +64,6 @@
     "lerna": "^3.5.0",
     "less-loader": "^4.1.0",
     "nodemon": "^1.17.5",
-    "parcel-bundler": "^1.10.3",
     "rollup": "^0.66.6",
     "rollup-plugin-babel": "^4.0.3",
     "rollup-plugin-commonjs": "^9.2.0",

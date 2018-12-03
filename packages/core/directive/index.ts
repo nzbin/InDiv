@@ -2,7 +2,7 @@ import { IDirective, TInjectTokenProvider, TUseClassProvider, TUseValueProvider 
 
 import { injected, Injector } from '../di';
 
-type TDirectiveOptions = {
+export type TDirectiveOptions = {
   selector: string;
   providers?: (Function | TUseClassProvider | TUseValueProvider)[];
 };

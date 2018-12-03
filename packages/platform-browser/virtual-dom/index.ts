@@ -1,3 +1,3 @@
-export { parseToVnode, Vnode, IPatchList, TAttributes } from './parse';
-export { diffVnode } from './diff';
-export { renderVnode } from './render';
+export * from './parse';
+export * from './diff';
+export * from './render';

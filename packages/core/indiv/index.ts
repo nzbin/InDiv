@@ -10,7 +10,7 @@ interface Type<T = any> extends Function {
   new (...args: any[]): T;
 }
 
-export interface IMiddleware {
+export interface IPlugin {
   bootstrap(vm: InDiv): void;
 }
 
@@ -22,7 +22,7 @@ const utils = new Utils();
  * @class InDiv
  */
 export class InDiv {
-  private readonly middlewareList: IMiddleware[] = [];
+  private readonly pluginList: IPlugin[] = [];
   private readonly rootDom: Element;
   private $routeDOMKey: string = 'router-render';
   private $rootModule: INvModule = null;
@@ -33,21 +33,22 @@ export class InDiv {
 
   constructor() {
     if (!utils.isBrowser()) return;
+    // todo remove DOM api
     this.rootDom = document.querySelector('#root');
   }
 
   /**
-   * for using middleware and use bootstrap method of middleware
+   * for using plugin class, use bootstrap method of plugin instance and return plugin's id in this.pluginList
    *
-   * @param {Type<IMiddleware>} Modal
+   * @param {Type<IPlugin>} Modal
    * @returns {number}
    * @memberof InDiv
    */
-  public use(Middleware: Type<IMiddleware>): number {
-    const newMiddleware = new Middleware();
-    newMiddleware.bootstrap(this);
-    this.middlewareList.push(newMiddleware);
-    return this.middlewareList.length - 1;
+  public use(Plugin: Type<IPlugin>): number {
+    const newPlugin = new Plugin();
+    newPlugin.bootstrap(this);
+    this.pluginList.push(newPlugin);
+    return this.pluginList.length - 1;
   }
   
 /**
@@ -156,7 +157,7 @@ export class InDiv {
     if (!utils.isBrowser()) return;
 
     if (!this.$rootModule) throw new Error('must use bootstrapModule to declare a root NvModule before init');
-    if (!this.render) throw new Error('must use middleware to set a render in InDiv!');
+    if (!this.render) throw new Error('must use plugin of platform to set a render in InDiv!');
     this.renderModuleBootstrap();
   }
 

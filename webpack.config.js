@@ -3,12 +3,9 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
-  // devServer: {
-  //   contentBase: './demo'
-  // },
-
   entry: {
     'app': './demo/index.ts',
+    // 'app-js': './demo/index.js',
   },
 
   output: {

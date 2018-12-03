@@ -2,7 +2,7 @@ import { INvModule, TUseClassProvider, TUseValueProvider } from '../types';
 
 import { injected, Injector } from '../di';
 
-type TNvModuleOptions = {
+export type TNvModuleOptions = {
   imports?: Function[];
   declarations?: Function[];
   providers?: (Function | TUseClassProvider | TUseValueProvider)[];

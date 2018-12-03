@@ -7,6 +7,7 @@
   - [提供商](providers)
   - [路由](route)
   - [InDiv](indiv)
-  - [中间件](middlewares)
+  - [插件](plugins)
 
-<!-- - [基本原理](fundamentals) -->
+- 基本原理
+  - [依赖注入](di)

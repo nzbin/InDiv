@@ -316,7 +316,9 @@ export default class AppComponent {
 
 通过引进异步路由，可以获得在请求时才惰性加载特性模块的能力。
 
-当然你需要优先修改你的打包程序，让其识别`import()`并可以根据动态引入进行代码切片(像webpack parcel之类的都提供动态引入，因为我们仅仅使用 `import()`，因此并不需要像 angular 需要写loader去让编译器识别loadChildren)
+当然你需要优先修改你的打包程序，让其识别`import()`并可以根据动态引入进行代码切片，
+
+像webpack parcel之类的都提供动态引入，因为我们仅仅使用 `import()`，因此并不需要像 angular 需要写loader去让编译器识别 `loadChildren`。
 
 首先我们要把`PageAComponent` 从 根模块中删除。
 

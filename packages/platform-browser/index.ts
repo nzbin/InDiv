@@ -1,11 +1,5 @@
-import { InDiv, IMiddleware } from '@indiv/core';
-import { render } from './render';
+export * from './compile';
+export * from './render';
+export * from './plugins';
+export * from './virtual-dom';
 
-export { Compile, CompileUtilForRepeat, CompileUtil } from './compile';
-export { render } from './render';
-
-export class PlatformBrowser implements IMiddleware {
-  public bootstrap(indivInstance: InDiv): void {
-    indivInstance.setComponentRender(render);
-  }
-}

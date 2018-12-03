@@ -153,6 +153,7 @@ function diffInputValue(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
  * @returns {void}
  */
 function diffRepeatData(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[]): void {
+  if (oldVnode.repeatData === newVnode.repeatData) return;
   patchList.push({
     type: 6,
     node: oldVnode.node,
@@ -223,8 +224,11 @@ function diffEventTypes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
             newValue: (newVnode.node as any)[`event${nEventType}`],
           });
         }
-        // 如果旧的存在并且新的类型相同，对比 nv-on 的属性，如果相同则忽略，如果不同则先移除事件再增加新事件
-        if (sameEventType && (oldVnode.node as Element).getAttribute(`nv-on:${sameEventType}`) !== (newVnode.node as Element).getAttribute(`nv-on:${sameEventType}`) ) {
+        // 如果旧的存在并且新的类型相同，对比 nv-on 的属性和 DOM上的 event${nEventType}事件函数，如果相同则忽略，如果不同则先移除事件再增加新事件
+        if (
+          sameEventType &&
+          ((oldVnode.node as Element).getAttribute(`nv-on:${sameEventType}`) !== (newVnode.node as Element).getAttribute(`nv-on:${sameEventType}`) || (oldVnode.node as any)[`event${nEventType}`].toString() !== (newVnode.node as any)[`event${nEventType}`].toString())
+        ) {
           patchList.push({
             type: 7,
             node: oldVnode.node,

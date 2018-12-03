@@ -75,5 +75,5 @@
 
 ## 组件props
 
-具体详情见 components
+具体详情见 <a href="#/components?id=组件通信-props-与-actions" target="_blank">组件</a>
 

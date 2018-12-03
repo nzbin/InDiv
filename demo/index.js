@@ -1,4 +1,7 @@
-import { InDiv, Component, Utils, NvModule, Injectable, setState, NvLocation, RouteModule, HttpClient } from '../build';
+import { InDiv, Component, Utils, NvModule, Injectable, setState, HttpClient } from '../build/core';
+import { NvLocation, RouteModule } from '../build/router';
+import { HttpClient } from '../build/common';
+import { PlatformBrowser } from '../build/platform-browser';
 
 
 class HeroSearchService1 {
@@ -25,6 +28,10 @@ Injectable({
 })(HeroSearchService2);
 
 class HeroSearchService {
+  static injectTokens = [
+    'heroSearchService1'
+  ];
+
   constructor(
     heroSearchService1,
   ) {
@@ -37,14 +44,18 @@ class HeroSearchService {
     console.log('HeroSearchService !!!000000000');
   }
 }
-HeroSearchService.injectTokens = [
-  'heroSearchService1'
-];
+// HeroSearchService.injectTokens = [
+//   'heroSearchService1'
+// ];
 Injectable({
   isSingletonMode: false,
 })(HeroSearchService);
 
 class RouteChild {
+  static injectTokens = [
+    'heroSearchService2'
+  ];
+
   constructor(heroSearchService2) {
     this.heroSearchService = heroSearchService2;
     this.heroSearchService.test();
@@ -78,9 +89,9 @@ class RouteChild {
     this.state.b = nextProps.a;
   }
 }
-RouteChild.injectTokens = [
-  'heroSearchService2'
-];
+// RouteChild.injectTokens = [
+//   'heroSearchService2'
+// ];
 Component({
   selector: 'route-child',
   template: (`
@@ -223,6 +234,11 @@ Component({
 
 
 class R1 {
+  static injectTokens = [
+    'heroSearchService',
+    'utils',
+    NvLocation
+  ];
   constructor(
     heroSearchService,
     utils,
@@ -291,11 +307,11 @@ class R1 {
     this.setState({ a: a });
   }
 }
-R1.injectTokens = [
-  'heroSearchService',
-  'utils',
-  NvLocation
-];
+// R1.injectTokens = [
+//   'heroSearchService',
+//   'utils',
+//   NvLocation
+// ];
 Component({
   selector: 'R1',
   template: (`
@@ -317,6 +333,11 @@ Component({
 
 
 class R2 {
+  static injectTokens = [
+    'heroSearchService1',
+    'heroSearchService',
+    NvLocation,
+  ];
   constructor(
     heroSearchService1,
     heroSearchService,
@@ -359,11 +380,11 @@ class R2 {
     this.location.set('/R1/C1/D1', { b: '1' });
   }
 }
-R2.injectTokens = [
-  'heroSearchService1',
-  'heroSearchService',
-  NvLocation
-];
+// R2.injectTokens = [
+//   'heroSearchService1',
+//   'heroSearchService',
+//   NvLocation
+// ];
 Component({
   selector: 'R2',
   template: (`
@@ -401,6 +422,14 @@ Component({
 
 
 class Container {
+  static injectTokens = [
+    'heroSearchService',
+    'heroSearchService1',
+    // HttpClient,
+    'value',
+    'heroSearchService2',
+    NvLocation,
+  ];
   constructor(
     heroSearchService,
     heroSearchService1,
@@ -546,14 +575,14 @@ class Container {
       }];
   }
 }
-Container.injectTokens = [
-  'heroSearchService',
-  'heroSearchService1',
-  // HttpClient,
-  'value',
-  'heroSearchService2',
-  NvLocation,
-];
+// Container.injectTokens = [
+//   'heroSearchService',
+//   'heroSearchService1',
+//   // HttpClient,
+//   'value',
+//   'heroSearchService2',
+//   NvLocation,
+// ];
 Component({
   selector: 'container-wrap',
   template: (`
@@ -688,4 +717,5 @@ NvModule({
 
 const inDiv = new InDiv();
 inDiv.bootstrapModule(M1);
+inDiv.use(PlatformBrowser);
 inDiv.init();

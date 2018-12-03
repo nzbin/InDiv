@@ -1,4 +1,4 @@
-export { Injectable } from './injectable';
-export { inject, factoryCreator } from './factory-creator';
-export { Injector, rootInjector } from './injector';
-export { injected } from './injected';
+export * from './injectable';
+export * from './factory-creator';
+export * from './injector';
+export * from './injected';

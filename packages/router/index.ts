@@ -1,4 +1,4 @@
-export { RouterTo, RouterFrom, RouterActive } from './route/directives';
-export { NvLocation } from './route/location';
-export { nvRouteStatus } from './route/location-status';
-export { RouteChange, TChildModule, TLoadChild, TRouter, RouteModule  } from './route/router-module';
+export * from './route/directives';
+export * from './route/location';
+export * from './route/location-status';
+export * from './route/router-module';

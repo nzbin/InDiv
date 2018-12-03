@@ -16,6 +16,10 @@ app.use('/demo', (req, res, next) => {
   res.render('index-app.html');
 });
 
+app.use('/demo_js', (req, res, next) => {
+  res.render('index.html');
+});
+
 app.get('/success', (req, res, next) => {
   setTimeout(() => {
     res.send({

@@ -2,8 +2,7 @@
   "compileOnSave": false,
   "buildOnSave": false,
   "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "build/common",
+    "baseUrl": "./",
     "module": "es2015",
     "moduleResolution": "node",
     "target": "es5",

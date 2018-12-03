@@ -30,7 +30,7 @@ $ npm i --save @indiv/core @indiv/common @indiv/platform-browser @indiv/router
 
   1. `@indiv/core` InDiv 核心，几乎所有基本都来自该包的导出
   2. `@indiv/common` InDiv 提供的一些普通组件指令服务模块等，目前仅含有 `HttpClient`
-  3. `@indiv/platform-browser` InDiv 的 render 方法，compile类及一些浏览器平台核心特性，`InDiv`实例需要使用该包的 `PlatformBrowser` 中间件完成一个浏览器应用的初始化
+  3. `@indiv/platform-browser` InDiv 的 render 方法，compile类及一些浏览器平台核心特性，`InDiv`实例需要使用该包的 `PlatformBrowser` 插件完成一个浏览器应用的初始化
   4. `@indiv/router` InDiv 路由，提供基础的 `RouteModule`模块，`NvLocation`服务，和其他一些组件指令
 
 
@@ -80,6 +80,6 @@ inDiv.init();
  
 `bootstrapModule(RootModule)` 方法引导了根模块创建。
  
-`use()` 方法实例中间件，比如实现一个浏览器应用，我们必须实现`PlatformBrowser`这个中间件。
+`use()` 方法实例插件，比如实现一个浏览器应用，我们必须实现`PlatformBrowser`这个插件。
 
 `init()` 将在创建完根模块之后初始化整个应用并将组件渲染到页面中，在后面的章节中将对此进行详细描述。

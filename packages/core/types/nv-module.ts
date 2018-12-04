@@ -19,12 +19,11 @@ export type TUseValueProvider = {
 };
 
 export interface INvModule {
-  $indivInstance?: InDiv;
-  $imports?: Function[];
-  $declarations?: Function[];
-  $providers?: (Function | TUseClassProvider | TUseValueProvider)[];
-  $exports?: Function[];
-  $exportsList?: Function[];
-  $bootstrap?: Function;
+  imports?: Function[];
+  declarations?: Function[];
+  providers?: (Function | TUseClassProvider | TUseValueProvider)[];
+  exports?: Function[];
+  exportsList?: Function[];
+  bootstrap?: Function;
   privateInjector?: Injector;
 }

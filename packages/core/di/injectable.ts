@@ -32,7 +32,7 @@ export function Injectable(options?: TInjectableOptions): (_constructor: Functio
       if (options && options.isSingletonMode === false) (_constructor as any).isSingletonMode = false;
       if (options && options.providedIn && (options.providedIn as any).nvType === 'nvModule') {
         if (options.providedIn === 'root') rootInjector.setProvider(_constructor, _constructor);
-        else ((options.providedIn as Type<INvModule>).prototype.$providers as Function[]).push(_constructor);
+        else ((options.providedIn as Type<INvModule>).prototype.providers as Function[]).push(_constructor);
       }
   };
 }

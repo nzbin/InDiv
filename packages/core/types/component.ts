@@ -13,14 +13,14 @@ export type ComponentList<C> = {
 export interface IComponent<State = any, Props = any, Vm = any> {
     state?: State | any;
     props?: Props | any;
-    renderDom?: Element;
-    $vm?: Vm | any;
+    renderNode?: Element | any;
+    $indivInstance?: Vm | any;
     stateWatcher?: Watcher;
 
-    $template?: string;
-    $declarationMap?: Map<string, Function>;
-    $componentList?: ComponentList<IComponent<any, any, any>>[];
-    $directiveList?: DirectiveList<IDirective<any, any>>[];
+    template?: string;
+    declarationMap?: Map<string, Function>;
+    componentList?: ComponentList<IComponent<any, any, any>>[];
+    directiveList?: DirectiveList<IDirective<any, any>>[];
     otherInjector?: Injector;
     privateInjector?: Injector;
 

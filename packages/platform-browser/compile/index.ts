@@ -13,9 +13,9 @@ const utils = new Utils();
  */
 export class Compile {
   public utils: Utils;
-  public $vm: any;
-  public $el: Element;
-  public $fragment: DocumentFragment;
+  public vm: any;
+  public mountedElement: Element;
+  public fragment: DocumentFragment;
   public saveVnode: Vnode;
 
   /**
@@ -25,22 +25,22 @@ export class Compile {
    * @memberof Compile
    */
   constructor(el: string | Element, vm: any) {
-    this.$vm = vm;
-    this.$el = this.isElementNode(el) ? el as Element : document.querySelector(el as string);
+    this.vm = vm;
+    this.mountedElement = this.isElementNode(el) ? el as Element : document.querySelector(el as string);
   }
 
   public startCompile(): void {
-    if (this.$el) {
-      this.$fragment = this.node2Fragment();
+    if (this.mountedElement) {
+      this.fragment = this.node2Fragment();
       this.init();
 
-      if (!this.saveVnode) this.saveVnode = parseToVnode(this.$el, shouldDiffAttributes);
-      const newVnode = parseToVnode(this.$fragment, shouldDiffAttributes);
+      if (!this.saveVnode) this.saveVnode = parseToVnode(this.mountedElement, shouldDiffAttributes);
+      const newVnode = parseToVnode(this.fragment, shouldDiffAttributes);
       const patchList: IPatchList[] = [];
       diffVnode(this.saveVnode, newVnode, patchList, this.needDiffChildCallback);
       renderVnode(patchList);
 
-      this.$fragment = null;
+      this.fragment = null;
     } else throw new Error('class Compile need el in constructor');
   }
 
@@ -62,7 +62,7 @@ export class Compile {
       return false;
     }
     // 如果为路由渲染层，则停止对比内部元素，交由router diff
-    if (oldVnode.tagName === newVnode.tagName && newVnode.tagName === (this.$vm.$vm.getRouteDOMKey() as string).toLocaleUpperCase()) return false;
+    if (oldVnode.tagName === newVnode.tagName && newVnode.tagName === (this.vm.$indivInstance.getRouteDOMKey() as string).toLocaleUpperCase()) return false;
     return true;
   }
 
@@ -72,7 +72,7 @@ export class Compile {
    * @memberof Compile
    */
   public init(): void {
-    this.compileElement(this.$fragment);
+    this.compileElement(this.fragment);
   }
 
   /**
@@ -83,7 +83,7 @@ export class Compile {
    */
   public compileElement(fragment: DocumentFragment): void {
     const elementCreated = document.createElement('div');
-    elementCreated.innerHTML = utils.formatInnerHTML(this.$vm.$template);
+    elementCreated.innerHTML = utils.formatInnerHTML(this.vm.template);
     const childNodes = elementCreated.childNodes;
     this.recursiveDOM(childNodes, fragment);
   }
@@ -99,7 +99,7 @@ export class Compile {
     Array.from(childNodes).forEach((node: Element) => {
       // mark for container of @Component
       if (this.isElementNode(node)) {
-        const findDeclaration = this.$vm.$declarationMap.get(node.tagName.toLocaleLowerCase());
+        const findDeclaration = this.vm.declarationMap.get(node.tagName.toLocaleLowerCase());
         if (findDeclaration && findDeclaration.nvType === 'nvComponent') node.isComponent = true;
       }
 
@@ -142,8 +142,8 @@ export class Compile {
           const dir = attrName.substring(3);
           const exp = attr.value;
           const compileUtil = new CompileUtil(fragment);
-          if (this.isEventDirective(dir)) compileUtil.eventHandler(node, this.$vm, exp, dir);
-          else compileUtil.bind(node, this.$vm, exp, dir);
+          if (this.isEventDirective(dir)) compileUtil.eventHandler(node, this.vm, exp, dir);
+          else compileUtil.bind(node, this.vm, exp, dir);
         }
       });
     }
@@ -167,7 +167,7 @@ export class Compile {
    * @memberof Compile
    */
   public compileText(node: Element, exp: string): void {
-    new CompileUtil(this.$fragment).templateUpdater(node, this.$vm, exp);
+    new CompileUtil(this.fragment).templateUpdater(node, this.vm, exp);
   }
 
   /**

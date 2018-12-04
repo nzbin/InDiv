@@ -48,25 +48,25 @@ export function buildProps<State = any, Props = any, Vm = any>(prop: any, vm: IC
  * @param {Function} ComponentClass
  * @param {*} props
  * @param {Element} dom
- * @param {IComponent<State, Props, Vm>} vm
+ * @param {IComponent<State, Props, Vm>} componentInstance
  * @returns {IComponent<State, Props, Vm>}
  */
-export function buildComponentScope<State = any, Props = any, Vm = any>(ComponentClass: Function, props: any, dom: Element, vm: IComponent<State, Props, Vm>): IComponent<State, Props, Vm> {
+export function buildComponentScope<State = any, Props = any, Vm = any>(ComponentClass: Function, props: any, dom: Element, componentInstance: IComponent<State, Props, Vm>): IComponent<State, Props, Vm> {
   const provideAndInstanceMap = new Map();
-  if (provideAndInstanceMap) provideAndInstanceMap.set(InDiv, vm.$vm);
-  provideAndInstanceMap.set(ElementRef, dom);
+  if (provideAndInstanceMap) provideAndInstanceMap.set(InDiv, componentInstance.$indivInstance);
+  provideAndInstanceMap.set(ElementRef, new ElementRef(dom));
 
-  const _component: IComponent = factoryCreator(ComponentClass, vm.otherInjector, provideAndInstanceMap);
+  const _component: IComponent = factoryCreator(ComponentClass, componentInstance.otherInjector, provideAndInstanceMap);
   _component.props = props;
-  _component.renderDom = dom;
+  _component.renderNode = dom;
 
-  vm.$declarationMap.forEach((declaration, key) => {
-    if (!_component.$declarationMap.has(key)) _component.$declarationMap.set(key, declaration);
+  componentInstance.declarationMap.forEach((declaration, key) => {
+    if (!_component.declarationMap.has(key)) _component.declarationMap.set(key, declaration);
   });
 
-  _component.render = vm.$vm.render.bind(_component);
-  _component.reRender = vm.$vm.reRender.bind(_component);
-  _component.otherInjector = vm.otherInjector;
+  _component.render = componentInstance.$indivInstance.render.bind(_component);
+  _component.reRender = componentInstance.$indivInstance.reRender.bind(_component);
+  _component.otherInjector = componentInstance.otherInjector;
 
   return _component;
 }
@@ -81,24 +81,24 @@ export function buildComponentScope<State = any, Props = any, Vm = any>(Componen
  * @param {Function} DirectiveClass
  * @param {*} props
  * @param {Element} dom
- * @param {IComponent<State, Props, Vm>} vm
+ * @param {IComponent<State, Props, Vm>} componentInstance
  * @returns {IComponent<State, Props, Vm>}
  */
-export function buildDirectiveScope<State = any, Props = any, Vm = any>(DirectiveClass: Function, props: any, dom: Element, vm: IComponent<State, Props, Vm>): IComponent<State, Props, Vm> {
+export function buildDirectiveScope<State = any, Props = any, Vm = any>(DirectiveClass: Function, props: any, dom: Element, componentInstance: IComponent<State, Props, Vm>): IComponent<State, Props, Vm> {
   const provideAndInstanceMap = new Map();
-  if (vm.$vm) provideAndInstanceMap.set(InDiv, vm.$vm);
-  provideAndInstanceMap.set(ElementRef, dom);
+  if (componentInstance.$indivInstance) provideAndInstanceMap.set(InDiv, componentInstance.$indivInstance);
+  provideAndInstanceMap.set(ElementRef, new ElementRef(dom));
 
-  const _directive: IDirective = factoryCreator(DirectiveClass, vm.otherInjector, provideAndInstanceMap);
+  const _directive: IDirective = factoryCreator(DirectiveClass, componentInstance.otherInjector, provideAndInstanceMap);
 
   _directive.props = props;
-  _directive.renderDom = dom;
+  _directive.renderNode = dom;
 
-  vm.$declarationMap.forEach((declaration, key) => {
-    if (!_directive.$declarationMap.has(key)) _directive.$declarationMap.set(key, declaration);
+  componentInstance.declarationMap.forEach((declaration, key) => {
+    if (!_directive.declarationMap.has(key)) _directive.declarationMap.set(key, declaration);
   });
 
-  _directive.otherInjector = vm.otherInjector;
+  _directive.otherInjector = componentInstance.otherInjector;
 
   return _directive;
 }

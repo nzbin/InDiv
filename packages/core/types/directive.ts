@@ -10,11 +10,11 @@ export type DirectiveList<C> = {
 
 export interface IDirective<Props = any, Vm = any> {
     props?: Props | any;
-    renderDom?: Element;
-    $vm?: Vm | any;
+    renderNode?: Element;
+    $indivInstance?: Vm | any;
 
-    $declarationMap?: Map<string, Function>;
-    $directiveList?: DirectiveList<IDirective<any, any>>[];
+    declarationMap?: Map<string, Function>;
+    directiveList?: DirectiveList<IDirective<any, any>>[];
     otherInjector?: Injector;
     privateInjector?: Injector;
 

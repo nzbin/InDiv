@@ -45,23 +45,23 @@ import { Directive, ElementRef } from '@indiv/core';
 })
 export default class ChangeColorDirective {
   constructor(private element: ElementRef) {
-    this.element.addEventListener('mouseover', this.changeColor);
-    this.element.addEventListener('mouseout', this.removeColor);
+    this.element.nativeElement.addEventListener('mouseover', this.changeColor);
+    this.element.nativeElement.addEventListener('mouseout', this.removeColor);
   }
 
   public changeColor = () => {
-    this.element.style = 'red';
+    this.element.nativeElement.style = 'red';
   }
 
   public removeColor = () => {
-    this.element.style.color = 'black';
+    this.element.nativeElement.style.color = 'black';
   }
 }
 ```
 
 `@Directive` 接收两个参数，`selector: string;` `providers?: (Function | TUseClassProvider | TUseValueProvider)[];`
 
-* `selector: string;`  作为指令被渲染成 DOM 的属性，类似于 `<div change-color="color"></div>`
+* `selector: string;`  作为指令被渲染成 DOM 的属性，类似于 `<div change-color="{color}"></div>`
 * `providers?: (Function | { provide: any; useClass: Function; } | { provide: any; useValue: any; })[];` 声明可以被指令注入的服务，这个我们放到服务再讲
 
 > app.module.ts
@@ -143,8 +143,8 @@ export default class ChangeColorDirective implements ReceiveProps {
   public props: string;
 
   constructor(private element: ElementRef) {
-    this.element.addEventListener('mouseover', this.changeColor);
-    this.element.addEventListener('mouseout', this.removeColor);
+    this.element.nativeElement.addEventListener('mouseover', this.changeColor);
+    this.element.nativeElement.addEventListener('mouseout', this.removeColor);
   }
 
   public ReceiveProps(nextProps: string) {
@@ -152,11 +152,11 @@ export default class ChangeColorDirective implements ReceiveProps {
   }
 
   public changeColor = () => {
-    this.element.style = this.props;
+    this.element.nativeElement.style = this.props;
   }
 
   public removeColor = () => {
-    this.element.style.color = 'black';
+    this.element.nativeElement.style.color = 'black';
   }
 }
 ```
@@ -173,7 +173,7 @@ import { Component, setState, SetState } from '@indiv/core';
     template: (`
         <div class="app-component-container">
           <input nv-model="name"/>
-          <p on-on:click="@addAge()" change-color="color">name: {{name}}</p>
+          <p on-on:click="@addAge()" change-color="{color}">name: {{name}}</p>
           <show-age age="{age}" up-date-age="{@upDateAge}"></show-age>
         </div>
     `),

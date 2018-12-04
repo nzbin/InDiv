@@ -99,7 +99,7 @@ import TestService from './provides/test.service';
     template: (`
         <div class="app-component-container">
           <input nv-model="name"/>
-          <p on-on:click="@addAge()" change-color="color">name: {{name}}</p>
+          <p on-on:click="@addAge()" change-color="{color}">name: {{name}}</p>
           <show-age age="{age}" up-date-age="{@upDateAge}"></show-age>
         </div>
     `),

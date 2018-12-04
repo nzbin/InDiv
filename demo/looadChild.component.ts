@@ -8,7 +8,7 @@ import { PrivateService } from './private.service';
   selector: 'test-loadchild-component',
   template: `
     <div>
-      <p router-to="'/R1/C1/D1'" router-from="'/R1/C1?a=1'">test loadChild</p>
+      <p router-to="{'/R1/C1/D1'}" router-from="{'/R1/C1?a=1'}">test loadChild</p>
       <router-render></router-render>
     </div>
   `,
@@ -29,8 +29,8 @@ export class TestLoadchildComponent {
 @Component({
   selector: 'R2',
   template: `
-    <p router-to="'/R2'">我是R22222</p>
-    <pp-childs ax={3}></pp-childs>
+    <p router-to="{'/R2'}">我是R22222</p>
+    <pp-childs ax="{3}"></pp-childs>
     `,
 })
 export class R2 {

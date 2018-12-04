@@ -8,13 +8,13 @@ const RENDERING = 'rendering';
 export type TRenderStatus = 'pending' | 'rendering';
 
 export class RenderTaskQueue {
-  public $vm: IComponent;
+  public componentInstance: IComponent;
   private taskQueue: Element[]; // 渲染队列
   private renderStatus: TRenderStatus; // 渲染状态：'pending' | 'rendering'
   private queuePointer: number; // 队列指针
 
-  constructor(vm: IComponent) {
-    this.$vm = vm;
+  constructor(componentInstance: IComponent) {
+    this.componentInstance = componentInstance;
     this.resetStatus();
   }
 
@@ -24,12 +24,12 @@ export class RenderTaskQueue {
    * if renderStatus === rendering, so only push task
    * if renderStatus === pending, so push task and start runTask
    *
-   * @param {Element} renderDom
+   * @param {Element} renderNode
    * @returns {Promise<IComponent>}
    * @memberof RenderTaskQueue
    */
-  public push(renderDom: Element): Promise<IComponent> {
-    this.taskQueue.push(renderDom);
+  public push(renderNode: Element): Promise<IComponent> {
+    this.taskQueue.push(renderNode);
     if (this.renderStatus === PENDING) {
       this.renderStatus = RENDERING;
       return this.runTask();

@@ -29,7 +29,7 @@ export class RouterTo implements OnInit, ReceiveProps, RouteChange, OnDestory {
 
   public nvOnInit() {
     this.resetState(this.props);
-    this.element.addEventListener('click', this.routeTo, false);
+    this.element.nativeElement.addEventListener('click', this.routeTo, false);
   }
 
   public nvReceiveProps(nextProps: string) {
@@ -39,12 +39,12 @@ export class RouterTo implements OnInit, ReceiveProps, RouteChange, OnDestory {
   public nvRouteChange(lastRoute?: string, newRoute?: string) {
     this.resetState(this.props);
     if (!this.activeClass) return;
-    if (newRoute === this.to && !this.element.classList.contains(this.activeClass)) this.element.classList.add(this.activeClass);
-    if (newRoute !== this.to && this.element.classList.contains(this.activeClass)) this.element.classList.remove(this.activeClass);
+    if (newRoute === this.to && !this.element.nativeElement.classList.contains(this.activeClass)) this.element.nativeElement.classList.add(this.activeClass);
+    if (newRoute !== this.to && this.element.nativeElement.classList.contains(this.activeClass)) this.element.nativeElement.classList.remove(this.activeClass);
   }
 
   public nvOnDestory() {
-    this.element.removeEventListener('click', this.routeTo, false);
+    this.element.nativeElement.removeEventListener('click', this.routeTo, false);
   }
 
   private routeTo = () => {
@@ -52,7 +52,7 @@ export class RouterTo implements OnInit, ReceiveProps, RouteChange, OnDestory {
     const location = this.location.get();
     const currentUrl = `${location.path}${utils.buildQuery(location.query)}`;
     if (!this.to) {
-      console.error('Directive router-to on element', this.element, 'need a prop');
+      console.error('Directive router-to on element', this.element.nativeElement, 'need a prop');
       return;
     }
     if (this.from && currentUrl === this.from) this.location.set(this.to);
@@ -61,9 +61,9 @@ export class RouterTo implements OnInit, ReceiveProps, RouteChange, OnDestory {
 
   private resetState(props: string) {
     this.to = props;
-    this.element.setAttribute('router-link-to', props);
-    this.from = this.element.getAttribute('router-link-from');
-    this.activeClass = this.element.getAttribute('router-link-active');
+    this.element.nativeElement.setAttribute('router-link-to', props);
+    this.from = this.element.nativeElement.getAttribute('router-link-from');
+    this.activeClass = this.element.nativeElement.getAttribute('router-link-active');
   }
 }
 
@@ -84,15 +84,15 @@ export class RouterFrom implements OnInit, ReceiveProps, OnDestory {
   constructor(private element: ElementRef) {}
 
   public nvOnInit() {
-    this.element.setAttribute('router-link-from', this.props);
+    this.element.nativeElement.setAttribute('router-link-from', this.props);
   }
 
   public nvReceiveProps(nextProps: string) {
-    this.element.setAttribute('router-link-from', nextProps);
+    this.element.nativeElement.setAttribute('router-link-from', nextProps);
   }
 
   public nvOnDestory() {
-    this.element.removeAttribute('router-link-from');
+    this.element.nativeElement.removeAttribute('router-link-from');
   }
 }
 
@@ -113,12 +113,12 @@ export class RouterActive implements OnInit, ReceiveProps, OnDestory {
   constructor(private element: ElementRef) {}
 
   public nvOnInit() {
-    this.element.setAttribute('router-link-active', this.props);
+    this.element.nativeElement.setAttribute('router-link-active', this.props);
     this.setActive(this.props);
   }
 
   public nvReceiveProps(nextProps: string) {
-    this.element.setAttribute('router-link-active', nextProps);
+    this.element.nativeElement.setAttribute('router-link-active', nextProps);
     this.setActive(nextProps);
   }
 
@@ -127,7 +127,7 @@ export class RouterActive implements OnInit, ReceiveProps, OnDestory {
   }
 
   public nvOnDestory() {
-    this.element.removeAttribute('router-link-active');
+    this.element.nativeElement.removeAttribute('router-link-active');
   }
 
   public setActive(props: string) {

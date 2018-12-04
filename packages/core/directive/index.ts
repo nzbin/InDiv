@@ -22,7 +22,7 @@ export function Directive<Props = any, Vm = any>(options: TDirectiveOptions): (_
   return function (_constructor: Function): void {
     injected(_constructor);
     (_constructor as any).nvType = 'nvDirective';
-    (_constructor as any).$selector = options.selector;
+    (_constructor as any).selector = options.selector;
     const vm: IDirective<Props, Vm> = _constructor.prototype;
 
     vm.privateInjector = new Injector();
@@ -38,7 +38,7 @@ export function Directive<Props = any, Vm = any>(options: TDirectiveOptions): (_
       }
     }
 
-    vm.$declarationMap = new Map();
+    vm.declarationMap = new Map();
   };
 }
 

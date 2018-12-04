@@ -31,3 +31,7 @@
 10. `getRootModule(): INvModule` 获取根模块
 
 11. `getDeclarations(): Function[]` 获取根模块上包括`imports`在内所有的`declarations`的组件和指令。
+
+12. `setRootNode(node: any): void` 设置整个应用挂载的节点，常用用于跨平台渲染
+
+13. `getRootNode(): any` 获取整个应用挂载的节点，常用用于跨平台渲染

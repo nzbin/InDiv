@@ -26,7 +26,7 @@ declare global {
  */
 export class CompileUtilForRepeat {
   [index: string]: any;
-  public $fragment?: Element | DocumentFragment;
+  public fragment?: Element | DocumentFragment;
 
   /**
    * Creates an instance of CompileUtilForRepeat.
@@ -35,7 +35,7 @@ export class CompileUtilForRepeat {
    * @memberof CompileUtilForRepeat
    */
   constructor(fragment?: Element | DocumentFragment) {
-    this.$fragment = fragment;
+    this.fragment = fragment;
   }
 
   /**
@@ -136,7 +136,8 @@ export class CompileUtilForRepeat {
       if (arg === 'undefined') return argsList.push(undefined);
       if (utilVm.isFromState(vm.state, arg)) return argsList.push(utilVm._getVMVal(vm.state, arg));
       if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
-      if (!/^\'.*\'$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
+      if (/^\".*\"$/.test(arg)) return argsList.push(arg.match(/^\"(.*)\"$/)[1]);
+      if (!/^\'.*\'$/.test(arg) && !/^\".*\"$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
       if (arg.indexOf(key) === 0 || arg.indexOf(`${key}.`) === 0) return argsList.push(utilVm._getVMRepeatVal(val, arg, key));
       if (node.repeatData) {
         // $index in this
@@ -218,7 +219,8 @@ export class CompileUtilForRepeat {
     else if (this.isFromState(vm.state, exp)) value = this._getVMVal(vm.state, exp);
     else if (exp === '$index') value = index;
     else if (/^\'.*\'$/.test(exp)) value = exp.match(/^\'(.*)\'$/)[1];
-    else if (!/^\'.*\'$/.test(exp) && /^[0-9]*$/g.test(exp)) value = Number(exp);
+    else if (/^\".*\"$/.test(exp)) value = exp.match(/^\"(.*)\"$/)[1];
+    else if (!/^\'.*\'$/.test(exp) && !/^\".*\"$/.test(exp) && /^[0-9]*$/g.test(exp)) value = Number(exp);
     else if (exp === 'true' || exp === 'false') value = (exp === 'true');
     else if (exp === 'null') value = null;
     else if (exp === 'undefined') value = undefined;
@@ -366,7 +368,7 @@ export class CompileUtilForRepeat {
    * @memberof CompileUtilForRepeat
    */
   public ifUpdater(node: Element, value: any): void {
-    if (!value && this.$fragment.contains(node)) this.$fragment.removeChild(node);
+    if (!value && this.fragment.contains(node)) this.fragment.removeChild(node);
   }
 
   /**
@@ -453,7 +455,8 @@ export class CompileUtilForRepeat {
         if (arg === 'undefined') return argsList.push(undefined);
         if (utilVm.isFromState(vm.state, arg)) return argsList.push(utilVm._getVMVal(vm.state, arg));
         if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
-        if (!/^\'.*\'$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
+        if (/^\".*\"$/.test(arg)) return argsList.push(arg.match(/^\"(.*)\"$/)[1]);
+        if (!/^\'.*\'$/.test(arg) && !/^\".*\"$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
         if (arg.indexOf(key) === 0 || arg.indexOf(`${key}.`) === 0) return argsList.push(utilVm._getVMRepeatVal(val, arg, key));
         if (this.repeatData) {
           // $index in this
@@ -485,7 +488,7 @@ export class CompileUtilForRepeat {
  */
 export class CompileUtil {
   [index: string]: any;
-  public $fragment?: Element | DocumentFragment;
+  public fragment?: Element | DocumentFragment;
 
   /**
    * Creates an instance of CompileUtil.
@@ -494,7 +497,7 @@ export class CompileUtil {
    *  @memberof CompileUtil
    */
   constructor(fragment?: Element | DocumentFragment) {
-    this.$fragment = fragment;
+    this.fragment = fragment;
   }
 
   /**
@@ -584,7 +587,8 @@ export class CompileUtil {
       if (arg === 'undefined') return argsList.push(undefined);
       if (this.isFromState(vm.state, arg)) return argsList.push(this._getVMVal(vm.state, arg));
       if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
-      if (!/^\'.*\'$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
+      if (/^\".*\"$/.test(arg)) return argsList.push(arg.match(/^\"(.*)\"$/)[1]);
+      if (!/^\'.*\'$/.test(arg) && !/^\".*\"$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
     });
     return argsList;
   }
@@ -643,7 +647,8 @@ export class CompileUtil {
       // normal value
       } else if (this.isFromState(vm.state, exp)) value = this._getVMVal(vm.state, exp);
       else if (/^\'.*\'$/.test(exp)) value = exp.match(/^\'(.*)\'$/)[1];
-      else if (!/^\'.*\'$/.test(exp) && /^[0-9]*$/g.test(exp)) value = Number(exp);
+      else if (/^\".*\"$/.test(exp)) value = exp.match(/^\"(.*)\"$/)[1];
+      else if (!/^\'.*\'$/.test(exp) && !/^\".*\"$/.test(exp) && /^[0-9]*$/g.test(exp)) value = Number(exp);
       else if (exp === 'true' || exp === 'false') value = (exp === 'true');
       else if (exp === 'null') value = null;
       else if (exp === 'undefined') value = undefined;
@@ -757,7 +762,7 @@ export class CompileUtil {
    * @memberof CompileUtil
    */
   public ifUpdater(node: Element, value: any): void {
-    if (!value && this.$fragment.contains(node)) this.$fragment.removeChild(node);
+    if (!value && this.fragment.contains(node)) this.fragment.removeChild(node);
   }
 
   /**
@@ -825,9 +830,9 @@ export class CompileUtil {
       const text = newElement.textContent;
       const reg = /\{\{(.*)\}\}/g;
 
-      this.$fragment.insertBefore(newElement, node);
+      this.fragment.insertBefore(newElement, node);
 
-      if (this.isTextNode((newElement as Element)) && reg.test(text)) new CompileUtilForRepeat(this.$fragment).templateUpdater(newElement as Element, val, key, vm);
+      if (this.isTextNode((newElement as Element)) && reg.test(text)) new CompileUtilForRepeat(this.fragment).templateUpdater(newElement as Element, val, key, vm);
 
       if (nodeAttrs) {
         Array.from(nodeAttrs).forEach(attr => {
@@ -835,14 +840,14 @@ export class CompileUtil {
           if (this.isDirective(attrName) && attrName !== 'nv-repeat') {
             const dir = attrName.substring(3);
             const exp = attr.value;
-            if (this.isEventDirective(dir)) new CompileUtilForRepeat(this.$fragment).eventHandler(newElement as Element, vm, exp, dir, key, val);
-            else new CompileUtilForRepeat(this.$fragment).bind(newElement as Element, key, dir, exp, index, vm, value, val);
+            if (this.isEventDirective(dir)) new CompileUtilForRepeat(this.fragment).eventHandler(newElement as Element, vm, exp, dir, key, val);
+            else new CompileUtilForRepeat(this.fragment).bind(newElement as Element, key, dir, exp, index, vm, value, val);
           }
         });
       }
 
       // first insert node before repeatnode, and remove repeatnode in Compile
-      if (newElement.hasChildNodes() && this.$fragment.contains(newElement)) this.repeatChildrenUpdater((newElement as Element), val, expFather, index, vm, value);
+      if (newElement.hasChildNodes() && this.fragment.contains(newElement)) this.repeatChildrenUpdater((newElement as Element), val, expFather, index, vm, value);
     });
   }
 
@@ -864,7 +869,7 @@ export class CompileUtil {
     Array.from(node.childNodes).forEach((child: Element) => {
       // mark for container of @Component
       if (this.isElementNode(child)) {
-        const findDeclaration = vm.$declarationMap.get(child.tagName.toLocaleLowerCase());
+        const findDeclaration = vm.declarationMap.get(child.tagName.toLocaleLowerCase());
         if (findDeclaration && findDeclaration.nvType === 'nvComponent') child.isComponent = true;
       }
 
@@ -940,7 +945,8 @@ export class CompileUtil {
         if (arg === 'undefined') return argsList.push(undefined);
         if (vmUtils.isFromState(vm.state, arg)) return argsList.push(vmUtils._getVMVal(vm.state, arg));
         if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
-        if (!/^\'.*\'$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
+        if (/^\".*\"$/.test(arg)) return argsList.push(arg.match(/^\"(.*)\"$/)[1]);
+        if (!/^\'.*\'$/.test(arg) && !/^\".*\"$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
       });
       fn.apply(vm, argsList);
     };

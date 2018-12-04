@@ -15,14 +15,14 @@ const compileUtil = new CompileUtil();
  * @template Props
  * @template Vm
  * @param {Element} dom
- * @param {IComponent<State, Props, Vm>} vm
+ * @param {IComponent<State, Props, Vm>} componentInstance
  */
-export function mountDirective<State = any, Props = any, Vm = any>(dom: Element, vm: IComponent<State, Props, Vm>): void {
-  const cacheStates: DirectiveList<IDirective<Props, Vm>>[] = [ ...vm.$directiveList ];
-  directivesConstructor(dom, vm);
-  const directiveListLength = vm.$directiveList.length;
+export function mountDirective<State = any, Props = any, Vm = any>(dom: Element, componentInstance: IComponent<State, Props, Vm>): void {
+  const cacheStates: DirectiveList<IDirective<Props, Vm>>[] = [ ...componentInstance.directiveList ];
+  directivesConstructor(dom, componentInstance);
+  const directiveListLength = componentInstance.directiveList.length;
   for (let i = 0; i < directiveListLength; i ++) {
-    const directive = vm.$directiveList[i];
+    const directive = componentInstance.directiveList[i];
     // find Directive from cache
     const cacheDirectiveIndex = cacheStates.findIndex(cache => cache.dom === directive.dom);
     const cacheDirective = cacheStates[cacheDirectiveIndex];
@@ -38,10 +38,10 @@ export function mountDirective<State = any, Props = any, Vm = any>(dom: Element,
         directive.scope.props = directive.props;
       }
     } else {
-      directive.scope = buildDirectiveScope(directive.constructorFunction, directive.props, directive.dom as Element, vm);
+      directive.scope = buildDirectiveScope(directive.constructorFunction, directive.props, directive.dom as Element, componentInstance);
     }
 
-    directive.scope.$vm = vm.$vm;
+    directive.scope.$indivInstance = componentInstance.$indivInstance;
 
     if (directive.scope.nvOnInit && !cacheDirective) directive.scope.nvOnInit();
     if (directive.scope.nvBeforeMount) directive.scope.nvBeforeMount();
@@ -61,26 +61,26 @@ export function mountDirective<State = any, Props = any, Vm = any>(dom: Element,
  * @template Props
  * @template Vm
  * @param {Element} dom
- * @param {IComponent<State, Props, Vm>} vm
+ * @param {IComponent<State, Props, Vm>} componentInstance
  */
-export function directivesConstructor<State = any, Props = any, Vm = any>(dom: Element, vm: IComponent<State, Props, Vm>): void {
-  vm.$directiveList = [];
-  const routerRenderDom = dom.querySelectorAll(vm.$vm.getRouteDOMKey())[0];
+export function directivesConstructor<State = any, Props = any, Vm = any>(dom: Element, componentInstance: IComponent<State, Props, Vm>): void {
+  componentInstance.directiveList = [];
+  const routerRenderNode = dom.querySelectorAll(componentInstance.$indivInstance.getRouteDOMKey())[0];
 
-  vm.$declarationMap.forEach((declaration, name) => {
+  componentInstance.declarationMap.forEach((declaration, name) => {
     if ((declaration as any).nvType !== 'nvDirective') return;
 
     const tags = dom.querySelectorAll(`*[${name}]`);
     Array.from(tags).forEach(node => {
       //  protect directive in <router-render>
-      if (routerRenderDom && routerRenderDom.contains(node)) return;
+      if (routerRenderNode && routerRenderNode.contains(node)) return;
 
       const attrValue = node.getAttribute(name);
       let props: any = null;
 
       // only attribute return
       if (!attrValue) {
-        vm.$directiveList.push({
+        componentInstance.directiveList.push({
           dom: node,
           props,
           scope: null,
@@ -89,16 +89,19 @@ export function directivesConstructor<State = any, Props = any, Vm = any>(dom: E
         return;
       }
 
-      const valueList = attrValue.split('.');
+      if (!/^\{(.+)\}$/.test(attrValue)) throw new Error(`Directive ${name} need use \{\} to wrap value!`);
+
+      const prop = /^\{(.+)\}$/.exec(attrValue)[1];
+      const valueList = prop.split('.');
       const key = valueList[0];
 
       // build props
-      if (compileUtil.isFromState(vm.state, attrValue)) {
-        props = compileUtil._getVMVal(vm.state, attrValue);
-      } else if (/^(\@.).*\(.*\)$/.test(attrValue)) {
+      if (compileUtil.isFromState(componentInstance.state, prop)) {
+        props = compileUtil._getVMVal(componentInstance.state, prop);
+      } else if (/^(\@.).*\(.*\)$/.test(prop)) {
         const utilVm = new CompileUtilForRepeat();
-        const fn = utilVm._getVMFunction(vm, attrValue);
-        const args = attrValue.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
+        const fn = utilVm._getVMFunction(componentInstance, prop);
+        const args = prop.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
         const argsList: any[] = [];
         args.forEach(arg => {
           if (arg === '') return false;
@@ -106,9 +109,10 @@ export function directivesConstructor<State = any, Props = any, Vm = any>(dom: E
           if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
           if (arg === 'null') return argsList.push(null);
           if (arg === 'undefined') return argsList.push(undefined);
-          if (utilVm.isFromState(vm.state, arg)) return argsList.push(utilVm._getVMVal(vm.state, arg));
+          if (utilVm.isFromState(componentInstance.state, arg)) return argsList.push(utilVm._getVMVal(componentInstance.state, arg));
           if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
-          if (!/^\'.*\'$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
+          if (/^\".*\"$/.test(arg)) return argsList.push(arg.match(/^\"(.*)\"$/)[1]);
+          if (!/^\'.*\'$/.test(arg) && !/^\".*\"$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
           if (node.repeatData) {
             // $index in this
             Object.keys(node.repeatData).forEach(data => {
@@ -116,17 +120,18 @@ export function directivesConstructor<State = any, Props = any, Vm = any>(dom: E
             });
           }
         });
-        const value = fn.apply(vm, argsList);
+        const value = fn.apply(componentInstance, argsList);
         props = value;
-      } else if (/^(\@.).*[^\(.*\)]$/g.test(attrValue)) props = compileUtil._getVMVal(vm, attrValue.replace(/^(\@)/, ''));
-      else if (node.repeatData && node.repeatData[key] !== null) props = compileUtil._getValueByValue(node.repeatData[key], attrValue, key);
-      else if (/^\'.*\'$/.test(attrValue)) props = attrValue.match(/^\'(.*)\'$/)[1];
-      else if (!/^\'.*\'$/.test(attrValue) && /^[0-9]*$/.test(attrValue)) props = Number(attrValue);
-      else if (attrValue === 'true' || attrValue === 'false') props = (attrValue === 'true');
-      else if (attrValue === 'null') props = null;
-      else if (attrValue === 'undefined') props = undefined;
+      } else if (/^(\@.).*[^\(.*\)]$/g.test(prop)) props = compileUtil._getVMVal(componentInstance, prop.replace(/^(\@)/, ''));
+      else if (node.repeatData && node.repeatData[key] !== null) props = compileUtil._getValueByValue(node.repeatData[key], prop, key);
+      else if (/^\'.*\'$/.test(prop)) props = prop.match(/^\'(.*)\'$/)[1];
+      else if (/^\".*\"$/.test(prop)) props = prop.match(/^\"(.*)\"$/)[1];
+      else if (!/^\'.*\'$/.test(prop) && !/^\".*\"$/.test(prop) && /^[0-9]*$/.test(prop)) props = Number(prop);
+      else if (prop === 'true' || prop === 'false') props = (prop === 'true');
+      else if (prop === 'null') props = null;
+      else if (prop === 'undefined') props = undefined;
 
-      vm.$directiveList.push({
+      componentInstance.directiveList.push({
         dom: node,
         props,
         scope: null,
@@ -137,26 +142,26 @@ export function directivesConstructor<State = any, Props = any, Vm = any>(dom: E
 }
 
 /**
- * render Directive with using renderDom and RenderTask instance
+ * render Directive with using renderNode and RenderTask instance
  *
  * @export
- * @param {Element} renderDom
+ * @param {Element} renderNode
  * @param {RenderTaskQueue} RenderTaskQueue
  * @returns {Promise<IDirective>}
  */
-export async function directiveRenderFunction(renderDom: Element, RenderTaskQueue: RenderTaskQueue): Promise<IDirective> {
+export async function directiveRenderFunction(renderNode: Element, RenderTaskQueue: RenderTaskQueue): Promise<IDirective> {
   return Promise.resolve()
     .then(() => {
-      mountDirective(renderDom, RenderTaskQueue.$vm);
-      const directiveListLength = RenderTaskQueue.$vm.$directiveList.length;
+      mountDirective(renderNode, RenderTaskQueue.componentInstance);
+      const directiveListLength = RenderTaskQueue.componentInstance.directiveList.length;
       for (let i = 0; i < directiveListLength; i++) {
-        const directive = RenderTaskQueue.$vm.$directiveList[i];
+        const directive = RenderTaskQueue.componentInstance.directiveList[i];
         if (directive.scope.nvAfterMount) directive.scope.nvAfterMount();
         if (directive.scope.nvHasRender) directive.scope.nvHasRender();
       }
-      return RenderTaskQueue.$vm;
+      return RenderTaskQueue.componentInstance;
     })
     .catch(e => {
-      throw new Error(`directive ${(RenderTaskQueue.$vm.constructor as any).$selector} render failed: ${e}`);
+      throw new Error(`directive ${(RenderTaskQueue.componentInstance.constructor as any).selector} render failed: ${e}`);
     });
 }

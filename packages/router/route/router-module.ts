@@ -243,7 +243,7 @@ export class RouteModule {
         const needRenderRoute = this.routesList[index];
         if (!needRenderRoute) throw new Error(`route error: wrong route instantiation in insertRenderRoutes: ${this.currentUrl}`);
 
-        const renderDom = document.querySelectorAll('router-render')[index - 1];
+        const renderNode = document.querySelectorAll('router-render')[index - 1];
 
         if (!needRenderRoute.component && !needRenderRoute.redirectTo && !needRenderRoute.loadChild) throw new Error(`route error: path ${needRenderRoute.path} need a component which has children path or need a redirectTo which has't children path`);
 
@@ -263,12 +263,12 @@ export class RouteModule {
         if (needRenderRoute.component) {
           const findComponentFromModuleResult = this.findComponentFromModule(needRenderRoute.component, currentUrlPath);
           FindComponent = findComponentFromModuleResult.component;
-          component = await this.instantiateComponent(FindComponent, renderDom, findComponentFromModuleResult.loadModule);
+          component = await this.instantiateComponent(FindComponent, renderNode, findComponentFromModuleResult.loadModule);
         }
         if (needRenderRoute.loadChild) {
           const loadModule = await this.NvModuleFactoryLoader(needRenderRoute.loadChild, currentUrlPath);
-          FindComponent = loadModule.$bootstrap;
-          component = await this.instantiateComponent(FindComponent, renderDom, loadModule);
+          FindComponent = loadModule.bootstrap;
+          component = await this.instantiateComponent(FindComponent, renderNode, loadModule);
         }
 
         if (FindComponent) {
@@ -300,10 +300,10 @@ export class RouteModule {
       }
 
       if (index === (this.renderRouteList.length - 1) && index < (lastRouteList.length - 1)) {
-        const renderDom = document.querySelectorAll('router-render')[index];
+        const renderNode = document.querySelectorAll('router-render')[index];
         this.routerChangeEvent(index);
 
-        if (renderDom && renderDom.hasChildNodes()) renderDom.removeChild(renderDom.childNodes[0]);
+        if (renderNode && renderNode.hasChildNodes()) renderNode.removeChild(renderNode.childNodes[0]);
 
         const needRenderRoute = this.routesList[index];
         if (needRenderRoute.redirectTo && /^\/.*/.test(needRenderRoute.redirectTo) && (index + 1) === this.renderRouteList.length) {
@@ -355,7 +355,7 @@ export class RouteModule {
         const route = lastRoute.find(r => r.path === `/${path}` || /^\/\:.+/.test(r.path));
         if (!route) throw new Error(`route error: wrong route instantiation: ${this.currentUrl}`);
 
-        const renderDom = document.querySelectorAll('router-render')[index - 1];
+        const renderNode = document.querySelectorAll('router-render')[index - 1];
 
         let FindComponent = null;
         let component = null;
@@ -369,12 +369,12 @@ export class RouteModule {
         if (route.component) {
           const findComponentFromModuleResult = this.findComponentFromModule(route.component, currentUrlPath);
           FindComponent = findComponentFromModuleResult.component;
-          component = await this.instantiateComponent(FindComponent, renderDom, findComponentFromModuleResult.loadModule);
+          component = await this.instantiateComponent(FindComponent, renderNode, findComponentFromModuleResult.loadModule);
         }
         if (route.loadChild) {
           const loadModule = await this.NvModuleFactoryLoader(route.loadChild, currentUrlPath);
-          FindComponent = loadModule.$bootstrap;
-          component = await this.instantiateComponent(FindComponent, renderDom, loadModule);
+          FindComponent = loadModule.bootstrap;
+          component = await this.instantiateComponent(FindComponent, renderNode, loadModule);
         }
 
         if (!route.component && !route.redirectTo && !route.loadChild) throw new Error(`route error: path ${route.path} need a component which has children path or need a  redirectTo which has't children path`);
@@ -407,12 +407,12 @@ export class RouteModule {
   private routerChangeEvent(index: number): void {
     this.hasRenderComponentList.forEach((component, i) => {
       if (component.nvRouteChange) component.nvRouteChange(this.lastRoute, this.currentUrl);
-      this.emitDirectiveEvent(component.$directiveList, 'nvRouteChange');
-      this.emitComponentEvent(component.$componentList, 'nvRouteChange');
+      this.emitDirectiveEvent(component.directiveList, 'nvRouteChange');
+      this.emitComponentEvent(component.componentList, 'nvRouteChange');
       if (i >= index + 1) {
         if (component.nvOnDestory) component.nvOnDestory();
-        this.emitDirectiveEvent(component.$directiveList, 'nvOnDestory');
-        this.emitComponentEvent(component.$componentList, 'nvOnDestory');
+        this.emitDirectiveEvent(component.directiveList, 'nvOnDestory');
+        this.emitComponentEvent(component.componentList, 'nvOnDestory');
       }
     });
     this.hasRenderComponentList.length = index + 1;
@@ -430,15 +430,15 @@ export class RouteModule {
     if (event === 'nvRouteChange') {
       componentList.forEach(component => {
         if (component.scope.nvRouteChange) component.scope.nvRouteChange(this.lastRoute, this.currentUrl);
-        this.emitDirectiveEvent(component.scope.$directiveList, event);
-        this.emitComponentEvent(component.scope.$componentList, event);
+        this.emitDirectiveEvent(component.scope.directiveList, event);
+        this.emitComponentEvent(component.scope.componentList, event);
       });
     }
     if (event === 'nvOnDestory') {
       componentList.forEach(component => {
         if (component.scope.nvOnDestory) component.scope.nvOnDestory();
-        this.emitDirectiveEvent(component.scope.$directiveList, event);
-        this.emitComponentEvent(component.scope.$componentList, event);
+        this.emitDirectiveEvent(component.scope.directiveList, event);
+        this.emitComponentEvent(component.scope.componentList, event);
       });
     }
   }
@@ -474,13 +474,13 @@ export class RouteModule {
    *
    * @private
    * @param {Function} FindComponent
-   * @param {Element} renderDom
+   * @param {Element} renderNode
    * @param {INvModule} [loadModule]
    * @returns {Promise<IComponent>}
    * @memberof Router
    */
-  private instantiateComponent(FindComponent: Function, renderDom: Element, loadModule: INvModule): Promise<IComponent> {
-    return this.indivInstance.renderComponent(FindComponent, renderDom, loadModule);
+  private instantiateComponent(FindComponent: Function, renderNode: Element, loadModule: INvModule): Promise<IComponent> {
+    return this.indivInstance.renderComponent(FindComponent, renderNode, loadModule);
   }
 
   /**
@@ -515,7 +515,7 @@ export class RouteModule {
   /**
    * find component from loadModule or rootModule
    * 
-   * if this.loadModuleMap.size === 0, only in $rootModule
+   * if this.loadModuleMap.size === 0, only in rootModule
    * if has loadModule, return component in loadModule firstly
    * 
    *
@@ -527,7 +527,7 @@ export class RouteModule {
    */
   private findComponentFromModule(selector: string, currentUrlPath: string): { component: Function, loadModule: INvModule } {
     if (this.loadModuleMap.size === 0) return {
-      component: this.indivInstance.getDeclarations().find((component: any) => component.$selector === selector && component.nvType === 'nvComponent'),
+      component: this.indivInstance.getDeclarations().find((component: any) => component.selector === selector && component.nvType === 'nvComponent'),
       loadModule: null,
     };
 
@@ -535,12 +535,12 @@ export class RouteModule {
     let loadModule = null;
     this.loadModuleMap.forEach((value, key) => {
       if (new RegExp(`^${key}.*`).test(currentUrlPath)) {
-        component = value.$declarations.find((component: any) => component.$selector === selector && component.nvType === 'nvComponent');
+        component = value.declarations.find((component: any) => component.selector === selector && component.nvType === 'nvComponent');
         loadModule = value;
       }
     });
     if (!component) {
-      component = this.indivInstance.getDeclarations().find((component: any) => component.$selector === selector && component.nvType === 'nvComponent');
+      component = this.indivInstance.getDeclarations().find((component: any) => component.selector === selector && component.nvType === 'nvComponent');
       loadModule = null;
     }
 

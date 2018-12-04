@@ -13,7 +13,7 @@ interface Props {
   template: (`
     <div>
       <p>子路由的子组件::{{b}}</p>
-      <pp-childs ax={b}></pp-childs>
+      <pp-childs ax="{b}"></pp-childs>
     </div>
   `),
 })
@@ -213,8 +213,8 @@ class TestDirective implements OnInit, RouteChange, ReceiveProps {
     console.log(666666, 'init TestDirective element', this.element);
     console.log(777777, 'init TestDirective indiv', this.indiv);
     this.hss.test();
-    this.element.addEventListener('mouseover', this.changeColor);
-    this.element.addEventListener('mouseout', this.removeColor);
+    this.element.nativeElement.addEventListener('mouseover', this.changeColor);
+    this.element.nativeElement.addEventListener('mouseout', this.removeColor);
   }
   public nvRouteChange(lastRoute?: string, newRoute?: string) {
     console.log(5555, 'nvRouteChange TestDirective', newRoute);
@@ -224,10 +224,10 @@ class TestDirective implements OnInit, RouteChange, ReceiveProps {
   }
 
   public changeColor = () => {
-    this.element.style.color = 'red';
+    this.element.nativeElement.style.color = 'red';
   }
   public removeColor = () => {
-    this.element.style.color = 'black';
+    this.element.nativeElement.style.color = 'black';
   }
 }
 

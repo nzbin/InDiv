@@ -1069,7 +1069,6 @@ export class CompileUtil {
     const newElement = node.cloneNode(true);
     if (node.eventTypes) {
       JSON.parse(node.eventTypes).forEach((eventType: string) => {
-        (newElement as Node).addEventListener(eventType, (node as any)[`event${eventType}`]);
         (newElement as any)[`event${eventType}`] = (node as any)[`event${eventType}`];
       });
       newElement.eventTypes = node.eventTypes;

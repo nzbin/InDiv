@@ -134,4 +134,3 @@ export class RouterActive implements OnInit, ReceiveProps, OnDestory {
 
   }
 }
-

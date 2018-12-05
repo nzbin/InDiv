@@ -300,9 +300,9 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
   template: (`
     <div>
       <input nv-model="test.a" nv-on:click="@show(test)" />
-      <p test-directive="{'123'}" nv-id="@countState(a)" nv-if="@countState(a)" nv-on:click="@changeInput()">{{a}}</p>
+      <p test-directive="{'123'}" nv-id="232" nv-if="@countState(a)" nv-on:click="@changeInput()">{{a}}</p>
       <test-component nv-repeat="let man in testArray" nv-key="man.name" man="{@countState(man.name)}" nv-if="a"></test-component>
-      <p nv-on:click="@go()">container: {{@countState(a)}}</p>
+      <p nv-on:click="@go()">container: {{@countState(color)}}</p>
       <input nv-model="a" />
       <div nv-repeat="let man in testArray" nv-key="man.name">
           <div nv-on:click="@show(testArray2, '你111')">姓名：{{man.name}}</div>
@@ -408,7 +408,7 @@ class Container implements OnInit, AfterMount, WatchState {
 
   public nvAfterMount() {
     console.log('nvAfterMount Container');
-    document.getElementById('1').className = '3333';
+    // document.getElementById('1').className = '3333';
   }
 
   public go() {

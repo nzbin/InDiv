@@ -51,7 +51,8 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
     vm.directiveList = [];
 
     vm.watchData = function (): void {
-      collectDependencesFromViewModel(this.template, this);
+      // todo add @watch in dependences
+      (this as IComponent).dependencesList = collectDependencesFromViewModel(this.template, this);
       if (this.state) {
         if ((this as IComponent<State, Props, Vm>).nvWatchState) (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, (this as IComponent<State, Props, Vm>).nvWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).render.bind(this as IComponent<State, Props, Vm>));
         if (!(this as IComponent<State, Props, Vm>).nvWatchState) (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, null, (this as IComponent<State, Props, Vm>).render.bind(this as IComponent<State, Props, Vm>));

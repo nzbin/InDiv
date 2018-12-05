@@ -8,12 +8,13 @@ import { PrivateService } from './private.service';
   selector: 'test-loadchild-component',
   template: `
     <div>
-      <p router-to="{'/R1/C1/D1'}" router-from="{'/R1/C1?a=1'}">test loadChild</p>
+      <p nv-repeat="let t in ttt" nv-on:click="@testt(t)" router-to="{'/R1/C1/D1'}" router-from="{'/R1/C1?a=1'}">test loadChild</p>
       <router-render></router-render>
     </div>
   `,
 })
 export class TestLoadchildComponent {
+  public state: any;
   constructor(
     private sss: HeroSearchService,
     private element: ElementRef,
@@ -23,6 +24,16 @@ export class TestLoadchildComponent {
     console.log(99999, 'from TestLoadchildComponent', this.element, this.indiv);
     this.sss.test(5);
     this.pss.change();
+    this.state = {
+      ttt: [
+        '1',
+        '2',
+      ],
+    };
+  }
+
+  public testt(t: any) {
+    console.log(4444444, '测试 repeat node', t);
   }
 }
 

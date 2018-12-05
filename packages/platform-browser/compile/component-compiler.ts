@@ -157,7 +157,7 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
               props[attrName] = buildProps(_prop, componentInstance);
               return;
             }
-            if (node.repeatData && node.repeatData[key] !== null) {
+            if (node.repeatData && node.repeatData.hasOwnProperty(key)) {
               _prop = compileUtil._getValueByValue(node.repeatData[key], propValue, key);
               props[attrName] = buildProps(_prop, componentInstance);
               return;

@@ -60,19 +60,49 @@ function buildProps(template: string, componentInstance: IComponent, dependences
 }
 
 function buildAttribute(template: string, componentInstance: IComponent, dependences: string[]): void {
-  // todo 整个匹配出
-  const templateMatchResult: string[] = template.match(/nv\-[a-z,A-Z,\:]*\=\"((?!nv\-)(?!\=).)*\"/g);
-  // console.log(4444444444444, templateMatchResult);
-  // templateMatchResult.forEach((matchProps) => {
-  //   const pureMatchProps = matchProps.replace(/^\"\{/, '').replace(/^\}\"/, '');
-  // });
+  const templateMatchResult: string[] = template.match(/nv\-[a-z,A-Z]+\=\"((?!nv\-)(?!\=).)+\"/g);
+  if (!templateMatchResult) return;
+  templateMatchResult.forEach((matchProps) => {
+    const pureMatchProps = matchProps.split('=')[1].replace(/^\"/, '').replace(/\"$/, '');
+    if (!/^(\@).*/.test(pureMatchProps)) {
+      let pureProps = null;
+      if (/^nv-repeat=.*/.test(matchProps)) pureProps = pureMatchProps.split(' ')[3].split('.')[0];
+      if (!/^nv-repeat=.*/.test(matchProps)) pureProps = pureMatchProps.split('.')[0];
+      if (componentInstance.state && componentInstance.state.hasOwnProperty(pureProps) && dependences.indexOf(pureProps) === -1) dependences.push(pureProps);
+    }
+    if (/^(\@).*/.test(pureMatchProps) && /^(\@).*\(.*\)$/.test(pureMatchProps)) {
+      const args = pureMatchProps.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
+      args.forEach(arg => {
+        const pureArg = arg.split('.')[0];
+        if (componentInstance.state && componentInstance.state.hasOwnProperty(pureArg) && dependences.indexOf(pureArg) === -1) dependences.push(pureArg);
+      });
+    }
+  });
+}
+
+function buildTemplateText(template: string, componentInstance: IComponent, dependences: string[]) {
+  const templateMatchResult: string[] = template.match(/(\{\{[^\{\}]+?\}\})/g);
+  if (!templateMatchResult) return;
+  templateMatchResult.forEach((matchProps) => {
+    const pureMatchProps = matchProps.replace(/^\{\{/, '').replace(/\}\}$/, '');
+    if (!/^(\@).*/.test(pureMatchProps)) {
+      const pureProps = pureMatchProps.split('.')[0];
+      if (componentInstance.state && componentInstance.state.hasOwnProperty(pureProps) && dependences.indexOf(pureProps) === -1) dependences.push(pureProps);
+    }
+    if (/^(\@).*/.test(pureMatchProps) && /^(\@).*\(.*\)$/.test(pureMatchProps)) {
+      const args = pureMatchProps.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
+      args.forEach(arg => {
+        const pureArg = arg.split('.')[0];
+        if (componentInstance.state && componentInstance.state.hasOwnProperty(pureArg) && dependences.indexOf(pureArg) === -1) dependences.push(pureArg);
+      });
+    }
+  });
 }
 
 export function collectDependencesFromViewModel(template: string, componentInstance: IComponent): string[] {
   const dependences: string[] = [];
-
   buildProps(template, componentInstance, dependences);
   buildAttribute(template, componentInstance, dependences);
-
+  buildTemplateText(template, componentInstance, dependences);
   return dependences;
 }

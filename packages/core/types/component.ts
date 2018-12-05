@@ -18,6 +18,7 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     $indivInstance?: Vm | any;
     stateWatcher?: Watcher;
     renderTaskQueue?: RenderTaskQueue;
+    dependencesList?: string[];
 
     template?: string;
     declarationMap?: Map<string, Function>;

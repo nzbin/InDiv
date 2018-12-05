@@ -11,3 +11,4 @@
 
 - 基本原理
   - [依赖注入](di)
+  - [状态依赖收集](stateDependenceCollection)

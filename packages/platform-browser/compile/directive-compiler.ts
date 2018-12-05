@@ -122,7 +122,7 @@ export function directivesConstructor<State = any, Props = any, Vm = any>(dom: E
         const value = fn.apply(componentInstance, argsList);
         props = value;
       } else if (/^(\@.).*[^\(.*\)]$/g.test(prop)) props = compileUtil._getVMVal(componentInstance, prop.replace(/^(\@)/, ''));
-      else if (node.repeatData && node.repeatData[key] !== null) props = compileUtil._getValueByValue(node.repeatData[key], prop, key);
+      else if (node.repeatData && node.repeatData.hasOwnProperty(key)) props = compileUtil._getValueByValue(node.repeatData[key], prop, key);
       else if (/^\'.*\'$/.test(prop)) props = prop.match(/^\'(.*)\'$/)[1];
       else if (/^\".*\"$/.test(prop)) props = prop.match(/^\"(.*)\"$/)[1];
       else if (!/^\'.*\'$/.test(prop) && !/^\".*\"$/.test(prop) && /^[0-9]*$/.test(prop)) props = Number(prop);

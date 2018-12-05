@@ -544,6 +544,7 @@ export class CompileUtil {
    * @returns {void}
    * @memberof CompileUtil
    */
+  // todo remove state
   public _getVMRepeatVal(vm: any, exp: string): void {
     const vlList = exp.split(' ');
     const value = this._getVMVal(vm.state, vlList[3]);
@@ -576,6 +577,7 @@ export class CompileUtil {
    * @returns {any[]}
    * @memberof CompileUtil
    */
+  // todo remove state
   public _getVMFunctionArguments(vm: any, exp: string, node: Element): any[] {
     const args = exp.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
     const argsList: any[] = [];

@@ -309,7 +309,7 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
           <div>性别：{{@countState(man.sex, $index)}}</div>
           <a nv-href="@countState(man.sex, $index)">a {{man.sex}}</a>
           <img nv-src="man.sex" nv-alt="man.sex" />
-          <test-component nv-key="man.name" man="{@countState(color)}"></test-component>
+          <test-component nv-key="man.name" man="{@countState(man.name)}"></test-component>
           <input nv-on:click="@show(b, $index)" nv-repeat="let b in testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
           <input nv-model="test.a"/>
           <div class="fuck" nv-repeat="let c in man.job" nv-key="c.id">

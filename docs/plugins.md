@@ -4,7 +4,7 @@
 
   - 添加全局方法或者属性
 
-  - 通过 InDiv 的方法添加全局资源：如 `@indiv/platform-browser` 中的 `PlatformBrowser` 通过调用 InDiv实例 上的 `setComponentRender` 来为组件 增加一个 浏览器平台的渲染器
+  - 通过 InDiv 的方法添加全局资源：如 `@indiv/platform-browser` 中的 `PlatformBrowser` 通过调用 InDiv实例 上的 `setComponentCompiler` 来为组件 增加一个 浏览器平台的编译器
 
   - 添加 InDiv 实例方法，通过 中间件方法`bootstrap` 的 参数 `indivInstance`，它们添加到 InDiv.prototype 上实现
 
@@ -19,7 +19,7 @@
 
 在`init()`之前就使用`use`方法去实例化 `PlatformBrowser`插件类，
 
-并调用了 `PlatformBrowser` 实例的 `bootstrap(indivInstance: InDiv): void` 调用 参数InDiv实例的 `indivInstance.setComponentRender(render);` 来添加渲染器。
+并调用了 `PlatformBrowser` 实例的 `bootstrap(indivInstance: InDiv): void` 调用 参数InDiv实例的 `indivInstance.setComponentCompiler(componentCompiler);` 来添加渲染器。
 
 > main.ts
 

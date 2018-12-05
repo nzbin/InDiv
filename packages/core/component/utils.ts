@@ -23,9 +23,9 @@ export function setState(newState: any): void {
       const _state = JSON.parse(JSON.stringify(this.state));
       Object.assign(_state, _newState);
       this.state = _state;
-      if ((this as IComponent).nvWatchState) (this as IComponent).stateWatcher = new Watcher((this as IComponent).state, (this as IComponent).nvWatchState.bind(this as IComponent), (this as IComponent).reRender.bind(this as IComponent));
-      if (!(this as IComponent).nvWatchState) (this as IComponent).stateWatcher = new Watcher((this as IComponent).state, null, (this as IComponent).reRender.bind(this as IComponent));
-      (this as IComponent).reRender();
+      if ((this as IComponent).nvWatchState) (this as IComponent).stateWatcher = new Watcher((this as IComponent).state, (this as IComponent).nvWatchState.bind(this as IComponent), (this as IComponent).render.bind(this as IComponent));
+      if (!(this as IComponent).nvWatchState) (this as IComponent).stateWatcher = new Watcher((this as IComponent).state, null, (this as IComponent).render.bind(this as IComponent));
+      (this as IComponent).render();
     }
   }
   if (newState && newState instanceof Object) {
@@ -33,26 +33,26 @@ export function setState(newState: any): void {
     const _state = JSON.parse(JSON.stringify(this.state));
     Object.assign(_state, newState);
     this.state = _state;
-    if ((this as IComponent).nvWatchState) (this as IComponent).stateWatcher = new Watcher((this as IComponent).state, (this as IComponent).nvWatchState.bind(this as IComponent), (this as IComponent).reRender.bind(this as IComponent));
-    if (!(this as IComponent).nvWatchState) (this as IComponent).stateWatcher = new Watcher((this as IComponent).state, null, (this as IComponent).reRender.bind(this as IComponent));
-    (this as IComponent).reRender();
+    if ((this as IComponent).nvWatchState) (this as IComponent).stateWatcher = new Watcher((this as IComponent).state, (this as IComponent).nvWatchState.bind(this as IComponent), (this as IComponent).render.bind(this as IComponent));
+    if (!(this as IComponent).nvWatchState) (this as IComponent).stateWatcher = new Watcher((this as IComponent).state, null, (this as IComponent).render.bind(this as IComponent));
+    (this as IComponent).render();
   }
 }
 
+// todo remove state
 function buildProps(template: string, componentInstance: IComponent, dependences: string[]): void {
   const templateMatchResult: string[] = template.match(/\"\{[^\{\}]+?\}\"/g);
   if (!templateMatchResult) return;
   templateMatchResult.forEach((matchProps) => {
-    const pureMatchProps = matchProps.replace(/^\"\{/, '').replace(/^\}\"/, '');
+    const pureMatchProps = matchProps.replace(/^\"\{/, '').replace(/\}\"$/, '');
     if (!/^(\@).*/.test(pureMatchProps)) {
       const pureProps = pureMatchProps.split('.')[0];
-      // todo remove state
       if (componentInstance.state && componentInstance.state.hasOwnProperty(pureProps) && dependences.indexOf(pureProps) === -1) dependences.push(pureProps);
-    } else {
+    }
+    if (/^(\@).*/.test(pureMatchProps) && /^(\@).*\(.*\)$/.test(pureMatchProps)) {
       const args = pureMatchProps.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
       args.forEach(arg => {
         const pureArg = arg.split('.')[0];
-        // todo remove state
         if (componentInstance.state && componentInstance.state.hasOwnProperty(pureArg) && dependences.indexOf(pureArg) === -1) dependences.push(pureArg);
       });
     }
@@ -61,8 +61,8 @@ function buildProps(template: string, componentInstance: IComponent, dependences
 
 function buildAttribute(template: string, componentInstance: IComponent, dependences: string[]): void {
   // todo 整个匹配出
-  const templateMatchResult: string[] = template.match(/nv\-[a-z,A-Z,\:]*\=\"((?!nv\-).)*\"/g);
-  console.log(4444444444444, templateMatchResult);
+  const templateMatchResult: string[] = template.match(/nv\-[a-z,A-Z,\:]*\=\"((?!nv\-)(?!\=).)*\"/g);
+  // console.log(4444444444444, templateMatchResult);
   // templateMatchResult.forEach((matchProps) => {
   //   const pureMatchProps = matchProps.replace(/^\"\{/, '').replace(/^\}\"/, '');
   // });

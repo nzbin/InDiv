@@ -33,8 +33,7 @@ export class InDiv {
   private rootModule: INvModule = null;
   private declarations: Function[];
   private bootstrapComponent: IComponent;
-  private render: () => Promise<IComponent>;
-  private reRender: () => Promise<IComponent>;
+  private compiler: (renderNode: Element | any, componentInstace: IComponent) => Promise<IComponent>;
 
   constructor() {
     if (utils.isBrowser()) {
@@ -55,36 +54,25 @@ export class InDiv {
     this.pluginList.push(newPlugin);
     return this.pluginList.length - 1;
   }
-  
+
   /**
-   * set component Render function
-   * 
-   * render and rerender will be a method in Component instance,
-   * so you can use this in render and rerender
+   * set component render function
    *
-   * @template S
-   * @template P
-   * @template V
-   * @param {() => Promise<IComponent<S, P, V>>} render
-   * @param {() => Promise<IComponent<S, P, V>>} [reRender]
+   * @param {((renderNode: Element | any, componentInstace: IComponent) => Promise<IComponent>)} compile
    * @memberof InDiv
    */
-  public setComponentRender<S = any, P = any, V = any>(render: () => Promise<IComponent<S, P, V>>, reRender?: () => Promise<IComponent<S, P, V>>): void {
-    this.render = render;
-    this.reRender = reRender ? reRender : render;
+  public setComponentCompiler(compiler: (renderNode: Element | any, componentInstace: IComponent) => Promise<IComponent>): void {
+    this.compiler = compiler;
   }
 
   /**
-   * get component Render function 
+   * get component render function
    *
-   * @returns {{ render: () => Promise<IComponent>, reRender: () => Promise<IComponent> }}
+   * @returns {((renderNode: Element | any, componentInstace: IComponent) => Promise<IComponent>)}
    * @memberof InDiv
    */
-  public getComponentRender(): { render: () => Promise<IComponent>, reRender: () => Promise<IComponent> } {
-    return {
-      render: this.render,
-      reRender: this.reRender,
-    };
+  public getComponentCompiler(): (renderNode: Element | any, componentInstace: IComponent) => Promise<IComponent> {
+    return this.compiler;
   }
 
   /**
@@ -188,7 +176,7 @@ export class InDiv {
     if (!utils.isBrowser()) return;
 
     if (!this.rootModule) throw new Error('must use bootstrapModule to declare a root NvModule before init');
-    if (!this.render) throw new Error('must use plugin of platform to set a render in InDiv!');
+    if (!this.compiler) throw new Error('must use plugin of platform to set a compiler method in InDiv!');
     this.renderModuleBootstrap<R>();
   }
 
@@ -226,8 +214,7 @@ export class InDiv {
       });
     }
 
-    component.render = this.render.bind(component);
-    component.reRender = this.reRender.bind(component);
+    component.compiler = this.compiler.bind(component);
     // set otherInjector for components from loadModule to be used
     component.otherInjector = otherInjector;
 

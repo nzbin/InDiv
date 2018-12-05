@@ -1,8 +1,7 @@
 import { IDirective, DirectiveList, IComponent, Utils } from '@indiv/core';
 
-import { CompileUtilForRepeat, CompileUtil } from '../compile';
-import { buildDirectiveScope } from './render-utils';
-import { RenderTaskQueue } from './render-task-queue';
+import { CompileUtilForRepeat, CompileUtil } from './compile-utils';
+import { buildDirectiveScope } from './compiler-utils';
 
 const utils = new Utils();
 
@@ -146,22 +145,22 @@ export function directivesConstructor<State = any, Props = any, Vm = any>(dom: E
  *
  * @export
  * @param {Element} renderNode
- * @param {RenderTaskQueue} RenderTaskQueue
+ * @param {IComponent} componentInstance
  * @returns {Promise<IDirective>}
  */
-export async function directiveRenderFunction(renderNode: Element, RenderTaskQueue: RenderTaskQueue): Promise<IDirective> {
+export async function directiveCompiler(renderNode: Element, componentInstance: IComponent): Promise<IDirective> {
   return Promise.resolve()
     .then(() => {
-      mountDirective(renderNode, RenderTaskQueue.componentInstance);
-      const directiveListLength = RenderTaskQueue.componentInstance.directiveList.length;
+      mountDirective(renderNode, componentInstance);
+      const directiveListLength = componentInstance.directiveList.length;
       for (let i = 0; i < directiveListLength; i++) {
-        const directive = RenderTaskQueue.componentInstance.directiveList[i];
+        const directive = componentInstance.directiveList[i];
         if (directive.scope.nvAfterMount) directive.scope.nvAfterMount();
         if (directive.scope.nvHasRender) directive.scope.nvHasRender();
       }
-      return RenderTaskQueue.componentInstance;
+      return componentInstance;
     })
     .catch(e => {
-      throw new Error(`directive ${(RenderTaskQueue.componentInstance.constructor as any).selector} render failed: ${e}`);
+      throw new Error(`directive ${(componentInstance.constructor as any).selector} render failed: ${e}`);
     });
 }

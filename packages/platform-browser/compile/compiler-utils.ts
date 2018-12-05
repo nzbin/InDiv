@@ -64,8 +64,8 @@ export function buildComponentScope<State = any, Props = any, Vm = any>(Componen
     if (!_component.declarationMap.has(key)) _component.declarationMap.set(key, declaration);
   });
 
-  _component.render = componentInstance.$indivInstance.render.bind(_component);
-  _component.reRender = componentInstance.$indivInstance.reRender.bind(_component);
+  // bind compile for @Component
+  _component.compiler = componentInstance.$indivInstance.getComponentCompiler().bind(_component);
   _component.otherInjector = componentInstance.otherInjector;
 
   return _component;

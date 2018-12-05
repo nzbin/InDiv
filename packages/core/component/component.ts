@@ -2,6 +2,7 @@ import { IComponent, TInjectTokenProvider, TUseClassProvider, TUseValueProvider 
 
 import { Watcher } from '../watcher';
 import { injected, Injector } from '../di';
+import { render } from '../render';
 import { collectDependencesFromViewModel } from './utils';
 
 export type TComponentOptions = {
@@ -52,9 +53,11 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
     vm.watchData = function (): void {
       collectDependencesFromViewModel(this.template, this);
       if (this.state) {
-        if ((this as IComponent<State, Props, Vm>).nvWatchState) (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, (this as IComponent<State, Props, Vm>).nvWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).reRender.bind(this as IComponent<State, Props, Vm>));
-        if (!(this as IComponent<State, Props, Vm>).nvWatchState) (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, null, (this as IComponent<State, Props, Vm>).reRender.bind(this as IComponent<State, Props, Vm>));
+        if ((this as IComponent<State, Props, Vm>).nvWatchState) (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, (this as IComponent<State, Props, Vm>).nvWatchState.bind(this as IComponent<State, Props, Vm>), (this as IComponent<State, Props, Vm>).render.bind(this as IComponent<State, Props, Vm>));
+        if (!(this as IComponent<State, Props, Vm>).nvWatchState) (this as IComponent<State, Props, Vm>).stateWatcher = new Watcher((this as IComponent<State, Props, Vm>).state, null, (this as IComponent<State, Props, Vm>).render.bind(this as IComponent<State, Props, Vm>));
       }
     };
+
+    vm.render = render;
   };
 }

@@ -1,9 +1,10 @@
 import { IComponent, ComponentList, Utils } from '@indiv/core';
 
-import { Compile, CompileUtilForRepeat, CompileUtil } from '../compile';
-import { getPropsValue, buildProps, buildComponentScope } from './render-utils';
-import { directiveRenderFunction } from './directive-render';
-import { RenderTaskQueue } from './render-task-queue';
+import { Compile } from './compile';
+import { CompileUtilForRepeat, CompileUtil } from './compile-utils';
+import { getPropsValue, buildProps, buildComponentScope } from './compiler-utils';
+
+import { directiveCompiler } from './directive-compiler';
 
 const utils = new Utils();
 
@@ -193,37 +194,32 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
  *
  * @export
  * @param {Element} renderNode
- * @param {RenderTaskQueue} RenderTaskQueue
+ * @param {IComponent} componentInstance
  * @returns {Promise<IComponent>}
  */
-export async function componentRenderFunction(renderNode: Element, RenderTaskQueue: RenderTaskQueue): Promise<IComponent> {
+export async function componentCompiler(renderNode: Element, componentInstance: IComponent): Promise<IComponent> {
   return Promise.resolve()
     .then(async() => {
       // compile has been added into Component instance by dirty method
-      if (!(RenderTaskQueue.componentInstance as any).compile) ((RenderTaskQueue.componentInstance as any).compile as Compile) = new Compile(renderNode, RenderTaskQueue.componentInstance);
-      ((RenderTaskQueue.componentInstance as any).compile as Compile).startCompile();
+      if (!(componentInstance as any).compileInstance) ((componentInstance as any).compileInstance as Compile) = new Compile(renderNode, componentInstance);
+      ((componentInstance as any).compileInstance as Compile).startCompile();
 
       // first mount directive
-      await directiveRenderFunction(renderNode, RenderTaskQueue);
+      await directiveCompiler(renderNode, componentInstance);
 
       // then mount component
-      mountComponent(renderNode, RenderTaskQueue.componentInstance);
-      const componentListLength = RenderTaskQueue.componentInstance.componentList.length;
+      mountComponent(renderNode, componentInstance);
+      const componentListLength = componentInstance.componentList.length;
       for (let i = 0; i < componentListLength; i++) {
-        const component = RenderTaskQueue.componentInstance.componentList[i];
-        if (component.hasRender) {
-          component.scope.reRender();
-        } else {
-          // if component didn't rendered, it will render and set hasRender true
-          component.scope.render();
-          component.hasRender = true;
-        }
+        const component = componentInstance.componentList[i];
+        if (!component.hasRender) component.hasRender = true;
+        component.scope.render();
         if (component.scope.nvAfterMount) component.scope.nvAfterMount();
       }
-      if (RenderTaskQueue.componentInstance.nvHasRender) RenderTaskQueue.componentInstance.nvHasRender();
-      return RenderTaskQueue.componentInstance;
+      if (componentInstance.nvHasRender) componentInstance.nvHasRender();
+      return componentInstance;
     })
     .catch(e => {
-      throw new Error(`component ${(RenderTaskQueue.componentInstance.constructor as any).selector} render failed: ${e}`);
+      throw new Error(`component ${(componentInstance.constructor as any).selector} render failed: ${e}`);
     });
 }

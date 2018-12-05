@@ -18,9 +18,9 @@
   - `otherModule?: INvModule` 如果来自非根模块，在这里指定，并使用`otherModule`的 IOC容器`injector` 去注入服务给组件
   - 返回 `Promise<IComponent>` 返回 promise 组件实例
 
-5. `setComponentRender<S = any, P = any, V = any>(render: () => Promise<IComponent<S, P, V>>, reRender?: () => Promise<IComponent<S, P, V>>): void` 重置 InDiv 组件渲染方法，该方法接收2个参数，第一个是渲染方法，第二个是重新渲染调用的方法。如果没有传第二个参数 `reRender`，则无论怎么渲染都将调用 `render`。该方法可用于 **跨平台渲染** 修改渲染方法。
+5. `setComponentCompiler(compiler: (renderNode: Element | any, componentInstace: IComponent) => Promise<IComponent>): void` 重置 InDiv 组件编译方法，该方法接收1个参数，为即将在组件中使用的编译方法。该方法可用于 **跨平台渲染** 修改编译方法。
 
-6. `getComponentRender(): { render: () => Promise<IComponent>, reRender: () => Promise<IComponent> }` 返回 InDiv 组件渲染的方法。
+6. `getComponentCompiler(): (renderNode: Element | any, componentInstace: IComponent) => Promise<IComponent>` 返回 InDiv 组件编译的方法。
 
 7. `getBootstrapComponent(): IComponent` 获取引导根组件是获得的根组件的`bootstrap`组件实例。
 

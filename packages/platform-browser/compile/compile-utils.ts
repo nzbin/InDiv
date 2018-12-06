@@ -48,7 +48,7 @@ export class CompileUtilForRepeat {
    * @memberof CompileUtilForRepeat
    */
   public _getValueByValue(vm: any, exp: string, key: string): any {
-    const valueList = exp.replace('()', '').split('.');
+    const valueList = exp.replace(/\(.*\)/, '').split('.');
     let value = vm;
     valueList.forEach((v, index) => {
       if (v === key && index === 0) return;
@@ -66,7 +66,7 @@ export class CompileUtilForRepeat {
    * @memberof CompileUtilForRepeat
    */
   public _getVMVal(vm: any, exp: string): any {
-    const valueList = exp.replace('()', '').split('.');
+    const valueList = exp.replace(/\(.*\)/, '').split('.');
     let value = vm;
     valueList.forEach(v => {
       value = value[v];
@@ -85,7 +85,7 @@ export class CompileUtilForRepeat {
    */
   public _getVMRepeatVal(val: any, exp: string, key: string): any {
     let value: any;
-    const valueList = exp.replace('()', '').split('.');
+    const valueList = exp.replace(/\(.*\)/, '').split('.');
     valueList.forEach((v, index) => {
       if (v === key && index === 0) {
         value = val;
@@ -105,7 +105,7 @@ export class CompileUtilForRepeat {
    * @memberof CompileUtil
    */
   public _getVMFunction(vm: any, exp: string): Function {
-    const fnList = exp.replace(/^(\@)/, '').replace(/\(.*\)/, '').split('.');
+    const fnList = exp.replace(/\(.*\)/, '').split('.');
     let fn = vm;
     fnList.forEach(f => {
       fn = fn[f];
@@ -125,7 +125,7 @@ export class CompileUtilForRepeat {
    * @memberof CompileUtilForRepeat
    */
   public _getVMFunctionArguments(vm: any, exp: string, node: Element, key?: string, val?: any): any[] {
-    const args = exp.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
+    const args = exp.match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
     const argsList: any[] = [];
     const utilVm = this;
     args.forEach(arg => {
@@ -134,7 +134,7 @@ export class CompileUtilForRepeat {
       if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
       if (arg === 'null') return argsList.push(null);
       if (arg === 'undefined') return argsList.push(undefined);
-      if (utilVm.isFromState(vm.state, arg)) return argsList.push(utilVm._getVMVal(vm.state, arg));
+      if (utilVm.isFromVM(vm, arg)) return argsList.push(utilVm._getVMVal(vm, arg));
       if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
       if (/^\".*\"$/.test(arg)) return argsList.push(arg.match(/^\"(.*)\"$/)[1]);
       if (!/^\'.*\'$/.test(arg) && !/^\".*\"$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
@@ -160,7 +160,7 @@ export class CompileUtilForRepeat {
    * @memberof CompileUtilForRepeat
    */
   public _setValueByValue(vm: any, exp: string, key: string, setValue: any): any {
-    const valueList = exp.replace('()', '').split('.');
+    const valueList = exp.replace(/\(.*\)/, '').split('.');
     let value = vm;
     let lastKey;
     valueList.forEach((v, index) => {
@@ -172,7 +172,7 @@ export class CompileUtilForRepeat {
   }
 
   /**
-   * set value from vm.state
+   * set value from vm instance
    *
    * @param {*} vm
    * @param {string} exp
@@ -180,14 +180,14 @@ export class CompileUtilForRepeat {
    * @memberof CompileUtilForRepeat
    */
   public _setVMVal(vm: any, exp: string, value: any): void {
-    let stateValue: any = null;
+    let vmValue: any = null;
     const keyList = exp.split('.');
-    if (keyList.length === 1) vm.state[exp] = value;
+    if (keyList.length === 1) vm[exp] = value;
     else {
       keyList.forEach((key, index) => {
-        if (index === 0) stateValue = vm.state[key];
-        if (index !== 0 && index !== keyList.length - 1) stateValue = stateValue[key];
-        if (index === keyList.length - 1) stateValue[key] = value;
+        if (index === 0) vmValue = vm[key];
+        if (index !== 0 && index !== keyList.length - 1) vmValue = vmValue[key];
+        if (index === keyList.length - 1) vmValue[key] = value;
       });
     }
   }
@@ -207,16 +207,16 @@ export class CompileUtilForRepeat {
   public bind(node: Element, key?: string, dir?: string, exp?: string, index?: number, vm?: any, watchValue?: any, val?: any): void {
     const repeatValue = (node.repeatData)[key];
     let value;
-    if (/^(\@)/.test(exp)) {
+    if (/^.*\(.*\)$/.test(exp)) {
       if (dir === 'model') throw new Error(`directive: nv-model can't use ${exp} as value`);
-      // if @Function need function return value
+      // if Function() need function return value
       const fn = this._getVMFunction(vm, exp);
       const argsList = this._getVMFunctionArguments(vm, exp, node, key, val);
       value = fn.apply(vm, argsList);
     // repeat value
     } else if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) value = this._getVMRepeatVal(repeatValue, exp, key);
     // normal value
-    else if (this.isFromState(vm.state, exp)) value = this._getVMVal(vm.state, exp);
+    else if (this.isFromVM(vm, exp)) value = this._getVMVal(vm, exp);
     else if (exp === '$index') value = index;
     else if (/^\'.*\'$/.test(exp)) value = exp.match(/^\'(.*)\'$/)[1];
     else if (/^\".*\"$/.test(exp)) value = exp.match(/^\"(.*)\"$/)[1];
@@ -235,7 +235,7 @@ export class CompileUtilForRepeat {
         if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
           watchData = watchValue;
         } else {
-          watchData = this._getVMVal(vm.state, exp);
+          watchData = this._getVMVal(vm, exp);
         }
         if (updaterFn) (updaterFn as Function).call(this, node, value, exp, key, index, watchData, vm);
         break;
@@ -277,17 +277,13 @@ export class CompileUtilForRepeat {
         for (let i = 0; i < textList.length; i++) {
           const exp = textList[i].replace('{{', '').replace('}}', '');
           let value = null;
-          if (/^(\@)/.test(exp)) {
+          if (/^.*\(.*\)$/.test(exp)) {
             const fn = this._getVMFunction(vm, exp);
             const argsList = this._getVMFunctionArguments(vm, exp, node, key, val);
             value = fn.apply(vm, argsList);
-          } else if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
-            value = this._getVMRepeatVal(val, exp, key);
-          } else if (this.isFromState(vm.state, exp)) {
-            value = this._getVMVal(vm.state, exp);
-          } else {
-            throw new Error(`directive: {{${exp}}} can\'t use recognize ${exp}`);
-          }
+          } else if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) value = this._getVMRepeatVal(val, exp, key);
+          else if (this.isFromVM(vm, exp)) value = this._getVMVal(vm, exp);
+          else throw new Error(`directive: {{${exp}}} can\'t use recognize ${exp}`);
           node.textContent = node.textContent.replace(textList[i], value);
         }
       }
@@ -311,7 +307,7 @@ export class CompileUtilForRepeat {
     const utilVm = this;
     const func = function(event: Event): void {
       event.preventDefault();
-      if (utilVm.isFromState(vm.state, exp)) {
+      if (utilVm.isFromVM(vm, exp)) {
         if ((event.target as HTMLInputElement).value === watchData) return;
         utilVm._setVMVal(vm, exp, (event.target as HTMLInputElement).value);
       } else if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
@@ -321,9 +317,7 @@ export class CompileUtilForRepeat {
           vals = (event.target as HTMLInputElement).value;
           utilVm._setValueByValue(watchData[index], exp, key, vals);
         }
-      } else {
-        throw new Error('directive: nv-model can\'t use recognize this value');
-      }
+      } else throw new Error(`directive: nv-model can\'t use recognize this prop ${exp}`);
     };
 
     (node as Node).addEventListener('input', func);
@@ -372,17 +366,17 @@ export class CompileUtilForRepeat {
   }
 
   /**
-   * find exp is member of vm.state
+   * find exp is member of vm instance
    *
    * @param {*} vm
    * @param {string} exp
    * @returns {boolean}
    * @memberof CompileUtil
    */
-  public isFromState(state: any, exp: string): boolean {
-    if (!state) return false;
-    const value = exp.replace('()', '').split('.')[0];
-    return state.hasOwnProperty(value);
+  public isFromVM(vm: any, exp: string): boolean {
+    if (!vm) return false;
+    const value = exp.replace(/\(.*\)/, '').split('.')[0];
+    return value in vm;
   }
 
   /**
@@ -440,8 +434,7 @@ export class CompileUtilForRepeat {
     const eventType = eventName.split(':')[1];
 
     const fn = this._getVMFunction(vm, exp);
-
-    const args = exp.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
+    const args = exp.match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
 
     const utilVm = this;
     const func = function(event: Event): any {
@@ -453,7 +446,7 @@ export class CompileUtilForRepeat {
         if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
         if (arg === 'null') return argsList.push(null);
         if (arg === 'undefined') return argsList.push(undefined);
-        if (utilVm.isFromState(vm.state, arg)) return argsList.push(utilVm._getVMVal(vm.state, arg));
+        if (utilVm.isFromVM(vm, arg)) return argsList.push(utilVm._getVMVal(vm, arg));
         if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
         if (/^\".*\"$/.test(arg)) return argsList.push(arg.match(/^\"(.*)\"$/)[1]);
         if (!/^\'.*\'$/.test(arg) && !/^\".*\"$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
@@ -510,7 +503,7 @@ export class CompileUtil {
    * @memberof CompileUtil
    */
   public _getValueByValue(vm: any, exp: string, key: string): any {
-    const valueList = exp.replace('()', '').split('.');
+    const valueList = exp.replace(/\(.*\)/, '').split('.');
     let value = vm;
     valueList.forEach((v, index) => {
       if (v === key && index === 0) return;
@@ -528,7 +521,7 @@ export class CompileUtil {
    * @memberof CompileUtil
    */
   public _getVMVal(vm: any, exp: string): any {
-    const valueList = exp.replace('()', '').split('.');
+    const valueList = exp.replace(/\(.*\)/, '').split('.');
     let value = vm;
     valueList.forEach(v => {
       value = value[v];
@@ -544,10 +537,9 @@ export class CompileUtil {
    * @returns {void}
    * @memberof CompileUtil
    */
-  // todo remove state
   public _getVMRepeatVal(vm: any, exp: string): void {
     const vlList = exp.split(' ');
-    const value = this._getVMVal(vm.state, vlList[3]);
+    const value = this._getVMVal(vm, vlList[3]);
     return value;
   }
 
@@ -560,7 +552,7 @@ export class CompileUtil {
    * @memberof CompileUtil
    */
   public _getVMFunction(vm: any, exp: string): Function {
-    const fnList = exp.replace(/^(\@)/, '').replace(/\(.*\)/, '').split('.');
+    const fnList = exp.replace(/\(.*\)/, '').split('.');
     let fn = vm;
     fnList.forEach(f => {
       fn = fn[f];
@@ -577,9 +569,8 @@ export class CompileUtil {
    * @returns {any[]}
    * @memberof CompileUtil
    */
-  // todo remove state
   public _getVMFunctionArguments(vm: any, exp: string, node: Element): any[] {
-    const args = exp.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
+    const args = exp.match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
     const argsList: any[] = [];
     args.forEach(arg => {
       if (arg === '') return false;
@@ -587,7 +578,7 @@ export class CompileUtil {
       if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
       if (arg === 'null') return argsList.push(null);
       if (arg === 'undefined') return argsList.push(undefined);
-      if (this.isFromState(vm.state, arg)) return argsList.push(this._getVMVal(vm.state, arg));
+      if (this.isFromVM(vm, arg)) return argsList.push(this._getVMVal(vm, arg));
       if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
       if (/^\".*\"$/.test(arg)) return argsList.push(arg.match(/^\"(.*)\"$/)[1]);
       if (!/^\'.*\'$/.test(arg) && !/^\".*\"$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
@@ -596,7 +587,7 @@ export class CompileUtil {
   }
 
   /**
-   * set value from vm.state
+   * set value from vm instance
    *
    * @param {*} vm
    * @param {string} exp
@@ -604,14 +595,14 @@ export class CompileUtil {
    * @memberof CompileUtil
    */
   public _setVMVal(vm: any, exp: string, value: any): void {
-    let stateValue: any = null;
+    let vmValue: any = null;
     const keyList = exp.split('.');
-    if (keyList.length === 1) vm.state[exp] = value;
+    if (keyList.length === 1) vm[exp] = value;
     else {
       keyList.forEach((key, index) => {
-        if (index === 0) stateValue = vm.state[key];
-        if (index !== 0 && index !== keyList.length - 1) stateValue = stateValue[key];
-        if (index === keyList.length - 1) stateValue[key] = value;
+        if (index === 0) vmValue = vm[key];
+        if (index !== 0 && index !== keyList.length - 1) vmValue = vmValue[key];
+        if (index === keyList.length - 1) vmValue[key] = value;
       });
     }
   }
@@ -639,22 +630,22 @@ export class CompileUtil {
       }
     } else {
       let value = null;
-      // for @Function(arg)
-      if (/^(\@)/.test(exp)) {
-        if (dir === 'model') throw new Error(`directive: nv-model can't use ${exp} as value`);
+      // for Function(arg)
+      if (/^.*\(.*\)$/.test(exp)) {
+        if (dir === 'model') throw new Error(`directive: nv-model can't use ${exp} as prop`);
         // if @Function need function return value
         const fn = this._getVMFunction(vm, exp);
         const argsList = this._getVMFunctionArguments(vm, exp, node);
         value = fn.apply(vm, argsList);
       // normal value
-      } else if (this.isFromState(vm.state, exp)) value = this._getVMVal(vm.state, exp);
+      } else if (this.isFromVM(vm, exp)) value = this._getVMVal(vm, exp);
       else if (/^\'.*\'$/.test(exp)) value = exp.match(/^\'(.*)\'$/)[1];
       else if (/^\".*\"$/.test(exp)) value = exp.match(/^\"(.*)\"$/)[1];
       else if (!/^\'.*\'$/.test(exp) && !/^\".*\"$/.test(exp) && /^[0-9]*$/g.test(exp)) value = Number(exp);
       else if (exp === 'true' || exp === 'false') value = (exp === 'true');
       else if (exp === 'null') value = null;
       else if (exp === 'undefined') value = undefined;
-      else throw new Error(`directive: nv-${dir} can't use recognize this value ${exp}`);
+      else throw new Error(`directive: nv-${dir} can't use recognize this value ${exp} as prop`);
 
       // compile unrepeatNode's attributes
       switch (dir) {
@@ -693,15 +684,12 @@ export class CompileUtil {
   public templateUpdater(node: any, vm: any, exp: string): void {
     const _exp = exp.replace('{{', '').replace('}}', '');
     let value = null;
-    if (/^(\@)/.test(_exp)) {
+    if (/^.*\(.*\)$/.test(_exp)) {
       const fn = this._getVMFunction(vm, _exp);
       const argsList = this._getVMFunctionArguments(vm, _exp, node);
       value = fn.apply(vm, argsList);
-    } else if (this.isFromState(vm.state, _exp)) {
-      value = this._getVMVal(vm.state, _exp);
-    } else {
-      throw new Error(`directive: ${exp} can't use recognize this value`);
-    }
+    } else if (this.isFromVM(vm, _exp)) value = this._getVMVal(vm, _exp);
+    else throw new Error(`directive: ${exp} can't use recognize this value`);
     node.textContent = node.textContent.replace(exp, value);
   }
 
@@ -719,7 +707,7 @@ export class CompileUtil {
 
     const func = (event: Event) => {
       event.preventDefault();
-      if (this.isFromState(vm.state, exp)) this._setVMVal(vm, exp, (event.target as HTMLInputElement).value);
+      if (this.isFromVM(vm, exp)) this._setVMVal(vm, exp, (event.target as HTMLInputElement).value);
     };
 
     (node as Node).addEventListener('input', func);
@@ -890,7 +878,7 @@ export class CompileUtil {
           const attrName = attr.name;
           const exp = attr.value;
           const dir = attrName.substring(3);
-          if (this.isDirective(attrName) && attrName !== 'nv-repeat' && (new RegExp(`(^${key})|(^@)`).test(exp) || this.isFromState(vm.state, exp))) {
+          if (this.isDirective(attrName) && attrName !== 'nv-repeat' && (new RegExp(`(^${key})`).test(exp) || this.isFromVM(vm, exp))) {
             if (this.isEventDirective(dir)) new CompileUtilForRepeat(node).eventHandler(child, vm, exp, dir, key, value);
             else new CompileUtilForRepeat(node).bind(child, key, dir, exp, index, vm, watchValue, value);
           }
@@ -905,7 +893,7 @@ export class CompileUtil {
         if (restRepeat) {
           const newWatchData = restRepeat.value.split(' ')[3];
           // first compile and then remove repeatNode
-          if (this.isFromState(vm.state, newWatchData)) {
+          if (this.isFromVM(vm, newWatchData)) {
             new CompileUtil(node).bind(child, vm, restRepeat.value, restRepeat.name.substring(3));
             if (node.contains(child)) node.removeChild(child);
           }
@@ -932,7 +920,7 @@ export class CompileUtil {
 
     const fn = this._getVMFunction(vm, exp);
 
-    const args = exp.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
+    const args = exp.match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
 
     const vmUtils = this;
 
@@ -945,7 +933,7 @@ export class CompileUtil {
         if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
         if (arg === 'null') return argsList.push(null);
         if (arg === 'undefined') return argsList.push(undefined);
-        if (vmUtils.isFromState(vm.state, arg)) return argsList.push(vmUtils._getVMVal(vm.state, arg));
+        if (vmUtils.isFromVM(vm, arg)) return argsList.push(vmUtils._getVMVal(vm, arg));
         if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
         if (/^\".*\"$/.test(arg)) return argsList.push(arg.match(/^\"(.*)\"$/)[1]);
         if (!/^\'.*\'$/.test(arg) && !/^\".*\"$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
@@ -1042,17 +1030,17 @@ export class CompileUtil {
   }
 
   /**
-   * find exp is member of vm.state
+   * find exp is member of vm instance
    *
    * @param {*} vm
    * @param {string} exp
    * @returns {boolean}
    * @memberof CompileUtil
    */
-  public isFromState(state: any, exp: string): boolean {
-    if (!state) return false;
-    const value = exp.replace('()', '').split('.')[0];
-    return state.hasOwnProperty(value);
+  public isFromVM(vm: any, exp: string): boolean {
+    if (!vm) return false;
+    const value = exp.replace(/\(.*\)/, '').split('.')[0];
+    return value in vm;
   }
 
   /**

@@ -1,4 +1,4 @@
-import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, ReceiveProps, SetState, OnDestory, setState, ElementRef } from '@indiv/core';
+import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, ReceiveProps, SetState, OnDestory, setState, ElementRef, Watch } from '@indiv/core';
 import { RouteChange, NvLocation, RouteModule } from '@indiv/router';
 import { PlatformBrowser } from '@indiv/platform-browser';
 import { HttpClient, HttpClientResponse } from '@indiv/common';
@@ -20,9 +20,9 @@ class ValueType { }
   selector: 'pc-component',
   template: (`
     <div>
-      <p nv-if="e" nv-class="a" nv-repeat="let da in d"  nv-on:click="@componentClick(d)">你好： {{da.z}}</p>
+      <p nv-if="e" nv-class="a" nv-repeat="let da in d"  nv-on:click="componentClick(d)">你好： {{da.z}}</p>
       state.d: <input nv-repeat="let da in d" nv-model="da.z" />
-      <p nv-on:click="@sendProps(5)">props from component.state.a: {{ax}}</p>
+      <p nv-on:click="sendProps(5)">props from component.state.a: {{ax}}</p>
     </div>
   `),
 })
@@ -30,6 +30,20 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
   public setState: SetState;
   public state: any;
   public props: any;
+  public a: any = 'a子组件';
+  public b: number = 100;
+  public c: string = '<p>1111</p>';
+  public d: any = [
+    {
+      z: 111111111111111,
+      b: 'a',
+    },
+    {
+      z: 33333333333333,
+      b: 'a',
+    }];
+  public e: boolean = true;
+  public ax: any;
 
   constructor(
     private element: ElementRef,
@@ -38,23 +52,7 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
   }
 
   public nvOnInit() {
-    this.state = {
-      a: 'a子组件',
-      b: 100,
-      c: '<p>1111</p>',
-      d: [
-        {
-          z: 111111111111111,
-          b: 'a',
-        },
-        {
-          z: 33333333333333,
-          b: 'a',
-        },
-      ],
-      e: true,
-      ax: this.props.ax,
-    };
+    this.ax = this.props.ax;
     console.log('nvOnInit props11', this.props, this.element);
   }
 
@@ -69,11 +67,13 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
     console.log('aa', a);
   }
   public sendProps(ax: any) {
+    console.log(4423213, this.props.b);
     this.props.b(ax);
   }
   public getProps(a: any) {
     alert('子组件里 里面传出来了');
-    this.setState({ a: a });
+    // this.setState({ a: a });
+    this.a = a;
     this.props.b(a);
   }
 
@@ -82,7 +82,7 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
   }
   public nvReceiveProps(nextProps: any) {
     console.log(1111111111111, nextProps);
-    this.state.ax = nextProps.ax;
+    this.ax = nextProps.ax;
   }
   public nvOnDestory() {
     console.log('PComponent is nvOnDestory');
@@ -93,12 +93,12 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
   selector: 'R1',
   template: (`
     <div>
-      <pc-component ax="{a}" b="{@getProps}"></pc-component>
+      <pc-component ax="{a}" b="{getProps}"></pc-component>
       下面跟组件没关系<br/>
       <div nv-if="f">
         ef
         <input nv-repeat="let ea in e" nv-model="ea.z" />
-        <p nv-class="c" nv-if="ea.z" nv-repeat="let ea in e" nv-text="ea.z" nv-on:click="@showAlert(ea)"></p>
+        <p nv-class="c" nv-if="ea.z" nv-repeat="let ea in e" nv-text="ea.z" nv-on:click="showAlert(ea)"></p>
         <p>111this.state.a：{{a}}</p>
         <input nv-model="a" />
       </div>
@@ -111,7 +111,30 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
   public hSr: HeroSearchService;
   public setState: SetState;
   public props: any;
-  public state: any;
+  public a: string = 'a11';
+  public b: number = 2;
+  public d: any[] = [{
+    z: 111111111111111,
+    b: 'a',
+    show: true,
+  },
+                     {
+    z: 33333333333333,
+    b: 'a',
+    show: true,
+  }];
+  public c: string = 'c';
+  public e: any = [{
+    z: 232323,
+    b: 'a',
+    show: true,
+  },
+                   {
+    z: 1111,
+    b: 'a',
+    show: false,
+  }];
+  public f: boolean = true;
 
   constructor(
     private heroSearchService: HeroSearchService,
@@ -123,32 +146,6 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
     this.setState = setState;
     console.log(9999888777, 'from R1', this.element, this.indiv);
     this.heroSearchService.test();
-    this.state = {
-      a: 'a11',
-      b: 2,
-      d: [{
-        z: 111111111111111,
-        b: 'a',
-        show: true,
-      },
-          {
-        z: 33333333333333,
-        b: 'a',
-        show: true,
-      }],
-      c: 'c',
-      e: [{
-        z: 232323,
-        b: 'a',
-        show: true,
-      },
-          {
-        z: 1111,
-        b: 'a',
-        show: false,
-      }],
-      f: true,
-    };
   }
 
   public nvOnInit() {
@@ -179,7 +176,8 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
   }
   public getProps(a: any) {
     console.log('被触发了！', a);
-    this.setState({ a: a });
+    this.a = a;
+    // this.setState({ a: a });
   }
 
   public nvOnDestory() {
@@ -192,10 +190,10 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
   selector: 'R2',
   template: (`
     <div>
-      <p nv-on:click="@showLocation()">点击显示子路由跳转</p>
+      <p nv-on:click="showLocation()">点击显示子路由跳转</p>
       <input nv-model="a"/>
       <br/>
-      <p nv-on:click="@showAlert()">点击显示this.state.a:{{a}}</p>
+      <p nv-on:click="showAlert()">点击显示this.state.a:{{a}}</p>
       子组件:<br/>
       <route-child a="{a}"></route-child>
       <router-render></router-render>
@@ -204,7 +202,7 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
 })
 class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, OnDestory {
   public state: any;
-
+  public a: any = 1;
   constructor(
     private heroSearchService1: HeroSearchService1,
     private location: NvLocation,
@@ -213,7 +211,6 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
   ) {
     this.heroSearchService1.test();
     console.log('this.heroSearchService1', this.heroSearchService1, this.element);
-    this.state = { a: 1 };
     this.sss.test();
   }
   public nvOnInit() {
@@ -226,7 +223,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
     // console.log('is nvAfterMount');
   }
   public nvHasRender() {
-    console.log('！！father: this.state.a', this.state.a);
+    console.log('！！father: this.a', this.a);
   }
   public nvRouteChange(lastRoute: string, newRoute: string) {
     console.log('R2 is nvRouteChange', lastRoute, newRoute);
@@ -241,7 +238,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
   }
 
   public showAlert() {
-    console.log('this.state.a', this.state.a);
+    console.log('this.a', this.a);
     // alert('我错了 点下控制台看看吧');
     // this.setState(() => ({ a: 2 }));
   }
@@ -257,12 +254,13 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
   selector: 'test-component',
   template: (`
     <div>
-      <p nv-on:click="@click()">测试repeat组件: {{man}}</p>
+      <p nv-on:click="click()">测试repeat组件: {{man}}</p>
     </div>`),
 })
 class TestComponent implements OnInit, OnDestory, ReceiveProps {
   public state: any;
   public props: any;
+  public man: any;
 
   constructor(
     private httpClient: HttpClient,
@@ -276,14 +274,12 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
   }
 
   public nvOnInit() {
-    this.state = {
-      man: this.props.man,
-    };
+    this.man = this.props.man;
   }
 
   public click() {
-    console.log('this.state.man', this.state.man);
-    this.state.man = 'fuck!';
+    console.log('this.state.man', this.man);
+    this.man = 'fuck!';
   }
 
   public nvOnDestory() {
@@ -299,21 +295,21 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
   selector: 'container-wrap',
   template: (`
     <div>
-      <input nv-model="test.a" nv-on:click="@show(test)" />
-      <p test-directive="{'123'}" nv-id="232" nv-if="@countState(a)" nv-on:click="@changeInput()">{{a}}</p>
-      <test-component nv-repeat="let man in testArray" nv-key="man.name" man="{@countState(man.name)}" nv-if="a"></test-component>
-      <p nv-on:click="@go()">container: {{@countState(color)}}</p>
+      <input nv-model="test.a" nv-on:click="show(test)" />
+      <p test-directive="{'123'}" nv-id="232" nv-if="countState(a)" nv-on:click="changeInput()">{{a}}</p>
+      <test-component nv-repeat="let man in testArray" nv-key="man.name" man="{countState(man.name)}" nv-if="a"></test-component>
+      <p nv-on:click="go()">container: {{countState(color)}}</p>
       <input nv-model="a" />
       <div nv-repeat="let man in testArray" nv-key="man.name">
-          <div nv-on:click="@show(testArray2, '你111')">姓名：{{man.name}}</div>
-          <div>性别：{{@countState(man.sex, $index)}}</div>
-          <a nv-href="@countState(man.sex, $index)">a {{man.sex}}</a>
+          <div nv-on:click="show(testArray2, '你111')">姓名：{{man.name}}</div>
+          <div>性别：{{countState(man.sex, $index)}}</div>
+          <a nv-href="countState(man.sex, $index)">a {{man.sex}}</a>
           <img nv-src="man.sex" nv-alt="man.sex" />
-          <test-component nv-key="man.name" man="{@countState(man.name)}"></test-component>
-          <input nv-on:click="@show(b, $index)" nv-repeat="let b in testArray2" nv-on:input="@showInput($event, $index)" nv-text="b" nv-class="b" />
+          <test-component nv-key="man.name" man="{countState(man.name)}"></test-component>
+          <input nv-on:click="show(b, $index)" nv-repeat="let b in testArray2" nv-on:input="showInput($event, $index)" nv-text="b" nv-class="b" />
           <input nv-model="test.a"/>
           <div class="fuck" nv-repeat="let c in man.job" nv-key="c.id">
-            <input nv-on:click="@show(c, $index)" nv-model="c.name" nv-class="c.id" />
+            <input nv-on:click="show(c, $index)" nv-model="c.name" nv-class="c.id" />
           </div>
       </div>
       <router-render></router-render>
@@ -325,6 +321,51 @@ class Container implements OnInit, AfterMount, WatchState {
   public ss: HeroSearchService;
   public ss2: HeroSearchService1;
   public state: any;
+  public color: any = 'red';
+  public test: any = {
+    a: 3,
+  };
+  public a: any = 1;
+  public b: any = 3;
+  public testArray: any = [
+    {
+      name: 'gerry',
+      sex: '男',
+      job: [
+        {
+          id: 1,
+          name: '程序员',
+        },
+        {
+          id: 2,
+          name: '码农',
+        },
+        {
+          id: 3,
+          name: '帅',
+        },
+      ],
+    },
+    {
+      name: 'nina',
+      sex: '女',
+      // job: ['老师', '英语老师', '美1'],
+      job: [
+        {
+          id: 1,
+          name: '老师',
+        },
+        {
+          id: 2,
+          name: '英语老师',
+        },
+        {
+          id: 3,
+          name: '美',
+        },
+      ],
+    }];
+  public testArray2: any = ['程序员3', '码农3', '帅3'];
   public props: any;
   public setState: SetState;
   public http$: Observable<HttpClientResponse>;
@@ -352,54 +393,6 @@ class Container implements OnInit, AfterMount, WatchState {
     });
     this.hss.test();
     console.log('value', this.value);
-    this.state = {
-      color: 'red',
-      test: {
-        a: 3,
-      },
-      a: 1,
-      b: 3,
-      // testArray: [],
-      testArray: [
-        {
-          name: 'gerry',
-          sex: '男',
-          job: [
-            {
-              id: 1,
-              name: '程序员',
-            },
-            {
-              id: 2,
-              name: '码农',
-            },
-            {
-              id: 3,
-              name: '帅',
-            },
-          ],
-        },
-        {
-          name: 'nina',
-          sex: '女',
-          // job: ['老师', '英语老师', '美1'],
-          job: [
-            {
-              id: 1,
-              name: '老师',
-            },
-            {
-              id: 2,
-              name: '英语老师',
-            },
-            {
-              id: 3,
-              name: '美',
-            },
-          ],
-        }],
-      testArray2: ['程序员3', '码农3', '帅3'],
-    };
   }
 
   public nvOnInit() {
@@ -421,11 +414,13 @@ class Container implements OnInit, AfterMount, WatchState {
   public show(a: any, index?: string) {
     console.log('aaaa', a);
     console.log('$index', index);
-    console.log('testArray2', this.state.testArray2);
+    // console.log('testArray2', this.state.testArray2);
+    console.log('testArray2', this.testArray2);
   }
 
   public showInput(event: any, index: number) {
-    this.state.testArray2[index] = event.target.value;
+    // this.state.testArray2[index] = event.target.value;
+    this.testArray2[index] = event.target.value;
   }
 
   public nvWatchState(oldState: any) {
@@ -433,8 +428,8 @@ class Container implements OnInit, AfterMount, WatchState {
   }
 
   public changeInput() {
-    this.state.a = 4;
-    this.state.color = 'green';
+    this.color = 'green';
+    this.a = 5;
     this.setState({
       testArray: [
         {
@@ -492,11 +487,11 @@ class Container implements OnInit, AfterMount, WatchState {
           ],
         }],
     });
-    this.state.a = 5;
   }
 
   private httpHandler = (value: any) => {
-    this.state.a = 100;
+    // this.state.a = 100;
+    this.a = 100;
     console.log(33333, 'from container', value);
   }
 }

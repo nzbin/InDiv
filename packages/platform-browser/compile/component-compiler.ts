@@ -116,15 +116,10 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
             const valueList = propValue.split('.');
             const key = valueList[0];
             let _prop = null;
-            if (compileUtil.isFromState(componentInstance.state, propValue)) {
-              _prop = compileUtil._getVMVal(componentInstance.state, propValue);
-              props[attrName] = buildProps(_prop, componentInstance);
-              return;
-            }
-            if (/^(\@.).*\(.*\)$/.test(propValue)) {
+            if (/^.*\(.*\)$/.test(propValue)) {
               const utilVm = new CompileUtilForRepeat();
               const fn = utilVm._getVMFunction(componentInstance, propValue);
-              const args = propValue.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
+              const args = propValue.match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
               const argsList: any[] = [];
               args.forEach(arg => {
                 if (arg === '') return false;
@@ -132,7 +127,7 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
                 if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
                 if (arg === 'null') return argsList.push(null);
                 if (arg === 'undefined') return argsList.push(undefined);
-                if (utilVm.isFromState(componentInstance.state, arg)) return argsList.push(utilVm._getVMVal(componentInstance.state, arg));
+                if (utilVm.isFromVM(componentInstance, arg)) return argsList.push(utilVm._getVMVal(componentInstance, arg));
                 if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
                 if (/^\".*\"$/.test(arg)) return argsList.push(arg.match(/^\"(.*)\"$/)[1]);
                 if (!/^\'.*\'$/.test(arg) && !/^\".*\"$/.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
@@ -147,12 +142,12 @@ export function componentsConstructor<State = any, Props = any, Vm = any>(dom: E
               props[attrName] = value;
               return;
             }
-            if (/^(\@.).*[^\(.*\)]$/g.test(propValue)) {
-              _prop = compileUtil._getVMVal(componentInstance, propValue.replace(/^(\@)/, ''));
+            if (compileUtil.isFromVM(componentInstance, propValue)) {
+              _prop = compileUtil._getVMVal(componentInstance, propValue);
               props[attrName] = buildProps(_prop, componentInstance);
               return;
             }
-            if (_propsKeys.hasOwnProperty(key)) {
+            if (_propsKeys.hasOwnProperty(key) || key in _propsKeys) {
               _prop = getPropsValue(valueList, _propsKeys[key]);
               props[attrName] = buildProps(_prop, componentInstance);
               return;

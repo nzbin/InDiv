@@ -1,5 +1,4 @@
 import { DirectiveList, IDirective } from './directive';
-import { Watcher } from '../watcher';
 import { Injector } from '../di';
 import { RenderTaskQueue } from '../render';
 
@@ -16,7 +15,6 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     props?: Props | any;
     renderNode?: Element | any;
     $indivInstance?: Vm | any;
-    stateWatcher?: Watcher;
     renderTaskQueue?: RenderTaskQueue;
     dependencesList?: string[];
 

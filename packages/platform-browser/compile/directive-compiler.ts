@@ -95,12 +95,10 @@ export function directivesConstructor<State = any, Props = any, Vm = any>(dom: E
       const key = valueList[0];
 
       // build props
-      if (compileUtil.isFromState(componentInstance.state, prop)) {
-        props = compileUtil._getVMVal(componentInstance.state, prop);
-      } else if (/^(\@.).*\(.*\)$/.test(prop)) {
+      if (/^.*\(.*\)$/.test(prop)) {
         const utilVm = new CompileUtilForRepeat();
         const fn = utilVm._getVMFunction(componentInstance, prop);
-        const args = prop.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
+        const args = prop.match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
         const argsList: any[] = [];
         args.forEach(arg => {
           if (arg === '') return false;
@@ -108,7 +106,7 @@ export function directivesConstructor<State = any, Props = any, Vm = any>(dom: E
           if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
           if (arg === 'null') return argsList.push(null);
           if (arg === 'undefined') return argsList.push(undefined);
-          if (utilVm.isFromState(componentInstance.state, arg)) return argsList.push(utilVm._getVMVal(componentInstance.state, arg));
+          if (utilVm.isFromVM(componentInstance, arg)) return argsList.push(utilVm._getVMVal(componentInstance, arg));
           if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
           if (/^\".*\"$/.test(arg)) return argsList.push(arg.match(/^\"(.*)\"$/)[1]);
           if (!/^\'.*\'$/.test(arg) && !/^\".*\"$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
@@ -121,7 +119,7 @@ export function directivesConstructor<State = any, Props = any, Vm = any>(dom: E
         });
         const value = fn.apply(componentInstance, argsList);
         props = value;
-      } else if (/^(\@.).*[^\(.*\)]$/g.test(prop)) props = compileUtil._getVMVal(componentInstance, prop.replace(/^(\@)/, ''));
+      } else if (compileUtil.isFromVM(componentInstance, prop)) props = compileUtil._getVMVal(componentInstance, prop);
       else if (node.repeatData && node.repeatData.hasOwnProperty(key)) props = compileUtil._getValueByValue(node.repeatData[key], prop, key);
       else if (/^\'.*\'$/.test(prop)) props = prop.match(/^\'(.*)\'$/)[1];
       else if (/^\".*\"$/.test(prop)) props = prop.match(/^\"(.*)\"$/)[1];

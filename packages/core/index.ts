@@ -1,5 +1,4 @@
 export * from './utils';
-export * from './watcher';
 export * from './component';
 export * from './directive';
 export * from './pipe';

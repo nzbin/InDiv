@@ -1,4 +1,4 @@
-import { Component, ElementRef, InDiv } from '@indiv/core';
+import { Component, ElementRef, InDiv, Watch, HasRender } from '@indiv/core';
 // import { Component, ElementRef, InDiv } from '../build/core';
 
 import { HeroSearchService } from './service';
@@ -8,13 +8,19 @@ import { PrivateService } from './private.service';
   selector: 'test-loadchild-component',
   template: `
     <div>
-      <p nv-repeat="let t in ttt" nv-on:click="@testt(t)" router-to="{'/R1/C1/D1'}" router-from="{'/R1/C1?a=1'}">test loadChild</p>
+      <p nv-repeat="let t in ttt" nv-on:click="testt(t)" >test loadChild</p>
       <router-render></router-render>
     </div>
   `,
 })
-export class TestLoadchildComponent {
-  public state: any;
+export class TestLoadchildComponent implements HasRender {
+  public ttt: string[] = [
+    '1',
+    '2',
+  ];
+
+  @Watch() public aa: string = '3';
+
   constructor(
     private sss: HeroSearchService,
     private element: ElementRef,
@@ -24,16 +30,15 @@ export class TestLoadchildComponent {
     console.log(99999, 'from TestLoadchildComponent', this.element, this.indiv);
     this.sss.test(5);
     this.pss.change();
-    this.state = {
-      ttt: [
-        '1',
-        '2',
-      ],
-    };
   }
 
   public testt(t: any) {
     console.log(4444444, '测试 repeat node', t);
+    this.aa = '23131';
+  }
+
+  public nvHasRender() {
+    console.log(99999, 'TestLoadchildComponent has rendered');
   }
 }
 

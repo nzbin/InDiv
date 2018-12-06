@@ -19,34 +19,31 @@ interface Props {
 })
 class RouteChild implements OnInit, HasRender, ReceiveProps, OnDestory {
   public setState: SetState;
-  public state: any;
   public heroSearchService: HeroSearchService2;
   public props: Readonly<Props>;
+  public a: string = 'a';
+  public b: any = null;
+  public d: any[] = [
+    {
+      z: 111111111111111,
+      b: 'a',
+    },
+    {
+      z: 33333333333333,
+      b: 'a',
+    },
+  ];
   constructor(
     private heroSearchService2: HeroSearchService2,
     private element: ElementRef,
   ) {
     console.log('fuck this.heroSearchService2', this.heroSearchService2, this.element);
     this.heroSearchService2.test();
-    this.state = {
-      a: 'a',
-      b: null,
-      d: [
-        {
-          z: 111111111111111,
-          b: 'a',
-        },
-        {
-          z: 33333333333333,
-          b: 'a',
-        },
-      ],
-    };
     this.setState = setState;
   }
 
   public nvOnInit() {
-    this.state.b = this.props.a;
+    this.b = this.props.a;
     console.log(555, 'PCChild nvOnInit props11', this.props);
     // this.props.b(3);
   }
@@ -57,7 +54,7 @@ class RouteChild implements OnInit, HasRender, ReceiveProps, OnDestory {
 
   public nvReceiveProps(nextProps: any) {
     console.log(3333, nextProps);
-    this.state.b = nextProps.a;
+    this.b = nextProps.a;
   }
 
   public nvOnDestory() {
@@ -70,22 +67,16 @@ class RouteChild implements OnInit, HasRender, ReceiveProps, OnDestory {
   template: (`
     <div>
       子组件的子组件<br/>
-      <p nv-on:click="@sendProps(3)">PCChild props.ax:: {{b}}</p>
+      <p nv-on:click="sendProps(3)">PCChild props.ax:: {{b}}</p>
       <p nv-repeat="let da in d">state.d {{da.z}}</p>
     </div>
   `),
 })
 class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps, OnDestory {
   public props: any;
-  public state: any;
-  public setState: SetState;
-  constructor(
-    private element: ElementRef,
-  ) {
-    this.state = {
-      a: 'a',
-      b: null,
-      d: [
+  public a: string = 'a';
+  public b: any = null;
+  public d: any[] = [
         {
           z: 101111,
           b: 'a',
@@ -94,19 +85,23 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps, OnDestor
           z: 103333,
           b: 'a',
         },
-      ],
-    };
+      ];
+  public setState: SetState;
+  constructor(
+    private element: ElementRef,
+  ) {
     this.setState = setState;
   }
 
   public nvHasRender() {
-    console.log('PCChild hasRender : this.props.ax', this.props, this.state, this.element);
+    console.log('PCChild hasRender : this.props.ax', this.props, this.element);
   }
 
   public nvOnInit() {
-    this.setState({
-      b: this.props.ax,
-    });
+    this.b = this.props.ax;
+    // this.setState({
+    //   b: this.props.ax,
+    // });
     console.log(555, 'PCChild nvOnInit props11', this.props);
     // this.props.b(3);
   }
@@ -132,10 +127,10 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps, OnDestor
   public nvReceiveProps(nextProps: any) {
     console.log(this.props.ax);
     console.log(4444, nextProps);
-    this.state.b = nextProps.ax;
-    this.setState({
-      b: nextProps.ax,
-    });
+    this.b = nextProps.ax;
+    // this.setState({
+    //   b: nextProps.ax,
+    // });
   }
 }
 

@@ -54,6 +54,15 @@ export function mountComponent(dom: Element, componentInstance: IComponent): voi
     const cache = cacheComponentList[i];
     if (cache.scope.nvOnDestory) cache.scope.nvOnDestory();
   }
+
+  // after mount
+  for (let i = 0; i < componentListLength; i++) {
+    const component = componentInstance.componentList[i];
+    if (!component.hasRender) component.hasRender = true;
+    component.scope.render();
+    if (component.scope.nvAfterMount) component.scope.nvAfterMount();
+  }
+  if (componentInstance.nvHasRender) componentInstance.nvHasRender();
 }
 
 /**
@@ -198,14 +207,7 @@ export async function componentCompiler(renderNode: Element, componentInstance: 
 
       // then mount component
       mountComponent(renderNode, componentInstance);
-      const componentListLength = componentInstance.componentList.length;
-      for (let i = 0; i < componentListLength; i++) {
-        const component = componentInstance.componentList[i];
-        if (!component.hasRender) component.hasRender = true;
-        component.scope.render();
-        if (component.scope.nvAfterMount) component.scope.nvAfterMount();
-      }
-      if (componentInstance.nvHasRender) componentInstance.nvHasRender();
+
       return componentInstance;
     })
     .catch(e => {

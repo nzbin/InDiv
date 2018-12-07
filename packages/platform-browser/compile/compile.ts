@@ -1,5 +1,5 @@
 import { Utils } from '@indiv/core';
-import { parseToVnode, diffVnode, renderVnode, Vnode, IPatchList } from '../virtual-dom';
+import { parseDOMToVnode, diffVnode, renderVnode, Vnode, IPatchList } from '../virtual-dom';
 import { CompileUtil, shouldDiffAttributes } from './compile-utils';
 
 const utils = new Utils();
@@ -28,18 +28,17 @@ export class Compile {
   }
 
   public startCompile(): void {
-    if (this.mountedElement) {
-      this.fragment = this.node2Fragment();
-      this.init();
+    if (!this.mountedElement) throw new Error('class Compile need el in constructor');
+    this.fragment = this.node2Fragment();
+    this.init();
 
-      if (!this.saveVnode) this.saveVnode = parseToVnode(this.mountedElement, shouldDiffAttributes);
-      const newVnode = parseToVnode(this.fragment, shouldDiffAttributes);
-      const patchList: IPatchList[] = [];
-      diffVnode(this.saveVnode, newVnode, patchList, this.needDiffChildCallback);
-      renderVnode(patchList);
+    if (!this.saveVnode) this.saveVnode = parseDOMToVnode(this.mountedElement, shouldDiffAttributes);
+    const newVnode = parseDOMToVnode(this.fragment, shouldDiffAttributes);
+    const patchList: IPatchList[] = [];
+    diffVnode(this.saveVnode, newVnode, patchList, this.needDiffChildCallback);
+    renderVnode(patchList);
 
-      this.fragment = null;
-    } else throw new Error('class Compile need el in constructor');
+    this.fragment = null;
   }
 
   /**

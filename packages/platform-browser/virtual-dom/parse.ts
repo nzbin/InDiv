@@ -102,11 +102,11 @@ function bindAttributes(node: DocumentFragment | Element, shouldDiffAttributes?:
  * @param {((node: DocumentFragment | Element) => string[])} [shouldDiffAttributes]
  * @returns {Vnode}
  */
-export function parseToVnode(node: DocumentFragment | Element, shouldDiffAttributes?: (node: DocumentFragment | Element) => string[]): Vnode {
+export function parseDOMToVnode(node: DocumentFragment | Element, shouldDiffAttributes?: (node: DocumentFragment | Element) => string[]): Vnode {
   const childNodes: Vnode[] = [];
   if (node.childNodes) {
     Array.from(node.childNodes).forEach((child: Element) => {
-      childNodes.push(parseToVnode(child, shouldDiffAttributes));
+      childNodes.push(parseDOMToVnode(child, shouldDiffAttributes));
     });
   }
   return new Vnode({

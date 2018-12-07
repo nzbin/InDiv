@@ -36,3 +36,4 @@
 - [ ] 注入器冒泡至父组件注入器
 - [ ] remove DOM api in @indiv/core
 - [ ] remove State and Props in @Component and @Directive
+- [ ] string to vnode

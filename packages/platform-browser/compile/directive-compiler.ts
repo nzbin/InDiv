@@ -48,6 +48,13 @@ export function mountDirective(dom: Element, componentInstance: IComponent): voi
     const cache = cacheDirectiveList[i];
     if (cache.scope.nvOnDestory) cache.scope.nvOnDestory();
   }
+
+  // after mount
+  for (let i = 0; i < directiveListLength; i++) {
+    const directive = componentInstance.directiveList[i];
+    if (directive.scope.nvAfterMount) directive.scope.nvAfterMount();
+    if (directive.scope.nvHasRender) directive.scope.nvHasRender();
+  }
 }
 
 /**
@@ -144,12 +151,6 @@ export async function directiveCompiler(renderNode: Element, componentInstance: 
   return Promise.resolve()
     .then(() => {
       mountDirective(renderNode, componentInstance);
-      const directiveListLength = componentInstance.directiveList.length;
-      for (let i = 0; i < directiveListLength; i++) {
-        const directive = componentInstance.directiveList[i];
-        if (directive.scope.nvAfterMount) directive.scope.nvAfterMount();
-        if (directive.scope.nvHasRender) directive.scope.nvHasRender();
-      }
       return componentInstance;
     })
     .catch(e => {

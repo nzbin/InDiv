@@ -1,7 +1,15 @@
-// todo replace props
-export function Input() {
+export type TInputProp = {
+  propName: string;
+  inputName: string;
+};
+
+export function Input(name?: string) {
   return function (target: any, propertyName: string) {
-    if (target.inputPropsList && target.inputPropsList.indexOf(propertyName) === -1) target.inputPropsList.push(propertyName);
-    if (!target.inputPropsList) target.inputPropsList = [ propertyName ];
+    const inputProp: TInputProp = {
+      propName: name ? name : propertyName,
+      inputName: propertyName,
+    };
+    if (target.inputPropsList && !target.inputPropsList.find((input: TInputProp) => input.propName === inputProp.propName)) target.inputPropsList.push(inputProp);
+    if (!target.inputPropsList) target.inputPropsList = [ inputProp ];
   };
 }

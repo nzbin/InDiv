@@ -11,7 +11,7 @@ export type DirectiveList<C> = {
 
 export interface IDirective {
     props?: any;
-    renderNode?: Element;
+    nativeElement?: Element | any;
     $indivInstance?: InDiv | any;
 
     declarationMap?: Map<string, Function>;

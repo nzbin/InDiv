@@ -188,25 +188,25 @@ export function componentsConstructor(dom: Element, componentInstance: IComponen
 }
 
 /**
- * render Component with using renderNode and RenderTask instance
+ * render Component with using nativeElement and RenderTask instance
  *
  * @export
- * @param {Element} renderNode
+ * @param {Element} nativeElement
  * @param {IComponent} componentInstance
  * @returns {Promise<IComponent>}
  */
-export async function componentCompiler(renderNode: Element, componentInstance: IComponent): Promise<IComponent> {
+export async function componentCompiler(nativeElement: Element, componentInstance: IComponent): Promise<IComponent> {
   return Promise.resolve()
     .then(async() => {
       // compile has been added into Component instance by dirty method
-      if (!(componentInstance as any).compileInstance) ((componentInstance as any).compileInstance as Compile) = new Compile(renderNode, componentInstance);
+      if (!(componentInstance as any).compileInstance) ((componentInstance as any).compileInstance as Compile) = new Compile(nativeElement, componentInstance);
       ((componentInstance as any).compileInstance as Compile).startCompile();
 
       // first mount directive
-      await directiveCompiler(renderNode, componentInstance);
+      await directiveCompiler(nativeElement, componentInstance);
 
       // then mount component
-      mountComponent(renderNode, componentInstance);
+      mountComponent(nativeElement, componentInstance);
 
       return componentInstance;
     })

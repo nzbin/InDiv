@@ -52,7 +52,7 @@ export function buildComponentScope(ComponentClass: Function, props: any, dom: E
 
   const _component: IComponent = factoryCreator(ComponentClass, componentInstance.otherInjector, provideAndInstanceMap);
   _component.props = props;
-  _component.renderNode = dom;
+  _component.nativeElement = dom;
 
   componentInstance.declarationMap.forEach((declaration, key) => {
     if (!_component.declarationMap.has(key)) _component.declarationMap.set(key, declaration);
@@ -83,7 +83,7 @@ export function buildDirectiveScope(DirectiveClass: Function, props: any, dom: E
   const _directive: IDirective = factoryCreator(DirectiveClass, componentInstance.otherInjector, provideAndInstanceMap);
 
   _directive.props = props;
-  _directive.renderNode = dom;
+  _directive.nativeElement = dom;
 
   componentInstance.declarationMap.forEach((declaration, key) => {
     if (!_directive.declarationMap.has(key)) _directive.declarationMap.set(key, declaration);

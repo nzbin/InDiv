@@ -7,6 +7,7 @@ function createVNode(name: any, attrs: any, proto: any) {
   proto.attrs = attrs;
   return proto;
 }
+// todo string to Vnode
 const parser = new Parser({
   onopentag: (name, attributes) => {
     console.log(111, 'onopentag', name, attributes);
@@ -49,12 +50,12 @@ parser.done();
 // console.log(3231312312, parse(a));
 
 export function parseStringToVnode(parseString: string): any {
-  const vnode: any = {};
-  // const childNodes: Vnode[] = [];
-  const openTag = parseString.match(/(\<[^\<,\>,\/]+\>|\<[^\<,\>]+\/\>)/g);
-  const closeTag = parseString.match(/\<\/[^\<,\>]+\>/g);
-  // const selfCloseTag = parseString.match(/\<[^\<,\>]+\/\>/g);
-  console.log(99888777, openTag, closeTag);
+  // const vnode: any = {};
+  // // const childNodes: Vnode[] = [];
+  // const openTag = parseString.match(/(\<[^\<,\>,\/]+\>|\<[^\<,\>]+\/\>)/g);
+  // const closeTag = parseString.match(/\<\/[^\<,\>]+\>/g);
+  // // const selfCloseTag = parseString.match(/\<[^\<,\>]+\/\>/g);
+  // console.log(99888777, openTag, closeTag);
   // openTag.forEach((open, index) => {
   //   if (index === 0) {
   //     vnode.tag = closeTag.;

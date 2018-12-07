@@ -10,8 +10,8 @@ export { RenderTaskQueue } from './render-task-queue';
  * @returns {Promise<IComponent}
  */
 export function render(): Promise<IComponent> {
-  const dom = (this as IComponent).renderNode;
+  const nativeElement = (this as IComponent).nativeElement;
 
   if (!(this as IComponent).renderTaskQueue) (this as IComponent).renderTaskQueue = new RenderTaskQueue(this);
-  return (this as IComponent).renderTaskQueue.push(dom);
+  return (this as IComponent).renderTaskQueue.push(nativeElement);
 }

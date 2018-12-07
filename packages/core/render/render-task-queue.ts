@@ -21,13 +21,12 @@ export class RenderTaskQueue {
    * 
    * if renderStatus === rendering, so only push task
    * if renderStatus === pending, so push task and start runTask
-   *
-   * @param {Element} renderNode
+   * @param {(Element | any)} nativeElement
    * @returns {Promise<IComponent>}
    * @memberof RenderTaskQueue
    */
-  public push(renderNode: Element): Promise<IComponent> {
-    this.taskQueue.push(renderNode);
+  public push(nativeElement: Element | any): Promise<IComponent> {
+    this.taskQueue.push(nativeElement);
     if (this.renderStatus === PENDING) {
       this.renderStatus = RENDERING;
       return this.runTask();
@@ -52,6 +51,7 @@ export class RenderTaskQueue {
    * @memberof RenderTaskQueue
    */
   public async runTask(): Promise<IComponent> {
+    // todo add compile children
     const component = await this.componentInstance.compiler(this.taskQueue[this.queuePointer], this.componentInstance);
     this.nextTask();
     return component;

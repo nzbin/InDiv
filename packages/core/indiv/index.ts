@@ -28,18 +28,12 @@ const utils = new Utils();
  */
 export class InDiv {
   private readonly pluginList: IPlugin[] = [];
-  private rootNode: Element | any;
+  private rootElement: Element | any;
   private routeDOMKey: string = 'router-render';
   private rootModule: INvModule = null;
   private declarations: Function[];
   private bootstrapComponent: IComponent;
-  private compiler: (renderNode: Element | any, componentInstace: IComponent) => Promise<IComponent>;
-
-  constructor() {
-    if (utils.isBrowser()) {
-      this.rootNode = document.querySelector('#root');
-    }
-  }
+  private compiler: (nativeElement: Element | any, componentInstace: IComponent) => Promise<IComponent>;
 
   /**
    * for using plugin class, use bootstrap method of plugin instance and return plugin's id in this.pluginList
@@ -58,20 +52,20 @@ export class InDiv {
   /**
    * set component render function
    *
-   * @param {((renderNode: Element | any, componentInstace: IComponent) => Promise<IComponent>)} compile
+   * @param {((nativeElement: Element | any, componentInstace: IComponent) => Promise<IComponent>)} compile
    * @memberof InDiv
    */
-  public setComponentCompiler(compiler: (renderNode: Element | any, componentInstace: IComponent) => Promise<IComponent>): void {
+  public setComponentCompiler(compiler: (nativeElement: Element | any, componentInstace: IComponent) => Promise<IComponent>): void {
     this.compiler = compiler;
   }
 
   /**
    * get component render function
    *
-   * @returns {((renderNode: Element | any, componentInstace: IComponent) => Promise<IComponent>)}
+   * @returns {((nativeElement: Element | any, componentInstace: IComponent) => Promise<IComponent>)}
    * @memberof InDiv
    */
-  public getComponentCompiler(): (renderNode: Element | any, componentInstace: IComponent) => Promise<IComponent> {
+  public getComponentCompiler(): (nativeElement: Element | any, componentInstace: IComponent) => Promise<IComponent> {
     return this.compiler;
   }
 
@@ -126,27 +120,27 @@ export class InDiv {
   }
 
   /**
-   * set rootNode which InDiv application can be mounted
+   * set rootElement which InDiv application can be mounted
    * 
    * this method can be used in cross platform architecture
    *
    * @param {*} node
    * @memberof InDiv
    */
-  public setRootNode(node: any): void {
-    this.rootNode = node;
+  public setRootElement(node: any): void {
+    this.rootElement = node;
   }
 
   /**
-   * get rootNode which InDiv application can be mounted
+   * get rootElement which InDiv application can be mounted
    * 
    * this method can be used in cross platform architecture
    *
    * @returns {*}
    * @memberof InDiv
    */
-  public getRootNode(): any {
-    return this.rootNode;
+  public getRootElement(): any {
+    return this.rootElement;
   }
 
   /**
@@ -189,15 +183,15 @@ export class InDiv {
    *
    * @template R
    * @param {Function} BootstrapComponent
-   * @param {R} renderNode
+   * @param {R} nativeElement
    * @param {INvModule} [otherModule]
    * @returns {Promise<IComponent>}
    * @memberof InDiv
    */
-  public async renderComponent<R = Element>(BootstrapComponent: Function, renderNode: R, otherModule?: INvModule): Promise<IComponent> {
+  public async renderComponent<R = Element>(BootstrapComponent: Function, nativeElement: R, otherModule?: INvModule): Promise<IComponent> {
     const provideAndInstanceMap = new Map();
     provideAndInstanceMap.set(InDiv, this);
-    provideAndInstanceMap.set(ElementRef, new ElementRef(renderNode));
+    provideAndInstanceMap.set(ElementRef, new ElementRef(nativeElement));
 
     const otherInjector = otherModule ? otherModule.privateInjector : null;
     const component: IComponent = factoryCreator(BootstrapComponent, otherInjector, provideAndInstanceMap);
@@ -222,10 +216,10 @@ export class InDiv {
     if (component.watchData) component.watchData();
     if (!component.template) throw new Error('must decaler this.template in bootstrap()');
     const template = component.template;
-    if (template && typeof template === 'string' && renderNode) {
+    if (template && typeof template === 'string' && nativeElement) {
       if (component.nvBeforeMount) component.nvBeforeMount();
 
-      const _component = await this.componentRender<R>(component, renderNode);
+      const _component = await this.componentRender<R>(component, nativeElement);
       if (_component.nvAfterMount) _component.nvAfterMount();
       return _component;
 
@@ -245,7 +239,7 @@ export class InDiv {
   private async renderModuleBootstrap<R = Element>(): Promise<IComponent> {
     if (!this.rootModule.bootstrap) throw new Error('need bootstrap for render Module Bootstrap');
     const BootstrapComponent = this.rootModule.bootstrap;
-    this.bootstrapComponent = await this.renderComponent<R>(BootstrapComponent, this.rootNode);
+    this.bootstrapComponent = await this.renderComponent<R>(BootstrapComponent, this.rootElement);
     return this.bootstrapComponent;
   }
 
@@ -255,12 +249,12 @@ export class InDiv {
    * @private
    * @template R
    * @param {IComponent} component
-   * @param {R} renderNode
+   * @param {R} nativeElement
    * @returns {Promise<IComponent>}
    * @memberof InDiv
    */
-  private componentRender<R = Element>(component: IComponent, renderNode: R): Promise<IComponent> {
-    component.renderNode = renderNode;
+  private componentRender<R = Element>(component: IComponent, nativeElement: R): Promise<IComponent> {
+    component.nativeElement = nativeElement;
     return component.render();
   }
 }

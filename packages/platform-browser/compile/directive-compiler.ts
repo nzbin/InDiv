@@ -140,17 +140,17 @@ export function directivesConstructor(dom: Element, componentInstance: IComponen
 }
 
 /**
- * render Directive with using renderNode and RenderTask instance
+ * render Directive with using nativeElement and RenderTask instance
  *
  * @export
- * @param {Element} renderNode
+ * @param {Element} nativeElement
  * @param {IComponent} componentInstance
  * @returns {Promise<IDirective>}
  */
-export async function directiveCompiler(renderNode: Element, componentInstance: IComponent): Promise<IDirective> {
+export async function directiveCompiler(nativeElement: Element, componentInstance: IComponent): Promise<IDirective> {
   return Promise.resolve()
     .then(() => {
-      mountDirective(renderNode, componentInstance);
+      mountDirective(nativeElement, componentInstance);
       return componentInstance;
     })
     .catch(e => {

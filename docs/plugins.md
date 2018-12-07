@@ -19,7 +19,7 @@
 
 在`init()`之前就使用`use`方法去实例化 `PlatformBrowser`插件类，
 
-并调用了 `PlatformBrowser` 实例的 `bootstrap(indivInstance: InDiv): void` 调用 参数InDiv实例的 `indivInstance.setComponentCompiler(componentCompiler);` 来添加渲染器。
+在`PlatformBrowser`插件类中，调用了 `PlatformBrowser` 实例的 `bootstrap(indivInstance: InDiv): void` 调用 参数InDiv实例的 `indivInstance.setComponentCompiler(componentCompiler);` 来添加渲染器和InDiv实例的`setRootElement`设置根元素来为渲染器指定一个在浏览器环境可用的根元素。
 
 > main.ts
 

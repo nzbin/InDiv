@@ -13,7 +13,7 @@ export type ComponentList<C> = {
 
 export interface IComponent {
     props?: any;
-    renderNode?: Element | any;
+    nativeElement?: Element | any;
     $indivInstance?: InDiv | any;
     renderTaskQueue?: RenderTaskQueue;
     dependencesList?: string[];
@@ -36,5 +36,5 @@ export interface IComponent {
     nvRouteChange?(lastRoute: string, newRoute: string): void;
     nvReceiveProps?(nextProps: any): void;
     render?(): Promise<IComponent>;
-    compiler?(renderNode: Element | any, componentInstace: IComponent): Promise<IComponent>;
+    compiler?(nativeElement: Element | any, componentInstace: IComponent): Promise<IComponent>;
 }

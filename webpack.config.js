@@ -75,9 +75,7 @@ module.exports = {
             ],
           },
         },
-        {
-          loader: 'awesome-typescript-loader',
-        },
+        "awesome-typescript-loader",
       ],
     },
     {

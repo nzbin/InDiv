@@ -13,24 +13,21 @@ const compileUtil = new CompileUtil();
  * mountComponent for Components in Component
  *
  * @export
- * @template State
- * @template Props
- * @template Vm
  * @param {Element} dom
- * @param {IComponent<State, Props, Vm>} componentInstance
+ * @param {IComponent} componentInstance
  */
-export function mountComponent<State = any, Props = any, Vm = any>(dom: Element, componentInstance: IComponent<State, Props, Vm>): void {
-  const cacheStates: ComponentList<IComponent<State, Props, Vm>>[] = [ ...componentInstance.componentList ];
+export function mountComponent(dom: Element, componentInstance: IComponent): void {
+  const cacheComponentList: ComponentList<IComponent>[] = [ ...componentInstance.componentList ];
   componentsConstructor(dom, componentInstance);
   const componentListLength = componentInstance.componentList.length;
   for (let i = 0; i < componentListLength; i ++) {
     const component = componentInstance.componentList[i];
     // find Component from cache
-    const cacheComponentIndex = cacheStates.findIndex(cache => cache.dom === component.dom);
-    const cacheComponent = cacheStates[cacheComponentIndex];
+    const cacheComponentIndex = cacheComponentList.findIndex(cache => cache.dom === component.dom);
+    const cacheComponent = cacheComponentList[cacheComponentIndex];
 
     // clear cache and the rest need to be destoried
-    if (cacheComponentIndex !== -1) cacheStates.splice(cacheComponentIndex, 1);
+    if (cacheComponentIndex !== -1) cacheComponentList.splice(cacheComponentIndex, 1);
     if (cacheComponent) {
       component.scope = cacheComponent.scope;
       // old props: component.scope.props
@@ -52,9 +49,9 @@ export function mountComponent<State = any, Props = any, Vm = any>(dom: Element,
     if (component.scope.nvBeforeMount) component.scope.nvBeforeMount();
   }
   // the rest should use nvOnDestory
-  const cacheStatesLength = cacheStates.length;
-  for (let i = 0; i < cacheStatesLength; i ++) {
-    const cache = cacheStates[i];
+  const cacheComponentListLength = cacheComponentList.length;
+  for (let i = 0; i < cacheComponentListLength; i ++) {
+    const cache = cacheComponentList[i];
     if (cache.scope.nvOnDestory) cache.scope.nvOnDestory();
   }
 }
@@ -63,13 +60,10 @@ export function mountComponent<State = any, Props = any, Vm = any>(dom: Element,
  * construct Components in Component
  *
  * @export
- * @template State
- * @template Props
- * @template Vm
  * @param {Element} dom
- * @param {IComponent<State, Props, Vm>} componentInstance
+ * @param {IComponent} componentInstance
  */
-export function componentsConstructor<State = any, Props = any, Vm = any>(dom: Element, componentInstance: IComponent<State, Props, Vm>): void {
+export function componentsConstructor(dom: Element, componentInstance: IComponent): void {
   componentInstance.componentList = [];
   const routerRenderNode = dom.querySelectorAll(componentInstance.$indivInstance.getRouteDOMKey())[0];
 

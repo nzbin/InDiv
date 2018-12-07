@@ -23,14 +23,11 @@ export function getPropsValue(valueList: any[], value: any): void {
  * build Actions for Props in Component
  *
  * @export
- * @template State
- * @template Props
- * @template Vm
  * @param {*} prop
- * @param {IComponent<State, Props, Vm>} vm
+ * @param {IComponent} vm
  * @returns {*}
  */
-export function buildProps<State = any, Props = any, Vm = any>(prop: any, vm: IComponent<State, Props, Vm>): any {
+export function buildProps(prop: any, vm: IComponent): any {
   if (utils.isFunction(prop)) {
     return prop.bind(vm);
   } else {
@@ -42,16 +39,13 @@ export function buildProps<State = any, Props = any, Vm = any>(prop: any, vm: IC
  * build scope for Components in Component
  *
  * @export
- * @template State
- * @template Props
- * @template Vm
  * @param {Function} ComponentClass
  * @param {*} props
  * @param {Element} dom
- * @param {IComponent<State, Props, Vm>} componentInstance
- * @returns {IComponent<State, Props, Vm>}
+ * @param {IComponent} componentInstance
+ * @returns {IComponent}
  */
-export function buildComponentScope<State = any, Props = any, Vm = any>(ComponentClass: Function, props: any, dom: Element, componentInstance: IComponent<State, Props, Vm>): IComponent<State, Props, Vm> {
+export function buildComponentScope(ComponentClass: Function, props: any, dom: Element, componentInstance: IComponent): IComponent {
   const provideAndInstanceMap = new Map();
   if (provideAndInstanceMap) provideAndInstanceMap.set(InDiv, componentInstance.$indivInstance);
   provideAndInstanceMap.set(ElementRef, new ElementRef(dom));
@@ -75,16 +69,13 @@ export function buildComponentScope<State = any, Props = any, Vm = any>(Componen
  * build scope for Directives in Directive
  *
  * @export
- * @template State
- * @template Props
- * @template Vm
  * @param {Function} DirectiveClass
  * @param {*} props
  * @param {Element} dom
- * @param {IComponent<State, Props, Vm>} componentInstance
- * @returns {IComponent<State, Props, Vm>}
+ * @param {IComponent} componentInstance
+ * @returns {IComponent}
  */
-export function buildDirectiveScope<State = any, Props = any, Vm = any>(DirectiveClass: Function, props: any, dom: Element, componentInstance: IComponent<State, Props, Vm>): IComponent<State, Props, Vm> {
+export function buildDirectiveScope(DirectiveClass: Function, props: any, dom: Element, componentInstance: IComponent): IComponent {
   const provideAndInstanceMap = new Map();
   if (componentInstance.$indivInstance) provideAndInstanceMap.set(InDiv, componentInstance.$indivInstance);
   provideAndInstanceMap.set(ElementRef, new ElementRef(dom));

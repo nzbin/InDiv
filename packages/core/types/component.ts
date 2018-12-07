@@ -1,6 +1,7 @@
 import { DirectiveList, IDirective } from './directive';
 import { Injector } from '../di';
 import { RenderTaskQueue } from '../render';
+import { InDiv } from '../indiv';
 
 export type ComponentList<C> = {
     dom: Node;
@@ -10,18 +11,18 @@ export type ComponentList<C> = {
     hasRender: boolean;
 };
 
-export interface IComponent<State = any, Props = any, Vm = any> {
-    state?: State | any;
-    props?: Props | any;
+export interface IComponent {
+    props?: any;
     renderNode?: Element | any;
-    $indivInstance?: Vm | any;
+    $indivInstance?: InDiv | any;
     renderTaskQueue?: RenderTaskQueue;
     dependencesList?: string[];
+    renderStatus?: 'pending' | 'available';
 
     template?: string;
     declarationMap?: Map<string, Function>;
-    componentList?: ComponentList<IComponent<any, any, any>>[];
-    directiveList?: DirectiveList<IDirective<any, any>>[];
+    componentList?: ComponentList<IComponent>[];
+    directiveList?: DirectiveList<IDirective>[];
     otherInjector?: Injector;
     privateInjector?: Injector;
 
@@ -33,7 +34,7 @@ export interface IComponent<State = any, Props = any, Vm = any> {
     nvHasRender?(): void;
     nvWatchState?(oldState?: any): void;
     nvRouteChange?(lastRoute: string, newRoute: string): void;
-    nvReceiveProps?(nextProps: Props): void;
-    render?(): Promise<IComponent<State, Props, Vm>>;
+    nvReceiveProps?(nextProps: any): void;
+    render?(): Promise<IComponent>;
     compiler?(renderNode: Element | any, componentInstace: IComponent): Promise<IComponent>;
 }

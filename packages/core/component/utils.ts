@@ -1,13 +1,13 @@
 import { IComponent } from '../types';
 import { Utils } from '../utils';
-import { Watcher } from './watch';
+import { WatcherDependences } from './watch';
 
 const utils = new Utils();
 
 export type SetState = (newState: any) => void;
 
 /**
- * set state from @Component instance
+ * set dependences states from @Component instance
  *
  * merge multiple changes like remove properties or add properties or change Array to once render
  *
@@ -15,40 +15,35 @@ export type SetState = (newState: any) => void;
  * @param {*} newState
  * @returns {void}
  */
-// todo  有点问题
 export function setState(newState: any): void {
+  const _oldState: any = {};
   let _newState = null;
+
   if (newState && utils.isFunction(newState)) _newState = newState();
   if (newState && newState instanceof Object) _newState = newState;
+
+  (this as IComponent).renderStatus = 'pending';
+
   for (const key in _newState) {
-    this[key] = _newState;
-    Watcher(this, key);
+    if (this[key] && (this as IComponent).nvWatchState) _oldState[key] = JSON.parse(JSON.stringify(this[key]));
+    this[key] = _newState[key];
+    WatcherDependences(this as IComponent, key);
   }
-  // if (newState && utils.isFunction(newState)) {
-  //   const _newState = newState();
-  //   if (_newState && _newState instanceof Object) {
-  //     if (utils.isEqual(this.state, _newState)) return;
-  //     const _state = JSON.parse(JSON.stringify(this.state));
-  //     Object.assign(_state, _newState);
-  //     this.state = _state;
-  //     // if ((this as IComponent).nvWatchState) (this as IComponent).stateWatcher = new Watcher((this as IComponent).state, (this as IComponent).nvWatchState.bind(this as IComponent), (this as IComponent).render.bind(this as IComponent));
-  //     // if (!(this as IComponent).nvWatchState) (this as IComponent).stateWatcher = new Watcher((this as IComponent).state, null, (this as IComponent).render.bind(this as IComponent));
-  //     (this as IComponent).render();
-  //   }
-  // }
-  // if (newState && newState instanceof Object) {
-  //   if (utils.isEqual(this.state, newState)) return;
-  //   const _state = JSON.parse(JSON.stringify(this.state));
-  //   Object.assign(_state, newState);
-  //   this.state = _state;
-  //   // if ((this as IComponent).nvWatchState) (this as IComponent).stateWatcher = new Watcher((this as IComponent).state, (this as IComponent).nvWatchState.bind(this as IComponent), (this as IComponent).render.bind(this as IComponent));
-  //   // if (!(this as IComponent).nvWatchState) (this as IComponent).stateWatcher = new Watcher((this as IComponent).state, null, (this as IComponent).render.bind(this as IComponent));
-  //   (this as IComponent).render();
-  // }
+
+  (this as IComponent).renderStatus = 'available';
+
+  if ((this as IComponent).nvWatchState) (this as IComponent).nvWatchState(_oldState);
+  (this as IComponent).render();
 }
 
-function buildProps(template: string, componentInstance: IComponent, dependences: string[]): void {
-  const templateMatchResult: string[] = template.match(/\"\{[^\{\}]+?\}\"/g);
+/**
+ * collect dependences from props of @Component template
+ *
+ * @param {IComponent} componentInstance
+ * @returns {void}
+ */
+function resolveProps(componentInstance: IComponent): void {
+  const templateMatchResult: string[] = componentInstance.template.match(/\"\{[^\{\}]+?\}\"/g);
   if (!templateMatchResult) return;
   templateMatchResult.forEach((matchProps) => {
     const pureMatchProps = matchProps.replace(/^\"\{/, '').replace(/\}\"$/, '');
@@ -56,17 +51,23 @@ function buildProps(template: string, componentInstance: IComponent, dependences
       const args = pureMatchProps.match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
       args.forEach(arg => {
         const pureArg = arg.split('.')[0];
-        if (componentInstance && pureArg in componentInstance && dependences.indexOf(pureArg) === -1) dependences.push(pureArg);
+        if (componentInstance && pureArg in componentInstance && componentInstance.dependencesList.indexOf(pureArg) === -1) componentInstance.dependencesList.push(pureArg);
       });
     } else {
       const pureProps = pureMatchProps.split('.')[0];
-      if (componentInstance && pureProps in componentInstance && dependences.indexOf(pureProps) === -1) dependences.push(pureProps);
+      if (componentInstance && pureProps in componentInstance && componentInstance.dependencesList.indexOf(pureProps) === -1) componentInstance.dependencesList.push(pureProps);
     }
   });
 }
 
-function buildAttribute(template: string, componentInstance: IComponent, dependences: string[]): void {
-  const templateMatchResult: string[] = template.match(/nv\-[a-z,A-Z]+\=\"((?!nv\-)(?!\=).)+\"/g);
+/**
+ * collect dependences from nv directives of @Component template
+ *
+ * @param {IComponent} componentInstance
+ * @returns {void}
+ */
+function resolveDirective(componentInstance: IComponent): void {
+  const templateMatchResult: string[] = componentInstance.template.match(/nv\-[a-z,A-Z]+\=\"((?!nv\-)(?!\=).)+\"/g);
   if (!templateMatchResult) return;
   templateMatchResult.forEach((matchProps) => {
     const pureMatchProps = matchProps.split('=')[1].replace(/^\"/, '').replace(/\"$/, '');
@@ -74,19 +75,25 @@ function buildAttribute(template: string, componentInstance: IComponent, depende
       const args = pureMatchProps.replace(/^(\@)/, '').match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
       args.forEach(arg => {
         const pureArg = arg.split('.')[0];
-        if (componentInstance && pureArg in componentInstance && dependences.indexOf(pureArg) === -1) dependences.push(pureArg);
+        if (componentInstance && pureArg in componentInstance && componentInstance.dependencesList.indexOf(pureArg) === -1) componentInstance.dependencesList.push(pureArg);
       });
     } else {
       let pureProps = null;
       if (/^nv-repeat=.*/.test(matchProps)) pureProps = pureMatchProps.split(' ')[3].split('.')[0];
       if (!/^nv-repeat=.*/.test(matchProps)) pureProps = pureMatchProps.split('.')[0];
-      if (componentInstance && pureProps in componentInstance && dependences.indexOf(pureProps) === -1) dependences.push(pureProps);
+      if (componentInstance && pureProps in componentInstance && componentInstance.dependencesList.indexOf(pureProps) === -1) componentInstance.dependencesList.push(pureProps);
     }
   });
 }
 
-function buildTemplateText(template: string, componentInstance: IComponent, dependences: string[]) {
-  const templateMatchResult: string[] = template.match(/(\{\{[^\{\}]+?\}\})/g);
+/**
+ * collect dependences from {{ }} of @Component template
+ *
+ * @param {IComponent} componentInstance
+ * @returns
+ */
+function resolveTemplateText(componentInstance: IComponent) {
+  const templateMatchResult: string[] = componentInstance.template.match(/(\{\{[^\{\}]+?\}\})/g);
   if (!templateMatchResult) return;
   templateMatchResult.forEach((matchProps) => {
     const pureMatchProps = matchProps.replace(/^\{\{/, '').replace(/\}\}$/, '');
@@ -94,19 +101,23 @@ function buildTemplateText(template: string, componentInstance: IComponent, depe
       const args = pureMatchProps.match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
       args.forEach(arg => {
         const pureArg = arg.split('.')[0];
-        if (componentInstance && pureArg in componentInstance && dependences.indexOf(pureArg) === -1) dependences.push(pureArg);
+        if (componentInstance && pureArg in componentInstance && componentInstance.dependencesList.indexOf(pureArg) === -1) componentInstance.dependencesList.push(pureArg);
       });
     } else {
       const pureProps = pureMatchProps.split('.')[0];
-      if (componentInstance && pureProps in componentInstance && dependences.indexOf(pureProps) === -1) dependences.push(pureProps);
+      if (componentInstance && pureProps in componentInstance && componentInstance.dependencesList.indexOf(pureProps) === -1) componentInstance.dependencesList.push(pureProps);
     }
   });
 }
 
-export function collectDependencesFromViewModel(template: string, componentInstance: IComponent): string[] {
-  const dependences: string[] = [];
-  buildProps(template, componentInstance, dependences);
-  buildAttribute(template, componentInstance, dependences);
-  buildTemplateText(template, componentInstance, dependences);
-  return dependences;
+/**
+ * collect dependences from @Component template
+ *
+ * @export
+ * @param {IComponent} componentInstance
+ */
+export function collectDependencesFromViewModel(componentInstance: IComponent): void {
+  resolveProps(componentInstance);
+  resolveDirective(componentInstance);
+  resolveTemplateText(componentInstance);
 }

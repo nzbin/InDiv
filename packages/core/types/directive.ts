@@ -1,4 +1,5 @@
 import { Injector } from '../di';
+import { InDiv } from '../indiv';
 
 export type DirectiveList<C> = {
     dom: Node;
@@ -8,13 +9,13 @@ export type DirectiveList<C> = {
 };
 
 
-export interface IDirective<Props = any, Vm = any> {
-    props?: Props | any;
+export interface IDirective {
+    props?: any;
     renderNode?: Element;
-    $indivInstance?: Vm | any;
+    $indivInstance?: InDiv | any;
 
     declarationMap?: Map<string, Function>;
-    directiveList?: DirectiveList<IDirective<any, any>>[];
+    directiveList?: DirectiveList<IDirective>[];
     otherInjector?: Injector;
     privateInjector?: Injector;
 
@@ -24,5 +25,5 @@ export interface IDirective<Props = any, Vm = any> {
     nvOnDestory?(): void;
     nvHasRender?(): void;
     nvRouteChange?(lastRoute: string, newRoute: string): void;
-    nvReceiveProps?(nextProps: Props): void;
+    nvReceiveProps?(nextProps: any): void;
 }

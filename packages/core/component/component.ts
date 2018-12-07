@@ -1,6 +1,6 @@
 import { IComponent, TInjectTokenProvider, TUseClassProvider, TUseValueProvider } from '../types';
 
-import { Watcher } from './watch';
+import { WatcherDependences } from './watch';
 import { injected, Injector } from '../di';
 import { render } from '../render';
 import { collectDependencesFromViewModel } from './utils';
@@ -16,20 +16,23 @@ export type TComponentOptions = {
  * 
  * to decorate an InDiv component
  * render function comes from InDiv instance, you can set it by youself
+ * 
+ * renderStatus: 'pending' | 'available', to controll watcher and render will be called or not in dependencesList
  *
- * @template State
  * @template Props
  * @template Vm
  * @param {TComponentOptions} options
  * @returns {(_constructor: Function) => void}
  */
-export function Component<State = any, Props = any, Vm = any>(options: TComponentOptions): (_constructor: Function) => void {
+export function Component(options: TComponentOptions): (_constructor: Function) => void {
   return function (_constructor: Function): void {
     injected(_constructor);
     (_constructor as any).nvType = 'nvComponent';
     (_constructor as any).selector = options.selector;
-    const vm: IComponent<State, Props, Vm> = _constructor.prototype;
+    const vm: IComponent = _constructor.prototype;
     vm.template = options.template;
+
+    vm.renderStatus = 'available';
 
     vm.privateInjector = new Injector();
     if (options.providers && options.providers.length > 0) {
@@ -51,9 +54,9 @@ export function Component<State = any, Props = any, Vm = any>(options: TComponen
     vm.directiveList = [];
 
     vm.watchData = function (): void {
-      console.log(1000323, 'watch', this);
-      (this as IComponent).dependencesList = collectDependencesFromViewModel(this.template, this);
-      (this as IComponent).dependencesList.forEach(dependence => Watcher(this, dependence));
+      if (!(this as IComponent).dependencesList) (this as IComponent).dependencesList = [];
+      collectDependencesFromViewModel(this);
+      (this as IComponent).dependencesList.forEach(dependence => WatcherDependences(this, dependence));
     };
 
     vm.render = render;

@@ -10,24 +10,21 @@ const compileUtil = new CompileUtil();
  * mountDirective for Directives in Component
  *
  * @export
- * @template State
- * @template Props
- * @template Vm
  * @param {Element} dom
- * @param {IComponent<State, Props, Vm>} componentInstance
+ * @param {IComponent} componentInstance
  */
-export function mountDirective<State = any, Props = any, Vm = any>(dom: Element, componentInstance: IComponent<State, Props, Vm>): void {
-  const cacheStates: DirectiveList<IDirective<Props, Vm>>[] = [ ...componentInstance.directiveList ];
+export function mountDirective(dom: Element, componentInstance: IComponent): void {
+  const cacheDirectiveList: DirectiveList<IDirective>[] = [ ...componentInstance.directiveList ];
   directivesConstructor(dom, componentInstance);
   const directiveListLength = componentInstance.directiveList.length;
   for (let i = 0; i < directiveListLength; i ++) {
     const directive = componentInstance.directiveList[i];
     // find Directive from cache
-    const cacheDirectiveIndex = cacheStates.findIndex(cache => cache.dom === directive.dom);
-    const cacheDirective = cacheStates[cacheDirectiveIndex];
+    const cacheDirectiveIndex = cacheDirectiveList.findIndex(cache => cache.dom === directive.dom);
+    const cacheDirective = cacheDirectiveList[cacheDirectiveIndex];
 
     // clear cache and the rest need to be destoried
-    if (cacheDirectiveIndex !== -1) cacheStates.splice(cacheDirectiveIndex, 1);
+    if (cacheDirectiveIndex !== -1) cacheDirectiveList.splice(cacheDirectiveIndex, 1);
     if (cacheDirective) {
       directive.scope = cacheDirective.scope;
       // old props: directive.scope.props
@@ -46,9 +43,9 @@ export function mountDirective<State = any, Props = any, Vm = any>(dom: Element,
     if (directive.scope.nvBeforeMount) directive.scope.nvBeforeMount();
   }
   // the rest should use nvOnDestory
-  const cacheStatesLength = cacheStates.length;
-  for (let i = 0; i < cacheStatesLength; i ++) {
-    const cache = cacheStates[i];
+  const cacheDirectiveListLength = cacheDirectiveList.length;
+  for (let i = 0; i < cacheDirectiveListLength; i ++) {
+    const cache = cacheDirectiveList[i];
     if (cache.scope.nvOnDestory) cache.scope.nvOnDestory();
   }
 }
@@ -56,13 +53,10 @@ export function mountDirective<State = any, Props = any, Vm = any>(dom: Element,
 /**
  * construct Directives in Directive
  *
- * @template State
- * @template Props
- * @template Vm
  * @param {Element} dom
- * @param {IComponent<State, Props, Vm>} componentInstance
+ * @param {IComponent} componentInstance
  */
-export function directivesConstructor<State = any, Props = any, Vm = any>(dom: Element, componentInstance: IComponent<State, Props, Vm>): void {
+export function directivesConstructor(dom: Element, componentInstance: IComponent): void {
   componentInstance.directiveList = [];
   const routerRenderNode = dom.querySelectorAll(componentInstance.$indivInstance.getRouteDOMKey())[0];
 

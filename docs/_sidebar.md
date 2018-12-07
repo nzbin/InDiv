@@ -11,4 +11,5 @@
 
 - 基本原理
   - [依赖注入](di)
-  - [状态依赖收集](stateDependenceCollection)
+  - [状态收集](stateCollection)
+  - [渲染](render)

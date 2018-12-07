@@ -7,14 +7,11 @@ export { RenderTaskQueue } from './render-task-queue';
 /**
  * render function for Component
  *
- * @template State
- * @template Props
- * @template Vm
- * @returns {Promise<IComponent<State, Props, Vm>>}
+ * @returns {Promise<IComponent}
  */
-export function render<State = any, Props = any, Vm = any>(): Promise<IComponent<State, Props, Vm>> {
-  const dom = (this as IComponent<State, Props, Vm>).renderNode;
+export function render(): Promise<IComponent> {
+  const dom = (this as IComponent).renderNode;
 
-  if (!(this as IComponent<State, Props, Vm>).renderTaskQueue) (this as IComponent<State, Props, Vm>).renderTaskQueue = new RenderTaskQueue(this);
-  return (this as IComponent<State, Props, Vm>).renderTaskQueue.push(dom);
+  if (!(this as IComponent).renderTaskQueue) (this as IComponent).renderTaskQueue = new RenderTaskQueue(this);
+  return (this as IComponent).renderTaskQueue.push(dom);
 }

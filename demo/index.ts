@@ -1,4 +1,4 @@
-import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, ReceiveProps, SetState, OnDestory, setState, ElementRef, Watch } from '@indiv/core';
+import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, ReceiveProps, SetState, OnDestory, setState, ElementRef, Watch, HasRender } from '@indiv/core';
 import { RouteChange, NvLocation, RouteModule } from '@indiv/router';
 import { PlatformBrowser } from '@indiv/platform-browser';
 import { HttpClient, HttpClientResponse } from '@indiv/common';
@@ -317,7 +317,7 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
   `),
 })
 
-class Container implements OnInit, AfterMount, WatchState {
+class Container implements OnInit, AfterMount, WatchState, HasRender {
   public ss: HeroSearchService;
   public ss2: HeroSearchService1;
   public state: any;
@@ -404,6 +404,10 @@ class Container implements OnInit, AfterMount, WatchState {
     // document.getElementById('1').className = '3333';
   }
 
+  public nvHasRender() {
+    console.log('nvHasRender Container');
+  }
+
   public go() {
     this.location.redirectTo('/R1', { b: '1' });
   }
@@ -424,68 +428,68 @@ class Container implements OnInit, AfterMount, WatchState {
   }
 
   public nvWatchState(oldState: any) {
-    console.log('oldState Controller:', oldState);
+    console.log(33333445, 'oldState Controller:', oldState);
   }
 
   public changeInput() {
-    this.color = 'green';
-    this.a = 5;
     this.setState({
-      testArray: [
-        {
-          name: 'gerry',
-          sex: '女',
-          job: [
-            {
-              id: 1,
-              name: '程序员',
-            },
-            {
-              id: 2,
-              name: '码农',
-            },
-            {
-              id: 3,
-              name: '帅',
-            },
-          ],
-        },
-        {
-          name: 'gerry2',
-          sex: '男2',
-          job: [
-            {
-              id: 1,
-              name: '程序员2',
-            },
-            {
-              id: 2,
-              name: '码农2',
-            },
-            {
-              id: 3,
-              name: '帅2',
-            },
-          ],
-        },
-        {
-          name: 'nina',
-          sex: '男',
-          job: [
-            {
-              id: 1,
-              name: '老师',
-            },
-            {
-              id: 2,
-              name: '英语老师',
-            },
-            {
-              id: 3,
-              name: '美',
-            },
-          ],
-        }],
+    color: "green",
+    a: 5,
+    testArray: [
+      {
+        name: 'gerry',
+        sex: '女',
+        job: [
+          {
+            id: 1,
+            name: '程序员',
+          },
+          {
+            id: 2,
+            name: '码农',
+          },
+          {
+            id: 3,
+            name: '帅',
+          },
+        ],
+      },
+      {
+        name: 'gerry2',
+        sex: '男2',
+        job: [
+          {
+            id: 1,
+            name: '程序员2',
+          },
+          {
+            id: 2,
+            name: '码农2',
+          },
+          {
+            id: 3,
+            name: '帅2',
+          },
+        ],
+      },
+      {
+        name: 'nina',
+        sex: '男',
+        job: [
+          {
+            id: 1,
+            name: '老师',
+          },
+          {
+            id: 2,
+            name: '英语老师',
+          },
+          {
+            id: 3,
+            name: '美',
+          },
+        ],
+      }],
     });
   }
 

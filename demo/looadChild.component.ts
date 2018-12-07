@@ -34,7 +34,7 @@ export class TestLoadchildComponent implements HasRender {
 
   public testt(t: any) {
     console.log(4444444, '测试 repeat node', t);
-    this.aa = '23131';
+    this.aa = Math.random().toString();
   }
 
   public nvHasRender() {

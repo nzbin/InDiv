@@ -8,3 +8,5 @@ export * from './di';
 export * from './lifecycle';
 export * from './render';
 export * from './types';
+export * from './vnode';
+// export * from './compile';

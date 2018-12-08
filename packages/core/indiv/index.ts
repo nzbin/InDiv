@@ -4,6 +4,8 @@ import { Utils } from '../utils';
 import { factoryCreator } from '../di';
 import { factoryModule } from '../nv-module';
 
+import { componentCompiler } from '../compile';
+
 export class ElementRef<R = HTMLElement> {
   public nativeElement: R;
   constructor(node: R) {
@@ -168,7 +170,8 @@ export class InDiv {
    */
   public init<R = Element>(): void {
     if (!utils.isBrowser()) return;
-
+    // todo
+    this.compiler = componentCompiler;
     if (!this.rootModule) throw new Error('must use bootstrapModule to declare a root NvModule before init');
     if (!this.compiler) throw new Error('must use plugin of platform to set a compiler method in InDiv!');
     this.renderModuleBootstrap<R>();

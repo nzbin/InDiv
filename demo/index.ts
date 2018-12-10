@@ -302,7 +302,9 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
       <input nv-model="a" />
       <div nv-repeat="let man in testArray" nv-key="man.name">
           <div nv-on:click="show(testArray2, '你111')">姓名：{{man.name}}</div>
-          <div>性别：{{countState(man.sex, $index)}}</div>
+          <div>
+            <p>性别：{{countState(man.sex, $index)}}</p>
+          </div>
           <a nv-href="countState(man.sex, $index)">a {{man.sex}}</a>
           <img nv-src="man.sex" nv-alt="man.sex" />
           <test-component nv-key="man.name" man="{countState(man.name)}"></test-component>
@@ -412,7 +414,7 @@ class Container implements OnInit, AfterMount, WatchState, HasRender {
     this.location.redirectTo('/R1', { b: '1' });
   }
   public countState(a: any, index: number): any {
-    if (!a) return 'false';
+    if (!a) return false;
     return a;
   }
   public show(a: any, index?: string) {
@@ -495,7 +497,8 @@ class Container implements OnInit, AfterMount, WatchState, HasRender {
 
   private httpHandler = (value: any) => {
     // this.state.a = 100;
-    this.a = 100;
+    // this.a = 100;
+    this.a = 0;
     console.log(33333, 'from container', value);
   }
 }

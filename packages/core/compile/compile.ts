@@ -1,7 +1,7 @@
 import { Utils } from '../utils';
-import { parseTemplateToVnode, Vnode } from '../vnode';
+import { parseTemplateToVnode, Vnode, ParseOptions } from '../vnode';
 import { CompileUtil, shouldDiffAttributes } from './compile-utils';
-import { IComponent } from 'types';
+import { IComponent } from '../types';
 
 const utils = new Utils();
 
@@ -12,212 +12,206 @@ const utils = new Utils();
  */
 export class Compile {
   public utils: Utils;
-  public vm: any;
+  public componentInstance: IComponent;
   public mountedElement: Element;
-  // public fragment: DocumentFragment;
+  public fragment: Vnode[];
   public saveVnode: Vnode[];
   public initVnode: Vnode[];
+  public parseVnodeOptions: ParseOptions;
 
   /**
    * Creates an instance of Compile.
    * @param {(string | Element)} el
-   * @param {*} vm
+   * @param {*} componentInstance
    * @memberof Compile
    */
-  constructor(el: string | Element, vm: IComponent) {
-    this.vm = vm;
-    this.initVnode = parseTemplateToVnode(vm.template);
-    // this.mountedElement = this.isElementNode(el) ? el as Element : document.querySelector(el as string);
+  constructor(el: any, componentInstance: IComponent) {
+    this.componentInstance = componentInstance;
+    this.initVnode = parseTemplateToVnode(componentInstance.template);
+    this.mountedElement = el;
+    this.parseVnodeOptions = {
+      components: [],
+      directives: [],
+    };
+    console.log(998877, this.componentInstance.declarationMap);
+    this.componentInstance.declarationMap.forEach((value, key) => {
+      if (this.parseVnodeOptions.components.indexOf(key) === -1 && (value as any).nvType === 'nvComponent') this.parseVnodeOptions.components.push(key);
+      if (this.parseVnodeOptions.directives.indexOf(key) === -1 && (value as any).nvType === 'nvDirective') this.parseVnodeOptions.directives.push(key);
+    });
   }
   // todo 开始编译
   public startCompile(): void {
-    // if (!this.mountedElement) throw new Error('class Compile need el in constructor');
-    // this.fragment = this.node2Fragment();
-    this.init();
-
-    // if (!this.saveVnode) this.saveVnode = parseTemplateToVnode(this.mountedElement, shouldDiffAttributes);
-    // const newVnode = parseTemplateToVnode(this.fragment, shouldDiffAttributes);
-    // // const patchList: IPatchList[] = [];
-    // // diffVnode(this.saveVnode, newVnode, patchList, this.needDiffChildCallback);
-    // // renderVnode(patchList);
+    if (!this.mountedElement) throw new Error('class Compile need el in constructor');
+    // todo to mountedElement vnode
+    this.fragment = parseTemplateToVnode(''); 
+    if (!this.saveVnode) this.saveVnode = parseTemplateToVnode(this.mountedElement.innerHTML, this.parseVnodeOptions);
+    const templateVnode = parseTemplateToVnode(this.componentInstance.template, this.parseVnodeOptions);
+    this.compileVnode(templateVnode);
+    console.log(88777777, templateVnode, this.fragment);
+    // const patchList: IPatchList[] = [];
+    // diffVnode(this.saveVnode, this.fragment, patchList, this.needDiffChildCallback);
+    // renderVnode(patchList);
 
     // this.fragment = null;
   }
 
-  /**
-   * needDiffChildCallback for Virtual DOM diff
-   * 
-   * if newVnode.node.isComponent no need diff children
-   * if newVnode.tagName and oldVnode.tagName no need diff children
-   *
-   * @param {Vnode} oldVnode
-   * @param {Vnode} newVnode
-   * @returns {boolean}
-   * @memberof Compile
-   */
-  public needDiffChildCallback = (oldVnode: Vnode, newVnode: Vnode): boolean => {
-    // 如果为组件，则停止对比内部元素，交由对应组件diff
-    if (newVnode.node.isComponent && oldVnode.node) {
-      oldVnode.node.isComponent = true;
-      return false;
-    }
-    // 如果为路由渲染层，则停止对比内部元素，交由router diff
-    if (oldVnode.tagName === newVnode.tagName && newVnode.tagName === (this.vm.$indivInstance.getRouteDOMKey() as string).toLocaleUpperCase()) return false;
-    return true;
-  }
+  // /**
+  //  * needDiffChildCallback for Virtual DOM diff
+  //  * 
+  //  * if newVnode.node.isComponent no need diff children
+  //  * if newVnode.tagName and oldVnode.tagName no need diff children
+  //  *
+  //  * @param {Vnode} oldVnode
+  //  * @param {Vnode} newVnode
+  //  * @returns {boolean}
+  //  * @memberof Compile
+  //  */
+  // public needDiffChildCallback = (oldVnode: Vnode, newVnode: Vnode): boolean => {
+  //   // 如果为组件，则停止对比内部元素，交由对应组件diff
+  //   if (newVnode.node.isComponent && oldVnode.node) {
+  //     oldVnode.node.isComponent = true;
+  //     return false;
+  //   }
+  //   // 如果为路由渲染层，则停止对比内部元素，交由router diff
+  //   if (oldVnode.tagName === newVnode.tagName && newVnode.tagName === (this.componentInstance.$indivInstance.getRouteDOMKey() as string).toLocaleUpperCase()) return false;
+  //   return true;
+  // }
 
   /**
-   * init compile
+   * compile vnode
    *
    * @memberof Compile
    */
-  public init(): void {
-    this.compileElement();
-  }
-
-  /**
-   * compile element
-   *
-   * @memberof Compile
-   */
-  public compileElement(): void {
-    // todo use initVnode
-    // const elementCreated = document.createElement('div');
-    // elementCreated.innerHTML = utils.formatInnerHTML(this.vm.template);
-    // const childNodes = elementCreated.childNodes;
-    // this.recursiveDOM(childNodes, fragment);
+  public compileVnode(vnodes: Vnode[]): void {
+    this.recursiveDOM(vnodes, this.fragment, null);
   }
 
   /**
    * recursive DOM for New State
    *
-   * @param {(NodeListOf<Node & ChildNode>)} childNodes
-   * @param {(DocumentFragment | Element)} fragment
+   * @param {Vnode[]} vnodes
+   * @param {Vnode[]} fragment
+   * @param {Vnode} parent
    * @memberof Compile
    */
-  public recursiveDOM(childNodes: NodeListOf<Node & ChildNode>, fragment: DocumentFragment | Element): void {
-    Array.from(childNodes).forEach((node: Element) => {
-      // mark for container of @Component
-      if (this.isElementNode(node)) {
-        const findDeclaration = this.vm.declarationMap.get(node.tagName.toLocaleLowerCase());
-        if (findDeclaration && findDeclaration.nvType === 'nvComponent') node.isComponent = true;
+  public recursiveDOM(vnodes: Vnode[], fragment: Vnode[], parent: Vnode): void {
+    vnodes.forEach((vnode: Vnode) => {
+
+      const _fragmentChild = new Vnode({...vnode});
+      // 因为当不上循环node时候将不会递归创建新vnode了
+      if (!this.isRepeatNode(_fragmentChild))_fragmentChild.childNodes = [];
+      if (parent) {
+        _fragmentChild.parentVnode = parent;
+        vnode.parentVnode = parent;
       }
+      fragment.push(_fragmentChild);
 
-      if (node.hasChildNodes() && !this.isRepeatNode(node)) this.recursiveDOM(node.childNodes, node);
+      // 要用新的编译
+      if (vnode.childNodes && vnode.childNodes.length > 0 && !this.isRepeatNode(vnode)) this.recursiveDOM(vnode.childNodes, _fragmentChild.childNodes, _fragmentChild);
 
-      fragment.appendChild(node);
-
-      const text = node.textContent;
+      const text = _fragmentChild.nodeValue;
       const reg = /\{\{(.*)\}\}/g;
-      if (this.isElementNode(node)) this.compile(node, fragment);
+      if (this.isElementNode(_fragmentChild)) this.compile(_fragmentChild, fragment);
 
-      if (this.isTextNode(node) && reg.test(text)) {
+      if (this.isTextNode(_fragmentChild) && reg.test(text)) {
         const textList = text.match(/(\{\{[^\{\}]+?\}\})/g);
         const length = textList.length;
         if (textList && length > 0) {
           for (let i = 0; i < length; i++) {
-              this.compileText(node, textList[i]);
+              this.compileText(_fragmentChild, textList[i]);
           }
         }
       }
 
       // after compile repeatNode, remove repeatNode
-      if (this.isRepeatNode(node) && fragment.contains(node)) fragment.removeChild(node);
+      if (this.isRepeatNode(_fragmentChild) && fragment.indexOf(_fragmentChild) !== -1) fragment.splice(fragment.indexOf(_fragmentChild), 1);
     });
   }
 
   /**
    * compile string to DOM
    *
-   * @param {Element} node
-   * @param {(DocumentFragment | Element)} fragment
+   * @param {Element} vnode
+   * @param {Vnode[]} fragment
    * @memberof Compile
    */
-  public compile(node: Element, fragment: DocumentFragment | Element): void {
-    const nodeAttrs = node.attributes;
+  public compile(vnode: Vnode, fragment: Vnode[]): void {
+    const nodeAttrs = vnode.attributes;
     if (nodeAttrs) {
-      Array.from(nodeAttrs).forEach(attr => {
+      nodeAttrs.forEach(attr => {
         const attrName = attr.name;
-        if (this.isDirective(attrName)) {
+        const compileUtil = new CompileUtil(fragment);
+        if (this.isDirective(attr.type)) {
           const dir = attrName.substring(3);
           const exp = attr.value;
-          const compileUtil = new CompileUtil(fragment);
-          if (this.isEventDirective(dir)) compileUtil.eventHandler(node, this.vm, exp, dir);
-          else compileUtil.bind(node, this.vm, exp, dir);
+          compileUtil.bind(vnode, this.componentInstance, exp, dir);
+        }
+        if (this.isEventDirective(attr.type)) {
+          const dir = attrName.substring(3);
+          const exp = attr.value;
+          compileUtil.eventHandler(vnode, this.componentInstance, exp, dir);
         }
       });
     }
   }
 
-  // /**
-  //  * create document fragment
-  //  *
-  //  * @returns {DocumentFragment}
-  //  * @memberof Compile
-  //  */
-  // public node2Fragment(): DocumentFragment {
-  //   return document.createDocumentFragment();
-  // }
-
   /**
    * compile text and use CompileUtil templateUpdater
    *
-   * @param {Element} node
+   * @param {Vnode} vnode
    * @param {string} exp
    * @memberof Compile
    */
-  public compileText(node: Element, exp: string): void {
-    new CompileUtil(this.fragment).templateUpdater(node, this.vm, exp);
+  public compileText(vnode: Vnode, exp: string): void {
+    new CompileUtil().templateUpdater(vnode, this.componentInstance, exp);
   }
 
   /**
    * judge attribute is nv directive or not
    *
-   * @param {string} attr
+   * @param {string} type
    * @returns {boolean}
    * @memberof Compile
    */
-  public isDirective(attr: string): boolean {
-    return attr.indexOf('nv-') === 0;
+  public isDirective(type: string): boolean {
+    return type === 'nv-attribute';
   }
 
   /**
    * judge attribute is nv event directive or not
    *
-   * @param {string} eventName
+   * @param {string} type
    * @returns {boolean}
    * @memberof Compile
    */
-  public isEventDirective(eventName: string): boolean {
-    return eventName.indexOf('on') === 0;
+  public isEventDirective(type: string): boolean {
+    return type === 'nv-event';
   }
 
   /**
    * judge DOM is a element node or not
    *
-   * @param {(Element | string)} node
+   * @param {Vnode} vnode
    * @returns {boolean}
    * @memberof Compile
    */
-  public isElementNode(node: Element | string): boolean {
-    if (typeof node === 'string') return false;
-    return node.nodeType === 1;
+  public isElementNode(vnode: Vnode): boolean {
+    return vnode.type === 'tag' || vnode.type === 'component';
   }
 
   /**
    * judge DOM is nv-repeat dom or not
    *
-   * @param {Element} node
+   * @param {Vnode} vnode
    * @returns {boolean}
    * @memberof Compile
    */
-  public isRepeatNode(node: Element): boolean {
-    const nodeAttrs = node.attributes;
+  public isRepeatNode(vnode: Vnode): boolean {
+    const nodeAttrs = vnode.attributes;
     let result = false;
     if (nodeAttrs) {
-      Array.from(nodeAttrs).forEach(attr => {
-        const attrName = attr.name;
-        if (attrName === 'nv-repeat') result = true;
+      nodeAttrs.forEach(attr => {
+        if (attr.name === 'nv-repeat') result = true;
       });
     }
     return result;
@@ -226,11 +220,11 @@ export class Compile {
   /**
    * judge DOM is text node or not
    *
-   * @param {Element} node
+   * @param {Vnode} vnode
    * @returns {boolean}
    * @memberof Compile
    */
-  public isTextNode(node: Element): boolean {
-    return node.nodeType === 3;
+  public isTextNode(vnode: Vnode): boolean {
+    return vnode.type === 'text';
   }
 }

@@ -1,12 +1,14 @@
 export type TAttributes = {
   name: string;
   value: string;
+  type: string;
+  nvValue?: any;
 };
 
 export interface IPatchList {
   type?: number;
   node?: DocumentFragment | Element;
-  parentNode?: Node;
+  parentVnode?: Vnode;
   newNode?: DocumentFragment | Element;
   oldVnode?: DocumentFragment | Element;
   newValue?: TAttributes | string | number | boolean | Function;
@@ -26,17 +28,18 @@ export interface IPatchList {
 export class Vnode {
   public tagName?: string;
   public node?: DocumentFragment | Element;
-  public parentNode?: Node;
+  public parentVnode?: Vnode;
   public attributes?: TAttributes[];
   public nodeValue?: string | null;
   public childNodes?: Vnode[];
   public type?: string;
   public value?: string | number;
   public repeatData?: any;
-  public eventTypes?: string;
+  public eventTypes?: { type: string; handler: Function}[] = [];
   public key?: any;
   public checked?: boolean;
   public voidElement?: boolean = false;
+  public template: string;
 
   /**
    * Creates an instance of Vnode.
@@ -46,35 +49,37 @@ export class Vnode {
   constructor(options: Vnode) {
     this.tagName = options.tagName;
     this.node = options.node;
-    this.parentNode = options.parentNode;
-    this.attributes = options.attributes;
-    this.childNodes = options.childNodes;
+    this.parentVnode = options.parentVnode;
+    this.attributes = options.attributes ? [...options.attributes] : [];
+    this.childNodes = options.childNodes ? [...options.childNodes] : [];
     this.nodeValue = options.nodeValue;
     this.type = options.type;
     this.value = options.value;
     this.repeatData = options.repeatData;
-    this.eventTypes = options.eventTypes;
+    this.eventTypes = options.eventTypes ? [...options.eventTypes] : [];
     this.key = options.key;
     this.checked = false;
     this.voidElement = options.voidElement;
+    this.template = options.template;
   }
 }
 
-export function parseTag(tag: string): Vnode {
+export function parseTag(tag: string, directives: string[]): Vnode {
   const vNodeOptions: Vnode = {
     tagName: '',
     node: null,
-    parentNode: null,
+    parentVnode: null,
     attributes: [],
     childNodes: [],
     nodeValue: null,
     type: 'tag',
     value: null,
     repeatData: null,
-    eventTypes: null,
+    eventTypes: [],
     key: null,
     checked: false,
     voidElement: false,
+    template: tag,
   };
 
   const attrRE = /[\w-:]+(\=['"]([^=-]*)['"]){0,1}/g;
@@ -104,8 +109,13 @@ export function parseTag(tag: string): Vnode {
     } else {
       const name = attr.split('=')[0];
       const _value = attr.split('=')[1];
-      const value = _value ? _value.substr(0, _value.length - 1).substr(1) : null;
-      vNodeOptions.attributes.push({ name, value });
+      const value = attr.split('=')[1] ? _value.substr(0, _value.length - 1).substr(1) : null;
+      let type = 'attribute';
+      if (name.indexOf('nv-') === 0) type = 'nv-attribute';
+      if (name.indexOf('nv-on:') === 0) type = 'nv-event';
+      if (directives.indexOf(name) !== -1 && /^\{[^{}]*\}$/.test(value)) type = 'directive';
+      if (directives.indexOf(name) === -1 && /^\{[^{}]*\}$/.test(value)) type = 'prop';
+      vNodeOptions.attributes.push({ name, value, type });
     }
   });
 

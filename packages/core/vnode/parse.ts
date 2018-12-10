@@ -2,10 +2,11 @@ import { parseTag, Vnode } from './parse-tag';
 
 export type ParseOptions = {
   components: string[];
+  directives: string[];
 };
 
 // todo compile 变量
-export function parseTemplateToVnode(template: string, options: ParseOptions = { components: [] }): Vnode[] {
+export function parseTemplateToVnode(template: string, options: ParseOptions = { components: [], directives: [] }): Vnode[] {
 
   const tagRegex = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
 
@@ -25,13 +26,13 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
     const isOpen = tag.charAt(1) !== '/';
     const start = index + tag.length;
     const nextChar = template.charAt(start);
-    let parent;
+    let parent = null;
 
     if (isOpen) {
       level++;
 
-      current = parseTag(tag);
-      if (current.type === 'tag' && options.components[(current.tagName as any)]) {
+      current = parseTag(tag, options.directives);
+      if (current.type === 'tag' && options.components.indexOf(current.tagName) !== -1) {
         current.type = 'component';
         inComponent = true;
       }
@@ -40,6 +41,8 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
         current.childNodes.push({
           type: 'text',
           nodeValue: template.slice(start, template.indexOf('<', start)),
+          parentVnode: current,
+          template: template.slice(start, template.indexOf('<', start)),
         });
       }
 
@@ -50,7 +53,10 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
 
       parent = arr[level - 1];
 
-      if (parent) parent.childNodes.push(current);
+      if (parent && parent.tagName !== 'router-render') {
+        current.parentVnode = parent;
+        parent.childNodes.push(current);
+      }
 
       arr[level] = current;
     }
@@ -61,14 +67,26 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
         // trailing text node
         // if we're at the root, push a base text node. otherwise add as
         // a child to the current node.
-        parent = level === -1 ? result : arr[level].childNodes;
-
+        // parent = level === -1 ? result : arr[level].childNodes;
+        parent = level === -1 ? null : arr[level];
+        
         // calculate correct end of the content slice in case there's
         // no tag after the text node.
         const end = template.indexOf('<', start);
         const nodeValue = template.slice(start, end === -1 ? undefined : end);
         // if a node is nothing but whitespace, no need to add it.
-        if (!/^\s*$/.test(nodeValue)) parent.push({ type: 'text', nodeValue: nodeValue });
+        if (!/^\s*$/.test(nodeValue) && !parent) result.push({
+          type: 'text',
+          nodeValue: nodeValue,
+          parentVnode: parent,
+          template: nodeValue,
+        });
+        if (!/^\s*$/.test(nodeValue) && parent && parent.tagName !== 'router-render') arr[level].childNodes.push({
+          type: 'text',
+          nodeValue: nodeValue,
+          parentVnode: parent,
+          template: nodeValue,
+        });
       }
     }
     return null;

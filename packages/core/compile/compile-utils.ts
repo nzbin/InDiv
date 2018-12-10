@@ -133,7 +133,7 @@ export class CompileUtilForRepeat {
     const utilVm = this;
     args.forEach(arg => {
       if (arg === '') return false;
-      if (arg === '$element') return argsList.push(vnode.node);
+      if (arg === '$element') return argsList.push(vnode.nativeElement);
       if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
       if (arg === 'null') return argsList.push(null);
       if (arg === 'undefined') return argsList.push(undefined);
@@ -575,7 +575,7 @@ export class CompileUtil {
     const argsList: any[] = [];
     args.forEach(arg => {
       if (arg === '') return false;
-      if (arg === '$element') return argsList.push(vnode.node);
+      if (arg === '$element') return argsList.push(vnode.nativeElement);
       if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
       if (arg === 'null') return argsList.push(null);
       if (arg === 'undefined') return argsList.push(undefined);

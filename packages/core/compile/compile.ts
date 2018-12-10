@@ -1,5 +1,5 @@
 import { Utils } from '../utils';
-import { parseTemplateToVnode, Vnode, ParseOptions } from '../vnode';
+import { parseTemplateToVnode, Vnode, ParseOptions, IPatchList, diffVnode, renderVnode } from '../vnode';
 import { CompileUtil, shouldDiffAttributes } from './compile-utils';
 import { IComponent } from '../types';
 
@@ -47,12 +47,19 @@ export class Compile {
     if (!this.saveVnode) this.saveVnode = parseTemplateToVnode(this.mountedElement.innerHTML, this.parseVnodeOptions);
     const templateVnode = parseTemplateToVnode(this.componentInstance.template, this.parseVnodeOptions);
     this.compileVnode(templateVnode);
-    console.log(88777777, templateVnode, this.fragment);
-    // const patchList: IPatchList[] = [];
-    // diffVnode(this.saveVnode, this.fragment, patchList, this.needDiffChildCallback);
-    // renderVnode(patchList);
+    const patchList: IPatchList[] = [];
+    if (this.saveVnode.length === 0) this.saveVnode.push({
+      parentVnode: { nativeElement: this.mountedElement, template: null, childNodes: [] },
+      template: null,
+      childNodes: [],
+    });
+    this.fragment[0].parentVnode = { nativeElement: this.mountedElement, template: null };
+    console.log(88777777, this.saveVnode, this.fragment);
+    diffVnode(this.saveVnode[0], this.fragment[0], patchList);
+    renderVnode(patchList);
 
-    // this.fragment = null;
+    this.saveVnode = this.fragment;
+    this.fragment = null;
   }
 
   // /**

@@ -5,7 +5,6 @@ export type ParseOptions = {
   directives: string[];
 };
 
-// todo compile 变量
 export function parseTemplateToVnode(template: string, options: ParseOptions = { components: [], directives: [] }): Vnode[] {
 
   const tagRegex = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;

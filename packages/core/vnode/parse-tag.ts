@@ -7,14 +7,14 @@ export type TAttributes = {
 
 export interface IPatchList {
   type?: number;
-  node?: DocumentFragment | Element;
+  nativeElement?: any;
   parentVnode?: Vnode;
-  newNode?: DocumentFragment | Element;
-  oldVnode?: DocumentFragment | Element;
+  newIndex?: number;
+  newNode?: Vnode;
+  oldVnode?: Vnode;
   newValue?: TAttributes | string | number | boolean | Function;
   oldValue?: TAttributes | string | number | boolean | Function;
   eventType?: string;
-  newIndex?: number;
   originVnode?: Vnode;
   changedVnode?: Vnode;
   changedValue?: TAttributes | string | number | boolean | Function;
@@ -27,7 +27,7 @@ export interface IPatchList {
  */
 export class Vnode {
   public tagName?: string;
-  public node?: DocumentFragment | Element;
+  public nativeElement?: any;
   public parentVnode?: Vnode;
   public attributes?: TAttributes[];
   public nodeValue?: string | null;
@@ -48,7 +48,7 @@ export class Vnode {
    */
   constructor(options: Vnode) {
     this.tagName = options.tagName;
-    this.node = options.node;
+    this.nativeElement = options.nativeElement;
     this.parentVnode = options.parentVnode;
     this.attributes = options.attributes ? [...options.attributes] : [];
     this.childNodes = options.childNodes ? [...options.childNodes] : [];
@@ -67,7 +67,7 @@ export class Vnode {
 export function parseTag(tag: string, directives: string[]): Vnode {
   const vNodeOptions: Vnode = {
     tagName: '',
-    node: null,
+    nativeElement: null,
     parentVnode: null,
     attributes: [],
     childNodes: [],

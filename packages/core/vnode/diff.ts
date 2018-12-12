@@ -15,6 +15,7 @@ import { Vnode, IPatchList } from './parse-tag';
 function diffChildNodes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[]): void {
   if (oldVnode.childNodes && oldVnode.childNodes.length > 0) {
     oldVnode.childNodes.forEach((oChild, index) => {
+      if (!oChild.type) return;
       // const sameCodeFromNewCode = newVnode.childNodes.find(nChild => (nChild.node.isEqualNode(oChild.node) && nChild.key === oChild.key && !nChild.checked) || (nChild.tagName === oChild.tagName && nChild.key === oChild.key && !nChild.checked));
       const sameCodeFromNewCode = newVnode.childNodes.find(nChild => (nChild.tagName === oChild.tagName && nChild.key === oChild.key && !nChild.checked));
       if (!sameCodeFromNewCode) {
@@ -30,6 +31,7 @@ function diffChildNodes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
           patchList.push({
             type: 1,
             newIndex: sameCodeIndexFromNewCode,
+            oldIndex: index,
             parentVnode: oldVnode,
             changedVnode: oChild,
           });
@@ -42,7 +44,7 @@ function diffChildNodes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
 
   if (newVnode.childNodes && newVnode.childNodes.length > 0) {
     newVnode.childNodes.forEach((nChild, index) => {
-      if (nChild.checked) return;
+      if (nChild.checked || !nChild.type) return;
       patchList.push({
         type: 2,
         newIndex: index,
@@ -269,7 +271,10 @@ function diffChildNodes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
  */
 export function diffVnode(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[]): void {
   if (!patchList) throw new Error('patchList can not be null, diffVnode must need an Array');
-
+  if (!newVnode.parentVnode && !newVnode.template && !newVnode.tagName) {
+    diffChildNodes(oldVnode, newVnode, patchList);
+    return;
+  }
   // if (newVnode.type === 'document-fragment') {
   //   newVnode.childNodes.forEach(child => { child.parentNode = oldVnode.node; });
   //   diffChildNodes(oldVnode, newVnode, patchList, needDiffChildCallback);

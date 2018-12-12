@@ -1,9 +1,6 @@
-import { Utils } from '../utils';
-import { parseTemplateToVnode, Vnode, ParseOptions, IPatchList, diffVnode, renderVnode } from '../vnode';
-import { CompileUtil, shouldDiffAttributes } from './compile-utils';
+import { parseTemplateToVnode, Vnode, ParseOptions, IPatchList, diffVnode, patchVnode } from '../vnode';
+import { CompileUtil } from './compile-utils';
 import { IComponent } from '../types';
-
-const utils = new Utils();
 
 /**
  * main compiler
@@ -11,7 +8,6 @@ const utils = new Utils();
  * @class Compile
  */
 export class Compile {
-  public utils: Utils;
   public componentInstance: IComponent;
   public mountedElement: Element;
   public fragment: Vnode[];
@@ -48,17 +44,12 @@ export class Compile {
     const templateVnode = parseTemplateToVnode(this.componentInstance.template, this.parseVnodeOptions);
     this.compileVnode(templateVnode);
     const patchList: IPatchList[] = [];
-    if (this.saveVnode.length === 0) this.saveVnode.push({
-      parentVnode: { nativeElement: this.mountedElement, template: null, childNodes: [] },
-      template: null,
-      childNodes: [],
-    });
-    this.fragment[0].parentVnode = { nativeElement: this.mountedElement, template: null };
+    if (this.saveVnode.length === 0) this.saveVnode.push({ parentVnode: { nativeElement: this.mountedElement } });
+    this.fragment[0].parentVnode = { nativeElement: this.mountedElement };
+    diffVnode({ childNodes: this.saveVnode, nativeElement: this.mountedElement, parentVnode: null }, { childNodes: this.fragment, nativeElement: this.mountedElement, parentVnode: null }, patchList);
+    patchVnode(patchList);
     console.log(88777777, this.saveVnode, this.fragment);
-    diffVnode(this.saveVnode[0], this.fragment[0], patchList);
-    renderVnode(patchList);
 
-    this.saveVnode = this.fragment;
     this.fragment = null;
   }
 
@@ -124,9 +115,7 @@ export class Compile {
         const textList = text.match(/(\{\{[^\{\}]+?\}\})/g);
         const length = textList.length;
         if (textList && length > 0) {
-          for (let i = 0; i < length; i++) {
-              this.compileText(_fragmentChild, textList[i]);
-          }
+          for (let i = 0; i < length; i++) this.compileText(_fragmentChild, textList[i]);
         }
       }
 
@@ -158,6 +147,7 @@ export class Compile {
           const exp = attr.value;
           compileUtil.eventHandler(vnode, this.componentInstance, exp, dir);
         }
+        if (this.isPropOrNvDirective(attr.type) && !this.isRepeatNode(vnode)) compileUtil.propHandler(vnode, this.componentInstance, attr);
       });
     }
   }
@@ -182,6 +172,17 @@ export class Compile {
    */
   public isDirective(type: string): boolean {
     return type === 'nv-attribute';
+  }
+
+  /**
+   * judge attribute is nv directive or not
+   *
+   * @param {string} type
+   * @returns {boolean}
+   * @memberof Compile
+   */
+  public isPropOrNvDirective(type: string): boolean {
+    return type === 'directive' || type === 'prop';
   }
 
   /**

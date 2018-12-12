@@ -1,5 +1,9 @@
-import { Vnode } from "../vnode";
 import { IComponent } from "../types";
+
+import { Vnode, TAttributes } from "../vnode";
+import { Utils } from '../utils';
+
+const utils = new Utils();
 
 declare global {
   interface Element {
@@ -169,7 +173,7 @@ export class CompileUtilForRepeat {
     valueList.forEach((v, index) => {
       if (v === key && index === 0) return lastKey = v;
       if (index < valueList.length) lastKey = v;
-      if (index < valueList.length - 1 ) value = value[v];
+      if (index < valueList.length - 1) value = value[v];
     });
     if (lastKey) value[lastKey] = setValue;
   }
@@ -216,7 +220,7 @@ export class CompileUtilForRepeat {
       const fn = this._getVMFunction(vm, exp);
       const argsList = this._getVMFunctionArguments(vm, exp, vnode, key, val);
       value = fn.apply(vm, argsList);
-    // repeat value
+      // repeat value
     } else if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) value = this._getVMRepeatVal(repeatValue, exp, key);
     // normal value
     else if (this.isFromVM(vm, exp)) value = this._getVMVal(vm, exp);
@@ -227,7 +231,11 @@ export class CompileUtilForRepeat {
     else if (exp === 'true' || exp === 'false') value = (exp === 'true');
     else if (exp === 'null') value = null;
     else if (exp === 'undefined') value = undefined;
-    else throw new Error(`directive: nv-${dir} can't use recognize this value ${exp}`);
+    else if (vnode.repeatData) {
+      Object.keys(vnode.repeatData).forEach(data => {
+        if (exp.indexOf(data) === 0 || exp.indexOf(`${data}.`) === 0) value = this._getValueByValue(vnode.repeatData[data], exp, data);
+      });
+    } else throw new Error(`directive: nv-${dir} can't use recognize this value ${exp}`);
 
     if (!vnode.childNodes || vnode.childNodes.length === 0) this.templateUpdater(vnode, repeatValue, key, vm);
 
@@ -309,7 +317,7 @@ export class CompileUtilForRepeat {
     vnode.value = typeof value === 'undefined' ? '' : value;
 
     const utilVm = this;
-    const func = function(event: Event): void {
+    const func = function (event: Event): void {
       event.preventDefault();
       if (utilVm.isFromVM(vm, exp)) {
         if ((event.target as HTMLInputElement).value === watchData) return;
@@ -368,7 +376,7 @@ export class CompileUtilForRepeat {
     if (value) {
       const findAttribute = vnode.attributes.find(attr => attr.name === 'nv-if');
       findAttribute.nvValue = value;
-    } 
+    }
   }
 
   /**
@@ -426,7 +434,7 @@ export class CompileUtilForRepeat {
     const args = exp.match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
 
     const utilVm = this;
-    const func = function(event: Event): any {
+    const func = function (event: Event): any {
       const argsList: any[] = [];
       args.forEach(arg => {
         if (arg === '') return false;
@@ -457,6 +465,101 @@ export class CompileUtilForRepeat {
         handler: func,
       });
     }
+  }
+
+  /**
+   * handle prop
+   *
+   * @param {Vnode} vnode
+   * @param {*} vm
+   * @param {TAttributes} attr
+   * @param {string} prop
+   * @memberof CompileUtilForRepeat
+   */
+  public propHandler(vnode: Vnode, vm: any, attr: TAttributes): void {
+    const prop = /^\{(.+)\}$/.exec(attr.value);
+    if (prop) {
+      const propValue = prop[1];
+      let _prop = null;
+      if (/^.*\(.*\)$/.test(propValue)) {
+        const fn = this._getVMFunction(vm, propValue);
+        const args = propValue.match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
+        const argsList: any[] = [];
+        args.forEach(arg => {
+          if (arg === '') return false;
+          if (arg === '$element') return argsList.push(vnode.nativeElement);
+          if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
+          if (arg === 'null') return argsList.push(null);
+          if (arg === 'undefined') return argsList.push(undefined);
+          if (this.isFromVM(vm, arg)) return argsList.push(this._getVMVal(vm, arg));
+          if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
+          if (/^\".*\"$/.test(arg)) return argsList.push(arg.match(/^\"(.*)\"$/)[1]);
+          if (!/^\'.*\'$/.test(arg) && !/^\".*\"$/.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
+          if (vnode.repeatData) {
+            // $index in this
+            Object.keys(vnode.repeatData).forEach(data => {
+              if (arg.indexOf(data) === 0 || arg.indexOf(`${data}.`) === 0) return argsList.push(this._getValueByValue(vnode.repeatData[data], arg, data));
+            });
+          }
+        });
+        const value = fn.apply(vm, argsList);
+        attr.nvValue = value;
+        return;
+      }
+      const valueList = propValue.split('.');
+      const key = valueList[0];
+      if (this.isFromVM(vm, propValue)) {
+        _prop = this._getVMVal(vm, propValue);
+        attr.nvValue = this.buildProps(_prop, vm);
+        return;
+      }
+      // if (_propsKeys.hasOwnProperty(key) || key in _propsKeys) {
+      //   _prop = getPropsValue(valueList, _propsKeys[key]);
+      //   attr.nvValue = buildProps(_prop, vm);
+      // }
+      if (vnode.repeatData && vnode.repeatData.hasOwnProperty(key)) {
+        _prop = this._getValueByValue(vnode.repeatData[key], propValue, key);
+        attr.nvValue = this.buildProps(_prop, vm);
+        return;
+      }
+      if (/^\'.*\'$/.test(propValue)) {
+        attr.nvValue = propValue.match(/^\'(.*)\'$/)[1];
+        return;
+      }
+      if (/^\".*\"$/.test(propValue)) {
+        attr.nvValue = propValue.match(/^\"(.*)\"$/)[1];
+        return;
+      }
+      if (!/^\'.*\'$/.test(propValue) && !/^\".*\"$/.test(propValue) && /^[0-9]*$/.test(propValue)) {
+        attr.nvValue = Number(prop);
+        return;
+      }
+      if (propValue === 'true' || propValue === 'false') {
+        attr.nvValue = (propValue === 'true');
+        return;
+      }
+      if (propValue === 'null') {
+        attr.nvValue = null;
+        return;
+      }
+      if (propValue === 'undefined') {
+        attr.nvValue = undefined;
+        return;
+      }
+    }
+  }
+
+  /**
+   * build prop
+   *
+   * @param {*} prop
+   * @param {IComponent} vm
+   * @returns {*}
+   * @memberof CompileUtilForRepeat
+   */
+  public buildProps(prop: any, vm: IComponent): any {
+    if (utils.isFunction(prop)) return prop.bind(vm);
+    else return prop;
   }
 
   /**
@@ -638,7 +741,7 @@ export class CompileUtil {
         const fn = this._getVMFunction(vm, exp);
         const argsList = this._getVMFunctionArguments(vm, exp, vnode);
         value = fn.apply(vm, argsList);
-      // normal value
+        // normal value
       } else if (this.isFromVM(vm, exp)) value = this._getVMVal(vm, exp);
       else if (/^\'.*\'$/.test(exp)) value = exp.match(/^\'(.*)\'$/)[1];
       else if (/^\".*\"$/.test(exp)) value = exp.match(/^\"(.*)\"$/)[1];
@@ -646,7 +749,11 @@ export class CompileUtil {
       else if (exp === 'true' || exp === 'false') value = (exp === 'true');
       else if (exp === 'null') value = null;
       else if (exp === 'undefined') value = undefined;
-      else throw new Error(`directive: nv-${dir} can't use recognize this value ${exp} as prop`);
+      else if (vnode.repeatData) {
+        Object.keys(vnode.repeatData).forEach(data => {
+          if (exp.indexOf(data) === 0 || exp.indexOf(`${data}.`) === 0) value = this._getValueByValue(vnode.repeatData[data], exp, data);
+        });
+      } else throw new Error(`directive: nv-${dir} can't use recognize this value ${exp} as prop`);
 
       // compile unrepeatNode's attributes
       switch (dir) {
@@ -755,7 +862,7 @@ export class CompileUtil {
     if (value) {
       const findAttribute = vnode.attributes.find(attr => attr.name === 'nv-if');
       findAttribute.nvValue = value;
-    } 
+    }
   }
 
   /**
@@ -812,10 +919,12 @@ export class CompileUtil {
 
     const key = expFather.split(' ')[1];
     value.forEach((val: any, index: number) => {
-      const repeatData: { [key: string]: any } = {};
+      const repeatData: { [key: string]: any } = {...vnode.repeatData} || {};
       repeatData[key] = val;
       repeatData.$index = index;
+
       const newVnode = this.cloneVnode(vnode, repeatData);
+      newVnode.index = index;
       const nodeAttrs = newVnode.attributes;
       const text = newVnode.nodeValue;
       const reg = /\{\{(.*)\}\}/g;
@@ -828,18 +937,13 @@ export class CompileUtil {
       if (nodeAttrs) {
         nodeAttrs.forEach(attr => {
           const attrName = attr.name;
-          if (this.isDirective(attr.type) && attrName !== 'nv-repeat') {
-            const dir = attrName.substring(3);
-            const exp = attr.value;
-            compileUtilForRepeat.bind(newVnode, key, dir, exp, index, vm, value, val);
-          }
-          if (this.isEventDirective(attr.type) && attrName !== 'nv-repeat') {
-            const dir = attrName.substring(3);
-            const exp = attr.value;
-            compileUtilForRepeat.eventHandler(newVnode, vm, exp, dir, key, val);
-          }
+          const dir = attrName.substring(3);
+          const exp = attr.value;
+          if (this.isDirective(attr.type) && attrName !== 'nv-repeat') compileUtilForRepeat.bind(newVnode, key, dir, exp, index, vm, value, val);
+          if (this.isEventDirective(attr.type) && attrName !== 'nv-repeat') compileUtilForRepeat.eventHandler(newVnode, vm, exp, dir, key, val);
+          if (this.isPropOrNvDirective(attr.type)) compileUtilForRepeat.propHandler(newVnode, vm, attr);
         });
-        
+
       }
       // first insert node before repeatnode, and remove repeatnode in Compile
       if (newVnode.childNodes && newVnode.childNodes.length > 0 && this.fragment.indexOf(newVnode)) this.repeatChildrenUpdater(newVnode, val, expFather, index, vm, value);
@@ -868,7 +972,7 @@ export class CompileUtil {
     }[] = [];
 
     vnode.childNodes.forEach(child => {
-      child.repeatData = child.repeatData || {};
+      child.repeatData = {...child.repeatData} || {};
       child.repeatData[key] = value;
       child.repeatData.$index = index;
       if (this.isRepeatProp(child)) child.attributes.push({ name: `_prop-${key}`, value: JSON.stringify(value), type: 'prop-value' });
@@ -879,18 +983,15 @@ export class CompileUtil {
 
       if (this.isTextNode(child) && reg.test(text)) new CompileUtilForRepeat(vnode.childNodes).templateUpdater(child, value, key, vm);
       if (nodeAttrs) {
-        Array.from(nodeAttrs).forEach(attr => {
+        nodeAttrs.forEach(attr => {
           const attrName = attr.name;
           const exp = attr.value;
           const dir = attrName.substring(3);
           const compileUtilForRepeat = new CompileUtilForRepeat(vnode.childNodes);
 
-          if (this.isDirective(attr.type) && attrName !== 'nv-repeat' && (new RegExp(`(^${key})`).test(exp) || this.isFromVM(vm, exp))) {
-            compileUtilForRepeat.bind(child, key, dir, exp, index, vm, watchValue, value);
-          }
-          if (this.isEventDirective(attr.type) && attrName !== 'nv-repeat' && (new RegExp(`(^${key})`).test(exp) || this.isFromVM(vm, exp))) {
-            compileUtilForRepeat.eventHandler(child, vm, exp, dir, key, value);
-          }
+          if (this.isDirective(attr.type) && attrName !== 'nv-repeat' && (new RegExp(`(^${key})`).test(exp) || this.isFromVM(vm, exp))) compileUtilForRepeat.bind(child, key, dir, exp, index, vm, watchValue, value);
+          if (this.isEventDirective(attr.type) && attrName !== 'nv-repeat' && (new RegExp(`(^${key})`).test(exp) || this.isFromVM(vm, exp))) compileUtilForRepeat.eventHandler(child, vm, exp, dir, key, value);
+          if (this.isPropOrNvDirective(attr.type)) compileUtilForRepeat.propHandler(child, vm, attr);
         });
       }
 
@@ -903,12 +1004,12 @@ export class CompileUtil {
         const restRepeat = newAttrs.find(attr => this.isDirective(attr.type) && attr.name === 'nv-repeat');
         if (restRepeat) {
           const newWatchData = restRepeat.value.split(' ')[3];
-          console.log(9887766, child, child.template, restRepeat, newWatchData);
 
           // 创建一个同级于vnode的容器存放新的子元素的容器，最后再统一放入vnode中
-          const _newContainerFragment = new Vnode({...vnode});
+          const _newContainerFragment = new Vnode({ ...vnode });
           // 因为确定了是不允许递归的循环node所以子节点要清空
           _newContainerFragment.childNodes = [];
+          _newContainerFragment.childNodes.push(child);
           _fragmentList.push({
             originChild: child,
             container: _newContainerFragment,
@@ -918,6 +1019,10 @@ export class CompileUtil {
 
           if (this.isFromVM(vm, newWatchData)) compileUtil.bind(child, vm, restRepeat.value, restRepeat.name.substring(3));
           if (new RegExp(`(^${key})`).test(newWatchData)) compileUtil.repeatUpdater(child, this._getValueByValue(value, newWatchData, key), restRepeat.value, vm);
+          // todo child
+          // if (this.isPropOrNvDirective(attr.type)) compileUtilForRepeat.propHandler(child, vm, attr);
+
+          if (this.isRepeatNode(child) && _newContainerFragment.childNodes.indexOf(child) !== -1) _newContainerFragment.childNodes.splice(_newContainerFragment.childNodes.indexOf(child), 1);
         }
       }
     });
@@ -948,7 +1053,7 @@ export class CompileUtil {
 
     const vmUtils = this;
 
-    const func = function(event: Event): void {
+    const func = function (event: Event): void {
       const argsList: any[] = [];
       args.forEach(arg => {
         if (arg === '') return false;
@@ -973,6 +1078,102 @@ export class CompileUtil {
         handler: func,
       });
     }
+  }
+
+  /**
+   * handler props
+   *
+   * @param {Vnode} vnode
+   * @param {*} vm
+   * @param {TAttributes} attr
+   * @param {string} prop
+   * @memberof CompileUtil
+   */
+  public propHandler(vnode: Vnode, vm: any, attr: TAttributes): void {
+    const compileUtilForRepeat = new CompileUtilForRepeat();
+    const prop = /^\{(.+)\}$/.exec(attr.value);
+    if (prop) {
+      const propValue = prop[1];
+      let _prop = null;
+      if (/^.*\(.*\)$/.test(propValue)) {
+        const fn = compileUtilForRepeat._getVMFunction(vm, propValue);
+        const args = propValue.match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
+        const argsList: any[] = [];
+        args.forEach(arg => {
+          if (arg === '') return false;
+          if (arg === '$element') return argsList.push(vnode.nativeElement);
+          if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
+          if (arg === 'null') return argsList.push(null);
+          if (arg === 'undefined') return argsList.push(undefined);
+          if (compileUtilForRepeat.isFromVM(vm, arg)) return argsList.push(compileUtilForRepeat._getVMVal(vm, arg));
+          if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
+          if (/^\".*\"$/.test(arg)) return argsList.push(arg.match(/^\"(.*)\"$/)[1]);
+          if (!/^\'.*\'$/.test(arg) && !/^\".*\"$/.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
+          if (vnode.repeatData) {
+            // $index in this
+            Object.keys(vnode.repeatData).forEach(data => {
+              if (arg.indexOf(data) === 0 || arg.indexOf(`${data}.`) === 0) return argsList.push(compileUtilForRepeat._getValueByValue(vnode.repeatData[data], arg, data));
+            });
+          }
+        });
+        const value = fn.apply(vm, argsList);
+        attr.nvValue = value;
+        return;
+      }
+      const valueList = propValue.split('.');
+      const key = valueList[0];
+      if (this.isFromVM(vm, propValue)) {
+        _prop = this._getVMVal(vm, propValue);
+        attr.nvValue = this.buildProps(_prop, vm);
+        return;
+      }
+      // if (_propsKeys.hasOwnProperty(key) || key in _propsKeys) {
+      //   _prop = getPropsValue(valueList, _propsKeys[key]);
+      //   attr.nvValue = buildProps(_prop, vm);
+      // }
+      if (vnode.repeatData && vnode.repeatData.hasOwnProperty(key)) {
+        _prop = this._getValueByValue(vnode.repeatData[key], propValue, key);
+        attr.nvValue = this.buildProps(_prop, vm);
+        return;
+      }
+      if (/^\'.*\'$/.test(propValue)) {
+        attr.nvValue = propValue.match(/^\'(.*)\'$/)[1];
+        return;
+      }
+      if (/^\".*\"$/.test(propValue)) {
+        attr.nvValue = propValue.match(/^\"(.*)\"$/)[1];
+        return;
+      }
+      if (!/^\'.*\'$/.test(propValue) && !/^\".*\"$/.test(propValue) && /^[0-9]*$/.test(propValue)) {
+        attr.nvValue = Number(prop);
+        return;
+      }
+      if (propValue === 'true' || propValue === 'false') {
+        attr.nvValue = (propValue === 'true');
+        return;
+      }
+      if (propValue === 'null') {
+        attr.nvValue = null;
+        return;
+      }
+      if (propValue === 'undefined') {
+        attr.nvValue = undefined;
+        return;
+      }
+    }
+  }
+
+  /**
+   * build props
+   *
+   * @param {*} prop
+   * @param {IComponent} vm
+   * @returns {*}
+   * @memberof CompileUtil
+   */
+  public buildProps(prop: any, vm: IComponent): any {
+    if (utils.isFunction(prop)) return prop.bind(vm);
+    else return prop;
   }
 
   /**
@@ -1066,6 +1267,17 @@ export class CompileUtil {
   }
 
   /**
+   * judge attribute is nv directive or not
+   *
+   * @param {string} type
+   * @returns {boolean}
+   * @memberof CompileUtil
+   */
+  public isPropOrNvDirective(type: string): boolean {
+    return type === 'directive' || type === 'prop';
+  }
+
+  /**
    * clone Node and clone it event
    *
    * event by attribute in DOM: eventTypes
@@ -1078,35 +1290,9 @@ export class CompileUtil {
    * @memberof CompileUtil
    */
   public cloneVnode(vnode: Vnode, repeatData?: any): Vnode {
-    const newVnode = new Vnode({...vnode});
-    newVnode.repeatData = repeatData;
+    const newVnode = new Vnode(vnode);
+    newVnode.repeatData = {...repeatData};
     newVnode.childNodes.forEach(child => child.parentVnode = newVnode);
     return newVnode;
   }
-}
-
-/**
- * for virtual-DOM to diff attributes of nv-directive
- *
- * @export
- * @param {(DocumentFragment | Element)} node
- * @returns {string[]}
- */
-export function shouldDiffAttributes(node: DocumentFragment | Element): string[] {
-  const shouldDiffAttr: string[] = [];
-  const nvDirective = [
-    'nv-model',
-    'nv-text',
-    'nv-html',
-    'nv-if',
-    'nv-key',
-  ];
-  if ((node as Element).attributes) {
-    Array.from((node as Element).attributes).forEach(attr => {
-      if (/^nv\-.*/.test(attr.name) && nvDirective.indexOf(attr.name) === -1) {
-        shouldDiffAttr.push(attr.name.replace('nv-', ''));
-      }
-    });
-  }
-  return shouldDiffAttr;
 }

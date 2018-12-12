@@ -390,9 +390,9 @@ class Container implements OnInit, AfterMount, WatchState, HasRender {
       };
     });
     this.http$ = this.httpClient.get('/success');
-    this.http$.subscribe({
-      next: this.httpHandler,
-    });
+    // this.http$.subscribe({
+    //   next: this.httpHandler,
+    // });
     this.hss.test();
     console.log('value', this.value);
   }
@@ -414,7 +414,7 @@ class Container implements OnInit, AfterMount, WatchState, HasRender {
     this.location.redirectTo('/R1', { b: '1' });
   }
   public countState(a: any, index: number): any {
-    if (!a) return false;
+    if (!a) return '';
     return a;
   }
   public show(a: any, index?: string) {

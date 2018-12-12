@@ -15,6 +15,25 @@ export class Utils {
   }
 
   /**
+   * deep clone a object or an array
+   *
+   * @param {*} obj
+   * @returns {*}
+   * @memberof Utils
+   */
+  public deepClone(target: any): any {
+    if (typeof target !== 'object') return target;
+
+    const targetClone: any = Array.isArray(target) ? [] : {};
+    for (const key in target) {
+      if (target.hasOwnProperty(key)) {
+        targetClone[key] = this.deepClone(target[key]);
+      }
+    }
+    return targetClone;
+  }
+
+  /**
    * set Cookie with easier-cookie
    *
    * @param {string} name
@@ -155,15 +174,15 @@ export class Utils {
     const className = this.toString.call(a);
     if (className !== this.toString.call(b)) return false;
     switch (className) {
-    case '[object RegExp]':
-    case '[object String]':
-      return `${a}` === `${b}`;
-    case '[object Number]':
-      if (+a !== +a) return +b !== +b;
-      return +a === 0 ? 1 / +a === 1 / b : +a === +b;
-    case '[object Date]':
-    case '[object Boolean]':
-      return +a === +b;
+      case '[object RegExp]':
+      case '[object String]':
+        return `${a}` === `${b}`;
+      case '[object Number]':
+        if (+a !== +a) return +b !== +b;
+        return +a === 0 ? 1 / +a === 1 / b : +a === +b;
+      case '[object Date]':
+      case '[object Boolean]':
+        return +a === +b;
     }
 
     const areArrays = className === '[object Array]';

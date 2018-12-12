@@ -1,3 +1,7 @@
+import { Utils } from '../utils';
+
+const utils = new Utils();
+
 export type TAttributes = {
   name: string;
   value: string;
@@ -10,14 +14,15 @@ export interface IPatchList {
   nativeElement?: any;
   parentVnode?: Vnode;
   newIndex?: number;
-  newNode?: Vnode;
-  oldVnode?: Vnode;
-  newValue?: TAttributes | string | number | boolean | Function;
-  oldValue?: TAttributes | string | number | boolean | Function;
-  eventType?: string;
-  originVnode?: Vnode;
+  oldIndex?: number;
+  // newVnode?: Vnode;
+  // oldVnode?: Vnode;
+  // newValue?: TAttributes | string | number | boolean | Function;
+  // oldValue?: TAttributes | string | number | boolean | Function;
+  // eventType?: string;
+  // originVnode?: Vnode;
   changedVnode?: Vnode;
-  changedValue?: TAttributes | string | number | boolean | Function;
+  // changedValue?: TAttributes | string | number | boolean | Function;
 }
 
 /**
@@ -39,7 +44,8 @@ export class Vnode {
   public key?: any;
   public checked?: boolean;
   public voidElement?: boolean = false;
-  public template: string;
+  public template?: string;
+  public index?: number;
 
   /**
    * Creates an instance of Vnode.
@@ -50,17 +56,20 @@ export class Vnode {
     this.tagName = options.tagName;
     this.nativeElement = options.nativeElement;
     this.parentVnode = options.parentVnode;
-    this.attributes = options.attributes ? [...options.attributes] : [];
+    this.attributes = options.attributes ? utils.deepClone(options.attributes) : [];
     this.childNodes = options.childNodes ? [...options.childNodes] : [];
     this.nodeValue = options.nodeValue;
     this.type = options.type;
     this.value = options.value;
+    this.repeatData = options.repeatData ? utils.deepClone(options.repeatData) : null;
+    this.eventTypes = options.eventTypes ? utils.deepClone(options.eventTypes) : null;
     this.repeatData = options.repeatData;
     this.eventTypes = options.eventTypes ? [...options.eventTypes] : [];
     this.key = options.key;
     this.checked = false;
     this.voidElement = options.voidElement;
     this.template = options.template;
+    this.index = options.index;
   }
 }
 

@@ -212,7 +212,7 @@ export class CompileUtilForRepeat {
    * @memberof CompileUtilForRepeat
    */
   public bind(vnode: Vnode, key?: string, dir?: string, exp?: string, index?: number, vm?: any, watchValue?: any, val?: any): void {
-    const repeatValue = (vnode.repeatData)[key];
+    const repeatValue = vnode.repeatData[key];
     let value;
     if (/^.*\(.*\)$/.test(exp)) {
       if (dir === 'model') throw new Error(`directive: nv-model can't use ${exp} as value`);
@@ -294,7 +294,11 @@ export class CompileUtilForRepeat {
             value = fn.apply(vm, argsList);
           } else if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) value = this._getVMRepeatVal(val, exp, key);
           else if (this.isFromVM(vm, exp)) value = this._getVMVal(vm, exp);
-          else throw new Error(`directive: {{${exp}}} can\'t use recognize ${exp}`);
+          else if (vnode.repeatData) {
+            Object.keys(vnode.repeatData).forEach(data => {
+              if (exp.indexOf(data) === 0 || exp.indexOf(`${data}.`) === 0) value = this._getValueByValue(vnode.repeatData[data], exp, data);
+            });
+          } else throw new Error(`directive: {{${exp}}} can\'t use recognize ${exp}`);
           vnode.nodeValue = vnode.nodeValue.replace(textList[i], value);
         }
       }
@@ -797,7 +801,11 @@ export class CompileUtil {
       const argsList = this._getVMFunctionArguments(vm, _exp, vnode);
       value = fn.apply(vm, argsList);
     } else if (this.isFromVM(vm, _exp)) value = this._getVMVal(vm, _exp);
-    else throw new Error(`directive: ${exp} can't use recognize this value`);
+    else if (vnode.repeatData) {
+      Object.keys(vnode.repeatData).forEach(data => {
+        if (exp.indexOf(data) === 0 || exp.indexOf(`${data}.`) === 0) value = this._getValueByValue(vnode.repeatData[data], exp, data);
+      });
+    } else throw new Error(`directive: ${exp} can't use recognize this value`);
     vnode.nodeValue = vnode.nodeValue.replace(exp, value);
   }
 
@@ -919,7 +927,8 @@ export class CompileUtil {
 
     const key = expFather.split(' ')[1];
     value.forEach((val: any, index: number) => {
-      const repeatData: { [key: string]: any } = {...vnode.repeatData} || {};
+      const repeatData: { [key: string]: any } = utils.deepClone({...vnode.repeatData}) || {};
+      // const repeatData: { [key: string]: any } = {...vnode.repeatData} || {};
       repeatData[key] = val;
       repeatData.$index = index;
 
@@ -964,6 +973,7 @@ export class CompileUtil {
    * @memberof CompileUtil
    */
   public repeatChildrenUpdater(vnode: Vnode, value: any, expFather: string, index: number, vm: any, watchValue: any): void {
+    console.log(44, 'fuck', expFather);
     const key = expFather.split(' ')[1];
 
     const _fragmentList: {
@@ -972,10 +982,11 @@ export class CompileUtil {
     }[] = [];
 
     vnode.childNodes.forEach(child => {
-      child.repeatData = {...child.repeatData} || {};
+      child.repeatData = Object.assign({},  utils.deepClone({...vnode.repeatData}), utils.deepClone({...vnode.repeatData})) || {};
+      // child.repeatData = Object.assign({}, utils.deepClone(vnode.repeatData), utils.deepClone(vnode.repeatData)) || {};
       child.repeatData[key] = value;
       child.repeatData.$index = index;
-      if (this.isRepeatProp(child)) child.attributes.push({ name: `_prop-${key}`, value: JSON.stringify(value), type: 'prop-value' });
+      // if (this.isRepeatProp(child)) child.attributes.push({ name: `_prop-${key}`, value: JSON.stringify(value), type: 'prop-value' });
 
       const nodeAttrs = child.attributes;
       const text = child.nodeValue;
@@ -996,7 +1007,7 @@ export class CompileUtil {
       }
 
       // if is repeat node
-      if (child.childNodes && !this.isRepeatNode(child) && vnode.childNodes.indexOf(child) !== -1) this.repeatChildrenUpdater(child, value, expFather, index, vm, watchValue);
+      if (child.childNodes && child.childNodes.length > 0 && vnode.childNodes.indexOf(child) !== -1) this.repeatChildrenUpdater(child, value, expFather, index, vm, watchValue);
 
       // if is't repeat node
       const newAttrs = child.attributes;
@@ -1006,7 +1017,7 @@ export class CompileUtil {
           const newWatchData = restRepeat.value.split(' ')[3];
 
           // 创建一个同级于vnode的容器存放新的子元素的容器，最后再统一放入vnode中
-          const _newContainerFragment = new Vnode({ ...vnode });
+          const _newContainerFragment = new Vnode(vnode);
           // 因为确定了是不允许递归的循环node所以子节点要清空
           _newContainerFragment.childNodes = [];
           _newContainerFragment.childNodes.push(child);
@@ -1016,11 +1027,9 @@ export class CompileUtil {
           });
 
           const compileUtil = new CompileUtil(_newContainerFragment.childNodes);
-
-          if (this.isFromVM(vm, newWatchData)) compileUtil.bind(child, vm, restRepeat.value, restRepeat.name.substring(3));
+          console.log(8877666, 'fuck333', key, child);
+          if (this.isFromVM(vm, newWatchData)) compileUtil.bind(child, vm, restRepeat.value, 'repeat');
           if (new RegExp(`(^${key})`).test(newWatchData)) compileUtil.repeatUpdater(child, this._getValueByValue(value, newWatchData, key), restRepeat.value, vm);
-          // todo child
-          // if (this.isPropOrNvDirective(attr.type)) compileUtilForRepeat.propHandler(child, vm, attr);
 
           if (this.isRepeatNode(child) && _newContainerFragment.childNodes.indexOf(child) !== -1) _newContainerFragment.childNodes.splice(_newContainerFragment.childNodes.indexOf(child), 1);
         }
@@ -1227,19 +1236,19 @@ export class CompileUtil {
     return result;
   }
 
-  /**
-   * judge DOM is a Component DOM in a repeat DOM or not
-   *
-   * @param {Element} node
-   * @returns {boolean}
-   * @memberof CompileUtil
-   */
-  public isRepeatProp(vnode: Vnode): boolean {
-    const nodeAttrs = vnode.attributes;
-    const result = false;
-    if (nodeAttrs) return !!(nodeAttrs.find(attr => /^\{(.+)\}$/.test(attr.value)));
-    return result;
-  }
+  // /**
+  //  * judge DOM is a Component DOM in a repeat DOM or not
+  //  *
+  //  * @param {Element} node
+  //  * @returns {boolean}
+  //  * @memberof CompileUtil
+  //  */
+  // public isRepeatProp(vnode: Vnode): boolean {
+  //   const nodeAttrs = vnode.attributes;
+  //   const result = false;
+  //   if (nodeAttrs) return !!(nodeAttrs.find(attr => /^\{(.+)\}$/.test(attr.value)));
+  //   return result;
+  // }
 
   /**
    * judge DOM is text node or not
@@ -1291,7 +1300,8 @@ export class CompileUtil {
    */
   public cloneVnode(vnode: Vnode, repeatData?: any): Vnode {
     const newVnode = new Vnode(vnode);
-    newVnode.repeatData = {...repeatData};
+    // newVnode.repeatData = {...repeatData} || {};
+    newVnode.repeatData = utils.deepClone({...repeatData}) || {};
     newVnode.childNodes.forEach(child => child.parentVnode = newVnode);
     return newVnode;
   }

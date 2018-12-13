@@ -307,11 +307,13 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
           </div>
           <a nv-href="countState(man.sex, $index)">a {{man.sex}}</a>
           <img nv-src="man.sex" nv-alt="man.sex" />
-          <test-component nv-key="man.name" man="{countState(man.name)}"></test-component>
+          <test-component nv-key="man.name" man="{countState2(man.name, bd)}"  nv-repeat="let bd in testArray2"></test-component>
+          <p nv-key="man.name" nv-class="man.name" nv-id="bd" nv-repeat="let bd in testArray2">{{bd}}</p>
           <input nv-on:click="show(b, $index)" nv-repeat="let b in testArray2" nv-on:input="showInput($event, $index)" nv-text="b" nv-class="b" />
           <input nv-model="test.a"/>
-          <div class="fuck" nv-repeat="let c in man.job" nv-key="c.id">
+          <div class="fuck" nv-class="man.name" nv-repeat="let c in man.job" nv-key="c.id">
             <input nv-on:click="show(c, $index)" nv-model="c.name" nv-class="c.id" />
+            <p nv-key="man.name" nv-class="man.name" nv-id="c.name">{{man.name}}</p>
           </div>
       </div>
       <router-render></router-render>
@@ -367,7 +369,7 @@ class Container implements OnInit, AfterMount, WatchState, HasRender {
         },
       ],
     }];
-  public testArray2: any = ['程序员3', '码农3', '帅3'];
+  public testArray2: any = ['程序员3', '码农3', '架构师3'];
   public props: any;
   public setState: SetState;
   public http$: Observable<HttpClientResponse>;
@@ -416,6 +418,12 @@ class Container implements OnInit, AfterMount, WatchState, HasRender {
   public countState(a: any, index: number): any {
     if (!a) return '';
     return a;
+  }
+
+  public countState2(a: any, index: number): any {
+    console.log(9998888, '1fuck', index);
+    // if (!index) return index;
+    return index;
   }
   public show(a: any, index?: string) {
     console.log('aaaa', a);

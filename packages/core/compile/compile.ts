@@ -53,28 +53,6 @@ export class Compile {
     this.fragment = null;
   }
 
-  // /**
-  //  * needDiffChildCallback for Virtual DOM diff
-  //  * 
-  //  * if newVnode.node.isComponent no need diff children
-  //  * if newVnode.tagName and oldVnode.tagName no need diff children
-  //  *
-  //  * @param {Vnode} oldVnode
-  //  * @param {Vnode} newVnode
-  //  * @returns {boolean}
-  //  * @memberof Compile
-  //  */
-  // public needDiffChildCallback = (oldVnode: Vnode, newVnode: Vnode): boolean => {
-  //   // 如果为组件，则停止对比内部元素，交由对应组件diff
-  //   if (newVnode.node.isComponent && oldVnode.node) {
-  //     oldVnode.node.isComponent = true;
-  //     return false;
-  //   }
-  //   // 如果为路由渲染层，则停止对比内部元素，交由router diff
-  //   if (oldVnode.tagName === newVnode.tagName && newVnode.tagName === (this.componentInstance.$indivInstance.getRouteDOMKey() as string).toLocaleUpperCase()) return false;
-  //   return true;
-  // }
-
   /**
    * compile vnode
    *

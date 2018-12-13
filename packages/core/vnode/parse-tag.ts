@@ -63,7 +63,7 @@ export class Vnode {
     this.value = options.value;
     this.repeatData = options.repeatData ? utils.deepClone(options.repeatData) : null;
     this.eventTypes = options.eventTypes ? utils.deepClone(options.eventTypes) : null;
-    this.repeatData = options.repeatData;
+    this.repeatData = options.repeatData ? utils.deepClone(options.repeatData) : null;
     this.eventTypes = options.eventTypes ? [...options.eventTypes] : [];
     this.key = options.key;
     this.checked = false;

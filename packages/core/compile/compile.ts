@@ -72,8 +72,7 @@ export class Compile {
    */
   public recursiveDOM(vnodes: Vnode[], fragment: Vnode[], parent: Vnode): void {
     vnodes.forEach((vnode: Vnode) => {
-
-      const _fragmentChild = new Vnode({...vnode});
+      const _fragmentChild = new Vnode(vnode);
       // 因为当不上循环node时候将不会递归创建新vnode了
       if (!this.isRepeatNode(_fragmentChild))_fragmentChild.childNodes = [];
       if (parent) {

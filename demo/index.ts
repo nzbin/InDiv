@@ -421,7 +421,7 @@ class Container implements OnInit, AfterMount, WatchState, HasRender {
   }
 
   public countState2(a: any, index: number): any {
-    console.log(9998888, '1fuck', index);
+    // console.log(9998888, '1fuck', index);
     // if (!index) return index;
     return index;
   }

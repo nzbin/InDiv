@@ -927,8 +927,7 @@ export class CompileUtil {
 
     const key = expFather.split(' ')[1];
     value.forEach((val: any, index: number) => {
-      const repeatData: { [key: string]: any } = utils.deepClone({...vnode.repeatData}) || {};
-      // const repeatData: { [key: string]: any } = {...vnode.repeatData} || {};
+      const repeatData: { [key: string]: any } = {...vnode.repeatData};
       repeatData[key] = val;
       repeatData.$index = index;
 
@@ -973,7 +972,6 @@ export class CompileUtil {
    * @memberof CompileUtil
    */
   public repeatChildrenUpdater(vnode: Vnode, value: any, expFather: string, index: number, vm: any, watchValue: any): void {
-    console.log(44, 'fuck', expFather);
     const key = expFather.split(' ')[1];
 
     const _fragmentList: {
@@ -982,10 +980,11 @@ export class CompileUtil {
     }[] = [];
 
     vnode.childNodes.forEach(child => {
-      child.repeatData = Object.assign({},  utils.deepClone({...vnode.repeatData}), utils.deepClone({...vnode.repeatData})) || {};
-      // child.repeatData = Object.assign({}, utils.deepClone(vnode.repeatData), utils.deepClone(vnode.repeatData)) || {};
-      child.repeatData[key] = value;
-      child.repeatData.$index = index;
+      const repeatData = {...vnode.repeatData, ...child.repeatData};
+      repeatData[key] = value;
+      repeatData.$index = index;
+      child.repeatData = repeatData;
+      this.copyRepeatData(child, repeatData);
       // if (this.isRepeatProp(child)) child.attributes.push({ name: `_prop-${key}`, value: JSON.stringify(value), type: 'prop-value' });
 
       const nodeAttrs = child.attributes;
@@ -1027,8 +1026,9 @@ export class CompileUtil {
           });
 
           const compileUtil = new CompileUtil(_newContainerFragment.childNodes);
-          console.log(8877666, 'fuck333', key, child);
-          if (this.isFromVM(vm, newWatchData)) compileUtil.bind(child, vm, restRepeat.value, 'repeat');
+
+          // if (this.isFromVM(vm, newWatchData)) compileUtil.bind(child, vm, restRepeat.value, 'repeat');
+          if (this.isFromVM(vm, newWatchData)) compileUtil.repeatUpdater(child, this._getVMRepeatVal(vm, restRepeat.value), restRepeat.value, vm);
           if (new RegExp(`(^${key})`).test(newWatchData)) compileUtil.repeatUpdater(child, this._getValueByValue(value, newWatchData, key), restRepeat.value, vm);
 
           if (this.isRepeatNode(child) && _newContainerFragment.childNodes.indexOf(child) !== -1) _newContainerFragment.childNodes.splice(_newContainerFragment.childNodes.indexOf(child), 1);
@@ -1300,9 +1300,27 @@ export class CompileUtil {
    */
   public cloneVnode(vnode: Vnode, repeatData?: any): Vnode {
     const newVnode = new Vnode(vnode);
-    // newVnode.repeatData = {...repeatData} || {};
-    newVnode.repeatData = utils.deepClone({...repeatData}) || {};
-    newVnode.childNodes.forEach(child => child.parentVnode = newVnode);
+    newVnode.repeatData = {...repeatData};
+    this.copyRepeatData(newVnode, repeatData);
+    newVnode.childNodes.forEach(child => {
+      child.parentVnode = newVnode;
+    });
     return newVnode;
+  }
+
+  /**
+   * copy repeatData from parentVnode to children
+   *
+   * @param {Vnode} vnode
+   * @param {*} [repeatData]
+   * @returns {void}
+   * @memberof CompileUtil
+   */
+  public copyRepeatData(vnode: Vnode, repeatData?: any): void {
+    if (!vnode.childNodes || vnode.childNodes.length === 0) return;
+    vnode.childNodes.forEach(child => {
+      child.repeatData = {...repeatData, ...child.repeatData};
+      this.copyRepeatData(child, repeatData);
+    });
   }
 }

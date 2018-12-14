@@ -93,27 +93,3 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
 
   return result;
 }
-
-const aaa = (`
-  <div>
-    <input nv-model="test.a" nv-on:click="show(test)" />
-    <p test-directive="{'123'}" nv-id="232" nv-if="countState(a)" nv-on:click="changeInput()">{{a}}</p>
-    <test-component nv-repeat="let man in testArray" nv-key="man.name" man="{countState(man.name)}" nv-if="a"></test-component>
-    <p nv-on:click="go()">container: {{countState(color)}}</p>
-    <input nv-model="a" />
-    <div nv-repeat="let man in testArray" nv-key="man.name">
-        <div nv-on:click="show(testArray2, '你111')">姓名：{{man.name}}</div>
-        <div>性别：{{countState(man.sex, $index)}}</div>
-        <a nv-href="countState(man.sex, $index)">a {{man.sex}}</a>
-        <img nv-src="man.sex" nv-alt="man.sex" />
-        <test-component nv-key="man.name" man="{countState(man.name)}"></test-component>
-        <input nv-on:click="show(b, $index)" nv-repeat="let b in testArray2" nv-on:input="showInput($event, $index)" nv-text="b" nv-class="b" />
-        <input nv-model="test.a"/>
-        <div class="fuck" nv-repeat="let c in man.job" nv-key="c.id">
-          <input nv-on:click="show(c, $index)" nv-model="c.name" nv-class="c.id" />
-        </div>
-    </div>
-    <router-render></router-render>
-  </div>
-`);
-console.log(55555555, aaa, parseTemplateToVnode(aaa));

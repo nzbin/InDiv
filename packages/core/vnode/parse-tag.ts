@@ -40,7 +40,7 @@ export class Vnode {
   public type?: string;
   public value?: string | number;
   public repeatData?: any;
-  public eventTypes?: { type: string; handler: Function}[] = [];
+  public eventTypes?: { type: string; handler: Function }[] = [];
   public key?: any;
   public checked?: boolean;
   public voidElement?: boolean = false;
@@ -57,19 +57,24 @@ export class Vnode {
     this.nativeElement = options.nativeElement;
     this.parentVnode = options.parentVnode;
     this.attributes = options.attributes ? utils.deepClone(options.attributes) : [];
-    this.childNodes = options.childNodes ? [...options.childNodes] : [];
+    this.childNodes = [];
     this.nodeValue = options.nodeValue;
     this.type = options.type;
     this.value = options.value;
-    this.repeatData = options.repeatData ? utils.deepClone(options.repeatData) : null;
-    this.eventTypes = options.eventTypes ? utils.deepClone(options.eventTypes) : null;
-    this.repeatData = options.repeatData ? utils.deepClone(options.repeatData) : null;
+    this.repeatData = { ...options.repeatData };
+    this.eventTypes = { ...options.eventTypes };
     this.eventTypes = options.eventTypes ? [...options.eventTypes] : [];
     this.key = options.key;
     this.checked = false;
     this.voidElement = options.voidElement;
     this.template = options.template;
     this.index = options.index;
+
+    if (!options.childNodes || options.childNodes.length === 0) return;
+    options.childNodes.forEach(child => {
+      const _child = new Vnode({ ...child });
+      this.childNodes.push(_child);
+    });
   }
 }
 

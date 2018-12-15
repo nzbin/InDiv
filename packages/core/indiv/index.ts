@@ -3,8 +3,7 @@ import { INvModule, IComponent } from '../types';
 import { Utils } from '../utils';
 import { factoryCreator } from '../di';
 import { factoryModule } from '../nv-module';
-
-import { componentCompiler } from '../compile';
+import { Renderer } from '../vnode';
 
 export class ElementRef<R = HTMLElement> {
   public nativeElement: R;
@@ -30,12 +29,12 @@ const utils = new Utils();
  */
 export class InDiv {
   private readonly pluginList: IPlugin[] = [];
-  private rootElement: Element | any;
+  private rootElement: any;
   private routeDOMKey: string = 'router-render';
   private rootModule: INvModule = null;
   private declarations: Function[];
   private bootstrapComponent: IComponent;
-  private compiler: (nativeElement: Element | any, componentInstace: IComponent) => Promise<IComponent>;
+  private renderer: Renderer;
 
   /**
    * for using plugin class, use bootstrap method of plugin instance and return plugin's id in this.pluginList
@@ -52,23 +51,23 @@ export class InDiv {
   }
 
   /**
-   * set component render function
+   * set component Renderer
    *
-   * @param {((nativeElement: Element | any, componentInstace: IComponent) => Promise<IComponent>)} compile
+   * @param {Renderer} renderer
    * @memberof InDiv
    */
-  public setComponentCompiler(compiler: (nativeElement: Element | any, componentInstace: IComponent) => Promise<IComponent>): void {
-    this.compiler = compiler;
+  public setRenderer(renderer: Renderer): void {
+    this.renderer = renderer;
   }
 
   /**
-   * get component render function
+   * get component Renderer
    *
-   * @returns {((nativeElement: Element | any, componentInstace: IComponent) => Promise<IComponent>)}
+   * @returns {Renderer}
    * @memberof InDiv
    */
-  public getComponentCompiler(): (nativeElement: Element | any, componentInstace: IComponent) => Promise<IComponent> {
-    return this.compiler;
+  public getRenderer(): Renderer {
+    return this.renderer;
   }
 
   /**
@@ -170,10 +169,8 @@ export class InDiv {
    */
   public init<R = Element>(): void {
     if (!utils.isBrowser()) return;
-    this.compiler = componentCompiler;
-    this.rootElement = document.getElementById('root');
     if (!this.rootModule) throw new Error('must use bootstrapModule to declare a root NvModule before init');
-    if (!this.compiler) throw new Error('must use plugin of platform to set a compiler method in InDiv!');
+    if (!this.renderer) throw new Error('must use plugin of platform to set a renderer in InDiv!');
     this.renderModuleBootstrap<R>();
   }
 
@@ -211,7 +208,6 @@ export class InDiv {
       });
     }
 
-    component.compiler = this.compiler.bind(component);
     // set otherInjector for components from loadModule to be used
     component.otherInjector = otherInjector;
 

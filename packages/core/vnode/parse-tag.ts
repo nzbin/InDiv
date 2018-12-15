@@ -25,7 +25,7 @@ export interface IPatchList {
 }
 
 /**
- * Vnode
+ * Vnode for diff
  *
  * @class Vnode
  */
@@ -60,7 +60,6 @@ export class Vnode {
     this.type = options.type;
     this.value = options.value;
     this.repeatData = { ...options.repeatData };
-    this.eventTypes = { ...options.eventTypes };
     this.eventTypes = options.eventTypes ? [...options.eventTypes] : [];
     this.key = options.key;
     this.checked = false;
@@ -75,6 +74,14 @@ export class Vnode {
   }
 }
 
+/**
+ * parse a tag and return a Vnode
+ *
+ * @export
+ * @param {string} tag
+ * @param {string[]} directives
+ * @returns {Vnode}
+ */
 export function parseTag(tag: string, directives: string[]): Vnode {
   const vNodeOptions: Vnode = {
     tagName: '',

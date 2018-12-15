@@ -1,6 +1,17 @@
 import { Vnode, TAttributes } from './parse-tag';
+import { ParseOptions } from './parse';
 
+/**
+ * Renderer in Indiv
+ * 
+ * can rewrite your Render for different platform
+ *
+ * @export
+ * @abstract
+ * @class Renderer
+ */
 export abstract class Renderer {
+  public abstract nativeElementToVnode(nativeElement: any, parseVnodeOptions?: ParseOptions): Vnode[];
   public abstract removeChild(parentVnode: Vnode, childVnode: Vnode): void;
   public abstract appendChild(parentVnode: Vnode, childVnode: Vnode): void;
   public abstract insertBefore(parentVnode: Vnode, childVnode: Vnode, index: number): void;

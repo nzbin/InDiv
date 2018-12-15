@@ -7,7 +7,7 @@ export type TRenderStatus = 'pending' | 'rendering';
 
 export class RenderTaskQueue {
   public componentInstance: IComponent;
-  private taskQueue: Element[]; // 渲染队列
+  private taskQueue: any[]; // 渲染队列
   private renderStatus: TRenderStatus; // 渲染状态：'pending' | 'rendering'
   private queuePointer: number; // 队列指针
 
@@ -51,7 +51,6 @@ export class RenderTaskQueue {
    * @memberof RenderTaskQueue
    */
   public async runTask(): Promise<IComponent> {
-    // todo add compile children
     const component = await this.componentInstance.compiler(this.taskQueue[this.queuePointer], this.componentInstance);
     this.nextTask();
     return component;

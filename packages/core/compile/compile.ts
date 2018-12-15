@@ -9,7 +9,7 @@ import { IComponent } from '../types';
  */
 export class Compile {
   public componentInstance: IComponent;
-  public mountedElement: Element;
+  public mountedElement: any;
   public fragment: Vnode[];
   public saveVnode: Vnode[];
   public initVnode: Vnode[];
@@ -17,7 +17,7 @@ export class Compile {
 
   /**
    * Creates an instance of Compile.
-   * @param {(string | Element)} el
+   * @param {any} el
    * @param {*} componentInstance
    * @memberof Compile
    */
@@ -43,8 +43,8 @@ export class Compile {
   public startCompile(): void {
     if (!this.mountedElement) throw new Error('class Compile need el in constructor');
     this.fragment = parseTemplateToVnode(''); 
-    // todo to mountedElement vnode
-    if (!this.saveVnode) this.saveVnode = parseTemplateToVnode(this.mountedElement.innerHTML, this.parseVnodeOptions);
+
+    if (!this.saveVnode) this.saveVnode = this.componentInstance.$indivInstance.getRenderer().nativeElementToVnode(this.mountedElement, this.parseVnodeOptions);
     const templateVnode = parseTemplateToVnode(this.componentInstance.template, this.parseVnodeOptions);
     this.compileVnode(templateVnode);
     const patchList: IPatchList[] = [];
@@ -52,7 +52,7 @@ export class Compile {
     this.fragment[0].parentVnode = { nativeElement: this.mountedElement };
     diffVnode({ childNodes: this.saveVnode, nativeElement: this.mountedElement, parentVnode: null }, { childNodes: this.fragment, nativeElement: this.mountedElement, parentVnode: null }, patchList);
     console.log(88777777, this.saveVnode, this.fragment);
-    patchVnode(patchList);
+    patchVnode(patchList, this.componentInstance.$indivInstance.getRenderer());
   }
 
   /**

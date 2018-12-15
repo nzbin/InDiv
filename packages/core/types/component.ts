@@ -14,7 +14,7 @@ export type ComponentList<C> = {
 export interface IComponent {
     props?: any;
     nativeElement?: Element | any;
-    $indivInstance?: InDiv | any;
+    $indivInstance?: InDiv;
     renderTaskQueue?: RenderTaskQueue;
     dependencesList?: string[];
     renderStatus?: 'pending' | 'available';

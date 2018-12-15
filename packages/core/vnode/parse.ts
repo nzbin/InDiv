@@ -5,6 +5,14 @@ export type ParseOptions = {
   directives: string[];
 };
 
+/**
+ * vnode main method, parse a template HTML string to Vnode[]
+ *
+ * @export
+ * @param {string} template
+ * @param {ParseOptions} [options={ components: [], directives: [] }]
+ * @returns {Vnode[]}
+ */
 export function parseTemplateToVnode(template: string, options: ParseOptions = { components: [], directives: [] }): Vnode[] {
 
   const tagRegex = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;

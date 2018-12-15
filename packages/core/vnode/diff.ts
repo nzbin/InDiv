@@ -225,7 +225,9 @@ function diffEventTypes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
           });
         }
         // 如果旧的存在并且新的类型相同，对比 nv-on 的属性和 DOM上的 event${nEventType}事件函数，如果相同则忽略，如果不同则先移除事件再增加新事件
+        // todo
         if (sameEventType && sameEventType.handler.toString() !== nEventType.handler.toString()) {
+        // if (sameEventType && sameEventType.handler !== nEventType.handler) {
           patchList.push({
             type: 8,
             originVnode: oldVnode,
@@ -244,8 +246,6 @@ function diffEventTypes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
 
 /**
  * diff two Vnode
- *
- * if needDiffChildCallback return false, then stop diff childNodes 
  * 
  * @param {Vnode} oldVnode
  * @param {Vnode} newVnode

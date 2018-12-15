@@ -4,6 +4,7 @@ import { WatcherDependences } from './watch';
 import { injected, Injector } from '../di';
 import { render } from '../render';
 import { collectDependencesFromViewModel } from './utils';
+import { componentCompiler } from '../compile';
 
 export type TComponentOptions = {
   selector: string;
@@ -60,5 +61,6 @@ export function Component(options: TComponentOptions): (_constructor: Function) 
     };
 
     vm.render = render;
+    vm.compiler = componentCompiler;
   };
 }

@@ -196,13 +196,14 @@ export function componentsConstructor(dom: Element, componentInstance: IComponen
  * @param {IComponent} componentInstance
  * @returns {Promise<IComponent>}
  */
-export async function componentCompiler(nativeElement: Element, componentInstance: IComponent): Promise<IComponent> {
+export async function componentCompiler(nativeElement: any, componentInstance: IComponent): Promise<IComponent> {
   return Promise.resolve()
     .then(async() => {
       // compile has been added into Component instance by dirty method
       if (!(componentInstance as any).compileInstance) ((componentInstance as any).compileInstance as Compile) = new Compile(nativeElement, componentInstance);
       ((componentInstance as any).compileInstance as Compile).startCompile();
 
+      // todo
       // first mount directive
       // await directiveCompiler(nativeElement, componentInstance);
 

@@ -63,7 +63,6 @@ export function buildComponentScope(ComponentClass: Function, props: any, dom: E
   });
 
   // bind compile for @Component
-  _component.compiler = componentInstance.$indivInstance.getComponentCompiler().bind(_component);
   _component.otherInjector = componentInstance.otherInjector;
 
   return _component;

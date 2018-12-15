@@ -470,19 +470,19 @@ export class CompileUtilForRepeat {
         if (/^\".*\"$/.test(arg)) return argsList.push(arg.match(/^\"(.*)\"$/)[1]);
         if (!/^\'.*\'$/.test(arg) && !/^\".*\"$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
         if (arg.indexOf(key) === 0 || arg.indexOf(`${key}.`) === 0) return argsList.push(utilVm._getVMRepeatVal(val, arg, key));
-        if (this.repeatData) {
+        if (vnode.repeatData) {
           // $index in this
-          Object.keys(this.repeatData).forEach(data => {
-            if (arg.indexOf(data) === 0 || arg.indexOf(`${data}.`) === 0) return argsList.push(utilVm._getValueByValue(this.repeatData[data], arg, data));
+          Object.keys(vnode.repeatData).forEach(data => {
+            if (arg.indexOf(data) === 0 || arg.indexOf(`${data}.`) === 0) return argsList.push(utilVm._getValueByValue(vnode.repeatData[data], arg, data));
           });
         }
       });
       fn.apply(vm, argsList);
     };
     if (eventType && fn) {
-      const sameEventType = vnode.eventTypes.find(_eventType => _eventType.type === eventType);
-      if (sameEventType) sameEventType.handler = func;
-      if (!sameEventType) vnode.eventTypes.push({
+      const sameEventTypeIndex = vnode.eventTypes.findIndex(_eventType => _eventType.type === eventType);
+      if (sameEventTypeIndex !== -1) vnode.eventTypes.splice(sameEventTypeIndex, 1);
+      vnode.eventTypes.push({
         type: eventType,
         handler: func,
       });
@@ -1112,9 +1112,9 @@ export class CompileUtil {
       fn.apply(vm, argsList);
     };
     if (eventType && fn) {
-      const sameEventType = vnode.eventTypes.find(_eventType => _eventType.type === eventType);
-      if (sameEventType) sameEventType.handler = func;
-      if (!sameEventType) vnode.eventTypes.push({
+      const sameEventTypeIndex = vnode.eventTypes.findIndex(_eventType => _eventType.type === eventType);
+      if (sameEventTypeIndex !== -1) vnode.eventTypes.splice(sameEventTypeIndex, 1);
+      vnode.eventTypes.push({
         type: eventType,
         handler: func,
       });

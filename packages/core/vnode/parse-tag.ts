@@ -2,10 +2,12 @@ import { Utils } from '../utils';
 
 const utils = new Utils();
 
+export type TNvAttribute = 'attribute' | 'nv-attribute' | 'directive' | 'prop' | 'nv-event';
+
 export type TAttributes = {
   name: string;
   value: string;
-  type: string;
+  type: TNvAttribute;
   nvValue?: any;
 };
 
@@ -15,14 +17,11 @@ export interface IPatchList {
   parentVnode?: Vnode;
   newIndex?: number;
   oldIndex?: number;
-  // newVnode?: Vnode;
-  // oldVnode?: Vnode;
-  // newValue?: TAttributes | string | number | boolean | Function;
-  // oldValue?: TAttributes | string | number | boolean | Function;
-  // eventType?: string;
-  // originVnode?: Vnode;
+  oldValue?: TAttributes | string | number | boolean | Function;
+  originVnode?: Vnode;
   changedVnode?: Vnode;
-  // changedValue?: TAttributes | string | number | boolean | Function;
+  changedValue?: TAttributes | string | number | boolean | Function | { type: string; handler: Function; };
+  attributeType?: TNvAttribute;
 }
 
 /**
@@ -45,7 +44,6 @@ export class Vnode {
   public checked?: boolean;
   public voidElement?: boolean = false;
   public template?: string;
-  public index?: number;
 
   /**
    * Creates an instance of Vnode.
@@ -68,7 +66,6 @@ export class Vnode {
     this.checked = false;
     this.voidElement = options.voidElement;
     this.template = options.template;
-    this.index = options.index;
 
     if (!options.childNodes || options.childNodes.length === 0) return;
     options.childNodes.forEach(child => {
@@ -124,7 +121,7 @@ export function parseTag(tag: string, directives: string[]): Vnode {
       const name = attr.split('=')[0];
       const _value = attr.split('=')[1];
       const value = attr.split('=')[1] ? _value.substr(0, _value.length - 1).substr(1) : null;
-      let type = 'attribute';
+      let type: TNvAttribute = 'attribute';
       if (name.indexOf('nv-') === 0) type = 'nv-attribute';
       if (name.indexOf('nv-on:') === 0) type = 'nv-event';
       if (directives.indexOf(name) !== -1 && /^\{[^{}]*\}$/.test(value)) type = 'directive';

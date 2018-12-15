@@ -5,6 +5,7 @@ import { Utils } from '../utils';
 
 const utils = new Utils();
 
+// todo delete
 declare global {
   interface Element {
     value?: any;
@@ -24,7 +25,6 @@ declare global {
     isComponent?: boolean;
   }
 }
-
 /**
  * compile util for nv-repeat DOM
  *
@@ -253,9 +253,6 @@ export class CompileUtilForRepeat {
       case 'text':
         if (updaterFn) (updaterFn as Function).call(this, vnode, value);
         break;
-      case 'html':
-        if (updaterFn) (updaterFn as Function).call(this, vnode, value);
-        break;
       case 'if':
         if (updaterFn) (updaterFn as Function).call(this, vnode, value);
         break;
@@ -263,6 +260,9 @@ export class CompileUtilForRepeat {
         if (updaterFn) (updaterFn as Function).call(this, vnode, value);
         break;
       case 'key':
+        if (updaterFn) (updaterFn as Function).call(this, vnode, value);
+        break;
+      case 'value':
         if (updaterFn) (updaterFn as Function).call(this, vnode, value);
         break;
       default:
@@ -280,7 +280,7 @@ export class CompileUtilForRepeat {
    * @memberof CompileUtilForRepeat
    */
   public templateUpdater(vnode: Vnode, val?: any, key?: string, vm?: any): void {
-    const text = vnode.nodeValue;
+    const text = vnode.template;
     const reg = /\{\{(.*)\}\}/g;
     if (reg.test(text)) {
       const textList = text.match(/(\{\{[^\{\}]+?\}\})/g);
@@ -299,7 +299,7 @@ export class CompileUtilForRepeat {
               if (exp.indexOf(data) === 0 || exp.indexOf(`${data}.`) === 0) value = this._getValueByValue(vnode.repeatData[data], exp, data);
             });
           } else throw new Error(`directive: {{${exp}}} can\'t use recognize ${exp}`);
-          vnode.nodeValue = vnode.nodeValue.replace(textList[i], value);
+          vnode.nodeValue = vnode.template.replace(textList[i], value);
         }
       }
     }
@@ -319,6 +319,8 @@ export class CompileUtilForRepeat {
    */
   public modelUpdater(vnode: Vnode, value: any, exp: string, key: string, index: number, watchData: any, vm: any): void {
     vnode.value = typeof value === 'undefined' ? '' : value;
+    const findAttribute = vnode.attributes.find(attr => attr.name === 'nv-model');
+    findAttribute.nvValue = (typeof value === 'undefined' ? '' : value);
 
     const utilVm = this;
     const func = function (event: Event): void {
@@ -335,6 +337,7 @@ export class CompileUtilForRepeat {
         }
       } else throw new Error(`directive: nv-model can\'t use recognize this prop ${exp}`);
     };
+
     const sameEventType = vnode.eventTypes.find(_eventType => _eventType.type === 'input');
     if (sameEventType) sameEventType.handler = func;
     if (!sameEventType) vnode.eventTypes.push({
@@ -352,20 +355,19 @@ export class CompileUtilForRepeat {
    * @memberof CompileUtilForRepeat
    */
   public textUpdater(vnode: Vnode, value: any): void {
-    if (vnode.tagName === 'input') return vnode.value = value;
-    vnode.nodeValue = typeof value === 'undefined' ? '' : value;
-  }
+    const findAttribute = vnode.attributes.find(attr => attr.name === 'nv-text');
+    findAttribute.nvValue = (typeof value === 'undefined' ? '' : value);
 
-  /**
-   * update html for nv-html
-   *
-   * @param {Vnode} vnode
-   * @param {*} value
-   * @memberof CompileUtilForRepeat
-   */
-  public htmlUpdater(vnode: Vnode, value: any): void {
-    const findAttribute = vnode.attributes.find(attr => attr.name === 'nv-html');
-    findAttribute.nvValue = value;
+    vnode.nodeValue = typeof value === 'undefined' ? '' : value;
+    if (!vnode.childNodes || (vnode.childNodes && vnode.childNodes.length > 0)) vnode.childNodes = [];
+    vnode.childNodes.push(new Vnode({
+      type: 'text',
+      nodeValue: typeof value === 'undefined' ? '' : value,
+      parentVnode: vnode,
+      template: typeof value === 'undefined' ? '' : value,
+      voidElement: true,
+    }));
+    vnode.voidElement = true;
   }
 
   /**
@@ -376,10 +378,11 @@ export class CompileUtilForRepeat {
    * @memberof CompileUtilForRepeat
    */
   public ifUpdater(vnode: Vnode, value: any): void {
-    if (!value && vnode.parentVnode.childNodes.indexOf(vnode) !== -1) vnode.parentVnode.childNodes.splice(vnode.parentVnode.childNodes.indexOf(vnode), 1);
-    if (value) {
+    const valueOfBoolean = Boolean(value);
+    if (!valueOfBoolean && vnode.parentVnode.childNodes.indexOf(vnode) !== -1) vnode.parentVnode.childNodes.splice(vnode.parentVnode.childNodes.indexOf(vnode), 1);
+    if (valueOfBoolean) {
       const findAttribute = vnode.attributes.find(attr => attr.name === 'nv-if');
-      findAttribute.nvValue = value;
+      findAttribute.nvValue = valueOfBoolean;
     }
   }
 
@@ -404,11 +407,26 @@ export class CompileUtilForRepeat {
    * @memberof CompileUtilForRepeat
    */
   public keyUpdater(vnode: Vnode, value: any): void {
+    const findAttribute = vnode.attributes.find(attr => attr.name === 'nv-key');
+    findAttribute.nvValue = value;
     vnode.key = value;
   }
 
   /**
-   * commonUpdater for nv directive except repeat model text html if class
+   * update value of repeat node for nv-value
+   *
+   * @param {Element} node
+   * @param {*} value
+   * @memberof CompileUtilForRepeat
+   */
+  public valueUpdater(vnode: Vnode, value: any): void {
+    const findAttribute = vnode.attributes.find(attr => attr.name === 'nv-value');
+    findAttribute.nvValue = value;
+    vnode.value = value;
+  }
+
+  /**
+   * commonUpdater for nv directive except repeat model text if class
    *
    * @param {Vnode} vnode
    * @param {*} value
@@ -517,10 +535,6 @@ export class CompileUtilForRepeat {
         attr.nvValue = this.buildProps(_prop, vm);
         return;
       }
-      // if (_propsKeys.hasOwnProperty(key) || key in _propsKeys) {
-      //   _prop = getPropsValue(valueList, _propsKeys[key]);
-      //   attr.nvValue = buildProps(_prop, vm);
-      // }
       if (vnode.repeatData && vnode.repeatData.hasOwnProperty(key)) {
         _prop = this._getValueByValue(vnode.repeatData[key], propValue, key);
         attr.nvValue = this.buildProps(_prop, vm);
@@ -767,9 +781,6 @@ export class CompileUtil {
         case 'text':
           if (updaterFn) (updaterFn as Function).call(this, vnode, value);
           break;
-        case 'html':
-          if (updaterFn) (updaterFn as Function).call(this, vnode, value);
-          break;
         case 'if':
           if (updaterFn) (updaterFn as Function).call(this, vnode, value);
           break;
@@ -777,6 +788,9 @@ export class CompileUtil {
           if (updaterFn) (updaterFn as Function).call(this, vnode, value);
           break;
         case 'key':
+          if (updaterFn) (updaterFn as Function).call(this, vnode, value);
+          break;
+        case 'value':
           if (updaterFn) (updaterFn as Function).call(this, vnode, value);
           break;
         default:
@@ -806,7 +820,7 @@ export class CompileUtil {
         if (exp.indexOf(data) === 0 || exp.indexOf(`${data}.`) === 0) value = this._getValueByValue(vnode.repeatData[data], exp, data);
       });
     } else throw new Error(`directive: ${exp} can't use recognize this value`);
-    vnode.nodeValue = vnode.nodeValue.replace(exp, value);
+    vnode.nodeValue = vnode.template.replace(exp, value);
   }
 
   /**
@@ -820,11 +834,17 @@ export class CompileUtil {
    */
   public modelUpdater(vnode: Vnode, value: any, exp: string, vm: any): void {
     vnode.value = typeof value === 'undefined' ? '' : value;
+    const findAttribute = vnode.attributes.find(attr => attr.name === 'nv-model');
+    findAttribute.nvValue = (typeof value === 'undefined' ? '' : value);
+
+    const utilVm = this;
 
     const func = (event: Event) => {
       event.preventDefault();
-      if (this.isFromVM(vm, exp)) this._setVMVal(vm, exp, (event.target as HTMLInputElement).value);
+      if (!utils.isBrowser()) return;
+      if (utilVm.isFromVM(vm, exp)) utilVm._setVMVal(vm, exp, (event.target as HTMLInputElement).value);
     };
+
     const sameEventType = vnode.eventTypes.find(_eventType => _eventType.type === 'input');
     if (sameEventType) sameEventType.handler = func;
     if (!sameEventType) vnode.eventTypes.push({
@@ -842,20 +862,19 @@ export class CompileUtil {
    * @memberof CompileUtil
    */
   public textUpdater(vnode: Vnode, value: any): void {
-    if (vnode.tagName === 'input') return vnode.value = value;
-    vnode.nodeValue = typeof value === 'undefined' ? '' : value;
-  }
+    const findAttribute = vnode.attributes.find(attr => attr.name === 'nv-text');
+    findAttribute.nvValue = (typeof value === 'undefined' ? '' : value);
 
-  /**
-   * update html for nv-html
-   *
-   * @param {Vnode} vnode
-   * @param {*} value
-   * @memberof CompileUtil
-   */
-  public htmlUpdater(vnode: Vnode, value: any): void {
-    const findAttribute = vnode.attributes.find(attr => attr.name === 'nv-html');
-    findAttribute.nvValue = value;
+    vnode.nodeValue = typeof value === 'undefined' ? '' : value;
+    if (!vnode.childNodes || (vnode.childNodes && vnode.childNodes.length > 0)) vnode.childNodes = [];
+    vnode.childNodes.push(new Vnode({
+      type: 'text',
+      nodeValue: typeof value === 'undefined' ? '' : value,
+      parentVnode: vnode,
+      template: typeof value === 'undefined' ? '' : value,
+      voidElement: true,
+    }));
+    vnode.voidElement = true;
   }
 
   /**
@@ -866,10 +885,11 @@ export class CompileUtil {
    * @memberof CompileUtil
    */
   public ifUpdater(vnode: Vnode, value: any): void {
-    if (!value && vnode.parentVnode.childNodes.indexOf(vnode) !== -1) vnode.parentVnode.childNodes.splice(vnode.parentVnode.childNodes.indexOf(vnode), 1);
-    if (value) {
+    const valueOfBoolean = Boolean(value);
+    if (!valueOfBoolean && vnode.parentVnode.childNodes.indexOf(vnode) !== -1) vnode.parentVnode.childNodes.splice(vnode.parentVnode.childNodes.indexOf(vnode), 1);
+    if (valueOfBoolean) {
       const findAttribute = vnode.attributes.find(attr => attr.name === 'nv-if');
-      findAttribute.nvValue = value;
+      findAttribute.nvValue = valueOfBoolean;
     }
   }
 
@@ -894,11 +914,26 @@ export class CompileUtil {
    * @memberof CompileUtilForRepeat
    */
   public keyUpdater(vnode: Vnode, value: any): void {
+    const findAttribute = vnode.attributes.find(attr => attr.name === 'nv-key');
+    findAttribute.nvValue = value;
     vnode.key = value;
   }
 
   /**
-   * commonUpdater for nv directive except repeat model text html if class
+   * update value of node for nv-value
+   *
+   * @param {Vnode} vnode
+   * @param {*} value
+   * @memberof CompileUtilForRepeat
+   */
+  public valueUpdater(vnode: Vnode, value: any): void {
+    const findAttribute = vnode.attributes.find(attr => attr.name === 'nv-value');
+    findAttribute.nvValue = value;
+    vnode.value = value;
+  }
+
+  /**
+   * commonUpdater for nv directive except repeat model text if class
    *
    * @param {Vnode} vnode
    * @param {*} value
@@ -927,17 +962,16 @@ export class CompileUtil {
 
     const key = expFather.split(' ')[1];
     value.forEach((val: any, index: number) => {
-      const repeatData: { [key: string]: any } = {...vnode.repeatData};
+      const repeatData: { [key: string]: any } = { ...vnode.repeatData };
       repeatData[key] = val;
       repeatData.$index = index;
 
       const newVnode = this.cloneVnode(vnode, repeatData);
-      newVnode.index = index;
+
       const nodeAttrs = newVnode.attributes;
-      const text = newVnode.nodeValue;
+      const text = newVnode.template;
       const reg = /\{\{(.*)\}\}/g;
       const compileUtilForRepeat = new CompileUtilForRepeat();
-
       this.fragment.splice(this.fragment.indexOf(vnode), 0, newVnode);
 
       if (this.isTextNode(newVnode) && reg.test(text)) compileUtilForRepeat.templateUpdater(newVnode, val, key, vm);
@@ -954,7 +988,7 @@ export class CompileUtil {
 
       }
       // first insert node before repeatnode, and remove repeatnode in Compile
-      if (newVnode.childNodes && newVnode.childNodes.length > 0 && this.fragment.indexOf(newVnode)) this.repeatChildrenUpdater(newVnode, val, expFather, index, vm, value);
+      if (newVnode.childNodes && newVnode.childNodes.length > 0 && this.fragment.indexOf(newVnode) !== -1) this.repeatChildrenUpdater(newVnode, val, expFather, index, vm, value);
     });
   }
 
@@ -979,25 +1013,26 @@ export class CompileUtil {
       container: Vnode,
     }[] = [];
 
+    const compileUtilForRepeat = new CompileUtilForRepeat(vnode.childNodes);
+
     vnode.childNodes.forEach(child => {
-      const repeatData = {...vnode.repeatData, ...child.repeatData};
+      const repeatData = { ...vnode.repeatData, ...child.repeatData };
       repeatData[key] = value;
       repeatData.$index = index;
       child.repeatData = repeatData;
       this.copyRepeatData(child, repeatData);
-      // if (this.isRepeatProp(child)) child.attributes.push({ name: `_prop-${key}`, value: JSON.stringify(value), type: 'prop-value' });
 
       const nodeAttrs = child.attributes;
-      const text = child.nodeValue;
+      const text = child.template;
       const reg = /\{\{(.*)\}\}/g;
 
-      if (this.isTextNode(child) && reg.test(text)) new CompileUtilForRepeat(vnode.childNodes).templateUpdater(child, value, key, vm);
+      if (this.isTextNode(child) && reg.test(text)) compileUtilForRepeat.templateUpdater(child, value, key, vm);
+
       if (nodeAttrs) {
         nodeAttrs.forEach(attr => {
           const attrName = attr.name;
           const exp = attr.value;
           const dir = attrName.substring(3);
-          const compileUtilForRepeat = new CompileUtilForRepeat(vnode.childNodes);
 
           if (this.isDirective(attr.type) && attrName !== 'nv-repeat' && (new RegExp(`(^${key})`).test(exp) || this.isFromVM(vm, exp))) compileUtilForRepeat.bind(child, key, dir, exp, index, vm, watchValue, value);
           if (this.isEventDirective(attr.type) && attrName !== 'nv-repeat' && (new RegExp(`(^${key})`).test(exp) || this.isFromVM(vm, exp))) compileUtilForRepeat.eventHandler(child, vm, exp, dir, key, value);
@@ -1005,13 +1040,12 @@ export class CompileUtil {
         });
       }
 
-      // if is repeat node
-      if (child.childNodes && child.childNodes.length > 0 && vnode.childNodes.indexOf(child) !== -1) this.repeatChildrenUpdater(child, value, expFather, index, vm, watchValue);
-
       // if is't repeat node
-      const newAttrs = child.attributes;
-      if (newAttrs && vnode.childNodes.indexOf(child) !== -1) {
-        const restRepeat = newAttrs.find(attr => this.isDirective(attr.type) && attr.name === 'nv-repeat');
+      if (child.childNodes && child.childNodes.length > 0) this.repeatChildrenUpdater(child, value, expFather, index, vm, watchValue);
+
+      // if is repeat node
+      if (nodeAttrs) {
+        const restRepeat = nodeAttrs.find(attr => this.isDirective(attr.type) && attr.name === 'nv-repeat');
         if (restRepeat) {
           const newWatchData = restRepeat.value.split(' ')[3];
 
@@ -1027,11 +1061,10 @@ export class CompileUtil {
 
           const compileUtil = new CompileUtil(_newContainerFragment.childNodes);
 
-          // if (this.isFromVM(vm, newWatchData)) compileUtil.bind(child, vm, restRepeat.value, 'repeat');
           if (this.isFromVM(vm, newWatchData)) compileUtil.repeatUpdater(child, this._getVMRepeatVal(vm, restRepeat.value), restRepeat.value, vm);
           if (new RegExp(`(^${key})`).test(newWatchData)) compileUtil.repeatUpdater(child, this._getValueByValue(value, newWatchData, key), restRepeat.value, vm);
 
-          if (this.isRepeatNode(child) && _newContainerFragment.childNodes.indexOf(child) !== -1) _newContainerFragment.childNodes.splice(_newContainerFragment.childNodes.indexOf(child), 1);
+          if (_newContainerFragment.childNodes.indexOf(child) !== -1) _newContainerFragment.childNodes.splice(_newContainerFragment.childNodes.indexOf(child), 1);
         }
       }
     });
@@ -1079,7 +1112,6 @@ export class CompileUtil {
       fn.apply(vm, argsList);
     };
     if (eventType && fn) {
-      // todo 添加事件
       const sameEventType = vnode.eventTypes.find(_eventType => _eventType.type === eventType);
       if (sameEventType) sameEventType.handler = func;
       if (!sameEventType) vnode.eventTypes.push({
@@ -1136,10 +1168,6 @@ export class CompileUtil {
         attr.nvValue = this.buildProps(_prop, vm);
         return;
       }
-      // if (_propsKeys.hasOwnProperty(key) || key in _propsKeys) {
-      //   _prop = getPropsValue(valueList, _propsKeys[key]);
-      //   attr.nvValue = buildProps(_prop, vm);
-      // }
       if (vnode.repeatData && vnode.repeatData.hasOwnProperty(key)) {
         _prop = this._getValueByValue(vnode.repeatData[key], propValue, key);
         attr.nvValue = this.buildProps(_prop, vm);
@@ -1236,20 +1264,6 @@ export class CompileUtil {
     return result;
   }
 
-  // /**
-  //  * judge DOM is a Component DOM in a repeat DOM or not
-  //  *
-  //  * @param {Element} node
-  //  * @returns {boolean}
-  //  * @memberof CompileUtil
-  //  */
-  // public isRepeatProp(vnode: Vnode): boolean {
-  //   const nodeAttrs = vnode.attributes;
-  //   const result = false;
-  //   if (nodeAttrs) return !!(nodeAttrs.find(attr => /^\{(.+)\}$/.test(attr.value)));
-  //   return result;
-  // }
-
   /**
    * judge DOM is text node or not
    *
@@ -1298,14 +1312,28 @@ export class CompileUtil {
    * @returns {Node}
    * @memberof CompileUtil
    */
-  public cloneVnode(vnode: Vnode, repeatData?: any): Vnode {
+  private cloneVnode(vnode: Vnode, repeatData?: any): Vnode {
     const newVnode = new Vnode(vnode);
-    newVnode.repeatData = {...repeatData};
+    newVnode.repeatData = { ...repeatData };
     this.copyRepeatData(newVnode, repeatData);
-    newVnode.childNodes.forEach(child => {
-      child.parentVnode = newVnode;
-    });
+    this.copyParentVnode(newVnode);
     return newVnode;
+  }
+
+  /**
+   * copy parentVnode from parentVnode to children
+   *
+   * @param {Vnode} vnode
+   * @param {*} [repeatData]
+   * @returns {void}
+   * @memberof CompileUtil
+   */
+  private copyParentVnode(vnode: Vnode): void {
+    if (!vnode.childNodes || vnode.childNodes.length === 0) return;
+    vnode.childNodes.forEach(child => {
+      child.parentVnode = vnode;
+      this.copyParentVnode(child);
+    });
   }
 
   /**
@@ -1316,10 +1344,10 @@ export class CompileUtil {
    * @returns {void}
    * @memberof CompileUtil
    */
-  public copyRepeatData(vnode: Vnode, repeatData?: any): void {
+  private copyRepeatData(vnode: Vnode, repeatData?: any): void {
     if (!vnode.childNodes || vnode.childNodes.length === 0) return;
     vnode.childNodes.forEach(child => {
-      child.repeatData = {...repeatData, ...child.repeatData};
+      child.repeatData = { ...child.repeatData, ...repeatData };
       this.copyRepeatData(child, repeatData);
     });
   }

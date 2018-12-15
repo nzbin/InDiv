@@ -290,7 +290,11 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
     console.log('test-component nvReceiveProps', p);
   }
 }
-
+// 姓名：{{man.name}}
+// <div class="fuck" nv-class="man.name" nv-repeat="let c in man.job" nv-key="c.id">
+//             <input nv-on:click="show(c, $index)" nv-model="c.name" nv-class="c.id" />
+//             <p nv-key="man.name" nv-class="man.name" nv-id="c.name">{{man.name}}</p>
+//           </div>
 @Component({
   selector: 'container-wrap',
   template: (`
@@ -301,20 +305,14 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
       <p nv-on:click="go()">container: {{countState(color)}}</p>
       <input nv-model="a" />
       <div nv-repeat="let man in testArray" nv-key="man.name">
-          <div nv-on:click="show(testArray2, '你111')">姓名：{{man.name}}</div>
-          <div>
-            <p>性别：{{countState(man.sex, $index)}}</p>
-          </div>
+          <div nv-on:click="show(testArray2, '你111')" nv-text="man.name"></div>
+          <div><p>性别：{{countState(man.sex, $index)}}</p></div>
           <a nv-href="countState(man.sex, $index)">a {{man.sex}}</a>
           <img nv-src="man.sex" nv-alt="man.sex" />
           <test-component nv-key="man.name" man="{countState2(man.name, bd)}"  nv-repeat="let bd in testArray2"></test-component>
           <p nv-key="man.name" nv-class="man.name" nv-id="bd" nv-repeat="let bd in testArray2">{{bd}}</p>
-          <input nv-on:click="show(b, $index)" nv-repeat="let b in testArray2" nv-on:input="showInput($event, $index)" nv-text="b" nv-class="b" />
+          <input nv-on:click="show(_b, $index)" nv-repeat="let _b in testArray2" nv-model="_b"  nv-class="_b" />
           <input nv-model="test.a"/>
-          <div class="fuck" nv-class="man.name" nv-repeat="let c in man.job" nv-key="c.id">
-            <input nv-on:click="show(c, $index)" nv-model="c.name" nv-class="c.id" />
-            <p nv-key="man.name" nv-class="man.name" nv-id="c.name">{{man.name}}</p>
-          </div>
       </div>
       <router-render></router-render>
     </div>

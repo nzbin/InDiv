@@ -170,8 +170,8 @@ export class InDiv {
    */
   public init<R = Element>(): void {
     if (!utils.isBrowser()) return;
-    // todo
     this.compiler = componentCompiler;
+    this.rootElement = document.getElementById('root');
     if (!this.rootModule) throw new Error('must use bootstrapModule to declare a root NvModule before init');
     if (!this.compiler) throw new Error('must use plugin of platform to set a compiler method in InDiv!');
     this.renderModuleBootstrap<R>();

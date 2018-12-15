@@ -29,17 +29,21 @@ export class Compile {
       components: [],
       directives: [],
     };
-    console.log(998877, this.componentInstance.declarationMap);
     this.componentInstance.declarationMap.forEach((value, key) => {
       if (this.parseVnodeOptions.components.indexOf(key) === -1 && (value as any).nvType === 'nvComponent') this.parseVnodeOptions.components.push(key);
       if (this.parseVnodeOptions.directives.indexOf(key) === -1 && (value as any).nvType === 'nvDirective') this.parseVnodeOptions.directives.push(key);
     });
   }
-  // todo 开始编译
+
+  /**
+   * start compile and change saveVnode
+   *
+   * @memberof Compile
+   */
   public startCompile(): void {
     if (!this.mountedElement) throw new Error('class Compile need el in constructor');
-    // todo to mountedElement vnode
     this.fragment = parseTemplateToVnode(''); 
+    // todo to mountedElement vnode
     if (!this.saveVnode) this.saveVnode = parseTemplateToVnode(this.mountedElement.innerHTML, this.parseVnodeOptions);
     const templateVnode = parseTemplateToVnode(this.componentInstance.template, this.parseVnodeOptions);
     this.compileVnode(templateVnode);
@@ -47,10 +51,8 @@ export class Compile {
     if (this.saveVnode.length === 0) this.saveVnode.push({ parentVnode: { nativeElement: this.mountedElement } });
     this.fragment[0].parentVnode = { nativeElement: this.mountedElement };
     diffVnode({ childNodes: this.saveVnode, nativeElement: this.mountedElement, parentVnode: null }, { childNodes: this.fragment, nativeElement: this.mountedElement, parentVnode: null }, patchList);
-    patchVnode(patchList);
     console.log(88777777, this.saveVnode, this.fragment);
-
-    this.fragment = null;
+    patchVnode(patchList);
   }
 
   /**
@@ -84,7 +86,7 @@ export class Compile {
       // 要用新的编译
       if (vnode.childNodes && vnode.childNodes.length > 0 && !this.isRepeatNode(vnode)) this.recursiveDOM(vnode.childNodes, _fragmentChild.childNodes, _fragmentChild);
 
-      const text = _fragmentChild.nodeValue;
+      const text = _fragmentChild.template;
       const reg = /\{\{(.*)\}\}/g;
       if (this.isElementNode(_fragmentChild)) this.compile(_fragmentChild, fragment);
 

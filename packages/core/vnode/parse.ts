@@ -42,6 +42,7 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
           nodeValue: template.slice(start, template.indexOf('<', start)),
           parentVnode: current,
           template: template.slice(start, template.indexOf('<', start)),
+          voidElement: true,
         });
       }
 
@@ -79,12 +80,14 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
           nodeValue: nodeValue,
           parentVnode: parent,
           template: nodeValue,
+          voidElement: true,
         });
         if (!/^\s*$/.test(nodeValue) && parent && parent.tagName !== 'router-render') arr[level].childNodes.push({
           type: 'text',
           nodeValue: nodeValue,
           parentVnode: parent,
           template: nodeValue,
+          voidElement: true,
         });
       }
     }

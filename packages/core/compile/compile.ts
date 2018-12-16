@@ -37,28 +37,26 @@ export class Compile {
 
   /**
    * start compile and change saveVnode
+   * 
+   * will return the newest vnode[]
    *
+   * @returns {Vnode[]}
    * @memberof Compile
    */
-  public startCompile(): void {
+  public startCompile(): Vnode[] {
     if (!this.mountedElement) throw new Error('class Compile need el in constructor');
-    this.fragment = parseTemplateToVnode(''); 
-
-    this.componentInstance.componentAndDirectiveList = {
-      components: new Map(),
-      directives: new Map(),
-    };
+    this.fragment = parseTemplateToVnode('');
 
     if (!this.saveVnode) this.saveVnode = this.componentInstance.$indivInstance.getRenderer().nativeElementToVnode(this.mountedElement, this.parseVnodeOptions);
     const templateVnode = parseTemplateToVnode(this.componentInstance.template, this.parseVnodeOptions);
     this.compileVnode(templateVnode);
     const patchList: IPatchList[] = [];
-    if (this.saveVnode.length === 0) this.saveVnode.push({ parentVnode: { nativeElement: this.mountedElement } });
-    this.fragment[0].parentVnode = { nativeElement: this.mountedElement };
+    this.fragment.forEach(child => child.parentVnode = { nativeElement: this.mountedElement });
     diffVnode({ childNodes: this.saveVnode, nativeElement: this.mountedElement, parentVnode: null }, { childNodes: this.fragment, nativeElement: this.mountedElement, parentVnode: null }, patchList);
-    console.log(288777777, this.saveVnode, this.fragment);
+    console.log(33333333, this.saveVnode, this.fragment);
     patchVnode(patchList, this.componentInstance.$indivInstance.getRenderer());
     console.log(388777777, patchList);
+    return this.saveVnode;
   }
 
   /**
@@ -80,7 +78,6 @@ export class Compile {
    */
   public recursiveDOM(vnodes: Vnode[], fragment: Vnode[], parent: Vnode): void {
     vnodes.forEach((vnode: Vnode) => {
-      if (!this.isRepeatNode(vnode) && vnode.type === 'component') this.componentInstance.componentAndDirectiveList.components.set(vnode, vnode);
 
       const _fragmentChild = new Vnode(vnode);
       // 因为当不上循环node时候将不会递归创建新vnode了
@@ -134,10 +131,7 @@ export class Compile {
           const exp = attr.value;
           compileUtil.eventHandler(vnode, this.componentInstance, exp, dir);
         }
-        if (this.isPropOrNvDirective(attr.type) && !this.isRepeatNode(vnode)) {
-          compileUtil.propHandler(vnode, this.componentInstance, attr);
-          if (attr.type === 'directive') this.componentInstance.componentAndDirectiveList.directives.set(attr, attr);
-        }
+        if (this.isPropOrNvDirective(attr.type) && !this.isRepeatNode(vnode)) compileUtil.propHandler(vnode, this.componentInstance, attr);
       });
     }
   }

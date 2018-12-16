@@ -25,11 +25,7 @@ export class Utils {
     if (typeof target !== 'object') return target;
 
     const targetClone: any = Array.isArray(target) ? [] : {};
-    for (const key in target) {
-      if (target.hasOwnProperty(key)) {
-        targetClone[key] = this.deepClone(target[key]);
-      }
-    }
+    for (const key in target) if (target.hasOwnProperty(key)) targetClone[key] = this.deepClone(target[key]);
     return targetClone;
   }
 

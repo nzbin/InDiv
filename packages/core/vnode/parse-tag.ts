@@ -1,7 +1,3 @@
-import { Utils } from '../utils';
-
-const utils = new Utils();
-
 export type TNvAttribute = 'attribute' | 'nv-attribute' | 'directive' | 'prop' | 'nv-event';
 
 export type TEventType = { type: string; handler: Function, token: any };
@@ -56,7 +52,7 @@ export class Vnode {
     this.tagName = options.tagName;
     this.nativeElement = options.nativeElement;
     this.parentVnode = options.parentVnode;
-    this.attributes = options.attributes ? utils.deepClone(options.attributes) : [];
+    this.attributes = [];
     this.childNodes = [];
     this.nodeValue = options.nodeValue;
     this.type = options.type;
@@ -67,6 +63,12 @@ export class Vnode {
     this.checked = false;
     this.voidElement = options.voidElement;
     this.template = options.template;
+
+    if (options.attributes && options.attributes.length > 0) {
+      options.attributes.forEach(attr => {
+        this.attributes.push({...attr});
+      });
+    }
 
     if (options.eventTypes && options.eventTypes.length > 0) {
       options.eventTypes.forEach(eventType => {

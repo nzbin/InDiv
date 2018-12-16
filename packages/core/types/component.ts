@@ -27,11 +27,6 @@ export interface IComponent {
     otherInjector?: Injector;
     privateInjector?: Injector;
 
-    componentAndDirectiveList?: {
-        components: Map<Vnode, Vnode>;
-        directives: Map<TAttributes, TAttributes>;
-    };
-
     nvOnInit?(): void;
     watchData?(): void;
     nvBeforeMount?(): void;

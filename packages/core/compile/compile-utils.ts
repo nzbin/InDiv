@@ -254,7 +254,7 @@ export class CompileUtilForRepeat {
         if (updaterFn) (updaterFn as Function).call(this, vnode, value);
         break;
       case 'if':
-        if (updaterFn) (updaterFn as Function).call(this, vnode, value);
+        if (updaterFn) (updaterFn as Function).call(this, vnode, value, vm);
         break;
       case 'class':
         if (updaterFn) (updaterFn as Function).call(this, vnode, value);
@@ -376,11 +376,15 @@ export class CompileUtilForRepeat {
    *
    * @param {Vnode} vnode
    * @param {*} value
+   * @param {*} vm
    * @memberof CompileUtilForRepeat
    */
-  public ifUpdater(vnode: Vnode, value: any): void {
+  public ifUpdater(vnode: Vnode, value: any, vm: any): void {
     const valueOfBoolean = Boolean(value);
-    if (!valueOfBoolean && vnode.parentVnode.childNodes.indexOf(vnode) !== -1) vnode.parentVnode.childNodes.splice(vnode.parentVnode.childNodes.indexOf(vnode), 1);
+    if (!valueOfBoolean && vnode.parentVnode.childNodes.indexOf(vnode) !== -1) {
+      vnode.parentVnode.childNodes.splice(vnode.parentVnode.childNodes.indexOf(vnode), 1);
+      this.removeVnodeFromVM(vnode, vm.componentAndDirectiveList);
+    }
     if (valueOfBoolean) {
       const findAttribute = vnode.attributes.find(attr => attr.name === 'nv-if');
       findAttribute.nvValue = valueOfBoolean;
@@ -591,12 +595,32 @@ export class CompileUtilForRepeat {
    * @param {*} vm
    * @param {string} exp
    * @returns {boolean}
-   * @memberof CompileUtil
+   * @memberof CompileUtilForRepeat
    */
   public isFromVM(vm: any, exp: string): boolean {
     if (!vm) return false;
     const value = exp.replace(/\(.*\)/, '').split('.')[0];
     return value in vm;
+  }
+
+  /**
+   * when remove Vnode from Vnodes,should use this to remove vnode from vm
+   *
+   * @private
+   * @param {Vnode} vnode
+   * @param {{ components: Map<Vnode, Vnode>; directives: Map<TAttributes, TAttributes> }} componentAndDirectiveList
+   * @memberof CompileUtilForRepeat
+   */
+  private removeVnodeFromVM(vnode: Vnode, componentAndDirectiveList: { components: Map<Vnode, Vnode>; directives: Map<TAttributes, TAttributes> }): void {
+    if (vnode.type === 'component' && componentAndDirectiveList.components.has(vnode)) componentAndDirectiveList.components.delete(vnode);
+    if (vnode.attributes && vnode.attributes.length > 0) {
+      vnode.attributes.forEach(attr => {
+        if (attr.type === 'directive' && componentAndDirectiveList.directives.has(attr)) componentAndDirectiveList.directives.delete(attr);
+      });
+    }
+    if (vnode.childNodes && vnode.childNodes.length > 0) {
+      vnode.childNodes.forEach(child => this.removeVnodeFromVM(child, componentAndDirectiveList));
+    }
   }
 }
 
@@ -787,7 +811,7 @@ export class CompileUtil {
           if (updaterFn) (updaterFn as Function).call(this, vnode, value);
           break;
         case 'if':
-          if (updaterFn) (updaterFn as Function).call(this, vnode, value);
+          if (updaterFn) (updaterFn as Function).call(this, vnode, value, vm);
           break;
         case 'class':
           if (updaterFn) (updaterFn as Function).call(this, vnode, value);
@@ -888,11 +912,15 @@ export class CompileUtil {
    *
    * @param {Vnode} vnode
    * @param {*} value
+   * @param {*} vm
    * @memberof CompileUtil
    */
-  public ifUpdater(vnode: Vnode, value: any): void {
+  public ifUpdater(vnode: Vnode, value: any, vm: any): void {
     const valueOfBoolean = Boolean(value);
-    if (!valueOfBoolean && vnode.parentVnode.childNodes.indexOf(vnode) !== -1) vnode.parentVnode.childNodes.splice(vnode.parentVnode.childNodes.indexOf(vnode), 1);
+    if (!valueOfBoolean && vnode.parentVnode.childNodes.indexOf(vnode) !== -1) {
+      vnode.parentVnode.childNodes.splice(vnode.parentVnode.childNodes.indexOf(vnode), 1);
+      this.removeVnodeFromVM(vnode, vm.componentAndDirectiveList);
+    }
     if (valueOfBoolean) {
       const findAttribute = vnode.attributes.find(attr => attr.name === 'nv-if');
       findAttribute.nvValue = valueOfBoolean;
@@ -973,6 +1001,7 @@ export class CompileUtil {
       repeatData.$index = index;
 
       const newVnode = this.cloneVnode(vnode, repeatData);
+      if (newVnode.type === 'component') vm.componentAndDirectiveList.components.set(newVnode, newVnode);
 
       const nodeAttrs = newVnode.attributes;
       const text = newVnode.template;
@@ -989,7 +1018,10 @@ export class CompileUtil {
           const exp = attr.value;
           if (this.isDirective(attr.type) && attrName !== 'nv-repeat') compileUtilForRepeat.bind(newVnode, key, dir, exp, index, vm, value, val);
           if (this.isEventDirective(attr.type) && attrName !== 'nv-repeat') compileUtilForRepeat.eventHandler(newVnode, vm, exp, dir, key, val);
-          if (this.isPropOrNvDirective(attr.type)) compileUtilForRepeat.propHandler(newVnode, vm, attr);
+          if (this.isPropOrNvDirective(attr.type)) {
+            compileUtilForRepeat.propHandler(newVnode, vm, attr);
+            if (attr.type === 'directive') vm.componentAndDirectiveList.directives.set(attr, attr);
+          }
         });
 
       }
@@ -1028,6 +1060,8 @@ export class CompileUtil {
       child.repeatData = repeatData;
       this.copyRepeatData(child, repeatData);
 
+      if (!this.isRepeatNode(child) && child.type === 'component') vm.componentAndDirectiveList.components.set(child, child);
+
       const nodeAttrs = child.attributes;
       const text = child.template;
       const reg = /\{\{(.*)\}\}/g;
@@ -1042,7 +1076,10 @@ export class CompileUtil {
 
           if (this.isDirective(attr.type) && attrName !== 'nv-repeat' && (new RegExp(`(^${key})`).test(exp) || this.isFromVM(vm, exp))) compileUtilForRepeat.bind(child, key, dir, exp, index, vm, watchValue, value);
           if (this.isEventDirective(attr.type) && attrName !== 'nv-repeat' && (new RegExp(`(^${key})`).test(exp) || this.isFromVM(vm, exp))) compileUtilForRepeat.eventHandler(child, vm, exp, dir, key, value);
-          if (this.isPropOrNvDirective(attr.type)) compileUtilForRepeat.propHandler(child, vm, attr);
+          if (this.isPropOrNvDirective(attr.type)) {
+            compileUtilForRepeat.propHandler(child, vm, attr);
+            if (!this.isRepeatNode(child) && attr.type === 'directive') vm.componentAndDirectiveList.directives.set(attr, attr);
+          }
         });
       }
 
@@ -1360,5 +1397,25 @@ export class CompileUtil {
       child.repeatData = { ...child.repeatData, ...repeatData };
       this.copyRepeatData(child, repeatData);
     });
+  }
+
+  /**
+   * when remove Vnode from Vnodes,should use this to remove vnode from vm
+   *
+   * @private
+   * @param {Vnode} vnode
+   * @param {{ components: Map<Vnode, Vnode>; directives: Map<TAttributes, TAttributes> }} componentAndDirectiveList
+   * @memberof CompileUtil
+   */
+  private removeVnodeFromVM(vnode: Vnode, componentAndDirectiveList: { components: Map<Vnode, Vnode>; directives: Map<TAttributes, TAttributes> }): void {
+    if (vnode.type === 'component' && componentAndDirectiveList.components.has(vnode)) componentAndDirectiveList.components.delete(vnode);
+    if (vnode.attributes && vnode.attributes.length > 0) {
+      vnode.attributes.forEach(attr => {
+        if (attr.type === 'directive' && componentAndDirectiveList.directives.has(attr)) componentAndDirectiveList.directives.delete(attr);
+      });
+    }
+    if (vnode.childNodes && vnode.childNodes.length > 0) {
+      vnode.childNodes.forEach(child => this.removeVnodeFromVM(child, componentAndDirectiveList));
+    }
   }
 }

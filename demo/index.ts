@@ -313,6 +313,10 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
           <p nv-key="man.name" nv-class="man.name" nv-id="bd" nv-repeat="let bd in testArray2">{{bd}}</p>
           <input nv-on:click="show(_b, $index)" nv-repeat="let _b in testArray2" nv-model="_b"  nv-class="_b" />
           <input nv-model="test.a"/>
+          <div class="fuck" nv-class="man.name" nv-key="c.id">
+             <input nv-on:click="show(c, $index)" nv-model="c.name" nv-class="c.id" />
+             <p test-directive="{c.id}" nv-key="man.name" nv-class="man.name" nv-id="c.name">{{man.name}}</p>
+          </div>
       </div>
       <router-render></router-render>
     </div>

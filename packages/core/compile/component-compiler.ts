@@ -202,8 +202,8 @@ export async function componentCompiler(nativeElement: any, componentInstance: I
       // compile has been added into Component instance by dirty method
       if (!(componentInstance as any).compileInstance) ((componentInstance as any).compileInstance as Compile) = new Compile(nativeElement, componentInstance);
       ((componentInstance as any).compileInstance as Compile).startCompile();
-
       // todo
+      console.log(888899999, componentInstance.componentAndDirectiveList);
       // first mount directive
       // await directiveCompiler(nativeElement, componentInstance);
 

@@ -2,6 +2,7 @@ import { DirectiveList, IDirective } from './directive';
 import { Injector } from '../di';
 import { RenderTaskQueue } from '../render';
 import { InDiv } from '../indiv';
+import { Vnode, TAttributes } from '../vnode';
 
 export type ComponentList<C> = {
     dom: Node;
@@ -25,6 +26,11 @@ export interface IComponent {
     directiveList?: DirectiveList<IDirective>[];
     otherInjector?: Injector;
     privateInjector?: Injector;
+
+    componentAndDirectiveList?: {
+        components: Map<Vnode, Vnode>;
+        directives: Map<TAttributes, TAttributes>;
+    };
 
     nvOnInit?(): void;
     watchData?(): void;

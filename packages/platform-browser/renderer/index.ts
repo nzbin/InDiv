@@ -51,8 +51,8 @@ export class PlatfromBrowserRenderer extends Renderer {
       case 'nv-class':
         let className = vnode.nativeElement.className;
         className = className.replace(/\s$/, '');
-        const space = className && String(attribute.value) ? ' ' : '';
-        vnode.nativeElement.className = className + space + attribute.value;
+        const space = className && String(attribute.nvValue) ? ' ' : '';
+        vnode.nativeElement.className = className + space + attribute.nvValue;
         break;
       default:
         const attrName = attribute.name.replace('nv-', '');

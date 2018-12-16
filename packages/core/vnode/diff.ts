@@ -3,6 +3,8 @@ import { Vnode, IPatchList, TEventType } from './parse-tag';
 /**
  * diff childNodes for diff VNode
  * 
+ * sameVnode: tagName , key and template are all same
+ * 
  * type: 0 removeChild
  * type: 1 change Child index
  * type: 2 create Child in index
@@ -16,7 +18,7 @@ function diffChildNodes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
   if (oldVnode.childNodes && oldVnode.childNodes.length > 0) {
     oldVnode.childNodes.forEach((oChild, index) => {
       if (!oChild.type) return;
-      const sameCodeFromNewCode = newVnode.childNodes.find(nChild => (nChild.tagName === oChild.tagName && nChild.key === oChild.key && !nChild.checked));
+      const sameCodeFromNewCode = newVnode.childNodes.find(nChild => (nChild.tagName === oChild.tagName && nChild.key === oChild.key && nChild.template === oChild.template && !nChild.checked));
       if (!sameCodeFromNewCode) {
         patchList.push({
           type: 0,

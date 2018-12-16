@@ -343,6 +343,7 @@ export class CompileUtilForRepeat {
     if (!sameEventType) vnode.eventTypes.push({
       type: 'input',
       handler: func,
+      token: value,
     });
   }
 
@@ -480,11 +481,15 @@ export class CompileUtilForRepeat {
       fn.apply(vm, argsList);
     };
     if (eventType && fn) {
-      const sameEventTypeIndex = vnode.eventTypes.findIndex(_eventType => _eventType.type === eventType);
-      if (sameEventTypeIndex !== -1) vnode.eventTypes.splice(sameEventTypeIndex, 1);
-      vnode.eventTypes.push({
+      const sameEventType = vnode.eventTypes.find(_eventType => _eventType.type === eventType);
+      if (sameEventType) {
+        sameEventType.handler = func;
+        sameEventType.token = fn;
+      }
+      if (!sameEventType) vnode.eventTypes.push({
         type: eventType,
         handler: func,
+        token: fn,
       });
     }
   }
@@ -850,6 +855,7 @@ export class CompileUtil {
     if (!sameEventType) vnode.eventTypes.push({
       type: 'input',
       handler: func,
+      token: value,
     });
   }
 
@@ -1112,11 +1118,15 @@ export class CompileUtil {
       fn.apply(vm, argsList);
     };
     if (eventType && fn) {
-      const sameEventTypeIndex = vnode.eventTypes.findIndex(_eventType => _eventType.type === eventType);
-      if (sameEventTypeIndex !== -1) vnode.eventTypes.splice(sameEventTypeIndex, 1);
-      vnode.eventTypes.push({
+      const sameEventType = vnode.eventTypes.find(_eventType => _eventType.type === eventType);
+      if (sameEventType) {
+        sameEventType.handler = func;
+        sameEventType.token = fn;
+      }
+      if (!sameEventType) vnode.eventTypes.push({
         type: eventType,
         handler: func,
+        token: fn,
       });
     }
   }

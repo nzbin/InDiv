@@ -4,6 +4,8 @@ const utils = new Utils();
 
 export type TNvAttribute = 'attribute' | 'nv-attribute' | 'directive' | 'prop' | 'nv-event';
 
+export type TEventType = { type: string; handler: Function, token: any };
+
 export type TAttributes = {
   name: string;
   value: string;
@@ -20,7 +22,7 @@ export interface IPatchList {
   oldValue?: TAttributes | string | number | boolean | Function;
   originVnode?: Vnode;
   changedVnode?: Vnode;
-  changedValue?: TAttributes | string | number | boolean | Function | { type: string; handler: Function; };
+  changedValue?: TAttributes | string | number | boolean | Function | TEventType;
   attributeType?: TNvAttribute;
 }
 
@@ -39,7 +41,7 @@ export class Vnode {
   public type?: string;
   public value?: string | number;
   public repeatData?: any;
-  public eventTypes?: { type: string; handler: Function }[] = [];
+  public eventTypes?: TEventType[] = [];
   public key?: any;
   public checked?: boolean;
   public voidElement?: boolean = false;
@@ -60,17 +62,23 @@ export class Vnode {
     this.type = options.type;
     this.value = options.value;
     this.repeatData = { ...options.repeatData };
-    this.eventTypes = options.eventTypes ? [...options.eventTypes] : [];
+    this.eventTypes = [];
     this.key = options.key;
     this.checked = false;
     this.voidElement = options.voidElement;
     this.template = options.template;
 
-    if (!options.childNodes || options.childNodes.length === 0) return;
-    options.childNodes.forEach(child => {
-      const _child = new Vnode({ ...child });
-      this.childNodes.push(_child);
-    });
+    if (options.eventTypes && options.eventTypes.length > 0) {
+      options.eventTypes.forEach(eventType => {
+        this.eventTypes.push({...eventType});
+      });
+    }
+  
+    if (options.childNodes && options.childNodes.length > 0) {
+      options.childNodes.forEach(child => {
+        this.childNodes.push(new Vnode({ ...child }));
+      });
+    }
   }
 }
 

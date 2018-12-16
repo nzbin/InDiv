@@ -1,4 +1,4 @@
-import { TAttributes, IPatchList, Vnode } from './parse-tag';
+import { TAttributes, IPatchList, Vnode, TEventType } from './parse-tag';
 import { Renderer } from './renderer';
 
 /**
@@ -74,8 +74,6 @@ export function createNativeElementAndChildrens(createdVnode: Vnode, renderer: R
  * @param {Renderer} renderer
  */
 export function patchVnode(patchList: IPatchList[], renderer: Renderer): void {
-  // todo delete
-  console.log(111111111222223, patchList);
   patchList.sort((a, b) => {
     if (a.type === b.type && a.newIndex && b.newIndex) return a.newIndex - b.newIndex;
     return a.type - b.type;
@@ -144,14 +142,14 @@ export function patchVnode(patchList: IPatchList[], renderer: Renderer): void {
         patch.originVnode.repeatData = patch.changedValue;
         break;
       case 8:
-        const removeEventTypeIndex = patch.originVnode.eventTypes.indexOf((patch.changedValue as { type: string; handler: Function; }));
+        const removeEventTypeIndex = patch.originVnode.eventTypes.indexOf((patch.changedValue as TEventType));
         patch.originVnode.eventTypes.splice(removeEventTypeIndex, 1);
-        renderer.removeEventListener(patch.originVnode, (patch.changedValue as { type: string; handler: Function; }).type, (patch.changedValue as { type: string; handler: Function; }).handler);
+        renderer.removeEventListener(patch.originVnode, (patch.changedValue as { type: string; handler: Function; }).type, (patch.changedValue as TEventType).handler);
         break;
       case 9:
-        if (!patch.originVnode.eventTypes) patch.originVnode.eventTypes = [{ ...(patch.changedValue as { type: string; handler: Function; }) }];
-        if (patch.originVnode.eventTypes) patch.originVnode.eventTypes.push({ ...(patch.changedValue as { type: string; handler: Function; }) });
-        renderer.addEventListener(patch.originVnode, (patch.changedValue as { type: string; handler: Function; }).type, (patch.changedValue as { type: string; handler: Function; }).handler);
+        if (!patch.originVnode.eventTypes) patch.originVnode.eventTypes = [{ ...(patch.changedValue as TEventType) }];
+        if (patch.originVnode.eventTypes) patch.originVnode.eventTypes.push({ ...(patch.changedValue as TEventType) });
+        renderer.addEventListener(patch.originVnode, (patch.changedValue as { type: string; handler: Function; }).type, (patch.changedValue as TEventType).handler);
         break;
     }
   });

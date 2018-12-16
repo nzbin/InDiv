@@ -1,4 +1,4 @@
-import { Vnode, IPatchList } from './parse-tag';
+import { Vnode, IPatchList, TEventType } from './parse-tag';
 
 /**
  * diff childNodes for diff VNode
@@ -179,8 +179,8 @@ function diffRepeatData(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
  * @param {IPatchList[]} patchList
  */
 function diffEventTypes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[]): void {
-  const oEventTypes: { type: string; handler: Function; }[] = oldVnode.eventTypes;
-  const nEventTypes: { type: string; handler: Function; }[] = newVnode.eventTypes;
+  const oEventTypes: TEventType[] = oldVnode.eventTypes;
+  const nEventTypes: TEventType[] = newVnode.eventTypes;
 
   if (oEventTypes && oEventTypes.length > 0) {
     oEventTypes.forEach(oEventType => {
@@ -224,10 +224,8 @@ function diffEventTypes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
             changedValue: nEventType,
           });
         }
-        // 如果旧的存在并且新的类型相同，对比 nv-on 的属性和 DOM上的 event${nEventType}事件函数，如果相同则忽略，如果不同则先移除事件再增加新事件
-        // todo
-        if (sameEventType && sameEventType.handler.toString() !== nEventType.handler.toString()) {
-        // if (sameEventType && sameEventType.handler !== nEventType.handler) {
+        // 如果旧的存在并且新的类型相同，对比 nv-on 的属性和 token，如果相同则忽略，如果不同则先移除事件再增加新事件
+        if (sameEventType && sameEventType.token !== nEventType.token) {
           patchList.push({
             type: 8,
             originVnode: oldVnode,

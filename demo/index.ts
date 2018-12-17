@@ -267,7 +267,7 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
     private indiv: InDiv,
     private element: ElementRef,
   ) {
-    console.log(55544333, this.indiv, this.element);
+    console.log(55544333, 'init TestComponent', this.indiv, this.element);
     this.httpClient.get('/success').subscribe({
       next: (value: any) => { console.log(4444, value); },
     });
@@ -290,11 +290,7 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
     console.log('test-component nvReceiveProps', p);
   }
 }
-// 姓名：{{man.name}}
-// <div class="fuck" nv-class="man.name" nv-repeat="let c in man.job" nv-key="c.id">
-//             <input nv-on:click="show(c, $index)" nv-model="c.name" nv-class="c.id" />
-//             <p nv-key="man.name" nv-class="man.name" nv-id="c.name">{{man.name}}</p>
-//           </div>
+
 @Component({
   selector: 'container-wrap',
   template: (`

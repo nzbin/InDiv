@@ -22,7 +22,7 @@ export class Utils {
    * @memberof Utils
    */
   public deepClone(target: any): any {
-    if (typeof target !== 'object') return target;
+    if (typeof target !== 'object' || target === null) return target;
 
     const targetClone: any = Array.isArray(target) ? [] : {};
     for (const key in target) if (target.hasOwnProperty(key)) targetClone[key] = this.deepClone(target[key]);
@@ -171,14 +171,13 @@ export class Utils {
     if (className !== this.toString.call(b)) return false;
     switch (className) {
       case '[object RegExp]':
-      case '[object String]':
-        return `${a}` === `${b}`;
-      case '[object Number]':
+      case '[object String]': return `${a}` === `${b}`;
+      case '[object Number]': {
         if (+a !== +a) return +b !== +b;
         return +a === 0 ? 1 / +a === 1 / b : +a === +b;
+      }
       case '[object Date]':
-      case '[object Boolean]':
-        return +a === +b;
+      case '[object Boolean]': return +a === +b;
     }
 
     const areArrays = className === '[object Array]';
@@ -250,3 +249,5 @@ export class Utils {
     return typeof window !== 'undefined' && typeof window.document !== 'undefined';
   }
 }
+
+export const utils = new Utils();

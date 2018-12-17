@@ -1,3 +1,4 @@
+import { utils } from '../utils';
 import { Vnode, IPatchList, TEventType } from './parse-tag';
 
 /**
@@ -75,7 +76,8 @@ function diffAttributes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
     const oldVnodeAttr = oldVnode.attributes.find(oldAttr => oldAttr.type === attr.type && oldAttr.name === attr.name);
     if (
       (attr.type === 'attribute' && (!oldVnodeAttr || oldVnodeAttr.value !== attr.value)) ||
-      ((attr.type === 'nv-attribute' || attr.type === 'directive' || attr.type === 'prop') && (!oldVnodeAttr || oldVnodeAttr.nvValue !== attr.nvValue))
+      ((attr.type === 'nv-attribute' || attr.type === 'directive') && (!oldVnodeAttr || oldVnodeAttr.nvValue !== attr.nvValue)) ||
+      (attr.type === 'prop' && (!oldVnodeAttr || !utils.isEqual(oldVnodeAttr.nvValue, attr.nvValue)))
     ) {
       patchList.push({
         type: 3,

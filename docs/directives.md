@@ -218,8 +218,6 @@ export default class AppComponent {
 
 * `constructor` 在类被实例化的时候回触发，你可以在这里预先定义你的 state
 * `nvOnInit(): void;` constructor 之后，在这个生命周期中，可以通过 this.props 获取 props，并定义 state，此生命周期会在开启监听前被触发，并且之后再也不会触发
-* `nvBeforeMount(): void;` 在 nvOnInit 之后，template 挂载页面之前被触发，每次触发渲染页面都会被触发
-* `nvAfterMount(): void;` 在 nvBeforeMount 之后，template 挂载页面之后被触发，每次触发渲染页面（render）都会被触发
 * `nvHasRender(): void;` 在 nvAfterMount 之后，渲染完成后被触发，每次触发渲染页面（render）都会被触发
 * `nvRouteChange(lastRoute?: string, newRoute?: string): void;` 监听路由变化，当更换路由后被触发
 * `nvOnDestory(): void;` 仅仅在路由决定销毁此组件时,或是被`nv-if`销毁组件时被触发

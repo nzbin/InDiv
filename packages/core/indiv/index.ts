@@ -1,6 +1,6 @@
 import { INvModule, IComponent } from '../types';
 
-import { Utils } from '../utils';
+import { utils } from '../utils';
 import { factoryCreator } from '../di';
 import { factoryModule } from '../nv-module';
 import { Renderer } from '../vnode';
@@ -19,8 +19,6 @@ interface Type<T = any> extends Function {
 export interface IPlugin {
   bootstrap(vm: InDiv): void;
 }
-
-const utils = new Utils();
 
 /**
  * main: for new InDiv

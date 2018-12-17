@@ -11,101 +11,96 @@ export class PlatfromBrowserRenderer extends Renderer {
   public nativeElementToVnode(nativeElement: any, parseVnodeOptions?: ParseOptions): Vnode[] {
     return parseTemplateToVnode(nativeElement.innerHTML, parseVnodeOptions);
   }
-  public removeChild(parentVnode: Vnode, childVnode: Vnode): void {
-    parentVnode.nativeElement.removeChild(childVnode.nativeElement);
+
+  public removeChild(parent: any, child: any): void {
+    (parent as Element).removeChild(child as Element);
   }
 
-  public appendChild(parentVnode: Vnode, childVnode: Vnode): void {
-    parentVnode.nativeElement.appendChild(childVnode.nativeElement);
+  public appendChild(parent: any, child: any): void {
+    (parent as Element).appendChild(child as Element);
   }
 
-  public insertBefore(parentVnode: Vnode, childVnode: Vnode, index: number): void {
-    parentVnode.nativeElement.insertBefore(childVnode.nativeElement, parentVnode.childNodes[index].nativeElement);
+  public insertBefore(parent: any, child: any, index: number): void {
+    (parent as Element).insertBefore(child as Element, (parent as Element).childNodes[index]);
   }
 
-  public isContainted(parentVnode: Vnode, childVnode: Vnode): boolean {
-    return parentVnode.nativeElement.contains(childVnode.nativeElement);
+  public isContainted(parent: any, child: any): boolean {
+    return (parent as Element).contains(child as Element);
   }
 
-  public creatElement(createdVnode: Vnode): any {
-    return document.createElement(createdVnode.tagName.toLocaleUpperCase());
+  public creatElement(name: string): any {
+    return document.createElement(name.toLocaleUpperCase());
   }
 
-  public creatTextElement(createdVnode: Vnode): any {
-    return document.createTextNode(createdVnode.nodeValue);
+  public creatTextElement(value: string): any {
+    return document.createTextNode(value);
   }
 
-  public setNvAttribute(vnode: Vnode, attribute: TAttributes): void {
-    const blackListAttr = [ 'nv-text', 'nv-if', 'nv-repeat' ];
-    if (blackListAttr.indexOf(attribute.type) !== -1)  return;
+  public setNvAttribute(element: any, attribute: TAttributes): void {
+    const blackListAttr = ['nv-text', 'nv-if', 'nv-repeat', 'nv-model', 'nv-key'];
+    if (blackListAttr.indexOf(attribute.type) !== -1) return;
     switch (attribute.name) {
-      case 'nv-html':
-        vnode.nativeElement.innerHTML = typeof attribute.nvValue === 'undefined' ? '' : attribute.nvValue;
+      case 'nv-html': {
+        element.innerHTML = typeof attribute.nvValue === 'undefined' ? '' : attribute.nvValue;
         break;
-      case 'nv-model':
-        vnode.value = attribute.nvValue;
-        break;
-      case 'nv-key':
-        vnode.key = attribute.nvValue;
-        break;
-      case 'nv-class':
-        let className = vnode.nativeElement.className;
+      }
+      case 'nv-class': {
+        let className = element.className;
         className = className.replace(/\s$/, '');
         const space = className && String(attribute.nvValue) ? ' ' : '';
-        vnode.nativeElement.className = className + space + attribute.nvValue;
+        element.className = className + space + attribute.nvValue;
         break;
-      default:
+      }
+      default: {
         const attrName = attribute.name.replace('nv-', '');
-        vnode.nativeElement[attrName] = attribute.nvValue;
+        (element as Element).setAttribute(attrName, attribute.nvValue);
+      }
     }
-  }
-  
-  public setAttribute(vnode: Vnode, attribute: TAttributes): void {
-    (vnode.nativeElement as Element).setAttribute(attribute.name, attribute.value);
   }
 
-  public removeNvAttribute(vnode: Vnode, attribute: TAttributes): void {
-    const blackListAttr = [ 'nv-text', 'nv-if', 'nv-repeat' ];
-    if (blackListAttr.indexOf(attribute.type) !== -1)  return;
+  public setAttribute(element: any, attribute: TAttributes): void {
+    (element as Element).setAttribute(attribute.name, attribute.value);
+  }
+
+  public removeNvAttribute(element: any, attribute: TAttributes): void {
+    const blackListAttr = ['nv-text', 'nv-if', 'nv-repeat', 'nv-model', 'nv-key'];
+    if (blackListAttr.indexOf(attribute.type) !== -1) return;
     switch (attribute.name) {
-      case 'nv-html':
-        vnode.nativeElement.innerHTML = '';
+      case 'nv-html': {
+        element.innerHTML = '';
         break;
-      case 'nv-model':
-        vnode.value = null;
-        break;
-      case 'nv-key':
-        vnode.key = null;
-        break;
-      case 'nv-class':
-        let className = vnode.nativeElement.className;
+      }
+      case 'nv-class': {
+        let className = element.className;
         className = className.replace(/\s$/, '');
         const space = className && String(attribute.value) ? ' ' : '';
-        vnode.nativeElement.className = className + space + attribute.value;
+        element.className = className + space + attribute.value;
         break;
-      default:
+      }
+      default: {
         const attrName = attribute.name.replace('nv-', '');
-        (vnode.nativeElement as Element).removeAttribute(attrName);
+        (element as Element).removeAttribute(attrName);
+      }
     }
   }
-  
-  public removeAttribute(vnode: Vnode, attribute: TAttributes): void {
-    (vnode.nativeElement as Element).removeAttribute(attribute.name);
+
+  public removeAttribute(element: any, attribute: TAttributes): void {
+    (element as Element).removeAttribute(attribute.name);
   }
-  
-  public setNodeValue(vnode: Vnode, nodeValue: any): void {
-    vnode.nativeElement.nodeValue = nodeValue;
+
+  public setNodeValue(element: any, nodeValue: any): void {
+    (element as Element).nodeValue = nodeValue;
   }
-  
-  public setValue(vnode: Vnode, value: any): void {
-    vnode.nativeElement.value = value;
+
+  public setValue(element: any, value: any): void {
+    (element as HTMLInputElement).value = value;
   }
-  
-  public removeEventListener(vnode: Vnode, eventType: string, handler: any): void {
-    vnode.nativeElement.removeEventListener(eventType, handler);
+
+  public removeEventListener(element: any, eventType: string, handler: any): void {
+    (element as Element).removeEventListener(eventType, handler);
   }
-  
-  public addEventListener(vnode: Vnode, eventType: string, handler: any): void {
-    vnode.nativeElement.addEventListener(eventType, handler);
+
+  public addEventListener(element: any, eventType: string, handler: any): void {
+    (element as Element).addEventListener(eventType, handler);
   }
 }

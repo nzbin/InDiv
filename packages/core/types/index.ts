@@ -1,3 +1,3 @@
-export { ComponentList, IComponent } from './component';
-export { DirectiveList, IDirective } from './directive';
-export { INvModule, TInjectTokenProvider, TUseClassProvider, TUseValueProvider } from './nv-module';
+export * from './component';
+export * from './directive';
+export * from './nv-module';

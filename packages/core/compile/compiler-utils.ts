@@ -1,43 +1,7 @@
 import { IComponent, IDirective } from '../types';
 
 import { InDiv, ElementRef } from '../indiv';
-import { Utils } from '../utils';
 import { factoryCreator } from '../di';
-
-const utils = new Utils();
-
-/**
- * get props from value
- *
- * @export
- * @param {any[]} valueList
- * @param {*} value
- * @returns {void}
- */
-export function getPropsValue(valueList: any[], value: any): void {
-  let val = value;
-  valueList.forEach((v, index: number) => {
-    if (index === 0) return;
-    val = val[v];
-  });
-  return val;
-}
-
-/**
- * build Actions for Props in Component
- *
- * @export
- * @param {*} prop
- * @param {IComponent} vm
- * @returns {*}
- */
-export function buildProps(prop: any, vm: IComponent): any {
-  if (utils.isFunction(prop)) {
-    return prop.bind(vm);
-  } else {
-    return JSON.parse(JSON.stringify(prop));
-  }
-}
 
 /**
  * build scope for Components in Component

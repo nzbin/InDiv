@@ -1,8 +1,6 @@
 import { IComponent } from '../types';
-import { Utils } from '../utils';
+import { utils } from '../utils';
 import { WatcherDependences } from './watch';
-
-const utils = new Utils();
 
 export type SetState = (newState: any) => void;
 

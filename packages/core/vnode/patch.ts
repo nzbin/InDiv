@@ -9,8 +9,8 @@ import { Renderer } from './renderer';
  * @returns {*}
  */
 export function createNativeElement(createdVnode: Vnode, renderer: Renderer): any {
-  if (createdVnode.type === 'text') return renderer.creatTextElement(createdVnode);
-  if (createdVnode.type !== 'text') return renderer.creatElement(createdVnode);
+  if (createdVnode.type === 'text') return renderer.creatTextElement(createdVnode.nodeValue);
+  if (createdVnode.type !== 'text') return renderer.creatElement(createdVnode.tagName);
 }
 
 /**
@@ -21,8 +21,8 @@ export function createNativeElement(createdVnode: Vnode, renderer: Renderer): an
  * @param {Renderer} renderer
  */
 export function setAttributesToNativeElement(vnode: Vnode, attribute: TAttributes, renderer: Renderer): void {
-  if (attribute.type === 'nv-attribute' || attribute.type === 'prop' ||  attribute.type === 'directive') renderer.setNvAttribute(vnode, attribute);
-  if (attribute.type === 'attribute') renderer.setAttribute(vnode, attribute);
+  if (attribute.type === 'nv-attribute' || attribute.type === 'prop' ||  attribute.type === 'directive') renderer.setNvAttribute(vnode.nativeElement, attribute);
+  if (attribute.type === 'attribute') renderer.setAttribute(vnode.nativeElement, attribute);
 }
 
 /**
@@ -41,15 +41,15 @@ export function createNativeElementAndChildrens(createdVnode: Vnode, renderer: R
     createdVnode.attributes.forEach(attr => setAttributesToNativeElement(createdVnode, attr, renderer));
   }
   if (createdVnode.eventTypes && createdVnode.eventTypes.length > 0) {
-    createdVnode.eventTypes.forEach(eventType => renderer.addEventListener(createdVnode, eventType.type, eventType.handler));
+    createdVnode.eventTypes.forEach(eventType => renderer.addEventListener(createdVnode.nativeElement, eventType.type, eventType.handler));
   }
-  if (createdVnode.value) renderer.setValue(createdVnode, createdVnode.value);
+  if (createdVnode.value) renderer.setValue(createdVnode.nativeElement, createdVnode.value);
   if (createdVnode.childNodes && createdVnode.childNodes.length > 0) {
     createdVnode.childNodes.forEach(childNode => createNativeElementAndChildrens(childNode, renderer));
   }
 
-  if (!index) renderer.appendChild(createdVnode.parentVnode, createdVnode);
-  else renderer.insertBefore(createdVnode.parentVnode, createdVnode, index);
+  if (!index) renderer.appendChild(createdVnode.parentVnode.nativeElement, createdVnode.nativeElement);
+  else renderer.insertBefore(createdVnode.parentVnode.nativeElement, createdVnode.nativeElement, index);
 }
 
 /**
@@ -80,12 +80,13 @@ export function patchVnode(patchList: IPatchList[], renderer: Renderer): void {
   });
   patchList.forEach(patch => {
     switch (patch.type) {
-      case 0:
+      case 0: {
         const removeNodeIndex = patch.parentVnode.childNodes.indexOf(patch.changedVnode);
         patch.parentVnode.childNodes.splice(removeNodeIndex, 1);
-        renderer.removeChild(patch.parentVnode, patch.changedVnode);
+        renderer.removeChild(patch.parentVnode.nativeElement, patch.changedVnode.nativeElement);
         break;
-      case 1:
+      }
+      case 1: {
         if (patch.parentVnode.childNodes[patch.newIndex]) {
           patch.changedVnode.parentVnode = patch.parentVnode;
           createNativeElementAndChildrens(patch.changedVnode, renderer, patch.newIndex);
@@ -96,22 +97,24 @@ export function patchVnode(patchList: IPatchList[], renderer: Renderer): void {
           patch.parentVnode.childNodes.push(patch.changedVnode);
         }
         break;
-      case 2:
+      }
+      case 2: {
         if (patch.parentVnode.childNodes.indexOf(patch.changedVnode) !== patch.newIndex) {
-          if (renderer.isContainted(patch.parentVnode, patch.changedVnode)) {
-            renderer.removeChild(patch.parentVnode, patch.changedVnode);
+          if (renderer.isContainted(patch.parentVnode.nativeElement, patch.changedVnode.nativeElement)) {
+            renderer.removeChild(patch.parentVnode.nativeElement, patch.changedVnode.nativeElement);
             patch.parentVnode.childNodes.splice(patch.oldIndex, 1);
           }
           if (patch.parentVnode.childNodes[patch.newIndex]) {
-            renderer.insertBefore(patch.parentVnode, patch.changedVnode, patch.newIndex);
+            renderer.insertBefore(patch.parentVnode.nativeElement, patch.changedVnode.nativeElement, patch.newIndex);
             patch.parentVnode.childNodes.splice(patch.newIndex, 0, patch.changedVnode);
           } else {
-            renderer.appendChild(patch.parentVnode, patch.changedVnode);
+            renderer.appendChild(patch.parentVnode.nativeElement, patch.changedVnode.nativeElement);
             patch.parentVnode.childNodes.push(patch.changedVnode);
           }
         }
         break;
-      case 3:
+      }
+      case 3: {
         if (!patch.oldValue) {
           if (patch.originVnode.attributes) patch.originVnode.attributes.push({ ...(patch.changedValue as TAttributes) });
           if (!patch.originVnode.attributes) patch.originVnode.attributes = [{ ...(patch.changedValue as TAttributes) }];
@@ -120,37 +123,49 @@ export function patchVnode(patchList: IPatchList[], renderer: Renderer): void {
           if (patch.attributeType === 'attribute') (patch.oldValue as TAttributes).value = (patch.changedValue as TAttributes).value;
           if (patch.attributeType === 'nv-attribute' || patch.attributeType === 'directive' || patch.attributeType === 'prop') (patch.oldValue as TAttributes).nvValue = (patch.changedValue as TAttributes).nvValue;
         }
+        if ((patch.changedValue as TAttributes).name === 'nv-model') patch.originVnode.value = (patch.changedValue as TAttributes).nvValue;
+        if ((patch.changedValue as TAttributes).name === 'nv-key') patch.originVnode.key = (patch.changedValue as TAttributes).nvValue;
 
-        if (patch.attributeType === 'attribute') renderer.setAttribute(patch.originVnode, patch.changedValue as TAttributes);
-        if (patch.attributeType === 'nv-attribute' || patch.attributeType === 'directive' || patch.attributeType === 'prop') renderer.setNvAttribute(patch.originVnode, patch.changedValue as TAttributes);
+        if (patch.attributeType === 'attribute') renderer.setAttribute(patch.originVnode.nativeElement, patch.changedValue as TAttributes);
+        if (patch.attributeType === 'nv-attribute' || patch.attributeType === 'directive' || patch.attributeType === 'prop') renderer.setNvAttribute(patch.originVnode.nativeElement, patch.changedValue as TAttributes);
         break;
-      case 4:
+      }
+      case 4: {
         const removeAttrIndex = patch.originVnode.attributes.indexOf((patch.changedVnode as TAttributes));
+        if ((patch.changedValue as TAttributes).name === 'nv-model') patch.originVnode.value = null;
+        if ((patch.changedValue as TAttributes).name === 'nv-key') patch.originVnode.key = null;
         patch.originVnode.attributes.splice(removeAttrIndex, 1);
-        if (patch.attributeType === 'attribute') renderer.removeAttribute(patch.originVnode, patch.changedValue as TAttributes);
-        if (patch.attributeType === 'nv-attribute' || patch.attributeType === 'directive' || patch.attributeType === 'prop') renderer.removeNvAttribute(patch.originVnode, patch.changedValue as TAttributes);
+
+        if (patch.attributeType === 'attribute') renderer.removeAttribute(patch.originVnode.nativeElement, patch.changedValue as TAttributes);
+        if (patch.attributeType === 'nv-attribute' || patch.attributeType === 'directive' || patch.attributeType === 'prop') renderer.removeNvAttribute(patch.originVnode.nativeElement, patch.changedValue as TAttributes);
         break;
-      case 5:
+      }
+      case 5: {
         patch.originVnode.nodeValue = (patch.changedValue as string);
-        renderer.setNodeValue(patch.originVnode, patch.changedValue);
+        renderer.setNodeValue(patch.originVnode.nativeElement, patch.changedValue);
         break;
-      case 6:
+      }
+      case 6: {
         patch.originVnode.value = (patch.changedValue as string | number);
-        renderer.setValue(patch.originVnode, patch.changedValue);
+        renderer.setValue(patch.originVnode.nativeElement, patch.changedValue);
         break;
-      case 7:
+      }
+      case 7: {
         patch.originVnode.repeatData = patch.changedValue;
         break;
-      case 8:
+      }
+      case 8: {
         const removeEventTypeIndex = patch.originVnode.eventTypes.indexOf((patch.changedValue as TEventType));
         patch.originVnode.eventTypes.splice(removeEventTypeIndex, 1);
-        renderer.removeEventListener(patch.originVnode, (patch.changedValue as { type: string; handler: Function; }).type, (patch.changedValue as TEventType).handler);
+        renderer.removeEventListener(patch.originVnode.nativeElement, (patch.changedValue as { type: string; handler: Function; }).type, (patch.changedValue as TEventType).handler);
         break;
-      case 9:
+      }
+      case 9: {
         if (!patch.originVnode.eventTypes) patch.originVnode.eventTypes = [{ ...(patch.changedValue as TEventType) }];
         if (patch.originVnode.eventTypes) patch.originVnode.eventTypes.push({ ...(patch.changedValue as TEventType) });
-        renderer.addEventListener(patch.originVnode, (patch.changedValue as { type: string; handler: Function; }).type, (patch.changedValue as TEventType).handler);
+        renderer.addEventListener(patch.originVnode.nativeElement, (patch.changedValue as { type: string; handler: Function; }).type, (patch.changedValue as TEventType).handler);
         break;
+      }
     }
   });
 }

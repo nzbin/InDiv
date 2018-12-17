@@ -1,9 +1,7 @@
-import { Utils } from '../utils';
+import { utils } from '../utils';
 
 export type TFnWatcher = (oldData?: any) => void;
 export type TFnRender = () => any;
-
-const utils = new Utils();
 
 /**
  * Recursive watch data by Object.defineProperty

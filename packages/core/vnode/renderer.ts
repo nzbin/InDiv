@@ -12,18 +12,18 @@ import { ParseOptions } from './parse';
  */
 export abstract class Renderer {
   public abstract nativeElementToVnode(nativeElement: any, parseVnodeOptions?: ParseOptions): Vnode[];
-  public abstract removeChild(parentVnode: Vnode, childVnode: Vnode): void;
-  public abstract appendChild(parentVnode: Vnode, childVnode: Vnode): void;
-  public abstract insertBefore(parentVnode: Vnode, childVnode: Vnode, index: number): void;
-  public abstract isContainted(parentVnode: Vnode, childVnode: Vnode): boolean;
-  public abstract creatElement(createdVnode: Vnode): any;
-  public abstract creatTextElement(createdVnode: Vnode): any;
-  public abstract setAttribute(vnode: Vnode, attribute: TAttributes): void;
-  public abstract setNvAttribute(vnode: Vnode, attribute: TAttributes): void;
-  public abstract removeAttribute(vnode: Vnode, attribute: TAttributes): void;
-  public abstract removeNvAttribute(vnode: Vnode, attribute: TAttributes): void;
-  public abstract setNodeValue(vnode: Vnode, nodeValue: any): void;
-  public abstract setValue(vnode: Vnode, value: any): void;
-  public abstract removeEventListener(vnode: Vnode, eventType: string, handler: any): void;
-  public abstract addEventListener(vnode: Vnode, eventType: string, handler: any): void;
+  public abstract removeChild(parent: any, child: any): void;
+  public abstract appendChild(parent: any, child: any): void;
+  public abstract insertBefore(parent: any, child: any, index: number): void;
+  public abstract isContainted(parent: any, child: any): boolean;
+  public abstract creatElement(name: string): any;
+  public abstract creatTextElement(value: string): any;
+  public abstract setAttribute(element: any, attribute: TAttributes): void;
+  public abstract setNvAttribute(element: any, attribute: TAttributes): void;
+  public abstract removeAttribute(element: any, attribute: TAttributes): void;
+  public abstract removeNvAttribute(element: any, attribute: TAttributes): void;
+  public abstract setNodeValue(element: any, nodeValue: any): void;
+  public abstract setValue(element: any, value: any): void;
+  public abstract removeEventListener(element: any, eventType: string, handler: any): void;
+  public abstract addEventListener(element: any, eventType: string, handler: any): void;
 }

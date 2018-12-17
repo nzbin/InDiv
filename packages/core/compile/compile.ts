@@ -53,9 +53,8 @@ export class Compile {
     const patchList: IPatchList[] = [];
     this.fragment.forEach(child => child.parentVnode = { nativeElement: this.mountedElement });
     diffVnode({ childNodes: this.saveVnode, nativeElement: this.mountedElement, parentVnode: null }, { childNodes: this.fragment, nativeElement: this.mountedElement, parentVnode: null }, patchList);
-    console.log(33333333, this.saveVnode, this.fragment);
     patchVnode(patchList, this.componentInstance.$indivInstance.getRenderer());
-    console.log(388777777, patchList);
+    console.log(33333333, this.saveVnode, this.fragment, patchList);
     return this.saveVnode;
   }
 

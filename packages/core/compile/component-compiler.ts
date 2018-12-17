@@ -1,27 +1,23 @@
-import { IComponent, ComponentList } from '../types';
+import { IComponent, ComponentList, TComAndDir } from '../types';
 
-import { Utils } from '../utils';
+import { utils } from '../utils';
 import { Compile } from './compile';
-import { CompileUtilForRepeat, CompileUtil } from './compile-utils';
-import { getPropsValue, buildProps, buildComponentScope } from './compiler-utils';
+import { buildComponentScope } from './compiler-utils';
+import { Vnode } from '../vnode';
+import { directiveCompiler } from './directive-compiler';
 
-// import { directiveCompiler } from './directive-compiler';
-
-const utils = new Utils();
-
-const compileUtil = new CompileUtil();
 /**
  * mountComponent for Components in Component
  *
  * @export
- * @param {Element} dom
  * @param {IComponent} componentInstance
+ * @param {TComAndDir} componentAndDirectives
  */
-export function mountComponent(dom: Element, componentInstance: IComponent): void {
-  const cacheComponentList: ComponentList<IComponent>[] = [ ...componentInstance.componentList ];
-  componentsConstructor(dom, componentInstance);
+export function mountComponent(componentInstance: IComponent, componentAndDirectives: TComAndDir): void {
+  const cacheComponentList: ComponentList<IComponent>[] = [...componentInstance.componentList];
+  componentsConstructor(componentInstance, componentAndDirectives);
   const componentListLength = componentInstance.componentList.length;
-  for (let i = 0; i < componentListLength; i ++) {
+  for (let i = 0; i < componentListLength; i++) {
     const component = componentInstance.componentList[i];
     // find Component from cache
     const cacheComponentIndex = cacheComponentList.findIndex(cache => cache.dom === component.dom);
@@ -37,8 +33,6 @@ export function mountComponent(dom: Element, componentInstance: IComponent): voi
         if (component.scope.nvReceiveProps) component.scope.nvReceiveProps(component.props);
         component.scope.props = component.props;
       }
-      // change hasRender to true
-      component.hasRender = true;
     } else {
       component.scope = buildComponentScope(component.constructorFunction, component.props, component.dom as Element, componentInstance);
     }
@@ -46,12 +40,12 @@ export function mountComponent(dom: Element, componentInstance: IComponent): voi
     component.scope.$indivInstance = componentInstance.$indivInstance;
 
     if (component.scope.nvOnInit && !cacheComponent) component.scope.nvOnInit();
-    if (component.scope.watchData) component.scope.watchData();
+    if (component.scope.watchData && !cacheComponent) component.scope.watchData();
     if (component.scope.nvBeforeMount) component.scope.nvBeforeMount();
   }
   // the rest should use nvOnDestory
   const cacheComponentListLength = cacheComponentList.length;
-  for (let i = 0; i < cacheComponentListLength; i ++) {
+  for (let i = 0; i < cacheComponentListLength; i++) {
     const cache = cacheComponentList[i];
     if (cache.scope.nvOnDestory) cache.scope.nvOnDestory();
   }
@@ -59,7 +53,6 @@ export function mountComponent(dom: Element, componentInstance: IComponent): voi
   // after mount
   for (let i = 0; i < componentListLength; i++) {
     const component = componentInstance.componentList[i];
-    if (!component.hasRender) component.hasRender = true;
     component.scope.render();
     if (component.scope.nvAfterMount) component.scope.nvAfterMount();
   }
@@ -70,122 +63,54 @@ export function mountComponent(dom: Element, componentInstance: IComponent): voi
  * construct Components in Component
  *
  * @export
- * @param {Element} dom
  * @param {IComponent} componentInstance
+ * @param {TComAndDir} componentAndDirectives
  */
-export function componentsConstructor(dom: Element, componentInstance: IComponent): void {
+export function componentsConstructor(componentInstance: IComponent, componentAndDirectives: TComAndDir): void {
   componentInstance.componentList = [];
-  const routerRenderNode = dom.querySelectorAll(componentInstance.$indivInstance.getRouteDOMKey())[0];
 
-  componentInstance.declarationMap.forEach((declaration, name) => {
-    if ((declaration as any).nvType !== 'nvComponent') return;
-
-    const tags = dom.getElementsByTagName(name);
-    Array.from(tags).forEach(node => {
-      // protect component in <router-render>
-      if (routerRenderNode && routerRenderNode.contains(node)) return;
-      // protect Component in Component
-      if (!node.isComponent) return;
-
-      const nodeAttrs = node.attributes;
-      const props: any = {};
-
-      if (nodeAttrs) {
-        const attrList = Array.from(nodeAttrs);
-        const _propsKeys: any = {};
-
-        attrList.forEach((attr: any) => {
-          if (/^\_prop\-(.+)/.test(attr.name)) {
-            _propsKeys[attr.name.replace('_prop-', '')] = JSON.parse(attr.value);
-            node.removeAttribute(attr.name);
-          }
-        });
-
-        attrList.forEach((attr: any) => {
-          let attrName: string = attr.name;
-
-          if ((/^\_prop\-(.+)/.test(attrName))) return;
-
-          const attrNameSplit = attrName.split('-');
-          if (attrNameSplit.length > 1) {
-            attrNameSplit.forEach((name, index) => {
-              if (index === 0) attrName = name;
-              if (index !== 0) attrName += name.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase());
-            });
-          }
-
-          const prop = /^\{(.+)\}$/.exec(attr.value);
-          if (prop) {
-            const propValue = prop[1];
-            const valueList = propValue.split('.');
-            const key = valueList[0];
-            let _prop = null;
-            if (/^.*\(.*\)$/.test(propValue)) {
-              const utilVm = new CompileUtilForRepeat();
-              const fn = utilVm._getVMFunction(componentInstance, propValue);
-              const args = propValue.match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
-              const argsList: any[] = [];
-              args.forEach(arg => {
-                if (arg === '') return false;
-                if (arg === '$element') return argsList.push(node);
-                if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
-                if (arg === 'null') return argsList.push(null);
-                if (arg === 'undefined') return argsList.push(undefined);
-                if (utilVm.isFromVM(componentInstance, arg)) return argsList.push(utilVm._getVMVal(componentInstance, arg));
-                if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
-                if (/^\".*\"$/.test(arg)) return argsList.push(arg.match(/^\"(.*)\"$/)[1]);
-                if (!/^\'.*\'$/.test(arg) && !/^\".*\"$/.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
-                if (node.repeatData) {
-                  // $index in this
-                  Object.keys(node.repeatData).forEach(data => {
-                    if (arg.indexOf(data) === 0 || arg.indexOf(`${data}.`) === 0) return argsList.push(utilVm._getValueByValue(node.repeatData[data], arg, data));
-                  });
-                }
-              });
-              const value = fn.apply(componentInstance, argsList);
-              props[attrName] = value;
-              return;
-            }
-            if (compileUtil.isFromVM(componentInstance, propValue)) {
-              _prop = compileUtil._getVMVal(componentInstance, propValue);
-              props[attrName] = buildProps(_prop, componentInstance);
-              return;
-            }
-            if (_propsKeys.hasOwnProperty(key) || key in _propsKeys) {
-              _prop = getPropsValue(valueList, _propsKeys[key]);
-              props[attrName] = buildProps(_prop, componentInstance);
-              return;
-            }
-            if (node.repeatData && node.repeatData.hasOwnProperty(key)) {
-              _prop = compileUtil._getValueByValue(node.repeatData[key], propValue, key);
-              props[attrName] = buildProps(_prop, componentInstance);
-              return;
-            }
-            if (/^\'.*\'$/.test(propValue)) return props[attrName] = propValue.match(/^\'(.*)\'$/)[1];
-            if (/^\".*\"$/.test(propValue)) return props[attrName] = propValue.match(/^\"(.*)\"$/)[1];
-            if (!/^\'.*\'$/.test(propValue) && !/^\".*\"$/.test(propValue) && /^[0-9]*$/.test(propValue)) return props[attrName] = Number(propValue);
-            if (propValue === 'true' || propValue === 'false') return props[attrName] = (propValue === 'true');
-            if (propValue === 'null') return props[attrName] = null;
-            if (propValue === 'undefined') return props[attrName] = undefined;
-          }
-
-          // can't remove indiv_repeat_key
-          if (attr.name !== 'indiv_repeat_key')  node.removeAttribute(attrName);
-        });
-      }
-
-      componentInstance.componentList.push({
-        dom: node,
-        props,
-        scope: null,
-        constructorFunction: declaration,
-        // init hasRender false
-        hasRender: false,
-      });
-      // after construct instance remove isComponent
-      node.isComponent = false;
+  componentAndDirectives.components.forEach(component => {
+    const declaration = componentInstance.declarationMap.get(component.name);
+    componentInstance.componentList.push({
+      dom: component.nativeElement,
+      props: component.props,
+      scope: null,
+      constructorFunction: declaration,
     });
   });
+}
+
+/**
+ * build list for build @Component and @Directive
+ *
+ * @export
+ * @param {Vnode} vnode
+ * @param {TComAndDir} componentAndDirectives
+ */
+export function buildComponentsAndDirectives(vnode: Vnode, componentAndDirectives: TComAndDir): void {
+  if (vnode.type === 'text') return;
+  const componentProps: any = {};
+
+  if (vnode.attributes && vnode.attributes.length > 0) {
+    vnode.attributes.forEach(attr => {
+      if (attr.type === 'directive') componentAndDirectives.directives.push({
+        nativeElement: vnode.nativeElement,
+        props: attr.nvValue,
+        name: attr.name,
+      });
+      if (attr.type === 'prop') componentProps[attr.name] = attr.nvValue;
+    });
+  }
+
+  if (vnode.type === 'component') {
+    componentAndDirectives.components.push({
+      nativeElement: vnode.nativeElement,
+      props: componentProps,
+      name: vnode.tagName,
+    });
+  }
+
+  if (vnode.childNodes && vnode.childNodes.length > 0) vnode.childNodes.forEach(child => buildComponentsAndDirectives(child, componentAndDirectives));
 }
 
 /**
@@ -198,17 +123,22 @@ export function componentsConstructor(dom: Element, componentInstance: IComponen
  */
 export async function componentCompiler(nativeElement: any, componentInstance: IComponent): Promise<IComponent> {
   return Promise.resolve()
-    .then(async() => {
+    .then(async () => {
       // compile has been added into Component instance by dirty method
       if (!(componentInstance as any).compileInstance) ((componentInstance as any).compileInstance as Compile) = new Compile(nativeElement, componentInstance);
-      const saveVnode = ((componentInstance as any).compileInstance as Compile).startCompile();
-      // todo
-      console.log(999999, saveVnode);
+      const saveVnodes = ((componentInstance as any).compileInstance as Compile).startCompile();
+
+      const componentAndDirectives: TComAndDir = {
+        components: [],
+        directives: [],
+      };
+      saveVnodes.forEach(vnode => buildComponentsAndDirectives(vnode, componentAndDirectives));
+
       // first mount directive
-      // await directiveCompiler(nativeElement, componentInstance);
+      await directiveCompiler(componentInstance, componentAndDirectives);
 
       // // then mount component
-      // mountComponent(nativeElement, componentInstance);
+      mountComponent(componentInstance, componentAndDirectives);
 
       return componentInstance;
     })

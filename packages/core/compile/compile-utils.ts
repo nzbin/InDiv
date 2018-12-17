@@ -1,30 +1,8 @@
 import { IComponent } from "../types";
 
 import { Vnode, TAttributes } from "../vnode";
-import { Utils } from '../utils';
+import { utils } from '../utils';
 
-const utils = new Utils();
-
-// todo delete
-declare global {
-  interface Element {
-    value?: any;
-    eventTypes?: string;
-    repeatData?: {
-      [key: string]: any;
-    };
-    indiv_repeat_key?: any;
-    isComponent?: boolean;
-  }
-  interface Node {
-    eventTypes?: string;
-    repeatData?: {
-      [key: string]: any;
-    };
-    indiv_repeat_key?: any;
-    isComponent?: boolean;
-  }
-}
 /**
  * compile util for nv-repeat DOM
  *
@@ -241,7 +219,7 @@ export class CompileUtilForRepeat {
 
     const updaterFn: any = this[`${dir}Updater`];
     switch (dir) {
-      case 'model':
+      case 'model': {
         let watchData;
         if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
           watchData = watchValue;
@@ -250,23 +228,28 @@ export class CompileUtilForRepeat {
         }
         if (updaterFn) (updaterFn as Function).call(this, vnode, value, exp, key, index, watchData, vm);
         break;
-      case 'text':
+      }
+      case 'text': {
         if (updaterFn) (updaterFn as Function).call(this, vnode, value);
         break;
-      case 'if':
+      }
+      case 'if': {
         if (updaterFn) (updaterFn as Function).call(this, vnode, value, vm);
         break;
-      case 'class':
+      }
+      case 'class': {
         if (updaterFn) (updaterFn as Function).call(this, vnode, value);
         break;
-      case 'key':
+      }
+      case 'key': {
         if (updaterFn) (updaterFn as Function).call(this, vnode, value);
         break;
-      case 'value':
+      }
+      case 'value': {
         if (updaterFn) (updaterFn as Function).call(this, vnode, value);
         break;
-      default:
-        this.commonUpdater.call(this, vnode, value, dir);
+      }
+      default: this.commonUpdater.call(this, vnode, value, dir);
     }
   }
 
@@ -583,7 +566,7 @@ export class CompileUtilForRepeat {
    */
   public buildProps(prop: any, vm: IComponent): any {
     if (utils.isFunction(prop)) return prop.bind(vm);
-    else return prop;
+    else return utils.deepClone(prop);
   }
 
   /**
@@ -781,26 +764,31 @@ export class CompileUtil {
 
       // compile unrepeatNode's attributes
       switch (dir) {
-        case 'model':
+        case 'model': {
           if (updaterFn) (updaterFn as Function).call(this, vnode, value, exp, vm);
           break;
-        case 'text':
+        }
+        case 'text': {
           if (updaterFn) (updaterFn as Function).call(this, vnode, value);
           break;
-        case 'if':
+        }
+        case 'if': {
           if (updaterFn) (updaterFn as Function).call(this, vnode, value, vm);
           break;
-        case 'class':
+        }
+        case 'class': {
           if (updaterFn) (updaterFn as Function).call(this, vnode, value);
           break;
-        case 'key':
+        }
+        case 'key': {
           if (updaterFn) (updaterFn as Function).call(this, vnode, value);
           break;
-        case 'value':
+        }
+        case 'value': {
           if (updaterFn) (updaterFn as Function).call(this, vnode, value);
           break;
-        default:
-          this.commonUpdater.call(this, vnode, value, dir);
+        }
+        default: this.commonUpdater.call(this, vnode, value, dir);
       }
     }
   }
@@ -1222,7 +1210,7 @@ export class CompileUtil {
    */
   public buildProps(prop: any, vm: IComponent): any {
     if (utils.isFunction(prop)) return prop.bind(vm);
-    else return prop;
+    else return utils.deepClone(prop);
   }
 
   /**

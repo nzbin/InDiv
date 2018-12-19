@@ -1,8 +1,6 @@
-import { Injectable, Utils } from '@indiv/core';
+import { Injectable, utils } from '@indiv/core';
 
 import { nvRouteStatus } from './location-status';
-
-const utils = new Utils();
 
 @Injectable()
 export class NvLocation {

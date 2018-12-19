@@ -1,8 +1,6 @@
-import { ElementRef, Utils, Directive, OnInit, ReceiveProps, OnDestory } from '@indiv/core';
+import { ElementRef, utils, Directive, OnInit, ReceiveProps, OnDestory } from '@indiv/core';
 import { NvLocation } from './location';
 import { RouteChange } from './router-module';
-
-const utils = new Utils();
 
 /**
  * @Directive can be used as `router-to=""`

@@ -2,7 +2,7 @@ import { Injector } from '../di';
 import { InDiv } from '../indiv';
 
 export type DirectiveList<C> = {
-    dom: Node;
+    nativeElement: any;
     props: any;
     scope: C;
     constructorFunction: Function;
@@ -15,6 +15,7 @@ export interface IDirective {
     $indivInstance?: InDiv | any;
 
     declarationMap?: Map<string, Function>;
+    inputPropsMap?: Map<string, string>;
     directiveList?: DirectiveList<IDirective>[];
     otherInjector?: Injector;
     privateInjector?: Injector;

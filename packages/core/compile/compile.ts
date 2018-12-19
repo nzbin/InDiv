@@ -47,13 +47,13 @@ export class Compile {
     if (!this.mountedElement) throw new Error('class Compile need el in constructor');
     this.fragment = parseTemplateToVnode('');
 
-    if (!this.saveVnode) this.saveVnode = this.componentInstance.$indivInstance.getRenderer().nativeElementToVnode(this.mountedElement, this.parseVnodeOptions);
+    if (!this.saveVnode) this.saveVnode = this.componentInstance.$indivInstance.getRenderer.nativeElementToVnode(this.mountedElement, this.parseVnodeOptions);
     const templateVnode = parseTemplateToVnode(this.componentInstance.template, this.parseVnodeOptions);
     this.compileVnode(templateVnode);
     const patchList: IPatchList[] = [];
     this.fragment.forEach(child => child.parentVnode = { nativeElement: this.mountedElement });
     diffVnode({ childNodes: this.saveVnode, nativeElement: this.mountedElement, parentVnode: null }, { childNodes: this.fragment, nativeElement: this.mountedElement, parentVnode: null }, patchList);
-    patchVnode(patchList, this.componentInstance.$indivInstance.getRenderer());
+    patchVnode(patchList, this.componentInstance.$indivInstance.getRenderer);
     console.log(33333333, this.saveVnode, this.fragment, patchList);
     return this.saveVnode;
   }

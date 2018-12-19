@@ -1,10 +1,8 @@
-import { IComponent, IDirective, INvModule, ComponentList, DirectiveList, Utils, factoryModule, NvModule, InDiv } from '@indiv/core';
+import { IComponent, IDirective, INvModule, ComponentList, DirectiveList, factoryModule, NvModule, InDiv, utils } from '@indiv/core';
 
 import { NvLocation } from './location';
 import { RouterTo, RouterFrom, RouterActive } from './directives';
 import { nvRouteStatus } from './location-status';
-
-const utils = new Utils();
 
 export interface RouteChange {
   nvRouteChange(lastRoute?: string, newRoute?: string): void;
@@ -13,8 +11,8 @@ export interface RouteChange {
 export type TChildModule = () => Promise<any>;
 
 export type TLoadChild = {
-    name: string;
-    child: TChildModule;
+  name: string;
+  child: TChildModule;
 };
 
 export type TRouter = {
@@ -35,7 +33,7 @@ export type TRouter = {
     {
       useClass: NvLocation,
       provide: NvLocation,
-    }, 
+    },
   ],
   exports: [
     RouterTo,
@@ -55,6 +53,16 @@ export class RouteModule {
   private renderRouteList: string[] = [];
   private loadModuleMap: Map<string, INvModule> = new Map();
   private canWatch: boolean = false;
+  // private pathName: string;
+
+  // public get locationPathname(): string {
+  //   if (utils.isBrowser()) return location.pathname;
+  //   else return this.pathName;
+  // }
+
+  // public set locationPathname(pathName: string) {
+  //   this.pathName = pathName;
+  // }
 
   constructor(
     private indivInstance: InDiv,
@@ -69,9 +77,9 @@ export class RouteModule {
     if (!nvRouteStatus.nvRootPath) nvRouteStatus.nvRootPath = '/';
     this.indivInstance.setRouteDOMKey('router-render');
 
-    if (!utils.isBrowser()) return;
-
     this.refresh = this.refresh.bind(this);
+
+    if (!utils.isBrowser()) return;
 
     window.addEventListener('load', this.refresh, false);
     window.addEventListener('popstate', () => {
@@ -130,7 +138,7 @@ export class RouteModule {
     const rootPath = nvRouteStatus.nvRootPath === '/' ? '' : nvRouteStatus.nvRootPath;
     history.replaceState(null, null, `${rootPath}${redirectTo}`);
     nvRouteStatus.nvRouteObject = {
-      path:  redirectTo || '/',
+      path: redirectTo || '/',
       query: {},
       data: null,
     };
@@ -146,8 +154,11 @@ export class RouteModule {
   private refresh(): void {
     if (!nvRouteStatus.nvRouteObject || !this.watcher) {
       let path;
+
+      // if (utils.isBrowser())
       if (nvRouteStatus.nvRootPath === '/') path = location.pathname || '/';
       else path = location.pathname.replace(nvRouteStatus.nvRootPath, '') === '' ? '/' : location.pathname.replace(nvRouteStatus.nvRootPath, '');
+
       nvRouteStatus.nvRouteObject = {
         path,
         query: utils.buildObjectFromLocationSearch(),
@@ -340,7 +351,7 @@ export class RouteModule {
         this.routesList.push(rootRoute);
 
         // push root component in InDiv instance
-        this.hasRenderComponentList.push(this.indivInstance.getBootstrapComponent());
+        this.hasRenderComponentList.push(this.indivInstance.getBootstrapComponent);
 
         if (index === this.renderRouteList.length - 1) this.routerChangeEvent(index);
 
@@ -527,7 +538,7 @@ export class RouteModule {
    */
   private findComponentFromModule(selector: string, currentUrlPath: string): { component: Function, loadModule: INvModule } {
     if (this.loadModuleMap.size === 0) return {
-      component: this.indivInstance.getDeclarations().find((component: any) => component.selector === selector && component.nvType === 'nvComponent'),
+      component: this.indivInstance.getDeclarations.find((component: any) => component.selector === selector && component.nvType === 'nvComponent'),
       loadModule: null,
     };
 
@@ -540,7 +551,7 @@ export class RouteModule {
       }
     });
     if (!component) {
-      component = this.indivInstance.getDeclarations().find((component: any) => component.selector === selector && component.nvType === 'nvComponent');
+      component = this.indivInstance.getDeclarations.find((component: any) => component.selector === selector && component.nvType === 'nvComponent');
       loadModule = null;
     }
 

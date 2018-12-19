@@ -17,7 +17,7 @@ export type TComAndDir = {
 };
 
 export type ComponentList<C> = {
-  dom: Node;
+  nativeElement: any;
   props: any;
   scope: C;
   constructorFunction: Function;
@@ -33,6 +33,7 @@ export interface IComponent {
 
   template?: string;
   declarationMap?: Map<string, Function>;
+  inputPropsMap?: Map<string, string>;
   componentList?: ComponentList<IComponent>[];
   directiveList?: DirectiveList<IDirective>[];
   otherInjector?: Injector;

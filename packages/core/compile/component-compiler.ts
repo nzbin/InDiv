@@ -20,7 +20,7 @@ export function mountComponent(componentInstance: IComponent, componentAndDirect
   for (let i = 0; i < componentListLength; i++) {
     const component = componentInstance.componentList[i];
     // find Component from cache
-    const cacheComponentIndex = cacheComponentList.findIndex(cache => cache.dom === component.dom);
+    const cacheComponentIndex = cacheComponentList.findIndex(cache => cache.nativeElement === component.nativeElement);
     const cacheComponent = cacheComponentList[cacheComponentIndex];
 
     // clear cache and the rest need to be destoried
@@ -34,7 +34,7 @@ export function mountComponent(componentInstance: IComponent, componentAndDirect
         component.scope.props = component.props;
       }
     } else {
-      component.scope = buildComponentScope(component.constructorFunction, component.props, component.dom as Element, componentInstance);
+      component.scope = buildComponentScope(component.constructorFunction, component.props, component.nativeElement as Element, componentInstance);
     }
 
     component.scope.$indivInstance = componentInstance.$indivInstance;
@@ -72,7 +72,7 @@ export function componentsConstructor(componentInstance: IComponent, componentAn
   componentAndDirectives.components.forEach(component => {
     const declaration = componentInstance.declarationMap.get(component.name);
     componentInstance.componentList.push({
-      dom: component.nativeElement,
+      nativeElement: component.nativeElement,
       props: component.props,
       scope: null,
       constructorFunction: declaration,

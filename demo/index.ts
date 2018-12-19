@@ -274,7 +274,7 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
   }
 
   public nvOnInit() {
-    this.man = this.props.man;
+    this.man = this.props.manName;
   }
 
   public click() {
@@ -297,7 +297,7 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
     <div>
       <input nv-model="test.a" nv-on:click="show(test)" />
       <p test-directive="{'123'}" nv-id="232" nv-if="countState(a)" nv-on:click="changeInput()">{{a}}</p>
-      <test-component nv-repeat="let man in testArray" nv-key="man.name" man="{countState(man.name)}" nv-if="a"></test-component>
+      <test-component nv-repeat="let man in testArray" nv-key="man.name" manName="{countState(man.name)}" nv-if="a"></test-component>
       <p nv-on:click="go()">container: {{countState(color)}}</p>
       <input nv-model="a" />
       <div nv-repeat="let man in testArray" nv-key="man.name">
@@ -305,7 +305,7 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
           <div><p>性别：{{countState(man.sex, $index)}}</p></div>
           <a nv-href="countState(man.sex, $index)">a {{man.sex}}</a>
           <img nv-src="man.sex" nv-alt="man.sex" />
-          <test-component nv-key="man.name" man="{countState2(man.name, bd)}"  nv-repeat="let bd in testArray2"></test-component>
+          <test-component nv-key="man.name" manName="{countState2(man.name, bd)}"  nv-repeat="let bd in testArray2"></test-component>
           <p nv-key="man.name" nv-class="man.name" nv-id="bd" nv-repeat="let bd in testArray2">{{bd}}</p>
           <input nv-on:click="show(_b, $index)" nv-repeat="let _b in testArray2" nv-model="_b"  nv-class="_b" />
           <input nv-model="test.a"/>

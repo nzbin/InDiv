@@ -20,18 +20,18 @@
 
 5. `setComponentCompiler(compiler: (renderNode: Element | any, componentInstace: IComponent) => Promise<IComponent>): void` 重置 InDiv 组件编译方法，该方法接收1个参数，为即将在组件中使用的编译方法。该方法可用于 **跨平台渲染** 修改编译方法。
 
-6. `getComponentCompiler(): (renderNode: Element | any, componentInstace: IComponent) => Promise<IComponent>` 返回 InDiv 组件编译的方法。
+6. `getComponentCompiler: (renderNode: Element | any, componentInstace: IComponent) => Promise<IComponent>` 返回 InDiv 组件编译的方法。
 
-7. `getBootstrapComponent(): IComponent` 获取引导根组件是获得的根组件的`bootstrap`组件实例。
+7. `getBootstrapComponent: IComponent` 获取引导根组件是获得的根组件的`bootstrap`组件实例。
 
 8. `setRouteDOMKey(routeDOMKey: string): void` 设置 InDiv 的路由出口 tag name。
 
-9. `getRouteDOMKey(): string` 获取 InDiv 的路由出口 tag name。
+9. `getRouteDOMKey: string` 获取 InDiv 的路由出口 tag name。
 
-10. `getRootModule(): INvModule` 获取根模块
+10. `getRootModule: INvModule` 获取根模块
 
-11. `getDeclarations(): Function[]` 获取根模块上包括`imports`在内所有的`declarations`的组件和指令。
+11. `getDeclarations: Function[]` 获取根模块上包括`imports`在内所有的`declarations`的组件和指令。
 
 12. `setRootElement(node: any): void` 设置整个应用挂载的节点，不一定是Element类型，可以是任意类型仅仅为编译器使用，常用用于跨平台渲染
 
-13. `getRootElement(): any` 获取整个应用挂载的节点，不一定是Element类型，可以是任意类型仅仅为编译器使用，常用用于跨平台渲染
+13. `getRootElement: any` 获取整个应用挂载的节点，不一定是Element类型，可以是任意类型仅仅为编译器使用，常用用于跨平台渲染

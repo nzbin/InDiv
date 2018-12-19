@@ -13,7 +13,7 @@ export class ElementRef<R = HTMLElement> {
 }
 
 interface Type<T = any> extends Function {
-  new (...args: any[]): T;
+  new(...args: any[]): T;
 }
 
 export interface IPlugin {
@@ -54,27 +54,31 @@ export class InDiv {
    * @param {Renderer} renderer
    * @memberof InDiv
    */
-  public setRenderer(renderer: Renderer): void {
-    this.renderer = renderer;
+  public setRenderer(NerRenderer: any): void {
+    const _renderer = new NerRenderer();
+    if (_renderer instanceof Renderer) this.renderer = _renderer;
+    else throw new Error('Custom Renderer must extend class Renderer!');
   }
 
   /**
    * get component Renderer
    *
-   * @returns {Renderer}
+   * @readonly
+   * @type {Renderer}
    * @memberof InDiv
    */
-  public getRenderer(): Renderer {
+  public get getRenderer(): Renderer {
     return this.renderer;
   }
 
   /**
    * return component instance of root module's bootstrap
    *
-   * @returns {IComponent}
+   * @readonly
+   * @type {IComponent}
    * @memberof InDiv
    */
-  public getBootstrapComponent(): IComponent {
+  public get getBootstrapComponent(): IComponent {
     return this.bootstrapComponent;
   }
 
@@ -87,34 +91,37 @@ export class InDiv {
   public setRouteDOMKey(routeDOMKey: string): void {
     this.routeDOMKey = routeDOMKey;
   }
-  
+
   /**
    * get route's DOM tag name
    *
-   * @returns {string}
+   * @readonly
+   * @type {string}
    * @memberof InDiv
    */
-  public getRouteDOMKey(): string {
+  public get getRouteDOMKey(): string {
     return this.routeDOMKey;
   }
 
   /**
    * get root module in InDiv
    *
-   * @returns {INvModule}
+   * @readonly
+   * @type {INvModule}
    * @memberof InDiv
    */
-  public getRootModule(): INvModule {
+  public get getRootModule(): INvModule {
     return this.rootModule;
   }
 
   /**
    * get root module in root module
    *
-   * @returns {Function[]}
+   * @readonly
+   * @type {Function[]}
    * @memberof InDiv
    */
-  public getDeclarations(): Function[] {
+  public get getDeclarations(): Function[] {
     return this.declarations;
   }
 
@@ -135,10 +142,11 @@ export class InDiv {
    * 
    * this method can be used in cross platform architecture
    *
-   * @returns {*}
+   * @readonly
+   * @type {*}
    * @memberof InDiv
    */
-  public getRootElement(): any {
+  public get getRootElement(): any {
     return this.rootElement;
   }
 

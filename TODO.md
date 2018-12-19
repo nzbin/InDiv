@@ -27,13 +27,13 @@
 - [x] 模板可以接受字符串及数字等
 - [x] 指令可以不接受props
 - [x] 优化编译 存储上次 Vnode 结构
-- [x] 移除 InDiv 实例中 setRenderModule 和 getRenderModule，RouteModule直接使用 InDiv 实例中 getBootstrapComponent 方法获得初始化的组件
+- [x] 移除 InDiv 实例中 setRenderModule 和 getRenderModule，RouteModule直接使用 InDiv 实例中 getBootstrapComponent 属性获得初始化的组件
 - [ ] @indiv/cli
 - [x] Injectable provideIn
 - [x] module: @indiv/core @indiv/common @indiv/router @indiv/platform-browser
 - [ ] support Pipe
-- [ ] props deep copy
+- [x] props deep copy
 - [ ] 注入器冒泡至父组件注入器
-- [ ] remove DOM api in @indiv/core
+- [x] remove DOM api in @indiv/core
 - [ ] remove State and Props in @Component and @Directive
 - [ ] string to vnode

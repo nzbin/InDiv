@@ -17,7 +17,7 @@ export function mountDirective(componentInstance: IComponent, componentAndDirect
   for (let i = 0; i < directiveListLength; i ++) {
     const directive = componentInstance.directiveList[i];
     // find Directive from cache
-    const cacheDirectiveIndex = cacheDirectiveList.findIndex(cache => cache.dom === directive.dom);
+    const cacheDirectiveIndex = cacheDirectiveList.findIndex(cache => cache.nativeElement === directive.nativeElement);
     const cacheDirective = cacheDirectiveList[cacheDirectiveIndex];
 
     // clear cache and the rest need to be destoried
@@ -31,7 +31,7 @@ export function mountDirective(componentInstance: IComponent, componentAndDirect
         directive.scope.props = directive.props;
       }
     } else {
-      directive.scope = buildDirectiveScope(directive.constructorFunction, directive.props, directive.dom as Element, componentInstance);
+      directive.scope = buildDirectiveScope(directive.constructorFunction, directive.props, directive.nativeElement as Element, componentInstance);
     }
 
     directive.scope.$indivInstance = componentInstance.$indivInstance;
@@ -65,7 +65,7 @@ export function directivesConstructor(componentInstance: IComponent, componentAn
   componentAndDirectives.directives.forEach(directive => {
     const declaration = componentInstance.declarationMap.get(directive.name);
     componentInstance.directiveList.push({
-      dom: directive.nativeElement,
+      nativeElement: directive.nativeElement,
       props: directive.props,
       scope: null,
       constructorFunction: declaration,

@@ -51,6 +51,8 @@ module.exports = {
           ],
           plugins: [
             '@babel/plugin-syntax-dynamic-import',
+            '@babel/plugin-proposal-decorators',
+            '@babel/plugin-proposal-class-properties',
             'dynamic-import-webpack',
           ],
         },

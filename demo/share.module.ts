@@ -1,4 +1,4 @@
-import { InDiv, Component, NvModule, HasRender, OnInit, BeforeMount, AfterMount, ReceiveProps, SetState, OnDestory, setState, Directive, ElementRef } from '@indiv/core';
+import { InDiv, Component, NvModule, HasRender, OnInit, BeforeMount, AfterMount, ReceiveProps, SetState, OnDestory, setState, Directive, ElementRef, Input } from '@indiv/core';
 import { RouteChange, RouteModule, TRouter } from '@indiv/router'; 
 // import { InDiv, Component, NvModule, HasRender, OnInit, BeforeMount, AfterMount, ReceiveProps, SetState, OnDestory, setState, Directive, ElementRef } from '../build/core';
 // import { RouteChange, RouteModule, TRouter } from '../build/router';  
@@ -21,7 +21,7 @@ class RouteChild implements OnInit, HasRender, ReceiveProps, OnDestory {
   public setState: SetState;
   public heroSearchService: HeroSearchService2;
   public props: Readonly<Props>;
-  public a: string = 'a';
+  @Input() public a: string = 'a';
   public b: any = null;
   public d: any[] = [
     {
@@ -75,7 +75,7 @@ class RouteChild implements OnInit, HasRender, ReceiveProps, OnDestory {
 class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps, OnDestory {
   public props: any;
   public a: string = 'a';
-  public b: any = null;
+  @Input('ax') public b: any = null;
   public d: any[] = [
         {
           z: 101111,
@@ -98,7 +98,7 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps, OnDestor
   }
 
   public nvOnInit() {
-    this.b = this.props.ax;
+    // this.b = this.props.ax;
     // this.setState({
     //   b: this.props.ax,
     // });
@@ -125,9 +125,9 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps, OnDestor
   }
 
   public nvReceiveProps(nextProps: any) {
-    console.log(this.props.ax);
+    // console.log(this.props.ax);
     console.log(4444, nextProps);
-    this.b = nextProps.ax;
+    // this.b = nextProps.ax;
     // this.setState({
     //   b: nextProps.ax,
     // });

@@ -29,9 +29,14 @@ export function mountComponent(componentInstance: IComponent, componentAndDirect
       component.scope = cacheComponent.scope;
       // old props: component.scope.props
       // new props: component.props
+      // todo remove props
       if (!utils.isEqual(component.scope.props, component.props)) {
-        if (component.scope.nvReceiveProps) component.scope.nvReceiveProps(component.props);
+        if (component.scope.nvReceiveProps) component.scope.nvReceiveProps({...component.props});
         component.scope.props = component.props;
+        console.log(3333333, component.scope, component.scope.inputPropsMap);
+        for (const key in component.props) {
+          if (component.scope.inputPropsMap && component.scope.inputPropsMap.has(key)) (component.scope as any)[component.scope.inputPropsMap.get(key)] = component.props[key];
+         }
       }
     } else {
       component.scope = buildComponentScope(component.constructorFunction, component.props, component.nativeElement as Element, componentInstance);

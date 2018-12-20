@@ -1,4 +1,4 @@
-import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, ReceiveProps, SetState, OnDestory, setState, ElementRef, Watch, HasRender } from '@indiv/core';
+import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, ReceiveProps, SetState, OnDestory, setState, ElementRef, Watch, HasRender, Input } from '@indiv/core';
 import { RouteChange, NvLocation, RouteModule } from '@indiv/router';
 import { PlatformBrowser } from '@indiv/platform-browser';
 import { HttpClient, HttpClientResponse } from '@indiv/common';
@@ -43,7 +43,8 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
       b: 'a',
     }];
   public e: boolean = true;
-  public ax: any;
+  @Input() public ax: any;
+  @Input('b') public bx: (ax: any) => void;
 
   constructor(
     private element: ElementRef,
@@ -52,7 +53,6 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
   }
 
   public nvOnInit() {
-    this.ax = this.props.ax;
     console.log('nvOnInit props11', this.props, this.element);
   }
 
@@ -67,14 +67,13 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
     console.log('aa', a);
   }
   public sendProps(ax: any) {
-    console.log(4423213, this.props.b);
-    this.props.b(ax);
+    this.bx(ax);
   }
   public getProps(a: any) {
     alert('子组件里 里面传出来了');
     // this.setState({ a: a });
     this.a = a;
-    this.props.b(a);
+    this.bx(a);
   }
 
   public nvWatchState(oldState: string) {
@@ -82,7 +81,7 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
   }
   public nvReceiveProps(nextProps: any) {
     console.log(1111111111111, nextProps);
-    this.ax = nextProps.ax;
+    // this.ax = nextProps.ax;
   }
   public nvOnDestory() {
     console.log('PComponent is nvOnDestory');
@@ -110,7 +109,7 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
 class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, OnDestory {
   public hSr: HeroSearchService;
   public setState: SetState;
-  public props: any;
+  // public props: any;
   public a: string = 'a11';
   public b: number = 2;
   public d: any[] = [{
@@ -254,13 +253,12 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
   selector: 'test-component',
   template: (`
     <div>
-      <p nv-on:click="click()">测试repeat组件: {{man}}</p>
+      <p nv-on:click="click()">测试repeat组件: {{manName}}</p>
     </div>`),
 })
-class TestComponent implements OnInit, OnDestory, ReceiveProps {
+class TestComponent implements OnDestory, ReceiveProps {
   public state: any;
-  public props: any;
-  public man: any;
+  @Input() public manName: any;
 
   constructor(
     private httpClient: HttpClient,
@@ -273,13 +271,9 @@ class TestComponent implements OnInit, OnDestory, ReceiveProps {
     });
   }
 
-  public nvOnInit() {
-    this.man = this.props.manName;
-  }
-
   public click() {
-    console.log('this.state.man', this.man);
-    this.man = 'fuck!';
+    console.log('this.state.man', this.manName);
+    this.manName = 'fuck!';
   }
 
   public nvOnDestory() {
@@ -368,7 +362,7 @@ class Container implements OnInit, AfterMount, WatchState, HasRender {
         },
       ],
     }];
-  public testArray2: any = ['程序员3', '码农3', '架构师3'];
+  public testArray2: any = ['程序员2', '码农2', '架构师2'];
   public props: any;
   public setState: SetState;
   public http$: Observable<HttpClientResponse>;

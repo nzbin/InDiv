@@ -19,6 +19,13 @@ export function buildComponentScope(ComponentClass: Function, props: any, dom: E
   provideAndInstanceMap.set(ElementRef, new ElementRef(dom));
 
   const _component: IComponent = factoryCreator(ComponentClass, componentInstance.otherInjector, provideAndInstanceMap);
+
+  // todo remove props
+  console.log(3333333, _component, _component.inputPropsMap);
+  for (const key in props) {
+   if (_component.inputPropsMap && _component.inputPropsMap.has(key)) (_component as any)[_component.inputPropsMap.get(key)] = props[key];
+  }
+  // todo delete
   _component.props = props;
   _component.nativeElement = dom;
 

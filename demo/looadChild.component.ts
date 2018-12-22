@@ -8,7 +8,7 @@ import { PrivateService } from './private.service';
   selector: 'test-loadchild-component',
   template: `
     <div>
-      <p nv-repeat="let t in ttt" nv-on:click="testt(t)" >test loadChild</p>
+      <p nv-repeat="let t in ttt" nv-on:click="testt(t)" routerTo="{'/R1/C1/D1'}" routerFrom="{'/R1/C1?a=1'}">test loadChild</p>
       <router-render></router-render>
     </div>
   `,
@@ -45,7 +45,7 @@ export class TestLoadchildComponent implements HasRender {
 @Component({
   selector: 'R2',
   template: `
-    <p router-to="{'/R2'}">我是R22222</p>
+    <p routerTo="{'/R2'}">我是R22222</p>
     <pp-childs ax="{3}"></pp-childs>
     `,
 })

@@ -37,7 +37,7 @@ export class Compile {
 
   /**
    * start compile and change saveVnode
-   * 
+   *
    * will return the newest vnode[]
    *
    * @returns {Vnode[]}
@@ -54,7 +54,7 @@ export class Compile {
     this.fragment.forEach(child => child.parentVnode = { nativeElement: this.mountedElement });
     diffVnode({ childNodes: this.saveVnode, nativeElement: this.mountedElement, parentVnode: null }, { childNodes: this.fragment, nativeElement: this.mountedElement, parentVnode: null }, patchList);
     patchVnode(patchList, this.componentInstance.$indivInstance.getRenderer);
-    console.log(33333333, this.saveVnode, this.fragment, patchList);
+    console.log(33333333, this.mountedElement, this.saveVnode, this.fragment, patchList);
     return this.saveVnode;
   }
 

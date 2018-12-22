@@ -19,12 +19,12 @@ export type TComAndDir = {
 export type ComponentList<C> = {
   nativeElement: any;
   props: any;
-  scope: C;
+  instanceScope: C;
   constructorFunction: Function;
 };
 
 export interface IComponent {
-  props?: any;
+  _save_props?: any;
   nativeElement?: Element | any;
   $indivInstance?: InDiv;
   renderTaskQueue?: RenderTaskQueue;

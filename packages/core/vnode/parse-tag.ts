@@ -75,7 +75,7 @@ export class Vnode {
         this.eventTypes.push({...eventType});
       });
     }
-  
+
     if (options.childNodes && options.childNodes.length > 0) {
       options.childNodes.forEach(child => {
         this.childNodes.push(new Vnode({ ...child }));
@@ -110,7 +110,9 @@ export function parseTag(tag: string, directives: string[]): Vnode {
     template: tag,
   };
 
-  const attrRE = /[\w-:]+(\=['"]([^=-]*)['"]){0,1}/g;
+  // const attrRE = /[\w-:]+(\=['"]([^=-]*)['"]){0,1}/g;
+  // todo optimize regular expressions
+  const attrRE = /[\w-:]+((\=[']([^']*)['])|(\=["]([^"]*)["])){0,1}/g;
   const voidElementList = [
     'area',
     'base',

@@ -26,40 +26,36 @@ export function mountComponent(componentInstance: IComponent, componentAndDirect
     // clear cache and the rest need to be destoried
     if (cacheComponentIndex !== -1) cacheComponentList.splice(cacheComponentIndex, 1);
     if (cacheComponent) {
-      component.scope = cacheComponent.scope;
-      // old props: component.scope.props
+      component.instanceScope = cacheComponent.instanceScope;
+      // old props: component.instanceScope._save_props
       // new props: component.props
-      // todo remove props
-      if (!utils.isEqual(component.scope.props, component.props)) {
-        if (component.scope.nvReceiveProps) component.scope.nvReceiveProps({...component.props});
-        component.scope.props = component.props;
-        console.log(3333333, component.scope, component.scope.inputPropsMap);
-        for (const key in component.props) {
-          if (component.scope.inputPropsMap && component.scope.inputPropsMap.has(key)) (component.scope as any)[component.scope.inputPropsMap.get(key)] = component.props[key];
-         }
+      if (!utils.isEqual(component.instanceScope._save_props, component.props)) {
+        if (component.instanceScope.nvReceiveProps) component.instanceScope.nvReceiveProps({...component.props});
+        component.instanceScope._save_props = component.props;
+        for (const key in component.props) if (component.instanceScope.inputPropsMap && component.instanceScope.inputPropsMap.has(key)) (component.instanceScope as any)[component.instanceScope.inputPropsMap.get(key)] = component.props[key];
       }
     } else {
-      component.scope = buildComponentScope(component.constructorFunction, component.props, component.nativeElement as Element, componentInstance);
+      component.instanceScope = buildComponentScope(component.constructorFunction, component.props, component.nativeElement as Element, componentInstance);
     }
 
-    component.scope.$indivInstance = componentInstance.$indivInstance;
+    component.instanceScope.$indivInstance = componentInstance.$indivInstance;
 
-    if (component.scope.nvOnInit && !cacheComponent) component.scope.nvOnInit();
-    if (component.scope.watchData && !cacheComponent) component.scope.watchData();
-    if (component.scope.nvBeforeMount) component.scope.nvBeforeMount();
+    if (component.instanceScope.nvOnInit && !cacheComponent) component.instanceScope.nvOnInit();
+    if (component.instanceScope.watchData && !cacheComponent) component.instanceScope.watchData();
+    if (component.instanceScope.nvBeforeMount) component.instanceScope.nvBeforeMount();
   }
   // the rest should use nvOnDestory
   const cacheComponentListLength = cacheComponentList.length;
   for (let i = 0; i < cacheComponentListLength; i++) {
     const cache = cacheComponentList[i];
-    if (cache.scope.nvOnDestory) cache.scope.nvOnDestory();
+    if (cache.instanceScope.nvOnDestory) cache.instanceScope.nvOnDestory();
   }
 
   // after mount
   for (let i = 0; i < componentListLength; i++) {
     const component = componentInstance.componentList[i];
-    component.scope.render();
-    if (component.scope.nvAfterMount) component.scope.nvAfterMount();
+    component.instanceScope.render();
+    if (component.instanceScope.nvAfterMount) component.instanceScope.nvAfterMount();
   }
   if (componentInstance.nvHasRender) componentInstance.nvHasRender();
 }
@@ -79,7 +75,7 @@ export function componentsConstructor(componentInstance: IComponent, componentAn
     componentInstance.componentList.push({
       nativeElement: component.nativeElement,
       props: component.props,
-      scope: null,
+      instanceScope: null,
       constructorFunction: declaration,
     });
   });

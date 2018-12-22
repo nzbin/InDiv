@@ -1,4 +1,4 @@
-import { ElementRef, utils, Directive, OnInit, ReceiveProps, OnDestory } from '@indiv/core';
+import { ElementRef, utils, Directive, OnInit, ReceiveProps, OnDestory, Input } from '@indiv/core';
 import { NvLocation } from './location';
 import { RouteChange } from './router-module';
 
@@ -12,11 +12,10 @@ import { RouteChange } from './router-module';
  * @implements {RouteChange}
  */
 @Directive({
-  selector: 'router-to',
+  selector: 'routerTo',
 })
 export class RouterTo implements OnInit, ReceiveProps, RouteChange, OnDestory {
-  private to: string;
-  private props: string;
+  @Input('routerTo') private to: string;
   private from: string;
   private activeClass: string;
 
@@ -26,7 +25,7 @@ export class RouterTo implements OnInit, ReceiveProps, RouteChange, OnDestory {
   ) {}
 
   public nvOnInit() {
-    this.resetState(this.props);
+    this.resetState(this.to);
     this.element.nativeElement.addEventListener('click', this.routeTo, false);
   }
 
@@ -35,7 +34,7 @@ export class RouterTo implements OnInit, ReceiveProps, RouteChange, OnDestory {
   }
 
   public nvRouteChange(lastRoute?: string, newRoute?: string) {
-    this.resetState(this.props);
+    this.resetState(this.to);
     if (!this.activeClass) return;
     if (newRoute === this.to && !this.element.nativeElement.classList.contains(this.activeClass)) this.element.nativeElement.classList.add(this.activeClass);
     if (newRoute !== this.to && this.element.nativeElement.classList.contains(this.activeClass)) this.element.nativeElement.classList.remove(this.activeClass);
@@ -46,7 +45,7 @@ export class RouterTo implements OnInit, ReceiveProps, RouteChange, OnDestory {
   }
 
   private routeTo = () => {
-    this.resetState(this.props);
+    this.resetState(this.to);
     const location = this.location.get();
     const currentUrl = `${location.path}${utils.buildQuery(location.query)}`;
     if (!this.to) {
@@ -74,15 +73,15 @@ export class RouterTo implements OnInit, ReceiveProps, RouteChange, OnDestory {
  * @implements {ReceiveProps}
  */
 @Directive({
-  selector: 'router-from',
+  selector: 'routerFrom',
 })
 export class RouterFrom implements OnInit, ReceiveProps, OnDestory {
-  private props: string;
+  @Input('routerFrom') private from: string;
 
   constructor(private element: ElementRef) {}
 
   public nvOnInit() {
-    this.element.nativeElement.setAttribute('router-link-from', this.props);
+    this.element.nativeElement.setAttribute('router-link-from', this.from);
   }
 
   public nvReceiveProps(nextProps: string) {
@@ -103,16 +102,16 @@ export class RouterFrom implements OnInit, ReceiveProps, OnDestory {
  * @implements {ReceiveProps}
  */
 @Directive({
-  selector: 'router-active',
+  selector: 'routerActive',
 })
 export class RouterActive implements OnInit, ReceiveProps, OnDestory {
-  private props: string;
+  @Input('routerActive') private activeClass: string;
   // todo 不知道怎么用
   constructor(private element: ElementRef) {}
 
   public nvOnInit() {
-    this.element.nativeElement.setAttribute('router-link-active', this.props);
-    this.setActive(this.props);
+    this.element.nativeElement.setAttribute('router-link-active', this.activeClass);
+    this.setActive(this.activeClass);
   }
 
   public nvReceiveProps(nextProps: string) {
@@ -121,7 +120,7 @@ export class RouterActive implements OnInit, ReceiveProps, OnDestory {
   }
 
   public nvRouteChange(lastRoute?: string, newRoute?: string) {
-    this.setActive(this.props);
+    this.setActive(this.activeClass);
   }
 
   public nvOnDestory() {

@@ -38,7 +38,7 @@ export class PlatfromBrowserRenderer extends Renderer {
 
   public setNvAttribute(element: any, attribute: TAttributes): void {
     const blackListAttr = ['nv-text', 'nv-if', 'nv-repeat', 'nv-model', 'nv-key'];
-    if (blackListAttr.indexOf(attribute.type) !== -1) return;
+    if (blackListAttr.indexOf(attribute.name) !== -1) return;
     switch (attribute.name) {
       case 'nv-html': {
         element.innerHTML = typeof attribute.nvValue === 'undefined' ? '' : attribute.nvValue;
@@ -64,7 +64,7 @@ export class PlatfromBrowserRenderer extends Renderer {
 
   public removeNvAttribute(element: any, attribute: TAttributes): void {
     const blackListAttr = ['nv-text', 'nv-if', 'nv-repeat', 'nv-model', 'nv-key'];
-    if (blackListAttr.indexOf(attribute.type) !== -1) return;
+    if (blackListAttr.indexOf(attribute.name) !== -1) return;
     switch (attribute.name) {
       case 'nv-html': {
         element.innerHTML = '';

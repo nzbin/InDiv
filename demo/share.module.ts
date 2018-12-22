@@ -11,7 +11,7 @@ interface Props {
 @Component({
   selector: 'route-child',
   template: (`
-    <div>
+    <div class="fuck">
       <p>子路由的子组件::{{b}}</p>
       <pp-childs ax="{b}"></pp-childs>
     </div>
@@ -20,9 +20,8 @@ interface Props {
 class RouteChild implements OnInit, HasRender, ReceiveProps, OnDestory {
   public setState: SetState;
   public heroSearchService: HeroSearchService2;
-  public props: Readonly<Props>;
   @Input() public a: string = 'a';
-  public b: any = null;
+  public b: any;
   public d: any[] = [
     {
       z: 111111111111111,
@@ -43,13 +42,13 @@ class RouteChild implements OnInit, HasRender, ReceiveProps, OnDestory {
   }
 
   public nvOnInit() {
-    this.b = this.props.a;
-    console.log(555, 'PCChild nvOnInit props11', this.props);
+    this.b = this.a;
+    console.log(555, 'PCChild nvOnInit props11', this.a);
     // this.props.b(3);
   }
 
   public nvHasRender() {
-    console.log('RouteChild hasRender: this.props.a', this.props.a);
+    console.log('RouteChild hasRender: this.props.a', this.a);
   }
 
   public nvReceiveProps(nextProps: any) {
@@ -73,9 +72,9 @@ class RouteChild implements OnInit, HasRender, ReceiveProps, OnDestory {
   `),
 })
 class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps, OnDestory {
-  public props: any;
+  // public props: any;
   public a: string = 'a';
-  @Input('ax') public b: any = null;
+  @Input('ax') public b: any;
   public d: any[] = [
         {
           z: 101111,
@@ -94,7 +93,7 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps, OnDestor
   }
 
   public nvHasRender() {
-    console.log('PCChild hasRender : this.props.ax', this.props, this.element);
+    console.log('PCChild hasRender : this.props', this.b, this.element);
   }
 
   public nvOnInit() {
@@ -102,22 +101,22 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps, OnDestor
     // this.setState({
     //   b: this.props.ax,
     // });
-    console.log(555, 'PCChild nvOnInit props11', this.props);
+    console.log(555, 'PCChild nvOnInit props11', this.b);
     // this.props.b(3);
   }
 
   public sendProps(i: number) {
     // this.props.b(i);
     // this.props.ax = 100;
-    console.log('this.props', this.props);
+    console.log('this.props', this.b);
   }
 
   public nvBeforeMount() {
-    console.log('PCChild nvBeforeMount props11', this.props.ax);
+    console.log('PCChild nvBeforeMount props11', this.b);
   }
 
   public nvAfterMount() {
-    console.log('PCChild nvAfterMount props11', this.props.ax);
+    console.log('PCChild nvAfterMount props11', this.b);
   }
 
   public nvOnDestory() {
@@ -196,7 +195,7 @@ const routes: TRouter[] = [
   selector: 'test-directive',
 })
 class TestDirective implements OnInit, RouteChange, ReceiveProps {
-  public props: string;
+  @Input('test-directive') public testDirective: string;
   constructor(
     private hss: HeroSearchService,
     private element: ElementRef,
@@ -204,7 +203,7 @@ class TestDirective implements OnInit, RouteChange, ReceiveProps {
   ) {}
 
   public nvOnInit() {
-    console.log(5555, 'init TestDirective', this.props);
+    console.log(5555, 'init TestDirective', this.testDirective);
     console.log(666666, 'init TestDirective element', this.element);
     console.log(777777, 'init TestDirective indiv', this.indiv);
     this.hss.test();

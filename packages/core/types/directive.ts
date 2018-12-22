@@ -4,13 +4,13 @@ import { InDiv } from '../indiv';
 export type DirectiveList<C> = {
     nativeElement: any;
     props: any;
-    scope: C;
+    instanceScope: C;
     constructorFunction: Function;
 };
 
 
 export interface IDirective {
-    props?: any;
+    _save_props?: any;
     nativeElement?: Element | any;
     $indivInstance?: InDiv | any;
 

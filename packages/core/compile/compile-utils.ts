@@ -538,7 +538,7 @@ export class CompileUtilForRepeat {
         return;
       }
       if (!/^\'.*\'$/.test(propValue) && !/^\".*\"$/.test(propValue) && /^[0-9]*$/.test(propValue)) {
-        attr.nvValue = Number(prop);
+        attr.nvValue = Number(propValue);
         return;
       }
       if (propValue === 'true' || propValue === 'false') {
@@ -1182,7 +1182,7 @@ export class CompileUtil {
         return;
       }
       if (!/^\'.*\'$/.test(propValue) && !/^\".*\"$/.test(propValue) && /^[0-9]*$/.test(propValue)) {
-        attr.nvValue = Number(prop);
+        attr.nvValue = Number(propValue);
         return;
       }
       if (propValue === 'true' || propValue === 'false') {

@@ -26,10 +26,8 @@ class ValueType { }
     </div>
   `),
 })
-class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, ReceiveProps, OnDestory {
+class PComponent implements WatchState, BeforeMount, ReceiveProps, OnDestory {
   public setState: SetState;
-  public state: any;
-  public props: any;
   public a: any = 'a子组件';
   public b: number = 100;
   public c: string = '<p>1111</p>';
@@ -52,17 +50,10 @@ class PComponent implements OnInit, WatchState, BeforeMount, AfterMount, Receive
     this.setState = setState;
   }
 
-  public nvOnInit() {
-    console.log('nvOnInit props11', this.props, this.element);
-  }
-
   public nvBeforeMount() {
-    console.log('nvBeforeMount props11', this.props);
+    console.log('nvBeforeMount props11');
   }
 
-  public nvAfterMount() {
-    console.log('nvAfterMount props11', this.props);
-  }
   public componentClick(a: any) {
     console.log('aa', a);
   }
@@ -288,7 +279,7 @@ class TestComponent implements OnDestory, ReceiveProps {
 @Component({
   selector: 'container-wrap',
   template: (`
-    <div>
+    <div nv-class="'a'" nv-id="'cc'">
       <input nv-model="test.a" nv-on:click="show(test)" />
       <p test-directive="{'123'}" nv-id="232" nv-if="countState(a)" nv-on:click="changeInput()">{{a}}</p>
       <test-component nv-repeat="let man in testArray" nv-key="man.name" manName="{countState(man.name)}" nv-if="a"></test-component>

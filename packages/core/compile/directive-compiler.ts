@@ -23,32 +23,33 @@ export function mountDirective(componentInstance: IComponent, componentAndDirect
     // clear cache and the rest need to be destoried
     if (cacheDirectiveIndex !== -1) cacheDirectiveList.splice(cacheDirectiveIndex, 1);
     if (cacheDirective) {
-      directive.scope = cacheDirective.scope;
-      // old props: directive.scope.props
+      directive.instanceScope = cacheDirective.instanceScope;
+      // old props: directive.instanceScope._save_props
       // new props: directive.props
-      if (!utils.isEqual(directive.scope.props, directive.props)) {
-        if (directive.scope.nvReceiveProps) directive.scope.nvReceiveProps(directive.props);
-        directive.scope.props = directive.props;
+      if (!utils.isEqual(directive.instanceScope._save_props, directive.props)) {
+        if (directive.instanceScope.nvReceiveProps) directive.instanceScope.nvReceiveProps(directive.props);
+        directive.instanceScope._save_props = directive.props;
+        if (directive.instanceScope.inputPropsMap && directive.instanceScope.inputPropsMap.has((directive.instanceScope as any).constructor.selector)) (directive.instanceScope as any)[directive.instanceScope.inputPropsMap.get((directive.instanceScope as any).constructor.selector)] = directive.props;
       }
     } else {
-      directive.scope = buildDirectiveScope(directive.constructorFunction, directive.props, directive.nativeElement as Element, componentInstance);
+      directive.instanceScope = buildDirectiveScope(directive.constructorFunction, directive.props, directive.nativeElement as Element, componentInstance);
     }
 
-    directive.scope.$indivInstance = componentInstance.$indivInstance;
+    directive.instanceScope.$indivInstance = componentInstance.$indivInstance;
 
-    if (directive.scope.nvOnInit && !cacheDirective) directive.scope.nvOnInit();
+    if (directive.instanceScope.nvOnInit && !cacheDirective) directive.instanceScope.nvOnInit();
   }
   // the rest should use nvOnDestory
   const cacheDirectiveListLength = cacheDirectiveList.length;
   for (let i = 0; i < cacheDirectiveListLength; i ++) {
     const cache = cacheDirectiveList[i];
-    if (cache.scope.nvOnDestory) cache.scope.nvOnDestory();
+    if (cache.instanceScope.nvOnDestory) cache.instanceScope.nvOnDestory();
   }
 
   // after mount
   for (let i = 0; i < directiveListLength; i++) {
     const directive = componentInstance.directiveList[i];
-    if (directive.scope.nvHasRender) directive.scope.nvHasRender();
+    if (directive.instanceScope.nvHasRender) directive.instanceScope.nvHasRender();
   }
 }
 
@@ -67,7 +68,7 @@ export function directivesConstructor(componentInstance: IComponent, componentAn
     componentInstance.directiveList.push({
       nativeElement: directive.nativeElement,
       props: directive.props,
-      scope: null,
+      instanceScope: null,
       constructorFunction: declaration,
     });
   });

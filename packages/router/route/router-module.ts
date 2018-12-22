@@ -440,16 +440,16 @@ export class RouteModule {
   private emitComponentEvent(componentList: ComponentList<IComponent>[], event: string): void {
     if (event === 'nvRouteChange') {
       componentList.forEach(component => {
-        if (component.scope.nvRouteChange) component.scope.nvRouteChange(this.lastRoute, this.currentUrl);
-        this.emitDirectiveEvent(component.scope.directiveList, event);
-        this.emitComponentEvent(component.scope.componentList, event);
+        if (component.instanceScope.nvRouteChange) component.instanceScope.nvRouteChange(this.lastRoute, this.currentUrl);
+        this.emitDirectiveEvent(component.instanceScope.directiveList, event);
+        this.emitComponentEvent(component.instanceScope.componentList, event);
       });
     }
     if (event === 'nvOnDestory') {
       componentList.forEach(component => {
-        if (component.scope.nvOnDestory) component.scope.nvOnDestory();
-        this.emitDirectiveEvent(component.scope.directiveList, event);
-        this.emitComponentEvent(component.scope.componentList, event);
+        if (component.instanceScope.nvOnDestory) component.instanceScope.nvOnDestory();
+        this.emitDirectiveEvent(component.instanceScope.directiveList, event);
+        this.emitComponentEvent(component.instanceScope.componentList, event);
       });
     }
   }
@@ -465,12 +465,12 @@ export class RouteModule {
   private emitDirectiveEvent(directiveList: DirectiveList<IDirective>[], event: string): void {
     if (event === 'nvRouteChange') {
       directiveList.forEach(directive => {
-        if (directive.scope.nvRouteChange) directive.scope.nvRouteChange(this.lastRoute, this.currentUrl);
+        if (directive.instanceScope.nvRouteChange) directive.instanceScope.nvRouteChange(this.lastRoute, this.currentUrl);
       });
     }
     if (event === 'nvOnDestory') {
       directiveList.forEach(directive => {
-        if (directive.scope.nvOnDestory) directive.scope.nvOnDestory();
+        if (directive.instanceScope.nvOnDestory) directive.instanceScope.nvOnDestory();
       });
     }
   }

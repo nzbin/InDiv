@@ -20,14 +20,10 @@ export function buildComponentScope(ComponentClass: Function, props: any, dom: E
 
   const _component: IComponent = factoryCreator(ComponentClass, componentInstance.otherInjector, provideAndInstanceMap);
 
-  // todo remove props
-  console.log(3333333, _component, _component.inputPropsMap);
-  for (const key in props) {
-   if (_component.inputPropsMap && _component.inputPropsMap.has(key)) (_component as any)[_component.inputPropsMap.get(key)] = props[key];
-  }
-  // todo delete
-  _component.props = props;
+  // _save_props in @Component for save props states
+  _component._save_props = props;
   _component.nativeElement = dom;
+  for (const key in props) if (_component.inputPropsMap && _component.inputPropsMap.has(key)) (_component as any)[_component.inputPropsMap.get(key)] = props[key];
 
   componentInstance.declarationMap.forEach((declaration, key) => {
     if (!_component.declarationMap.has(key)) _component.declarationMap.set(key, declaration);
@@ -56,8 +52,9 @@ export function buildDirectiveScope(DirectiveClass: Function, props: any, dom: E
 
   const _directive: IDirective = factoryCreator(DirectiveClass, componentInstance.otherInjector, provideAndInstanceMap);
 
-  _directive.props = props;
+  _directive._save_props = props;
   _directive.nativeElement = dom;
+  if (_directive.inputPropsMap && _directive.inputPropsMap.has((DirectiveClass as any).selector)) (_directive as any)[_directive.inputPropsMap.get((DirectiveClass as any).selector)] = props;
 
   componentInstance.declarationMap.forEach((declaration, key) => {
     if (!_directive.declarationMap.has(key)) _directive.declarationMap.set(key, declaration);

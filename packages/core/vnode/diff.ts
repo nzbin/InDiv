@@ -154,6 +154,17 @@ function diffValue(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[]): v
  * @returns {void}
  */
 function diffRepeatData(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[]): void {
+  if (!oldVnode.repeatData && !newVnode.repeatData) return;
+
+  if (!oldVnode.repeatData || !newVnode.repeatData) {
+    patchList.push({
+      type: 7,
+      originVnode: oldVnode,
+      changedValue: newVnode.repeatData,
+    });
+    return;
+  }
+
   let isEqual = true;
   const oldDataKeys = Object.keys(oldVnode.repeatData);
   const newDataKeys = Object.keys(newVnode.repeatData);

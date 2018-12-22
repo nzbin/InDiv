@@ -4,7 +4,7 @@ import { utils } from '../utils';
 import { Compile } from './compile';
 import { buildComponentScope } from './compiler-utils';
 import { Vnode } from '../vnode';
-import { directiveCompiler } from './directive-compiler';
+import { mountDirective } from './directive-compiler';
 
 /**
  * mountComponent for Components in Component
@@ -30,7 +30,7 @@ export function mountComponent(componentInstance: IComponent, componentAndDirect
       // old props: component.instanceScope._save_props
       // new props: component.props
       if (!utils.isEqual(component.instanceScope._save_props, component.props)) {
-        if (component.instanceScope.nvReceiveProps) component.instanceScope.nvReceiveProps({...component.props});
+        if (component.instanceScope.nvReceiveProps) component.instanceScope.nvReceiveProps({ ...component.props });
         component.instanceScope._save_props = component.props;
         for (const key in component.props) if (component.instanceScope.inputPropsMap && component.instanceScope.inputPropsMap.has(key)) (component.instanceScope as any)[component.instanceScope.inputPropsMap.get(key)] = component.props[key];
       }
@@ -124,7 +124,7 @@ export function buildComponentsAndDirectives(vnode: Vnode, componentAndDirective
  */
 export async function componentCompiler(nativeElement: any, componentInstance: IComponent): Promise<IComponent> {
   return Promise.resolve()
-    .then(async () => {
+    .then(() => {
       // compile has been added into Component instance by dirty method
       if (!(componentInstance as any).compileInstance) ((componentInstance as any).compileInstance as Compile) = new Compile(nativeElement, componentInstance);
       const saveVnodes = ((componentInstance as any).compileInstance as Compile).startCompile();
@@ -136,9 +136,9 @@ export async function componentCompiler(nativeElement: any, componentInstance: I
       saveVnodes.forEach(vnode => buildComponentsAndDirectives(vnode, componentAndDirectives));
 
       // first mount directive
-      await directiveCompiler(componentInstance, componentAndDirectives);
+      mountDirective(componentInstance, componentAndDirectives);
 
-      // // then mount component
+      // then mount component
       mountComponent(componentInstance, componentAndDirectives);
 
       return componentInstance;

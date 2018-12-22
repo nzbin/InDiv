@@ -11,10 +11,10 @@ import { buildDirectiveScope } from './compiler-utils';
  * @param {TComAndDir} componentAndDirectives
  */
 export function mountDirective(componentInstance: IComponent, componentAndDirectives: TComAndDir): void {
-  const cacheDirectiveList: DirectiveList<IDirective>[] = [ ...componentInstance.directiveList ];
+  const cacheDirectiveList: DirectiveList<IDirective>[] = [...componentInstance.directiveList];
   directivesConstructor(componentInstance, componentAndDirectives);
   const directiveListLength = componentInstance.directiveList.length;
-  for (let i = 0; i < directiveListLength; i ++) {
+  for (let i = 0; i < directiveListLength; i++) {
     const directive = componentInstance.directiveList[i];
     // find Directive from cache
     const cacheDirectiveIndex = cacheDirectiveList.findIndex(cache => cache.nativeElement === directive.nativeElement);
@@ -41,7 +41,7 @@ export function mountDirective(componentInstance: IComponent, componentAndDirect
   }
   // the rest should use nvOnDestory
   const cacheDirectiveListLength = cacheDirectiveList.length;
-  for (let i = 0; i < cacheDirectiveListLength; i ++) {
+  for (let i = 0; i < cacheDirectiveListLength; i++) {
     const cache = cacheDirectiveList[i];
     if (cache.instanceScope.nvOnDestory) cache.instanceScope.nvOnDestory();
   }
@@ -72,23 +72,4 @@ export function directivesConstructor(componentInstance: IComponent, componentAn
       constructorFunction: declaration,
     });
   });
-}
-
-/**
- * render Directive with using nativeElement and RenderTask instance
- *
- * @export
- * @param {IComponent} componentInstance
- * @param {TComAndDir} componentAndDirectives
- * @returns {Promise<IDirective>}
- */
-export async function directiveCompiler(componentInstance: IComponent, componentAndDirectives: TComAndDir): Promise<IDirective> {
-  return Promise.resolve()
-    .then(() => {
-      mountDirective(componentInstance, componentAndDirectives);
-      return componentInstance;
-    })
-    .catch(e => {
-      throw new Error(`directive ${(componentInstance.constructor as any).selector} render failed: ${e}`);
-    });
 }

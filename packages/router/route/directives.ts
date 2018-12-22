@@ -26,7 +26,7 @@ export class RouterTo implements OnInit, ReceiveProps, RouteChange, OnDestory {
 
   public nvOnInit() {
     this.resetState(this.to);
-    this.element.nativeElement.addEventListener('click', this.routeTo, false);
+    // this.element.nativeElement.addEventListener('click', this.routeTo, false);
   }
 
   public nvReceiveProps(nextProps: string) {
@@ -41,9 +41,9 @@ export class RouterTo implements OnInit, ReceiveProps, RouteChange, OnDestory {
   }
 
   public nvOnDestory() {
-    this.element.nativeElement.removeEventListener('click', this.routeTo, false);
+    // this.element.nativeElement.removeEventListener('click', this.routeTo, false);
   }
-
+  // todo can't get attribute from nativeElement
   private routeTo = () => {
     this.resetState(this.to);
     const location = this.location.get();

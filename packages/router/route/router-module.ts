@@ -1,7 +1,7 @@
-import { IComponent, IDirective, INvModule, ComponentList, DirectiveList, factoryModule, NvModule, InDiv, utils } from '@indiv/core';
+import { IComponent, IDirective, INvModule, ComponentList, DirectiveList, factoryModule, NvModule, InDiv, utils, Vnode } from '@indiv/core';
 
 import { NvLocation } from './location';
-import { RouterTo, RouterFrom, RouterActive } from './directives';
+import { RouterTo, RouterFrom } from './directives';
 import { nvRouteStatus } from './location-status';
 
 export interface RouteChange {
@@ -27,7 +27,6 @@ export type TRouter = {
   declarations: [
     RouterTo,
     RouterFrom,
-    RouterActive,
   ],
   providers: [
     {
@@ -38,7 +37,6 @@ export type TRouter = {
   exports: [
     RouterTo,
     RouterFrom,
-    RouterActive,
   ],
 })
 export class RouteModule {
@@ -53,6 +51,8 @@ export class RouteModule {
   private renderRouteList: string[] = [];
   private loadModuleMap: Map<string, INvModule> = new Map();
   private canWatch: boolean = false;
+
+  // todo remove location
   // private pathName: string;
 
   // public get locationPathname(): string {
@@ -66,6 +66,7 @@ export class RouteModule {
 
   constructor(
     private indivInstance: InDiv,
+    private nvLocation: NvLocation,
   ) {
     // if don't use static function forRoot, RouteModule.prototype.canWatch is false
     // if RouteModule.prototype.canWatch is false, don't watch router
@@ -128,24 +129,6 @@ export class RouteModule {
   }
 
   /**
-   * redirectTo a path
-   *
-   * @private
-   * @param {string} redirectTo
-   * @memberof Router
-   */
-  private redirectTo(redirectTo: string): void {
-    const rootPath = nvRouteStatus.nvRootPath === '/' ? '' : nvRouteStatus.nvRootPath;
-    history.replaceState(null, null, `${rootPath}${redirectTo}`);
-    nvRouteStatus.nvRouteObject = {
-      path: redirectTo || '/',
-      query: {},
-      data: null,
-    };
-    nvRouteStatus.nvRouteParmasObject = {};
-  }
-
-  /**
    * refresh if not watch $nvRouteObject
    *
    * @private
@@ -155,6 +138,7 @@ export class RouteModule {
     if (!nvRouteStatus.nvRouteObject || !this.watcher) {
       let path;
 
+      // todo remove location
       // if (utils.isBrowser())
       if (nvRouteStatus.nvRootPath === '/') path = location.pathname || '/';
       else path = location.pathname.replace(nvRouteStatus.nvRootPath, '') === '' ? '/' : location.pathname.replace(nvRouteStatus.nvRootPath, '');
@@ -192,9 +176,9 @@ export class RouteModule {
         return val;
       },
       set(newVal: any) {
-        if (utils.isEqual(newVal, val)) return;
+        const _val = JSON.parse(JSON.stringify(val));
         val = newVal;
-        routeModuleInstance.refresh();
+        if (newVal.path !== _val.path) routeModuleInstance.refresh();
       },
     });
   }
@@ -212,13 +196,13 @@ export class RouteModule {
       nvRouteStatus.nvRouteParmasObject = {};
       await this.insertRenderRoutes();
     } else {
-      // first render
+      // first render child
       await this.generalDistributeRoutes();
     }
     if (this.routeChange) this.routeChange(this.lastRoute, this.currentUrl);
     this.lastRoute = this.currentUrl;
     if (this.needRedirectPath) {
-      this.redirectTo(this.needRedirectPath);
+      this.nvLocation.redirectTo(this.needRedirectPath, {}, null, null);
       this.needRedirectPath = null;
     }
   }
@@ -254,7 +238,12 @@ export class RouteModule {
         const needRenderRoute = this.routesList[index];
         if (!needRenderRoute) throw new Error(`route error: wrong route instantiation in insertRenderRoutes: ${this.currentUrl}`);
 
-        const nativeElement = document.querySelectorAll('router-render')[index - 1];
+        const nativeElement = this.indivInstance.getRenderer.getElementsByTagName('router-render')[index - 1];
+
+        // todo delete
+        // if (this.indivInstance.getRenderer.hasChildNodes(nativeElement)) this.indivInstance.getRenderer.getChildNodes(nativeElement).forEach(child => this.indivInstance.getRenderer.removeChild(nativeElement, child));
+        let assignedVnode: Vnode[] = null;
+        if (this.hasRenderComponentList[index]) assignedVnode = this.hasRenderComponentList[index].saveVnode;
 
         if (!needRenderRoute.component && !needRenderRoute.redirectTo && !needRenderRoute.loadChild) throw new Error(`route error: path ${needRenderRoute.path} need a component which has children path or need a redirectTo which has't children path`);
 
@@ -274,12 +263,12 @@ export class RouteModule {
         if (needRenderRoute.component) {
           const findComponentFromModuleResult = this.findComponentFromModule(needRenderRoute.component, currentUrlPath);
           FindComponent = findComponentFromModuleResult.component;
-          component = await this.instantiateComponent(FindComponent, nativeElement, findComponentFromModuleResult.loadModule);
+          component = await this.instantiateComponent(FindComponent, nativeElement, findComponentFromModuleResult.loadModule, assignedVnode);
         }
         if (needRenderRoute.loadChild) {
           const loadModule = await this.NvModuleFactoryLoader(needRenderRoute.loadChild, currentUrlPath);
           FindComponent = loadModule.bootstrap;
-          component = await this.instantiateComponent(FindComponent, nativeElement, loadModule);
+          component = await this.instantiateComponent(FindComponent, nativeElement, loadModule, assignedVnode);
         }
 
         if (FindComponent) {
@@ -311,10 +300,10 @@ export class RouteModule {
       }
 
       if (index === (this.renderRouteList.length - 1) && index < (lastRouteList.length - 1)) {
-        const nativeElement = document.querySelectorAll('router-render')[index];
+        const nativeElement = this.indivInstance.getRenderer.getElementsByTagName('router-render')[index];
         this.routerChangeEvent(index);
 
-        if (nativeElement && nativeElement.hasChildNodes()) nativeElement.removeChild(nativeElement.childNodes[0]);
+        if (nativeElement && this.indivInstance.getRenderer.hasChildNodes(nativeElement)) this.indivInstance.getRenderer.getChildNodes(nativeElement).forEach(child => this.indivInstance.getRenderer.removeChild(nativeElement, child));
 
         const needRenderRoute = this.routesList[index];
         if (needRenderRoute.redirectTo && /^\/.*/.test(needRenderRoute.redirectTo) && (index + 1) === this.renderRouteList.length) {
@@ -366,7 +355,12 @@ export class RouteModule {
         const route = lastRoute.find(r => r.path === `/${path}` || /^\/\:.+/.test(r.path));
         if (!route) throw new Error(`route error: wrong route instantiation: ${this.currentUrl}`);
 
-        const nativeElement = document.querySelectorAll('router-render')[index - 1];
+        const nativeElement = this.indivInstance.getRenderer.getElementsByTagName('router-render')[index - 1];
+
+        // todo delete
+        // if (this.indivInstance.getRenderer.hasChildNodes(nativeElement)) this.indivInstance.getRenderer.getChildNodes(nativeElement).forEach(child => this.indivInstance.getRenderer.removeChild(nativeElement, child));
+        let assignedVnode: Vnode[] = null;
+        if (this.hasRenderComponentList[index]) assignedVnode = this.hasRenderComponentList[index].saveVnode;
 
         let FindComponent = null;
         let component = null;
@@ -380,12 +374,12 @@ export class RouteModule {
         if (route.component) {
           const findComponentFromModuleResult = this.findComponentFromModule(route.component, currentUrlPath);
           FindComponent = findComponentFromModuleResult.component;
-          component = await this.instantiateComponent(FindComponent, nativeElement, findComponentFromModuleResult.loadModule);
+          component = await this.instantiateComponent(FindComponent, nativeElement, findComponentFromModuleResult.loadModule, assignedVnode);
         }
         if (route.loadChild) {
           const loadModule = await this.NvModuleFactoryLoader(route.loadChild, currentUrlPath);
           FindComponent = loadModule.bootstrap;
-          component = await this.instantiateComponent(FindComponent, nativeElement, loadModule);
+          component = await this.instantiateComponent(FindComponent, nativeElement, loadModule, assignedVnode);
         }
 
         if (!route.component && !route.redirectTo && !route.loadChild) throw new Error(`route error: path ${route.path} need a component which has children path or need a  redirectTo which has't children path`);
@@ -480,18 +474,20 @@ export class RouteModule {
    * 
    * use InDiv renderComponent
    * 
-   * if parmas has loadModule, use loadModule
-   * if parmas has'nt loadModule, use rootModule in InDiv
+   * if argument has loadModule, use loadModule
+   * if argument has'nt loadModule, use rootModule in InDiv
+   * if argument has assignedVnode, will use assignedVnode fro new Component instance
    *
    * @private
    * @param {Function} FindComponent
    * @param {Element} nativeElement
    * @param {INvModule} [loadModule]
+   * @param {Vnode[]} [assignedVnode]
    * @returns {Promise<IComponent>}
    * @memberof Router
    */
-  private instantiateComponent(FindComponent: Function, nativeElement: Element, loadModule: INvModule): Promise<IComponent> {
-    return this.indivInstance.renderComponent(FindComponent, nativeElement, loadModule);
+  private instantiateComponent(FindComponent: Function, nativeElement: Element, loadModule: INvModule, assignedVnode: Vnode[]): Promise<IComponent> {
+    return this.indivInstance.renderComponent(FindComponent, nativeElement, loadModule, assignedVnode);
   }
 
   /**

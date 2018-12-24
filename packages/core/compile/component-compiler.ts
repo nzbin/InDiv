@@ -127,12 +127,18 @@ export async function componentCompiler(nativeElement: any, componentInstance: I
     .then(() => {
       // compile has been added into Component instance by dirty method
       if (!(componentInstance as any).compileInstance) ((componentInstance as any).compileInstance as Compile) = new Compile(nativeElement, componentInstance);
-      const saveVnodes = ((componentInstance as any).compileInstance as Compile).startCompile();
 
-      const componentAndDirectives: TComAndDir = {
-        components: [],
-        directives: [],
-      };
+      let saveVnodes: Vnode[] = [];
+      try {
+        saveVnodes = ((componentInstance as any).compileInstance as Compile).startCompile();
+      } catch (error) {
+        throw new Error(`Compoent ${(componentInstance.constructor as any).selector} was compiled failed!`);
+      }
+
+      // for save saveVnode in componentInstance
+      componentInstance.saveVnode = saveVnodes;
+
+      const componentAndDirectives: TComAndDir = { components: [], directives: [] };
       saveVnodes.forEach(vnode => buildComponentsAndDirectives(vnode, componentAndDirectives));
 
       // first mount directive

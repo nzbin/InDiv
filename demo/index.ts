@@ -20,8 +20,8 @@ class ValueType { }
   selector: 'pc-component',
   template: (`
     <div>
-      <p nv-if="e" nv-class="a" nv-repeat="let da in d"  nv-on:click="componentClick(d)">你好： {{da.z}}</p>
-      state.d: <input nv-repeat="let da in d" nv-model="da.z" />
+      <p nv-if="e" nv-class="a" nv-repeat="da in d"  nv-on:click="componentClick(d)">你好： {{da.z}}</p>
+      state.d: <input nv-repeat="da in d" nv-model="da.z" />
       <p nv-on:click="sendProps(5)">props from component.state.a: {{ax}}</p>
     </div>
   `),
@@ -87,8 +87,8 @@ class PComponent implements WatchState, BeforeMount, ReceiveProps, OnDestory {
       下面跟组件没关系<br/>
       <div nv-if="f">
         ef
-        <input nv-repeat="let ea in e" nv-model="ea.z" />
-        <p nv-class="c" nv-if="ea.z" nv-repeat="let ea in e" nv-text="ea.z" nv-on:click="showAlert(ea)"></p>
+        <input nv-repeat="ea in e" nv-model="ea.z" />
+        <p nv-class="c" nv-if="ea.z" nv-repeat="ea in e" nv-text="ea.z" nv-on:click="showAlert(ea)"></p>
         <p>111this.state.a：{{a}}</p>
         <input nv-model="a" />
       </div>
@@ -282,19 +282,19 @@ class TestComponent implements OnDestory, ReceiveProps {
     <div nv-class="'a'" nv-id="'cc'">
       <input nv-model="test.a" nv-on:click="show(test)" />
       <p test-directive="{'123'}" nv-id="232" nv-if="countState(a)" nv-on:click="changeInput()">{{a}}</p>
-      <test-component nv-repeat="let man in testArray" nv-key="man.name" manName="{countState(man.name)}" nv-if="a"></test-component>
+      <test-component nv-repeat="man in testArray" nv-key="man.name" manName="{countState(man.name)}" nv-if="a"></test-component>
       <p nv-on:click="go()">container: {{countState(color)}}</p>
       <input nv-model="a" />
-      <div nv-repeat="let man in testArray" nv-key="man.name">
+      <div nv-repeat="man in testArray" nv-key="man.name">
           <div nv-on:click="show(testArray2, '你111')" nv-text="man.name"></div>
           <div><p>性别：{{countState(man.sex, $index)}}</p></div>
           <a nv-href="countState(man.sex, $index)">a {{man.sex}}</a>
           <img nv-src="man.sex" nv-alt="man.sex" />
-          <test-component nv-key="man.name" manName="{countState2(man.name, bd)}"  nv-repeat="let bd in testArray2"></test-component>
-          <p nv-key="man.name" nv-class="man.name" nv-id="bd" nv-repeat="let bd in testArray2">{{bd}}</p>
-          <input nv-on:click="show(_b, $index)" nv-repeat="let _b in testArray2" nv-model="_b"  nv-class="_b" />
+          <test-component nv-key="man.name" manName="{countState2(man.name, bd)}"  nv-repeat="bd in testArray2"></test-component>
+          <p nv-key="man.name" nv-class="man.name" nv-id="bd" nv-repeat="bd in testArray2">{{bd}}</p>
+          <input nv-on:click="show(_b, $index)" nv-repeat="_b in testArray2" nv-model="_b"  nv-class="_b" />
           <input nv-model="test.a"/>
-          <div class="fuck" nv-class="man.name" nv-repeat="let c in man.job" nv-key="c.id">
+          <div class="fuck" nv-class="man.name" nv-repeat="c in man.job" nv-key="c.id">
              <input nv-on:click="show(c, $index)" nv-model="c.name" nv-class="c.id" />
              <p test-directive="{'123'}" nv-key="man.name" nv-class="man.name" nv-id="c.name">{{man.name}}</p>
           </div>
@@ -305,7 +305,7 @@ class TestComponent implements OnDestory, ReceiveProps {
   `),
 })
 
-class Container implements OnInit, AfterMount, WatchState, HasRender {
+class Container implements OnInit, AfterMount, WatchState, HasRender, RouteChange {
   public ss: HeroSearchService;
   public ss2: HeroSearchService1;
   public state: any;
@@ -376,11 +376,15 @@ class Container implements OnInit, AfterMount, WatchState, HasRender {
       };
     });
     this.http$ = this.httpClient.get('/success');
-    // this.http$.subscribe({
-    //   next: this.httpHandler,
-    // });
+    this.http$.subscribe({
+      next: this.httpHandler,
+    });
     this.hss.test();
     console.log('value', this.value);
+  }
+
+  public nvRouteChange(lastRoute?: string, newRoute?: string) {
+    console.log('nvRouteChange Container', lastRoute, newRoute);
   }
 
   public nvOnInit() {

@@ -67,7 +67,7 @@ class RouteChild implements OnInit, HasRender, ReceiveProps, OnDestory {
     <div>
       子组件的子组件<br/>
       <p nv-on:click="sendProps(3)">PCChild props.ax:: {{b}}</p>
-      <p nv-repeat="let da in d">state.d {{da.z}}</p>
+      <p nv-repeat="da in d">state.d {{da.z}}</p>
     </div>
   `),
 })

@@ -91,6 +91,7 @@ export class Utils {
    * @memberof Utils
    */
   public getQuery(name: string): string {
+    if (!this.isBrowser()) return;
     const parts: string[] = window.location.search.replace('?', '').split('&');
     const params: any = {};
     for (let i = 0; i < parts.length; i++) {

@@ -25,7 +25,6 @@ export class NvLocation {
     data?: any;
     rootPath?: string;
   } {
-    if (!utils.isBrowser()) return {};
     return {
       path: nvRouteStatus.nvRouteObject.path,
       query: nvRouteStatus.nvRouteObject.query,
@@ -48,13 +47,14 @@ export class NvLocation {
    * @returns {void}
    */
   public set(path: string, query?: any, data?: any, title?: string): void {
-    if (!utils.isBrowser()) return;
     const rootPath = nvRouteStatus.nvRootPath === '/' ? '' : nvRouteStatus.nvRootPath;
-    history.pushState(
-      { path, query, data },
-      title,
-      `${rootPath}${path}${utils.buildQuery(query)}`,
-    );
+    if (utils.isBrowser()) {
+      history.pushState(
+        { path, query, data },
+        title,
+        `${rootPath}${path}${utils.buildQuery(query)}`,
+      );
+    }
     nvRouteStatus.nvRouteObject = { path, query, data };
   }
 
@@ -71,11 +71,13 @@ export class NvLocation {
    */
   public redirectTo(path: string, query?: any, data?: any, title?: string): void {
     const rootPath = nvRouteStatus.nvRootPath === '/' ? '' : nvRouteStatus.nvRootPath;
-    history.replaceState(
-      { path, query, data },
-      title,
-      `${rootPath}${path}${utils.buildQuery(query)}`,
-    );
+    if (utils.isBrowser()) {
+      history.replaceState(
+        { path, query, data },
+        title,
+        `${rootPath}${path}${utils.buildQuery(query)}`,
+      );
+    }
     nvRouteStatus.nvRouteObject = { path, query, data };
     nvRouteStatus.nvRouteParmasObject = {};
   }

@@ -8,7 +8,7 @@ import { PrivateService } from './private.service';
   selector: 'test-loadchild-component',
   template: `
     <div>
-      <p nv-repeat="let t in ttt" nv-on:click="testt(t)" routerTo="{'/R1/C1/D1'}" routerFrom="{'/R1/C1?a=1'}">test loadChild</p>
+      <p nv-repeat="t in ttt" nv-on:click="testt(t)" routerTo="{'/R1/C1/D1'}" routerFrom="{'/R1/C1?a=1'}">test loadChild</p>
       <router-render></router-render>
     </div>
   `,

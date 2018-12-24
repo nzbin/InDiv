@@ -137,9 +137,9 @@ export function parseTag(tag: string, directives: string[]): Vnode {
       if (voidElementList.indexOf(attr) !== -1 || tag.charAt(tag.length - 2) === '/') vNodeOptions.voidElement = true;
       vNodeOptions.tagName = attr;
     } else {
-      const name = attr.split('=')[0];
-      const _value = attr.split('=')[1];
-      const value = attr.split('=')[1] ? _value.substr(0, _value.length - 1).substr(1) : null;
+      const name = attr.match(/([^=]*)\=(.*)/)[1];
+      const _value = attr.match(/([^=]*)\=(.*)/)[2];
+      const value = _value ? _value.substr(0, _value.length - 1).substr(1) : null;
       let type: TNvAttribute = 'attribute';
       if (name.indexOf('nv-') === 0) type = 'nv-attribute';
       if (name.indexOf('nv-on:') === 0) type = 'nv-event';

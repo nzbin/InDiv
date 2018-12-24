@@ -2,6 +2,7 @@ import { DirectiveList, IDirective } from './directive';
 import { Injector } from '../di';
 import { RenderTaskQueue } from '../render';
 import { InDiv } from '../indiv';
+import { Vnode } from '../vnode';
 
 export type TComAndDir = {
   components: {
@@ -38,6 +39,7 @@ export interface IComponent {
   directiveList?: DirectiveList<IDirective>[];
   otherInjector?: Injector;
   privateInjector?: Injector;
+  saveVnode?: Vnode[];
 
   nvOnInit?(): void;
   watchData?(): void;

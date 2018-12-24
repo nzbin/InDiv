@@ -19,7 +19,7 @@ InDiv 2.0.0+ 开始使用 NvModule 重构路由系统。
 
 通过引入默认的路由模块，就可以快速搭建一个拥有路由导航的应用程序。
 
-当引入`RouteModule` 时，仅仅导出`RouterTo, RouterFrom, RouterActive,`这三个指令和对全局Injector注入`NvLocation`提供商。但是当调用`RouteModule`的静态方法时，将返回一个开启路由监听的`RouteModule`。
+当引入`RouteModule` 时，仅仅导出`RouterTo, RouterFrom,`这两个指令和对全局Injector注入`NvLocation`提供商。但是当调用`RouteModule`的静态方法时，将返回一个开启路由监听的`RouteModule`。
 
 > app.module.ts
 

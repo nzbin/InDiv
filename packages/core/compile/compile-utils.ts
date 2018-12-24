@@ -649,8 +649,10 @@ export class CompileUtil {
    * @memberof CompileUtil
    */
   public _getVMRepeatVal(vm: any, exp: string): void {
-    const vlList = exp.split(' ');
-    const value = this._getVMVal(vm, vlList[3]);
+    const _vlList = exp.split('in')[1];
+    if (!_vlList) throw new Error(`directive nv-repeat 's expression ${exp} is wrong!`);
+    const vlList = _vlList.replace(/\s*/g, '');
+    const value = this._getVMVal(vm, vlList);
     return value;
   }
 
@@ -956,7 +958,9 @@ export class CompileUtil {
     if (!value) return;
     if (value && !(value instanceof Array)) throw new Error('compile error: nv-repeat need an Array!');
 
-    const key = expFather.split(' ')[1];
+    const _key = expFather.split('in')[0];
+    if (!_key) throw new Error(`directive nv-repeat 's expression ${expFather} is wrong!`);
+    const key = _key.replace(/\s*/g, '');
     value.forEach((val: any, index: number) => {
       const repeatData: { [key: string]: any } = { ...vnode.repeatData };
       repeatData[key] = val;
@@ -1043,7 +1047,10 @@ export class CompileUtil {
       if (nodeAttrs) {
         const restRepeat = nodeAttrs.find(attr => this.isDirective(attr.type) && attr.name === 'nv-repeat');
         if (restRepeat) {
-          const newWatchData = restRepeat.value.split(' ')[3];
+          const _value = restRepeat.value.split('in')[1];
+          if (!_value) throw new Error(`directive nv-repeat 's expression ${restRepeat.value} is wrong!`);
+          const newWatchData = _value.replace(/\s*/g, '');
+          // const newWatchData = restRepeat.value.split(' ')[3];
 
           // 创建一个同级于vnode的容器存放新的子元素的容器，最后再统一放入vnode中
           const _newContainerFragment = new Vnode(vnode);

@@ -11,7 +11,7 @@
 
 3. `init(): void` 初始化 InDiv 应用，整个应用中的初始化方法。
 
-4. `renderComponent(BootstrapComponent: Function, renderDOM: Element, otherModule?: INvModule): Promise<IComponent>` 渲染组件的公共方法，`RouteModule`中 多次使用。
+4. `renderComponent(BootstrapComponent: Function, renderDOM: Element, otherModule?: INvModule, assignedVnode?: Vnode[]): Promise<IComponent>` 渲染组件的公共方法，`RouteModule`中 多次使用。可以为即将实例化的组件指定其他的模块及被提前分配的虚拟DOM结构。
 
   - `BootstrapComponent: Function` 需要实例化的组件类
   - `renderDOM: Element` 实例化的地方

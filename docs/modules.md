@@ -71,13 +71,12 @@ export default class AppModule {}
 ```typescript
 import { NvModule} from '@indiv/core';
 import { NvLocation } from './location';
-import { RouterTo, RouterFrom, RouterActive } from './directives'
+import { RouterTo, RouterFrom } from './directives'
 
 @NvModule({
   declarations: [
     RouterTo,
     RouterFrom,
-    RouterActive,
   ],
   providers: [
     {
@@ -88,7 +87,6 @@ import { RouterTo, RouterFrom, RouterActive } from './directives'
   exports: [
     RouterTo,
     RouterFrom,
-    RouterActive,
   ],
 })
 export class RouteModule {}

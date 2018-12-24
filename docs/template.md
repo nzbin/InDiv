@@ -15,7 +15,7 @@
 指令可以绑定下面几种值
 
 1. 来自实例上的 `state` 上的值：例如 接受 `this.state.value`，则可以直接写成 `nv-id="value"`，省略state。
-2. 通过结构指令 `nv-repeat` 出的被循环的数组中的每一项：例如 `nv-repeat="let item in valueList"`，在该指令所属的元素及其子元素都可以直接使用 `item`，如`nv-class="item.className"`
+2. 通过结构指令 `nv-repeat` 出的被循环的数组中的每一项：例如 `nv-repeat="item in valueList"`，在该指令所属的元素及其子元素都可以直接使用 `item`，如`nv-class="item.className"`
 3. 来自实例上以`@`开头 + 方法名的方法，如果用在事件指令中则结尾要加 `()` 表示执行。该类型常用与 `props action` 及事件指令的绑定：`nv-on:click="@handleClick()"` `handler-method="{@handleClick}"` 
 4. `props` 与 `actions`，使用前三种语法外额外要用 `{}` 包裹：`handler-method="{@handleClick}"` `color="{color}"`
 5. pipe类型：接收一个来自实例上以`@`开头 + 方法名的并带有返回值的方法，参数可以是 **来自实例上的 `state` 上的值** 或 **通过结构指令 `nv-repeat` 出的被循环的数组中的每一项**，指令被渲染的值为该方法的**返回值**。例如：`<p nv-text="@returnValue(b)"></p>`
@@ -41,13 +41,13 @@
 
   1. repeat 是一个重复器指令 —— 自定义数据显示的一种方式。你的目标是展示一个由多个条目组成的列表。
   2. 首先定义了一个 HTML 块，它规定了单个条目应该如何显示。再告诉 InDiv 把这个块当做模板，渲染列表中的每个条目。该指令可以搭配 nv-key 指令使用提高渲染性能。
-  3. 使用 nv-repeat="let item in Array"语法, Array只能为 **其他被repeat值** 或 **组件实例state上** 的数组。
-  4. 可以通过 let item in Array 的语法定义 nv-repeat 指令，在元素本身或子元素可以直接使用 item 作为值。
+  3. 使用 nv-repeat="item in Array"语法, Array只能为 **其他被repeat值** 或 **组件实例state上** 的数组。
+  4. 可以通过 `item in Array` 的语法定义 nv-repeat 指令，在元素本身或子元素可以直接使用 item 作为值。
   5. 此指令十分耗费性能，不建议多用，并且建议搭配 nv-key 使用。
 
   ```html
-  <div nv-class="li.class" nv-repeat="let li in arrayList" nv-key="li.id">
-    <input nv-model="l.value" nv-repeat="let l in li" nv-key="l.id"/>
+  <div nv-class="li.class" nv-repeat="li in arrayList" nv-key="li.id">
+    <input nv-model="l.value" nv-repeat="l in li" nv-key="l.id"/>
     <demo-component value="{l}" nv-key="li.id"></demo-component>
   </div>
   ```
@@ -70,7 +70,7 @@
   4. `1,2,3` 数字类型
   5. `$index` 如果该元素被 repeat指令包裹 或是 repeat指令的元素本身，可以使用该参数
   6. 来自实例`state`上的值
-  7. repeat value，传递`nv-repeat='let item in array'`的item值，如： `nv-on:click="@show(nav)" nv-repeat="let nav in navList" nv-key="nav.id"`,
+  7. repeat value，传递`nv-repeat='item in array'`的item值，如： `nv-on:click="@show(nav)" nv-repeat="nav in navList" nv-key="nav.id"`,
 
 
 ## 组件props

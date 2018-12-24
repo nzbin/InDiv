@@ -33,6 +33,7 @@ export class Compile {
       if (this.parseVnodeOptions.components.indexOf(key) === -1 && (value as any).nvType === 'nvComponent') this.parseVnodeOptions.components.push(key);
       if (this.parseVnodeOptions.directives.indexOf(key) === -1 && (value as any).nvType === 'nvDirective') this.parseVnodeOptions.directives.push(key);
     });
+    this.saveVnode = componentInstance.saveVnode;
   }
 
   /**
@@ -48,14 +49,20 @@ export class Compile {
     this.fragment = parseTemplateToVnode('');
 
     if (!this.saveVnode) this.saveVnode = this.componentInstance.$indivInstance.getRenderer.nativeElementToVnode(this.mountedElement, this.parseVnodeOptions);
+
     const templateVnode = parseTemplateToVnode(this.componentInstance.template, this.parseVnodeOptions);
     this.compileVnode(templateVnode);
+
     const patchList: IPatchList[] = [];
     this.fragment.forEach(child => child.parentVnode = { nativeElement: this.mountedElement });
+
     diffVnode({ childNodes: this.saveVnode, nativeElement: this.mountedElement, parentVnode: null }, { childNodes: this.fragment, nativeElement: this.mountedElement, parentVnode: null }, patchList);
-    // todo 重复渲染的bug
-    console.log(33333333, this.mountedElement, this.saveVnode, this.fragment, patchList);
+    // todo delete
+    console.log(33333333, this.mountedElement, this.saveVnode, patchList, this.componentInstance.declarationMap);
     patchVnode(patchList, this.componentInstance.$indivInstance.getRenderer);
+
+    this.fragment = null;
+
     return this.saveVnode;
   }
 

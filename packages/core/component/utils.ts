@@ -77,7 +77,12 @@ function resolveDirective(componentInstance: IComponent): void {
       });
     } else {
       let pureProps = null;
-      if (/^nv-repeat=.*/.test(matchProps)) pureProps = pureMatchProps.split(' ')[3].split('.')[0];
+      if (/^nv-repeat=.*/.test(matchProps)) {
+        const _value = pureMatchProps.split('in')[1];
+        if (!_value) throw new Error(`directive nv-repeat 's expression ${pureMatchProps} is wrong!`);
+        const value = _value.replace(/\s*/g, '');
+        pureProps = value.split('.')[0];
+      }
       if (!/^nv-repeat=.*/.test(matchProps)) pureProps = pureMatchProps.split('.')[0];
       if (componentInstance && pureProps in componentInstance && componentInstance.dependencesList.indexOf(pureProps) === -1) componentInstance.dependencesList.push(pureProps);
     }

@@ -33,7 +33,7 @@ export class Compile {
       if (this.parseVnodeOptions.components.indexOf(key) === -1 && (value as any).nvType === 'nvComponent') this.parseVnodeOptions.components.push(key);
       if (this.parseVnodeOptions.directives.indexOf(key) === -1 && (value as any).nvType === 'nvDirective') this.parseVnodeOptions.directives.push(key);
     });
-    this.saveVnode = componentInstance.saveVnode;
+    if (componentInstance.saveVnode) this.saveVnode = componentInstance.saveVnode;
   }
 
   /**
@@ -58,7 +58,7 @@ export class Compile {
 
     diffVnode({ childNodes: this.saveVnode, nativeElement: this.mountedElement, parentVnode: null }, { childNodes: this.fragment, nativeElement: this.mountedElement, parentVnode: null }, patchList);
     // todo delete
-    console.log(33333333, this.mountedElement, this.saveVnode, patchList, this.componentInstance.declarationMap);
+    console.log(33333333, this.mountedElement, this.saveVnode, patchList);
     patchVnode(patchList, this.componentInstance.$indivInstance.getRenderer);
 
     this.fragment = null;

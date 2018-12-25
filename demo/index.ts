@@ -376,9 +376,9 @@ class Container implements OnInit, AfterMount, WatchState, HasRender, RouteChang
       };
     });
     this.http$ = this.httpClient.get('/success');
-    this.http$.subscribe({
-      next: this.httpHandler,
-    });
+    // this.http$.subscribe({
+    //   next: this.httpHandler,
+    // });
     this.hss.test();
     console.log('value', this.value);
   }

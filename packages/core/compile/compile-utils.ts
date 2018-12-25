@@ -1006,7 +1006,9 @@ export class CompileUtil {
    * @memberof CompileUtil
    */
   public repeatChildrenUpdater(vnode: Vnode, value: any, expFather: string, index: number, vm: any, watchValue: any): void {
-    const key = expFather.split(' ')[1];
+    const _key = expFather.split('in')[0];
+    if (!_key) throw new Error(`directive nv-repeat 's expression ${expFather} is wrong!`);
+    const key = _key.replace(/\s*/g, '');
 
     const _fragmentList: {
       originChild: Vnode,

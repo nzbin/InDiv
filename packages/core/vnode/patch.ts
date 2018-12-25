@@ -21,7 +21,7 @@ export function createNativeElement(createdVnode: Vnode, renderer: Renderer): an
  * @param {Renderer} renderer
  */
 export function setAttributesToNativeElement(vnode: Vnode, attribute: TAttributes, renderer: Renderer): void {
-  if (attribute.type === 'nv-attribute' || attribute.type === 'prop' ||  attribute.type === 'directive') renderer.setNvAttribute(vnode.nativeElement, attribute);
+  if (attribute.type === 'nv-attribute') renderer.setNvAttribute(vnode.nativeElement, attribute);
   if (attribute.type === 'attribute') renderer.setAttribute(vnode.nativeElement, attribute);
 }
 
@@ -126,8 +126,9 @@ export function patchVnode(patchList: IPatchList[], renderer: Renderer): void {
         if ((patch.changedValue as TAttributes).name === 'nv-model') patch.originVnode.value = (patch.changedValue as TAttributes).nvValue;
         if ((patch.changedValue as TAttributes).name === 'nv-key') patch.originVnode.key = (patch.changedValue as TAttributes).nvValue;
 
+        // render nativeElement
         if (patch.attributeType === 'attribute') renderer.setAttribute(patch.originVnode.nativeElement, patch.changedValue as TAttributes);
-        if (patch.attributeType === 'nv-attribute' || patch.attributeType === 'directive' || patch.attributeType === 'prop') renderer.setNvAttribute(patch.originVnode.nativeElement, patch.changedValue as TAttributes);
+        if (patch.attributeType === 'nv-attribute') renderer.setNvAttribute(patch.originVnode.nativeElement, patch.changedValue as TAttributes);
         break;
       }
       case 4: {
@@ -136,8 +137,9 @@ export function patchVnode(patchList: IPatchList[], renderer: Renderer): void {
         if ((patch.changedValue as TAttributes).name === 'nv-key') patch.originVnode.key = null;
         patch.originVnode.attributes.splice(removeAttrIndex, 1);
 
+        // render nativeElement
         if (patch.attributeType === 'attribute') renderer.removeAttribute(patch.originVnode.nativeElement, patch.changedValue as TAttributes);
-        if (patch.attributeType === 'nv-attribute' || patch.attributeType === 'directive' || patch.attributeType === 'prop') renderer.removeNvAttribute(patch.originVnode.nativeElement, patch.changedValue as TAttributes);
+        if (patch.attributeType === 'nv-attribute') renderer.removeNvAttribute(patch.originVnode.nativeElement, patch.changedValue as TAttributes);
         break;
       }
       case 5: {

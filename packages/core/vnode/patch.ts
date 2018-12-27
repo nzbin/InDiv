@@ -1,4 +1,4 @@
-import { TAttributes, IPatchList, Vnode, TEventType } from './parse-tag';
+import { TAttributes, IPatchList, Vnode, TEventType } from './vnode';
 import { Renderer } from './renderer';
 
 /**

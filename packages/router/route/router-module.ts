@@ -240,8 +240,6 @@ export class RouteModule {
 
         const nativeElement = this.indivInstance.getRenderer.getElementsByTagName('router-render')[index - 1];
 
-        // todo delete
-        // if (this.indivInstance.getRenderer.hasChildNodes(nativeElement)) this.indivInstance.getRenderer.getChildNodes(nativeElement).forEach(child => this.indivInstance.getRenderer.removeChild(nativeElement, child));
         let assignedVnode: Vnode[] = null;
         if (this.hasRenderComponentList[index]) assignedVnode = this.hasRenderComponentList[index].saveVnode;
 
@@ -357,8 +355,6 @@ export class RouteModule {
 
         const nativeElement = this.indivInstance.getRenderer.getElementsByTagName('router-render')[index - 1];
 
-        // todo delete
-        // if (this.indivInstance.getRenderer.hasChildNodes(nativeElement)) this.indivInstance.getRenderer.getChildNodes(nativeElement).forEach(child => this.indivInstance.getRenderer.removeChild(nativeElement, child));
         let assignedVnode: Vnode[] = null;
         if (this.hasRenderComponentList[index]) assignedVnode = this.hasRenderComponentList[index].saveVnode;
 

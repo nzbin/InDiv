@@ -1,10 +1,10 @@
 import { utils } from '../utils';
-import { Vnode, IPatchList, TEventType } from './parse-tag';
+import { Vnode, IPatchList, TEventType } from './vnode';
 
 /**
  * diff childNodes for diff VNode
  * 
- * sameVnode: tagName , key and template are all same
+ * sameVnode: tagName , key, template of Vnode are all same
  * 
  * type: 0 removeChild
  * type: 1 change Child index

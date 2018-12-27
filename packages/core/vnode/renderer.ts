@@ -1,4 +1,4 @@
-import { Vnode, TAttributes } from './parse-tag';
+import { Vnode, TAttributes } from './vnode';
 import { ParseOptions } from './parse';
 
 /**

@@ -275,34 +275,65 @@ class TestComponent implements OnDestory, ReceiveProps {
     console.log('test-component nvReceiveProps', p);
   }
 }
+// (`
+//     <div nv-class="test.a" nv-id="'cc'">
+//       <input nv-model="test.a" nv-on:click="show(test)" />
+//       <p test-directive="{'123'}" nv-id="232" nv-if="countState(a)" nv-on:click="changeInput()">{{a}}</p>
+//       <test-component nv-repeat="man in testArray" nv-key="man.name" manName="{countState(man.name)}" nv-if="a"></test-component>
+//       <p nv-on:click="go()">container: {{countState(color)}}</p>
+//       <input nv-model="a" />
+//       <div nv-repeat="man in testArray" nv-key="man.name">
+//           <div nv-on:click="show(testArray2, '你111')" nv-text="man.name"></div>
+//           <div><p>性别：{{countState(man.sex, $index)}}</p></div>
+//           <a nv-href="countState(man.sex, $index)">a {{man.sex}}</a>
+//           <img nv-src="man.sex" nv-alt="man.sex" />
+//           <test-component nv-key="man.name" manName="{countState2(man.name, bd)}"  nv-repeat="bd in testArray2"></test-component>
+//           <p nv-key="man.name" nv-class="man.name" nv-id="bd" nv-repeat="bd in testArray2">{{bd}}</p>
+//           <input nv-on:click="show(_b, $index)" nv-repeat="_b in testArray2" nv-model="_b"  nv-class="_b" />
+//           <input nv-model="test.a"/>
+//           <div class="fuck" nv-class="man.name" nv-repeat="c in man.job" nv-key="c.id">
+//              <input nv-on:click="show(c, $index)" nv-model="c.name" nv-class="c.id" />
+//              <p test-directive="{'123'}" nv-key="man.name" nv-class="man.name" nv-id="c.name">{{man.name}}</p>
+//              <div nv-repeat="_bb in man.job">
+//               <p nv-class="_bb.id">{{_bb.name}}</p>
+//              </div>
+//           </div>
+//       </div>
+//       <router-render></router-render>
+//     </div>
+//     <p>1111</p>
+//   `)
 
 @Component({
   selector: 'container-wrap',
   template: (`
-    <div nv-class="'a'" nv-id="'cc'">
-      <input nv-model="test.a" nv-on:click="show(test)" />
-      <p test-directive="{'123'}" nv-id="232" nv-if="countState(a)" nv-on:click="changeInput()">{{a}}</p>
-      <test-component nv-repeat="man in testArray" nv-key="man.name" manName="{countState(man.name)}" nv-if="a"></test-component>
-      <p nv-on:click="go()">container: {{countState(color)}}</p>
-      <input nv-model="a" />
-      <div nv-repeat="man in testArray" nv-key="man.name">
-          <div nv-on:click="show(testArray2, '你111')" nv-text="man.name"></div>
-          <div><p>性别：{{countState(man.sex, $index)}}</p></div>
-          <a nv-href="countState(man.sex, $index)">a {{man.sex}}</a>
-          <img nv-src="man.sex" nv-alt="man.sex" />
-          <test-component nv-key="man.name" manName="{countState2(man.name, bd)}"  nv-repeat="bd in testArray2"></test-component>
-          <p nv-key="man.name" nv-class="man.name" nv-id="bd" nv-repeat="bd in testArray2">{{bd}}</p>
-          <input nv-on:click="show(_b, $index)" nv-repeat="_b in testArray2" nv-model="_b"  nv-class="_b" />
-          <input nv-model="test.a"/>
-          <div class="fuck" nv-class="man.name" nv-repeat="c in man.job" nv-key="c.id">
-             <input nv-on:click="show(c, $index)" nv-model="c.name" nv-class="c.id" />
-             <p test-directive="{'123'}" nv-key="man.name" nv-class="man.name" nv-id="c.name">{{man.name}}</p>
-          </div>
-      </div>
-      <router-render></router-render>
+  <div nv-class="test.a" nv-id="'cc'">
+    <input nv-model="test.a" nv-on:click="show(test)" />
+    <p test-directive="{'123'}" nv-id="232" nv-if="countState(a)" nv-on:click="changeInput()">{{a}}</p>
+    <test-component nv-repeat="man in testArray" nv-key="man.name" manName="{countState(man.name)}" nv-if="a"></test-component>
+    <p nv-on:click="go()">container: {{countState(color)}}</p>
+    <input nv-model="a" />
+    <div nv-repeat="man in testArray" nv-key="man.name">
+        <div nv-on:click="show(testArray2, '你111')" nv-text="man.name"></div>
+        <div><p>性别：{{countState(man.sex, $index)}}</p></div>
+        <a nv-href="countState(man.sex, $index)">a {{man.sex}}</a>
+        <img nv-src="man.sex" nv-alt="man.sex" />
+        <test-component nv-key="man.name" manName="{countState2(man.name, bd)}"  nv-repeat="bd in testArray2"></test-component>
+        <p nv-key="man.name" nv-class="man.name" nv-id="bd" nv-repeat="bd in testArray2">{{bd}}</p>
+        <input nv-on:click="show(_b, $index)" nv-repeat="_b in testArray2" nv-model="_b"  nv-class="_b" />
+        <input nv-model="test.a"/>
+        <div class="fuck" nv-class="man.name" nv-repeat="c in man.job" nv-key="c.id">
+           <input nv-on:click="show(c, $index)" nv-model="c.name" nv-class="c.id" />
+           <p test-directive="{'123'}" nv-key="man.name" nv-class="man.name" nv-id="c.name">{{man.name}}</p>
+           <div nv-repeat="_bb in man.job">
+            <p nv-class="man.name">{{test.a}}: {{man.name}} is {{_bb.name}}</p>
+           </div>
+        </div>
     </div>
-    <p>1111</p>
-  `),
+    <router-render></router-render>
+  </div>
+  <p>1111</p>
+`),
 })
 
 class Container implements OnInit, AfterMount, WatchState, HasRender, RouteChange {
@@ -334,26 +365,28 @@ class Container implements OnInit, AfterMount, WatchState, HasRender, RouteChang
         },
       ],
     },
-    {
-      name: 'nina',
-      sex: '女',
-      // job: ['老师', '英语老师', '美1'],
-      job: [
-        {
-          id: 1,
-          name: '老师',
-        },
-        {
-          id: 2,
-          name: '英语老师',
-        },
-        {
-          id: 3,
-          name: '美',
-        },
-      ],
-    }];
+    // {
+    //   name: 'nina',
+    //   sex: '女',
+    //   // job: ['老师', '英语老师', '美1'],
+    //   job: [
+    //     {
+    //       id: 1,
+    //       name: '老师',
+    //     },
+    //     {
+    //       id: 2,
+    //       name: '英语老师',
+    //     },
+    //     {
+    //       id: 3,
+    //       name: '美',
+    //     },
+    //   ],
+    // }
+  ];
   public testArray2: any = ['程序员2', '码农2', '架构师2'];
+  // public testArray2: any = ['程序员2'];
   public props: any;
   public setState: SetState;
   public http$: Observable<HttpClientResponse>;

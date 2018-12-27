@@ -1,4 +1,7 @@
-import { parseTemplateToVnode, Vnode, ParseOptions, IPatchList, diffVnode, patchVnode } from '../vnode';
+import {
+  parseTemplateToVnode, Vnode, ParseOptions, IPatchList, diffVnode, patchVnode,
+  isRepeatNode, isElementNode, isTextNode, isDirective, isEventDirective, isPropOrNvDirective,
+} from '../vnode';
 import { CompileUtil } from './compile-utils';
 import { IComponent } from '../types';
 
@@ -58,7 +61,7 @@ export class Compile {
 
     diffVnode({ childNodes: this.saveVnode, nativeElement: this.mountedElement, parentVnode: null }, { childNodes: this.fragment, nativeElement: this.mountedElement, parentVnode: null }, patchList);
     // todo delete
-    console.log(33333333, this.mountedElement, this.saveVnode, patchList);
+    // console.log(33333333, this.mountedElement, this.saveVnode, patchList);
     patchVnode(patchList, this.componentInstance.$indivInstance.getRenderer);
 
     this.fragment = null;
@@ -88,7 +91,7 @@ export class Compile {
 
       const _fragmentChild = new Vnode(vnode);
       // 因为当不上循环node时候将不会递归创建新vnode了
-      if (!this.isRepeatNode(_fragmentChild)) _fragmentChild.childNodes = [];
+      if (!isRepeatNode(_fragmentChild)) _fragmentChild.childNodes = [];
       if (parent) {
         _fragmentChild.parentVnode = parent;
         vnode.parentVnode = parent;
@@ -96,13 +99,13 @@ export class Compile {
       fragment.push(_fragmentChild);
 
       // 要用新的编译
-      if (vnode.childNodes && vnode.childNodes.length > 0 && !this.isRepeatNode(vnode)) this.recursiveDOM(vnode.childNodes, _fragmentChild.childNodes, _fragmentChild);
+      if (vnode.childNodes && vnode.childNodes.length > 0 && !isRepeatNode(vnode)) this.recursiveDOM(vnode.childNodes, _fragmentChild.childNodes, _fragmentChild);
 
       const text = _fragmentChild.template;
       const reg = /\{\{(.*)\}\}/g;
-      if (this.isElementNode(_fragmentChild)) this.compile(_fragmentChild, fragment);
+      if (isElementNode(_fragmentChild)) this.compile(_fragmentChild, fragment);
 
-      if (this.isTextNode(_fragmentChild) && reg.test(text)) {
+      if (isTextNode(_fragmentChild) && reg.test(text)) {
         const textList = text.match(/(\{\{[^\{\}]+?\}\})/g);
         const length = textList.length;
         if (textList && length > 0) {
@@ -111,7 +114,7 @@ export class Compile {
       }
 
       // after compile repeatNode, remove repeatNode
-      if (this.isRepeatNode(_fragmentChild) && fragment.indexOf(_fragmentChild) !== -1) fragment.splice(fragment.indexOf(_fragmentChild), 1);
+      if (isRepeatNode(_fragmentChild) && fragment.indexOf(_fragmentChild) !== -1) fragment.splice(fragment.indexOf(_fragmentChild), 1);
     });
   }
 
@@ -128,17 +131,17 @@ export class Compile {
       nodeAttrs.forEach(attr => {
         const attrName = attr.name;
         const compileUtil = new CompileUtil(fragment);
-        if (this.isDirective(attr.type)) {
+        if (isDirective(attr.type)) {
           const dir = attrName.substring(3);
           const exp = attr.value;
           compileUtil.bind(vnode, this.componentInstance, exp, dir);
         }
-        if (this.isEventDirective(attr.type)) {
+        if (isEventDirective(attr.type)) {
           const dir = attrName.substring(3);
           const exp = attr.value;
           compileUtil.eventHandler(vnode, this.componentInstance, exp, dir);
         }
-        if (this.isPropOrNvDirective(attr.type) && !this.isRepeatNode(vnode)) compileUtil.propHandler(vnode, this.componentInstance, attr);
+        if (isPropOrNvDirective(attr.type) && !isRepeatNode(vnode)) compileUtil.propHandler(vnode, this.componentInstance, attr);
       });
     }
   }
@@ -152,78 +155,5 @@ export class Compile {
    */
   public compileText(vnode: Vnode, exp: string): void {
     new CompileUtil().templateUpdater(vnode, this.componentInstance, exp);
-  }
-
-  /**
-   * judge attribute is nv directive or not
-   *
-   * @param {string} type
-   * @returns {boolean}
-   * @memberof Compile
-   */
-  public isDirective(type: string): boolean {
-    return type === 'nv-attribute';
-  }
-
-  /**
-   * judge attribute is nv directive or not
-   *
-   * @param {string} type
-   * @returns {boolean}
-   * @memberof Compile
-   */
-  public isPropOrNvDirective(type: string): boolean {
-    return type === 'directive' || type === 'prop';
-  }
-
-  /**
-   * judge attribute is nv event directive or not
-   *
-   * @param {string} type
-   * @returns {boolean}
-   * @memberof Compile
-   */
-  public isEventDirective(type: string): boolean {
-    return type === 'nv-event';
-  }
-
-  /**
-   * judge DOM is a element node or not
-   *
-   * @param {Vnode} vnode
-   * @returns {boolean}
-   * @memberof Compile
-   */
-  public isElementNode(vnode: Vnode): boolean {
-    return vnode.type === 'tag' || vnode.type === 'component';
-  }
-
-  /**
-   * judge DOM is nv-repeat dom or not
-   *
-   * @param {Vnode} vnode
-   * @returns {boolean}
-   * @memberof Compile
-   */
-  public isRepeatNode(vnode: Vnode): boolean {
-    const nodeAttrs = vnode.attributes;
-    let result = false;
-    if (nodeAttrs) {
-      nodeAttrs.forEach(attr => {
-        if (attr.name === 'nv-repeat') result = true;
-      });
-    }
-    return result;
-  }
-
-  /**
-   * judge DOM is text node or not
-   *
-   * @param {Vnode} vnode
-   * @returns {boolean}
-   * @memberof Compile
-   */
-  public isTextNode(vnode: Vnode): boolean {
-    return vnode.type === 'text';
   }
 }

@@ -1,4 +1,5 @@
-import { parseTag, Vnode } from './parse-tag';
+import { parseTag } from './parse-tag';
+import { Vnode } from './vnode';
 
 export type ParseOptions = {
   components: string[];

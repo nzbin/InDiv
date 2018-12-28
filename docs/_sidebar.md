@@ -12,4 +12,4 @@
 - 基本原理
   - [依赖注入](di)
   - [状态收集](stateCollection)
-  - [渲染](render)
+  - [跨平台渲染](render)

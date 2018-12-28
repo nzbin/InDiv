@@ -53,12 +53,12 @@ export interface WatchState {
   nvWatchState(oldState?: any): void;
 }
 
-export interface ReceiveProps {
+export interface ReceiveInputs {
   /**
-   * for @Dirctive and @Component, when props from Component instance will been changed
+   * for @Dirctive and @Component, when input from Component instance will been changed
    *
-   * @param {*} nextProps
-   * @memberof ReceiveProps
+   * @param {*} nextInputs
+   * @memberof ReceiveInputs
    */
-  nvReceiveProps(nextProps: any): void;
+  nvReceiveInputs(nextInputs: any): void;
 }

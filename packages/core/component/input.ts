@@ -14,10 +14,10 @@ export function Input(name?: string) {
   return function (target: IComponent | IDirective, propertyName: string) {
       const propName = name ? name : propertyName;
       const inputName = propertyName;
-      if (target.inputPropsMap && !target.inputPropsMap.has(propName)) target.inputPropsMap.set(propName, inputName);
-      if (!target.inputPropsMap) {
-        target.inputPropsMap = new Map();
-        target.inputPropsMap.set(propName, inputName);
+      if (target.inputsMap && !target.inputsMap.has(propName)) target.inputsMap.set(propName, inputName);
+      if (!target.inputsMap) {
+        target.inputsMap = new Map();
+        target.inputsMap.set(propName, inputName);
       }
   };
 }

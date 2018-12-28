@@ -100,9 +100,9 @@ class RouteChild {
   nvHasRender() {
     console.log('RouteChild: this.props.a', this.props.a);
   }
-  nvReceiveProps(nextProps) {
-    console.log(3333, nextProps);
-    this.state.b = nextProps.a;
+  nvReceiveInputs(nextInputs) {
+    console.log(3333, nextInputs);
+    this.state.b = nextInputs.a;
   }
 }
 // RouteChild.injectTokens = [
@@ -174,10 +174,10 @@ class PCChild {
     console.log('PCChild nvAfterMount props11', this.props.ax);
   }
 
-  nvReceiveProps(nextProps) {
+  nvReceiveInputs(nextInputs) {
     console.log(this.props.ax);
-    console.log(4444, nextProps);
-    this.state.b = nextProps.ax;
+    console.log(4444, nextInputs);
+    this.state.b = nextInputs.ax;
   }
 }
 // Component({
@@ -228,9 +228,9 @@ class PComponent {
   nvAfterMount() {
     console.log('nvAfterMount props11', this.props);
   }
-  nvReceiveProps(nextProps) {
-    console.log(1111111111111, nextProps);
-    this.state.ax = nextProps.ax;
+  nvReceiveInputs(nextInputs) {
+    console.log(1111111111111, nextInputs);
+    this.state.ax = nextInputs.ax;
   }
   componentClick(a) {
     // alert('点击了组件');
@@ -329,14 +329,8 @@ class R1 {
   }
 
   nvOnInit() {
-    this.utils.setCookie('tutor', {
-      name: 'gerry',
-      github: 'https://github.com/DimaLiLongJi',
-    }, { expires: 7 });
   }
   nvBeforeMount() {
-    const cookie = this.utils.getCookie('tutor');
-    console.log('cookie is', cookie);
     console.log('is nvBeforeMount');
   }
   nvAfterMount() {

@@ -1,5 +1,3 @@
-import Cookie from 'easier-cookie';
-
 /**
  * utils for InDiv
  *
@@ -30,40 +28,6 @@ export class Utils {
   }
 
   /**
-   * set Cookie with easier-cookie
-   *
-   * @param {string} name
-   * @param {*} value
-   * @param {*} [options]
-   * @memberof Utils
-   */
-  public setCookie(name: string, value: any, options?: any): void {
-    Cookie.set(name, value, options);
-  }
-
-  /**
-   * get Cookie with easier-cookie
-   *
-   * @param {string} name
-   * @returns {*}
-   * @memberof Utils
-   */
-  public getCookie(name: string): any {
-    return Cookie.get(name);
-  }
-
-  /**
-   * remove Cookie with easier-cookie
-   *
-   * @param {string} name
-   * @returns {boolean}
-   * @memberof Utils
-   */
-  public removeCookie(name: string): boolean {
-    return Cookie.remove(name);
-  }
-
-  /**
    * build url query
    *
    * @param {*} object
@@ -81,44 +45,6 @@ export class Utils {
       }
     }
     return query.slice(0, query.length - 1);
-  }
-
-  /**
-   * get one url query
-   *
-   * @param {string} name
-   * @returns {string}
-   * @memberof Utils
-   */
-  public getQuery(name: string): string {
-    if (!this.isBrowser()) return;
-    const parts: string[] = window.location.search.replace('?', '').split('&');
-    const params: any = {};
-    for (let i = 0; i < parts.length; i++) {
-      const pairs = parts[i].split('=');
-      params[pairs[0]] = pairs[1];
-    }
-    if (params[name]) {
-      return params[name];
-    } else {
-      return '';
-    }
-  }
-
-  /**
-   * build object by location.search
-   *
-   * @returns
-   * @memberof Utils
-   */
-  public buildObjectFromLocationSearch() {
-    if (!location.search) return {};
-    const returnValue: any = {};
-    const queryList = location.search.split('?')[1].split('&');
-    queryList.forEach(query => {
-      returnValue[query.split('=')[0]] = query.split('=')[1];
-    });
-    return returnValue;
   }
 
   /**
@@ -225,19 +151,6 @@ export class Utils {
     aStack.pop();
     bStack.pop();
     return true;
-  }
-
-  /**
-   * format string for InnerHTML
-   *
-   * @param {string} inner
-   * @returns {string}
-   * @memberof Utils
-   */
-  public formatInnerHTML(inner: string): string {
-    inner = inner.replace(/(\n\s*)/g, '');
-    inner = inner.replace(/^[^\S\n]+/gm, '');
-    return inner;
   }
 
   /**

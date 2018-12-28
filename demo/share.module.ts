@@ -1,6 +1,6 @@
-import { InDiv, Component, NvModule, HasRender, OnInit, BeforeMount, AfterMount, ReceiveProps, SetState, OnDestory, setState, Directive, ElementRef, Input } from '@indiv/core';
+import { InDiv, Component, NvModule, HasRender, OnInit, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, setState, Directive, ElementRef, Input } from '@indiv/core';
 import { RouteChange, RouteModule, TRouter } from '@indiv/router'; 
-// import { InDiv, Component, NvModule, HasRender, OnInit, BeforeMount, AfterMount, ReceiveProps, SetState, OnDestory, setState, Directive, ElementRef } from '../build/core';
+// import { InDiv, Component, NvModule, HasRender, OnInit, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, setState, Directive, ElementRef } from '../build/core';
 // import { RouteChange, RouteModule, TRouter } from '../build/router';  
 import { HeroSearchService, HeroSearchService2 } from './service';
 
@@ -17,7 +17,7 @@ interface Props {
     </div>
   `),
 })
-class RouteChild implements OnInit, HasRender, ReceiveProps, OnDestory {
+class RouteChild implements OnInit, HasRender, ReceiveInputs, OnDestory {
   public setState: SetState;
   public heroSearchService: HeroSearchService2;
   @Input() public a: string = 'a';
@@ -51,9 +51,9 @@ class RouteChild implements OnInit, HasRender, ReceiveProps, OnDestory {
     console.log('RouteChild hasRender: this.props.a', this.a);
   }
 
-  public nvReceiveProps(nextProps: any) {
-    console.log(3333, nextProps);
-    this.b = nextProps.a;
+  public nvReceiveInputs(nextInputs: any) {
+    console.log(3333, nextInputs);
+    this.b = nextInputs.a;
   }
 
   public nvOnDestory() {
@@ -71,7 +71,7 @@ class RouteChild implements OnInit, HasRender, ReceiveProps, OnDestory {
     </div>
   `),
 })
-class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps, OnDestory {
+class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveInputs, OnDestory {
   // public props: any;
   public a: string = 'a';
   @Input('ax') public b: any;
@@ -123,12 +123,12 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveProps, OnDestor
     console.log('PCChild nvOnDestory');
   }
 
-  public nvReceiveProps(nextProps: any) {
+  public nvReceiveInputs(nextInputs: any) {
     // console.log(this.props.ax);
-    console.log(4444, nextProps);
-    // this.b = nextProps.ax;
+    console.log(4444, nextInputs);
+    // this.b = nextInputs.ax;
     // this.setState({
-    //   b: nextProps.ax,
+    //   b: nextInputs.ax,
     // });
   }
 }
@@ -194,7 +194,7 @@ const routes: TRouter[] = [
 @Directive({
   selector: 'test-directive',
 })
-class TestDirective implements OnInit, RouteChange, ReceiveProps {
+class TestDirective implements OnInit, RouteChange, ReceiveInputs {
   @Input('test-directive') public testDirective: string;
   constructor(
     private hss: HeroSearchService,
@@ -213,8 +213,8 @@ class TestDirective implements OnInit, RouteChange, ReceiveProps {
   public nvRouteChange(lastRoute?: string, newRoute?: string) {
     console.log(5555, 'nvRouteChange TestDirective', newRoute);
   }
-  public nvReceiveProps(nextProps: any): void {
-    console.log(33333, 'nvReceiveProps test-directive', nextProps);
+  public nvReceiveInputs(nextInputs: any): void {
+    console.log(33333, 'nvReceiveInputs test-directive', nextInputs);
   }
 
   public changeColor = () => {

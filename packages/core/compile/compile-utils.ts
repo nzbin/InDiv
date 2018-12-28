@@ -169,7 +169,7 @@ export class CompileUtil {
       // for Function(arg)
       if (/^.*\(.*\)$/.test(exp)) {
         if (dir === 'model') throw new Error(`directive: nv-model can't use ${exp} as prop`);
-        // if @Function need function return value
+        // if Function need function return value
         const fn = this._getVMFunction(vm, exp);
         const argsList = this._getVMFunctionArguments(vm, exp, vnode);
         value = fn.apply(vm, argsList);
@@ -198,7 +198,7 @@ export class CompileUtil {
           break;
         }
         case 'if': {
-          this.ifUpdater(vnode, value, vm);
+          this.ifUpdater(vnode, value);
           break;
         }
         case 'class': {
@@ -243,7 +243,7 @@ export class CompileUtil {
   /**
    * update value of input for nv-model
    *
-   * @param {Element} vnode
+   * @param {Vnode} vnode
    * @param {*} value
    * @param {string} exp
    * @param {*} vm
@@ -296,14 +296,13 @@ export class CompileUtil {
   }
 
   /**
-   * remove or show DOM for nv-if
+   * remove or show for nv-if
    *
    * @param {Vnode} vnode
    * @param {*} value
-   * @param {*} vm
    * @memberof CompileUtil
    */
-  public ifUpdater(vnode: Vnode, value: any, vm: any): void {
+  public ifUpdater(vnode: Vnode, value: any): void {
     const valueOfBoolean = Boolean(value);
     if (!valueOfBoolean && vnode.parentVnode.childNodes.indexOf(vnode) !== -1) vnode.parentVnode.childNodes.splice(vnode.parentVnode.childNodes.indexOf(vnode), 1);
     if (valueOfBoolean) {
@@ -365,7 +364,7 @@ export class CompileUtil {
   }
 
   /**
-   * update repeat DOM for nv-repeat
+   * update repeat Vnode for nv-repeat
    *
    * if it has child and it will into repeatChildrenUpdater
    *
@@ -530,7 +529,7 @@ export class CompileUtil {
   }
 
   /**
-   * compile event and build eventType in DOM
+   * compile event and build eventType in Vnode
    *
    * @param {Vnode} vnode
    * @param {*} vm

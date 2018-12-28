@@ -99,7 +99,7 @@ export class CompileRepeatUtil {
    *
    * @param {*} vm
    * @param {string} exp
-   * @param {Element} node
+   * @param {Vnode} vnode
    * @param {string} key
    * @param {*} val
    * @returns {any[]}
@@ -380,7 +380,7 @@ export class CompileRepeatUtil {
   /**
    * update value of repeat node for nv-key
    *
-   * @param {Element} node
+   * @param {Vnode} vnode
    * @param {*} value
    * @memberof CompileRepeatUtil
    */
@@ -393,7 +393,7 @@ export class CompileRepeatUtil {
   /**
    * update value of repeat node for nv-value
    *
-   * @param {Element} node
+   * @param {Vnode} vnode
    * @param {*} value
    * @memberof CompileRepeatUtil
    */

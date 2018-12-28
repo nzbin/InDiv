@@ -3,19 +3,19 @@ import { InDiv } from '../indiv';
 
 export type DirectiveList<C> = {
     nativeElement: any;
-    props: any;
+    inputs: any;
     instanceScope: C;
     constructorFunction: Function;
 };
 
 
 export interface IDirective {
-    _save_props?: any;
+    _save_inputs?: any;
     nativeElement?: Element | any;
     $indivInstance?: InDiv | any;
 
     declarationMap?: Map<string, Function>;
-    inputPropsMap?: Map<string, string>;
+    inputsMap?: Map<string, string>;
     directiveList?: DirectiveList<IDirective>[];
     otherInjector?: Injector;
     privateInjector?: Injector;
@@ -26,5 +26,5 @@ export interface IDirective {
     nvOnDestory?(): void;
     nvHasRender?(): void;
     nvRouteChange?(lastRoute: string, newRoute: string): void;
-    nvReceiveProps?(nextProps: any): void;
+    nvReceiveInputs?(nextInputs: any): void;
 }

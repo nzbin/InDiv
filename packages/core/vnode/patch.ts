@@ -21,8 +21,8 @@ export function createNativeElement(createdVnode: Vnode, renderer: Renderer): an
  * @param {Renderer} renderer
  */
 export function setAttributesToNativeElement(vnode: Vnode, attribute: TAttributes, renderer: Renderer): void {
-  if (attribute.type === 'nv-attribute') renderer.setNvAttribute(vnode.nativeElement, attribute);
-  if (attribute.type === 'attribute') renderer.setAttribute(vnode.nativeElement, attribute);
+  if (attribute.type === 'attribute') renderer.setAttribute(vnode.nativeElement, attribute.name, attribute.value);
+  if (attribute.type === 'nv-attribute') renderer.setNvAttribute(vnode.nativeElement, attribute.name, attribute.nvValue);
 }
 
 /**
@@ -55,19 +55,17 @@ export function createNativeElementAndChildrens(createdVnode: Vnode, renderer: R
 /**
  * renderVnode 对比完render node
  * 
- * REMOVETAG: 0, 移除DOM: 0
- * REMOVETAG: 1, 移动位置: 1
- * CREATE: 2, 创建DOM: 1
- * ADDATTRIBUTES: 3, 增加属性: 3
- * REPLACEATTRIBUTES: 4, 移除属性: 4
+ * REMOVE_TAG: 0, 移除nativeElement
+ * MOVE_TAG: 1, 移动位置
+ * CREATE_TAG: 2, 创建nativeElement
+ * REPLACE_ATTRIBUTES: 3, 移除属性
+ * ADD_ATTRIBUTES: 4, 设置属性 
  * TEXT: 5, 更改文字: 5
  * value: 6, 更改 input textarea select value 的值: 6
- * value: 7, 更改 node 的 repeatData: 7, render过来的的被复制的值
- * value: 8, 移除 node 事件
- * value: 9, 添加 node 事件
+ * repeatData: 7, 更改 node 的 repeatData: 7, render过来的的被复制的值
+ * REMOVE_EVENT: 8, 移除 node 事件
+ * ADD_EVENT: 9, 添加 node 事件
  * value: 10, 更改 node 的 eventTypes: 10, 修改node的eventTypes
- * 
- * keep order from 0 delete to 8
  *
  * @export
  * @param {IPatchList[]} patchList
@@ -115,31 +113,26 @@ export function patchVnode(patchList: IPatchList[], renderer: Renderer): void {
         break;
       }
       case 3: {
-        if (!patch.oldValue) {
-          if (patch.originVnode.attributes) patch.originVnode.attributes.push({ ...(patch.changedValue as TAttributes) });
-          if (!patch.originVnode.attributes) patch.originVnode.attributes = [{ ...(patch.changedValue as TAttributes) }];
-        }
-        if (patch.oldValue) {
-          if (patch.attributeType === 'attribute') (patch.oldValue as TAttributes).value = (patch.changedValue as TAttributes).value;
-          if (patch.attributeType === 'nv-attribute' || patch.attributeType === 'directive' || patch.attributeType === 'prop') (patch.oldValue as TAttributes).nvValue = (patch.changedValue as TAttributes).nvValue;
-        }
-        if ((patch.changedValue as TAttributes).name === 'nv-model') patch.originVnode.value = (patch.changedValue as TAttributes).nvValue;
-        if ((patch.changedValue as TAttributes).name === 'nv-key') patch.originVnode.key = (patch.changedValue as TAttributes).nvValue;
-
-        // render nativeElement
-        if (patch.attributeType === 'attribute') renderer.setAttribute(patch.originVnode.nativeElement, patch.changedValue as TAttributes);
-        if (patch.attributeType === 'nv-attribute') renderer.setNvAttribute(patch.originVnode.nativeElement, patch.changedValue as TAttributes);
-        break;
-      }
-      case 4: {
-        const removeAttrIndex = patch.originVnode.attributes.indexOf((patch.changedVnode as TAttributes));
+        const removeAttrIndex = patch.originVnode.attributes.indexOf((patch.changedValue as TAttributes));
         if ((patch.changedValue as TAttributes).name === 'nv-model') patch.originVnode.value = null;
         if ((patch.changedValue as TAttributes).name === 'nv-key') patch.originVnode.key = null;
         patch.originVnode.attributes.splice(removeAttrIndex, 1);
 
         // render nativeElement
-        if (patch.attributeType === 'attribute') renderer.removeAttribute(patch.originVnode.nativeElement, patch.changedValue as TAttributes);
-        if (patch.attributeType === 'nv-attribute') renderer.removeNvAttribute(patch.originVnode.nativeElement, patch.changedValue as TAttributes);
+        if (patch.attributeType === 'attribute') renderer.removeAttribute(patch.originVnode.nativeElement, (patch.changedValue as TAttributes).name, (patch.changedValue as TAttributes).value);
+        if (patch.attributeType === 'nv-attribute') renderer.removeNvAttribute(patch.originVnode.nativeElement, (patch.changedValue as TAttributes).name, (patch.changedValue as TAttributes).nvValue);
+        break;
+      }
+      case 4: {
+        if (patch.originVnode.attributes) patch.originVnode.attributes.push({ ...(patch.changedValue as TAttributes) });
+        if (!patch.originVnode.attributes) patch.originVnode.attributes = [{ ...(patch.changedValue as TAttributes) }];
+
+        if ((patch.changedValue as TAttributes).name === 'nv-model') patch.originVnode.value = (patch.changedValue as TAttributes).nvValue;
+        if ((patch.changedValue as TAttributes).name === 'nv-key') patch.originVnode.key = (patch.changedValue as TAttributes).nvValue;
+
+        // render nativeElement
+        if (patch.attributeType === 'attribute') renderer.setAttribute(patch.originVnode.nativeElement, (patch.changedValue as TAttributes).name, (patch.changedValue as TAttributes).value);
+        if (patch.attributeType === 'nv-attribute') renderer.setNvAttribute(patch.originVnode.nativeElement, (patch.changedValue as TAttributes).name, (patch.changedValue as TAttributes).nvValue);
         break;
       }
       case 5: {

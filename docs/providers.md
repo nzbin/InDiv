@@ -91,7 +91,7 @@ export default class AppModule {}
 > app.component.ts
 
 ```typescript
-import { Component, setState, SetState } from '@indiv/core';
+import { Component, setState, SetState, Watch } from '@indiv/core';
 import TestService from './provides/test.service';
 
 @Component({
@@ -99,20 +99,15 @@ import TestService from './provides/test.service';
     template: (`
         <div class="app-component-container">
           <input nv-model="name"/>
-          <p on-on:click="@addAge()" change-color="{color}">name: {{name}}</p>
-          <show-age age="{age}" up-date-age="{@upDateAge}"></show-age>
+          <p on-on:click="addAge()" change-color="{color}">name: {{name}}</p>
+          <show-age age="{age}" uupDateAge="{@upDateAge}"></show-age>
         </div>
     `),
 })
 export default class AppComponent {
-  public state: {
-    name: string,
-    age?: number,
-    color: string,
-  } = {
-    name: 'InDiv',
-    color: 'red',
-  };
+  public name: string = 'InDiv';
+  @Watch() public age: number;
+  public color: string = 'red';
 
   public setState: SetState;
 
@@ -129,7 +124,7 @@ export default class AppComponent {
   }
 
   public upDateAge(age: number) {
-    this.state.age = age;
+    this.age = age;
     // this.setState({ age: 24 });
   }
 }
@@ -144,17 +139,17 @@ export default class AppComponent {
 > components/show-age/show-age.component.ts
 
 ```typescript
-import { Component, setState, SetState, nvReceiveProps } from '@indiv/core';
+import { Component, setState, SetState, nvReceiveInputs, Input } from '@indiv/core';
 import TestService from '../provides/test.service';
 
 @Component({
     selector: 'show-age',
-    template: (`<p nv-on:click="@updateAge()">age: {{age}}</p>`),
+    template: (`<p nv-on:click="updateAge()">age: {{age}}</p>`),
     providers: [ TestService ],
 })
-export default class ShowAgeComponent implements nvReceiveProps {
-  public state: { age?: number };
-  public props: { age?: number, upDateAge?: (age: number) => void };
+export default class ShowAgeComponent implements nvReceiveInputs {
+  @Input('age') public age: number;
+  @Input('upDateAge') public changeAge: (age: number) => void;
 
   public setState: SetState;
 
@@ -162,17 +157,15 @@ export default class ShowAgeComponent implements nvReceiveProps {
     private testService: TestService
   ) {
     console.log(this.testService.count); // 1
-    this.state = {
-      age: this.props.age,
-    };
+    this.setState = setState;
   }
 
-  public nvReceiveProps(nextProps: { age: number }): void {
-    this.state.age = nextProps.age;
+  public nvReceiveInputs(nextInputs: { age: number }): void {
+    this.age = nextInputs.age;
   }
 
   public updateAge() {
-    this.props.upDateAge(3);
+    this.changeAge(3);
   }
 }
 ```
@@ -239,7 +232,7 @@ constructor(private testService: TestService)
 > components/show-age/show-age.component.ts
 
 ```javascript
-import { Component } from '@indiv/core';
+import { Component, Input } from '@indiv/core';
 import TestService from '../provides/test.service';
 
 @Component({
@@ -248,24 +241,25 @@ import TestService from '../provides/test.service';
     providers: [ TestService ],
 })
 export default class ShowAgeComponent {
+  @Input('age') age;
+  @Input('upDateAge') changeAge;
+
   static injectTokens = [
     TestService
   ];
 
   constructor(testService) {
     this.testService = testService;
+    this.setState = setState;
     console.log(this.testService.count); // 1
-    this.state = {
-      age: this.props.age,
-    };
   }
 
-  nvReceiveProps(nextProps) {
-    this.state.age = nextProps.age;
+  nvReceiveInputs(nextInputs) {
+    this.age = nextInputs.age;
   }
 
   updateAge() {
-    this.props.upDateAge(3);
+    this.upDateAge(3);
   }
 }
 ```

@@ -1,4 +1,4 @@
-import { Renderer, Vnode, TAttributes, parseTemplateToVnode, ParseOptions } from '@indiv/core';
+import { Renderer, Vnode, parseTemplateToVnode, ParseOptions } from '@indiv/core';
 
 /**
  * get template from nativeElement
@@ -101,8 +101,8 @@ export class PlatfromBrowserRenderer extends Renderer {
     return parent.contains(child);
   }
 
-  public creatElement(name: string): any {
-    return document.createElement(name.toLocaleUpperCase());
+  public creatElement(tagName: string): any {
+    return document.createElement(tagName.toLocaleUpperCase());
   }
 
   public creatTextElement(value: string): any {
@@ -113,56 +113,52 @@ export class PlatfromBrowserRenderer extends Renderer {
     return element.getAttribute(name);
   }
 
-  public setNvAttribute(element: Element, attribute: TAttributes): void {
+  public setNvAttribute(element: Element, name: string, value: any): void {
     const blackListAttr = ['nv-text', 'nv-if', 'nv-repeat', 'nv-model', 'nv-key'];
-    if (blackListAttr.indexOf(attribute.name) !== -1) return;
-    switch (attribute.name) {
+    if (blackListAttr.indexOf(name) !== -1) return;
+    switch (name) {
       case 'nv-html': {
-        element.innerHTML = typeof attribute.nvValue === 'undefined' ? '' : attribute.nvValue;
+        element.innerHTML = typeof value === 'undefined' ? '' : value;
         break;
       }
       case 'nv-class': {
-        let className = element.className;
-        className = className.replace(/\s$/, '');
-        const space = className && String(attribute.nvValue) ? ' ' : '';
-        element.className = className + space + attribute.nvValue;
+        if (Array.isArray(value)) element.classList.add(...value.map((_value: string) => String(_value).trim()));
+        else if (String(value).trim()) element.classList.add(String(value).trim());
         break;
       }
       default: {
-        const attrName = attribute.name.replace('nv-', '');
-        element.setAttribute(attrName, attribute.nvValue);
+        const attrName = name.replace('nv-', '');
+        element.setAttribute(attrName, value);
       }
     }
   }
 
-  public setAttribute(element: Element, attribute: TAttributes): void {
-    element.setAttribute(attribute.name, attribute.value);
+  public setAttribute(element: Element, name: string, value: any): void {
+    element.setAttribute(name, value);
   }
 
-  public removeNvAttribute(element: Element, attribute: TAttributes): void {
+  public removeNvAttribute(element: Element, name: string, value?: any): void {
     const blackListAttr = ['nv-text', 'nv-if', 'nv-repeat', 'nv-model', 'nv-key'];
-    if (blackListAttr.indexOf(attribute.name) !== -1) return;
-    switch (attribute.name) {
+    if (blackListAttr.indexOf(name) !== -1) return;
+    switch (name) {
       case 'nv-html': {
         element.innerHTML = '';
         break;
       }
       case 'nv-class': {
-        let className = element.className;
-        className = className.replace(/\s$/, '');
-        const space = className && String(attribute.value) ? ' ' : '';
-        element.className = className + space + attribute.value;
+        if (Array.isArray(value)) element.classList.remove(...value.map((_value: string) => String(_value).trim()));
+        else if (String(value).trim()) element.classList.remove(String(value).trim());
         break;
       }
       default: {
-        const attrName = attribute.name.replace('nv-', '');
+        const attrName = name.replace('nv-', '');
         element.removeAttribute(attrName);
       }
     }
   }
 
-  public removeAttribute(element: Element, attribute: TAttributes): void {
-    element.removeAttribute(attribute.name);
+  public removeAttribute(element: Element, name: string, value?: any): void {
+    element.removeAttribute(name);
   }
 
   public setNodeValue(element: Element, nodeValue: any): void {

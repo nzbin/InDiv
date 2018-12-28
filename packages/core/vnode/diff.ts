@@ -63,43 +63,56 @@ function diffChildNodes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
 /**
  * diff attributes for diff VNode
  * 
- * type: 3 setAttribute
- * type: 4 removeAttribute
+ * type: 3 removeAttribute
+ * type: 4 setAttribute
  *
  * @param {Vnode} oldVnode
  * @param {Vnode} newVnode
  * @param {IPatchList[]} patchList
  */
 function diffAttributes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[]): void {
-  if (!newVnode.attributes || newVnode.attributes.length === 0) return;
-  newVnode.attributes.forEach((attr) => {
-    const oldVnodeAttr = oldVnode.attributes.find(oldAttr => oldAttr.type === attr.type && oldAttr.name === attr.name);
-    if (
-      (attr.type === 'attribute' && (!oldVnodeAttr || oldVnodeAttr.value !== attr.value)) ||
-      ((attr.type === 'nv-attribute' || attr.type === 'directive') && (!oldVnodeAttr || oldVnodeAttr.nvValue !== attr.nvValue)) ||
-      (attr.type === 'prop' && (!oldVnodeAttr || !utils.isEqual(oldVnodeAttr.nvValue, attr.nvValue)))
-    ) {
-      patchList.push({
-        type: 3,
-        oldValue: oldVnodeAttr,
-        originVnode: oldVnode,
-        changedValue: attr,
-        attributeType: attr.type,
-      });
-    }
-  });
-  if (!oldVnode.attributes || oldVnode.attributes.length === 0) return;
-  oldVnode.attributes.forEach((attr) => {
-    const newVnodeAttr = newVnode.attributes.find(newAttr => newAttr.type === attr.type && newAttr.name === attr.name);
-    if (!newVnodeAttr) {
-      patchList.push({
-        type: 4,
-        originVnode: oldVnode,
-        changedValue: attr,
-        attributeType: attr.type,
-      });
-    }
-  });
+  if (newVnode.attributes && newVnode.attributes.length > 0) {
+    newVnode.attributes.forEach((attr) => {
+      const oldVnodeAttr = oldVnode.attributes.find(oldAttr => oldAttr.type === attr.type && oldAttr.name === attr.name);
+      if (!oldVnodeAttr) {
+        patchList.push({
+          type: 4,
+          // oldValue: oldVnodeAttr,
+          originVnode: oldVnode,
+          changedValue: attr,
+          attributeType: attr.type,
+        });
+      }
+      if (oldVnodeAttr && ((attr.type === 'attribute' && oldVnodeAttr.value !== attr.value) || ((attr.type === 'nv-attribute' || attr.type === 'directive') && oldVnodeAttr.nvValue !== attr.nvValue) || (attr.type === 'prop' && !utils.isEqual(oldVnodeAttr.nvValue, attr.nvValue)))) {
+        patchList.push({
+          type: 3,
+          originVnode: oldVnode,
+          changedValue: oldVnodeAttr,
+          attributeType: oldVnodeAttr.type,
+        });
+        patchList.push({
+          type: 4,
+          // oldValue: oldVnodeAttr,
+          originVnode: oldVnode,
+          changedValue: attr,
+          attributeType: attr.type,
+        });
+      }
+    });
+  }
+  if (oldVnode.attributes && oldVnode.attributes.length > 0) {
+    oldVnode.attributes.forEach((attr) => {
+      const newVnodeAttr = newVnode.attributes.find(newAttr => newAttr.type === attr.type && newAttr.name === attr.name);
+      if (!newVnodeAttr) {
+        patchList.push({
+          type: 3,
+          originVnode: oldVnode,
+          changedValue: attr,
+          attributeType: attr.type,
+        });
+      }
+    });
+  }
 }
 
 /**

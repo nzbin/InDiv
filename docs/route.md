@@ -15,7 +15,7 @@ InDiv 的 Router（即“路由器”）借鉴了这个浏览器的导航模型�
 
 ## 配置路由
 
-InDiv 2.0.0+ 开始使用 NvModule 重构路由系统。
+InDiv 2.0.0+ 放气以前使用插件构建路由，开始使用 NvModule 重构路由系统。
 
 通过引入默认的路由模块，就可以快速搭建一个拥有路由导航的应用程序。
 
@@ -83,7 +83,7 @@ export default class AppModule {}
 > components/page-a/page-a.component.ts
 
 ```typescript
-import { Component, setState, SetState, nvReceiveProps } from '@indiv/core';
+import { Component, setState, SetState, nvReceiveInputs } from '@indiv/core';
 
 @Component({
     selector: 'page-a',
@@ -142,7 +142,7 @@ export default class AppModule {}
 > app.component.ts
 
 ```typescript
-import { Component, setState, SetState } from '@indiv/core';
+import { Component, setState, SetState, Watch } from '@indiv/core';
 import TestService from './provides/test.service';
 
 @Component({
@@ -150,21 +150,15 @@ import TestService from './provides/test.service';
     template: (`
         <div class="app-component-container">
           <input nv-model="name"/>
-          <p on-on:click="@addAge()" change-color="{color}">name: {{name}}</p>
-          <show-age age="{age}" up-date-age="{@upDateAge}"></show-age>
-          <router-render></router-render>
+          <p on-on:click="addAge()" change-color="{color}">name: {{name}}</p>
+          <show-age age="{age}" uupDateAge="{@upDateAge}"></show-age>
         </div>
     `),
 })
 export default class AppComponent {
-  public state: {
-    name: string,
-    age?: number,
-    color: string,
-  } = {
-    name: 'InDiv',
-    color: 'red',
-  };
+  public name: string = 'InDiv';
+  @Watch() public age: number;
+  public color: string = 'red';
 
   public setState: SetState;
 
@@ -181,7 +175,7 @@ export default class AppComponent {
   }
 
   public upDateAge(age: number) {
-    this.state.age = age;
+    this.age = age;
     // this.setState({ age: 24 });
   }
 }
@@ -207,7 +201,7 @@ interface NvLocation {
 > app.component.ts
 
 ```typescript
-import { Component, setState, SetState } from '@indiv/core';
+import { Component, setState, SetState, Watch } from '@indiv/core';
 import { NvLocation } from '@indiv/router';
 import TestService from './provides/test.service';
 
@@ -216,26 +210,21 @@ import TestService from './provides/test.service';
     template: (`
         <div class="app-component-container">
           <input nv-model="name"/>
-          <p on-on:click="@addAge()" change-color="{color}">name: {{name}}</p>
-          <show-age age="{age}" up-date-age="{@upDateAge}"></show-age>
+          <p on-on:click="addAge()" change-color="{color}">name: {{name}}</p>
+          <show-age age="{age}" uupDateAge="{@upDateAge}"></show-age>
           <router-render></router-render>
         </div>
     `),
 })
 export default class AppComponent {
-  public state: {
-    name: string,
-    age?: number,
-    color: string,
-  } = {
-    name: 'InDiv',
-    color: 'red',
-  };
+  public name: string = 'InDiv';
+  @Watch() public age: number;
+  public color: string = 'red';
 
   public setState: SetState;
 
   constructor(
-    private testService: TestService
+    private testService: TestService,
     private nvLocation: NvLocation
   ) {
     this.setState = setState;
@@ -250,7 +239,7 @@ export default class AppComponent {
   }
 
   public upDateAge(age: number) {
-    this.state.age = age;
+    this.age = age;
     // this.setState({ age: 24 });
   }
 }
@@ -261,7 +250,7 @@ export default class AppComponent {
 > app.component.ts
 
 ```typescript
-import { Component, setState, SetState } from '@indiv/core';
+import { Component, setState, SetState, Watch } from '@indiv/core';
 import TestService from './provides/test.service';
 
 @Component({
@@ -270,23 +259,16 @@ import TestService from './provides/test.service';
         <div class="app-component-container">
           <input nv-model="name"/>
           <a router-to="routeTo">点击跳转到/a</a>
-          <p on-on:click="@addAge()" change-color="{color}">name: {{name}}</p>
-          <show-age age="{age}" up-date-age="{@upDateAge}"></show-age>
+          <p on-on:click="addAge()" change-color="{color}">name: {{name}}</p>
+          <show-age age="{age}" uupDateAge="{@upDateAge}"></show-age>
           <router-render></router-render>
         </div>
     `),
 })
 export default class AppComponent {
-  public state: {
-    name: string,
-    age?: number,
-    color: string,
-    routeTo: string,
-  } = {
-    name: 'InDiv',
-    color: 'red',
-    routeTo: '/a',
-  };
+  public name: string = 'InDiv';
+  @Watch() public age: number;
+  public color: string = 'red';
 
   public setState: SetState;
 
@@ -303,7 +285,7 @@ export default class AppComponent {
   }
 
   public upDateAge(age: number) {
-    this.state.age = age;
+    this.age = age;
     // this.setState({ age: 24 });
   }
 }
@@ -474,6 +456,3 @@ NvModule 级的依赖提供商可以在 `@NgModule()` `providers` 元数据中�
 但一旦 懒加载的模块中的 `providers` 依赖提供商 并不存在对应的 DI令牌 ，则 `RouteModule` 会去 根注入器 继续寻找依赖及实例。
 
 所以，想要在 **懒加载模块与根模块之间的组件** 实现通信，请不要在懒加载模块中声明 **公用的依赖提供商**。
-
-
-

@@ -70,7 +70,7 @@ export function isTextNode(vnode: Vnode): boolean {
 }
 
 /**
- * clone Node and clone it event
+ * clone Vnode and clone it event
  *
  * event by attribute in DOM: eventTypes
  * repeat data by attribute in DOM: repeatData
@@ -78,7 +78,7 @@ export function isTextNode(vnode: Vnode): boolean {
  *
  * @param {Vnode} vnode
  * @param {*} [repeatData]
- * @returns {Node}
+ * @returns {Vnode}
  */
 export function cloneVnode(vnode: Vnode, repeatData?: any): Vnode {
   const newVnode = new Vnode(vnode);

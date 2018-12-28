@@ -1,6 +1,7 @@
 import { INvModule, TInjectTokenProvider, TUseClassProvider, TUseValueProvider } from '../types';
 
 import { factoryCreator, rootInjector, Injector } from '../di';
+import { Renderer } from '../vnode';
 import { InDiv } from '../indiv';
 
 /**
@@ -122,6 +123,7 @@ function buildExports(moduleInstance: INvModule, indivInstance?: InDiv, otherInj
 export function factoryModule(NM: Function, otherInjector?: Injector, indivInstance?: InDiv): INvModule {
   const provideAndInstanceMap = new Map();
   if (indivInstance) provideAndInstanceMap.set(InDiv, indivInstance);
+  if (indivInstance) provideAndInstanceMap.set(Renderer, indivInstance.getRenderer);
   buildProviderList(NM.prototype, otherInjector);
   buildImports(NM.prototype, indivInstance, otherInjector);
   buildDeclarations4Declarations(NM.prototype);

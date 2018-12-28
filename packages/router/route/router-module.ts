@@ -129,6 +129,22 @@ export class RouteModule {
   }
 
   /**
+   * build object by location.search
+   *
+   * @returns
+   * @memberof Utils
+   */
+  private buildObjectFromLocationSearch(): Object {
+    if (!location.search) return {};
+    const returnValue: any = {};
+    const queryList = location.search.split('?')[1].split('&');
+    queryList.forEach(query => {
+      returnValue[query.split('=')[0]] = query.split('=')[1];
+    });
+    return returnValue;
+  }
+
+  /**
    * refresh if not watch $nvRouteObject
    *
    * @private
@@ -145,7 +161,7 @@ export class RouteModule {
 
       nvRouteStatus.nvRouteObject = {
         path,
-        query: utils.buildObjectFromLocationSearch(),
+        query: this.buildObjectFromLocationSearch(),
         data: null,
       };
       nvRouteStatus.nvRouteParmasObject = {};
@@ -240,8 +256,8 @@ export class RouteModule {
 
         const nativeElement = this.indivInstance.getRenderer.getElementsByTagName('router-render')[index - 1];
 
-        let assignedVnode: Vnode[] = null;
-        if (this.hasRenderComponentList[index]) assignedVnode = this.hasRenderComponentList[index].saveVnode;
+        let initVnode: Vnode[] = null;
+        if (this.hasRenderComponentList[index]) initVnode = this.hasRenderComponentList[index].saveVnode;
 
         if (!needRenderRoute.component && !needRenderRoute.redirectTo && !needRenderRoute.loadChild) throw new Error(`route error: path ${needRenderRoute.path} need a component which has children path or need a redirectTo which has't children path`);
 
@@ -261,12 +277,12 @@ export class RouteModule {
         if (needRenderRoute.component) {
           const findComponentFromModuleResult = this.findComponentFromModule(needRenderRoute.component, currentUrlPath);
           FindComponent = findComponentFromModuleResult.component;
-          component = await this.instantiateComponent(FindComponent, nativeElement, findComponentFromModuleResult.loadModule, assignedVnode);
+          component = await this.instantiateComponent(FindComponent, nativeElement, findComponentFromModuleResult.loadModule, initVnode);
         }
         if (needRenderRoute.loadChild) {
           const loadModule = await this.NvModuleFactoryLoader(needRenderRoute.loadChild, currentUrlPath);
           FindComponent = loadModule.bootstrap;
-          component = await this.instantiateComponent(FindComponent, nativeElement, loadModule, assignedVnode);
+          component = await this.instantiateComponent(FindComponent, nativeElement, loadModule, initVnode);
         }
 
         if (FindComponent) {
@@ -355,8 +371,8 @@ export class RouteModule {
 
         const nativeElement = this.indivInstance.getRenderer.getElementsByTagName('router-render')[index - 1];
 
-        let assignedVnode: Vnode[] = null;
-        if (this.hasRenderComponentList[index]) assignedVnode = this.hasRenderComponentList[index].saveVnode;
+        let initVnode: Vnode[] = null;
+        if (this.hasRenderComponentList[index]) initVnode = this.hasRenderComponentList[index].saveVnode;
 
         let FindComponent = null;
         let component = null;
@@ -370,12 +386,12 @@ export class RouteModule {
         if (route.component) {
           const findComponentFromModuleResult = this.findComponentFromModule(route.component, currentUrlPath);
           FindComponent = findComponentFromModuleResult.component;
-          component = await this.instantiateComponent(FindComponent, nativeElement, findComponentFromModuleResult.loadModule, assignedVnode);
+          component = await this.instantiateComponent(FindComponent, nativeElement, findComponentFromModuleResult.loadModule, initVnode);
         }
         if (route.loadChild) {
           const loadModule = await this.NvModuleFactoryLoader(route.loadChild, currentUrlPath);
           FindComponent = loadModule.bootstrap;
-          component = await this.instantiateComponent(FindComponent, nativeElement, loadModule, assignedVnode);
+          component = await this.instantiateComponent(FindComponent, nativeElement, loadModule, initVnode);
         }
 
         if (!route.component && !route.redirectTo && !route.loadChild) throw new Error(`route error: path ${route.path} need a component which has children path or need a  redirectTo which has't children path`);
@@ -472,18 +488,18 @@ export class RouteModule {
    * 
    * if argument has loadModule, use loadModule
    * if argument has'nt loadModule, use rootModule in InDiv
-   * if argument has assignedVnode, will use assignedVnode fro new Component instance
+   * if argument has initVnode, will use initVnode fro new Component instance
    *
    * @private
    * @param {Function} FindComponent
    * @param {Element} nativeElement
    * @param {INvModule} [loadModule]
-   * @param {Vnode[]} [assignedVnode]
+   * @param {Vnode[]} [initVnode]
    * @returns {Promise<IComponent>}
    * @memberof Router
    */
-  private instantiateComponent(FindComponent: Function, nativeElement: Element, loadModule: INvModule, assignedVnode: Vnode[]): Promise<IComponent> {
-    return this.indivInstance.renderComponent(FindComponent, nativeElement, loadModule, assignedVnode);
+  private instantiateComponent(FindComponent: Function, nativeElement: Element, loadModule: INvModule, initVnode: Vnode[]): Promise<IComponent> {
+    return this.indivInstance.renderComponent(FindComponent, nativeElement, loadModule, initVnode);
   }
 
   /**

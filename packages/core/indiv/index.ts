@@ -185,20 +185,21 @@ export class InDiv {
    * 
    * if otherModule don't has use rootModule
    * if has otherModule, build component will use privateInjector from loadModule instead of rootInjector
-   * if has assignedVnode, it will use assignedVnode for new Component
+   * if has initVnode, it will use initVnode for new Component
    *
    * @template R
    * @param {Function} BootstrapComponent
    * @param {R} nativeElement
    * @param {INvModule} [otherModule]
-   * @param {Vnode[]} [assignedVnode]
+   * @param {Vnode[]} [initVnode]
    * @returns {Promise<IComponent>}
    * @memberof InDiv
    */
-  public async renderComponent<R = Element>(BootstrapComponent: Function, nativeElement: R, otherModule?: INvModule, assignedVnode?: Vnode[]): Promise<IComponent> {
+  public async renderComponent<R = Element>(BootstrapComponent: Function, nativeElement: R, otherModule?: INvModule, initVnode?: Vnode[]): Promise<IComponent> {
     const provideAndInstanceMap = new Map();
     provideAndInstanceMap.set(InDiv, this);
     provideAndInstanceMap.set(ElementRef, new ElementRef<R>(nativeElement));
+    provideAndInstanceMap.set(Renderer, this.getRenderer);
 
     const otherInjector = otherModule ? otherModule.privateInjector : null;
     const component: IComponent = factoryCreator(BootstrapComponent, otherInjector, provideAndInstanceMap);
@@ -225,7 +226,7 @@ export class InDiv {
     if (template && typeof template === 'string' && nativeElement) {
       if (component.nvBeforeMount) component.nvBeforeMount();
 
-      const _component = await this.componentRender<R>(component, nativeElement, assignedVnode);
+      const _component = await this.componentRender<R>(component, nativeElement, initVnode);
       if (_component.nvAfterMount) _component.nvAfterMount();
       return _component;
 
@@ -256,13 +257,13 @@ export class InDiv {
    * @template R
    * @param {IComponent} component
    * @param {R} nativeElement
-   * @param {Vnode[]} [assignedVnode]
+   * @param {Vnode[]} [initVnode]
    * @returns {Promise<IComponent>}
    * @memberof InDiv
    */
-  private componentRender<R = Element>(component: IComponent, nativeElement: R, assignedVnode?: Vnode[]): Promise<IComponent> {
-    // if has assignedVnode, assign assignedVnode for component.saveVnode 
-    if (assignedVnode) component.saveVnode = assignedVnode;
+  private componentRender<R = Element>(component: IComponent, nativeElement: R, initVnode?: Vnode[]): Promise<IComponent> {
+    // if has initVnode, assign initVnode for component.saveVnode 
+    if (initVnode) component.saveVnode = initVnode;
     component.nativeElement = nativeElement;
     return component.render();
   }

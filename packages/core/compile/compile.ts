@@ -121,7 +121,7 @@ export class Compile {
   /**
    * compile string to DOM
    *
-   * @param {Element} vnode
+   * @param {Vnode} vnode
    * @param {Vnode[]} fragment
    * @memberof Compile
    */

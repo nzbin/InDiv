@@ -24,15 +24,15 @@ export function mountDirective(componentInstance: IComponent, componentAndDirect
     if (cacheDirectiveIndex !== -1) cacheDirectiveList.splice(cacheDirectiveIndex, 1);
     if (cacheDirective) {
       directive.instanceScope = cacheDirective.instanceScope;
-      // old props: directive.instanceScope._save_props
-      // new props: directive.props
-      if (!utils.isEqual(directive.instanceScope._save_props, directive.props)) {
-        if (directive.instanceScope.nvReceiveProps) directive.instanceScope.nvReceiveProps(directive.props);
-        directive.instanceScope._save_props = directive.props;
-        if (directive.instanceScope.inputPropsMap && directive.instanceScope.inputPropsMap.has((directive.instanceScope as any).constructor.selector)) (directive.instanceScope as any)[directive.instanceScope.inputPropsMap.get((directive.instanceScope as any).constructor.selector)] = directive.props;
+      // old inputs: directive.instanceScope._save_inputs
+      // new inputs: directive.inputs
+      if (!utils.isEqual(directive.instanceScope._save_inputs, directive.inputs)) {
+        if (directive.instanceScope.nvReceiveInputs) directive.instanceScope.nvReceiveInputs(directive.inputs);
+        directive.instanceScope._save_inputs = directive.inputs;
+        if (directive.instanceScope.inputsMap && directive.instanceScope.inputsMap.has((directive.instanceScope as any).constructor.selector)) (directive.instanceScope as any)[directive.instanceScope.inputsMap.get((directive.instanceScope as any).constructor.selector)] = directive.inputs;
       }
     } else {
-      directive.instanceScope = buildDirectiveScope(directive.constructorFunction, directive.props, directive.nativeElement as Element, componentInstance);
+      directive.instanceScope = buildDirectiveScope(directive.constructorFunction, directive.inputs, directive.nativeElement, componentInstance);
     }
 
     directive.instanceScope.$indivInstance = componentInstance.$indivInstance;
@@ -67,7 +67,7 @@ export function directivesConstructor(componentInstance: IComponent, componentAn
     const declaration = componentInstance.declarationMap.get(directive.name);
     componentInstance.directiveList.push({
       nativeElement: directive.nativeElement,
-      props: directive.props,
+      inputs: directive.inputs,
       instanceScope: null,
       constructorFunction: declaration,
     });

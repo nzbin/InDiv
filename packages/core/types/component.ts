@@ -7,25 +7,25 @@ import { Vnode } from '../vnode';
 export type TComAndDir = {
   components: {
     nativeElement: any,
-    props: any,
+    inputs: any,
     name: string,
   }[];
   directives: {
     nativeElement: any,
-    props: any,
+    inputs: any,
     name: string,
   }[];
 };
 
 export type ComponentList<C> = {
   nativeElement: any;
-  props: any;
+  inputs: any;
   instanceScope: C;
   constructorFunction: Function;
 };
 
 export interface IComponent {
-  _save_props?: any;
+  _save_inputs?: any;
   nativeElement?: Element | any;
   $indivInstance?: InDiv;
   renderTaskQueue?: RenderTaskQueue;
@@ -34,7 +34,7 @@ export interface IComponent {
 
   template?: string;
   declarationMap?: Map<string, Function>;
-  inputPropsMap?: Map<string, string>;
+  inputsMap?: Map<string, string>;
   componentList?: ComponentList<IComponent>[];
   directiveList?: DirectiveList<IDirective>[];
   otherInjector?: Injector;
@@ -49,7 +49,7 @@ export interface IComponent {
   nvHasRender?(): void;
   nvWatchState?(oldState?: any): void;
   nvRouteChange?(lastRoute: string, newRoute: string): void;
-  nvReceiveProps?(nextProps: any): void;
+  nvReceiveInputs?(nextInputs: any): void;
   render?(): Promise<IComponent>;
   compiler?(nativeElement: Element | any, componentInstace: IComponent): Promise<IComponent>;
 }

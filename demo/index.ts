@@ -1,8 +1,8 @@
-import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, ReceiveProps, SetState, OnDestory, setState, ElementRef, Watch, HasRender, Input } from '@indiv/core';
+import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, setState, ElementRef, Watch, HasRender, Input } from '@indiv/core';
 import { RouteChange, NvLocation, RouteModule } from '@indiv/router';
 import { PlatformBrowser } from '@indiv/platform-browser';
 import { HttpClient, HttpClientResponse } from '@indiv/common';
-// import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, ReceiveProps, SetState, OnDestory, setState, ElementRef } from '../build/core';
+// import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, setState, ElementRef } from '../build/core';
 // import { RouteChange, NvLocation, RouteModule } from '../build/router';
 // import { PlatformBrowser } from '../build/platform-browser';
 // import { HttpClient, HttpClientResponse } from '../build/common';
@@ -26,7 +26,7 @@ class ValueType { }
     </div>
   `),
 })
-class PComponent implements WatchState, BeforeMount, ReceiveProps, OnDestory {
+class PComponent implements WatchState, BeforeMount, ReceiveInputs, OnDestory {
   public setState: SetState;
   public a: any = 'a子组件';
   public b: number = 100;
@@ -70,9 +70,9 @@ class PComponent implements WatchState, BeforeMount, ReceiveProps, OnDestory {
   public nvWatchState(oldState: string) {
     console.log('oldState Component:', oldState);
   }
-  public nvReceiveProps(nextProps: any) {
-    console.log(1111111111111, nextProps);
-    // this.ax = nextProps.ax;
+  public nvReceiveInputs(nextInputs: any) {
+    console.log(1111111111111, nextInputs);
+    // this.ax = nextInputs.ax;
   }
   public nvOnDestory() {
     console.log('PComponent is nvOnDestory');
@@ -97,7 +97,7 @@ class PComponent implements WatchState, BeforeMount, ReceiveProps, OnDestory {
     </div>
     `),
 })
-class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, OnDestory {
+class R1 implements OnInit, BeforeMount, WatchState, RouteChange, OnDestory {
   public hSr: HeroSearchService;
   public setState: SetState;
   // public props: any;
@@ -128,7 +128,6 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
 
   constructor(
     private heroSearchService: HeroSearchService,
-    private utils: Utils,
     private location: NvLocation,
     private element: ElementRef,
     private indiv: InDiv,
@@ -139,20 +138,12 @@ class R1 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
   }
 
   public nvOnInit() {
-    this.utils.setCookie('tutor', {
-      name: 'gerry',
-      github: 'https://github.com/DimaLiLongJi',
-    }, { expires: 7 });
     console.log('R1 nvOnInit', this.location.get());
   }
   public nvBeforeMount() {
-    const cookie = this.utils.getCookie('tutor');
-    console.log('cookie is', cookie);
     console.log('is nvBeforeMount');
   }
-  public nvAfterMount() {
-    // console.log('is nvAfterMount');
-  }
+
   public nvRouteChange(lastRoute: string, newRoute: string) {
     console.log('R1 is nvRouteChange', lastRoute, newRoute);
   }
@@ -247,7 +238,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
       <p nv-on:click="click()">测试repeat组件: {{manName}}</p>
     </div>`),
 })
-class TestComponent implements OnDestory, ReceiveProps {
+class TestComponent implements OnDestory, ReceiveInputs {
   public state: any;
   @Input() public manName: any;
 
@@ -271,48 +262,20 @@ class TestComponent implements OnDestory, ReceiveProps {
     console.log('TestComponent OnDestory');
   }
 
-  public nvReceiveProps(p: any) {
-    console.log('test-component nvReceiveProps', p);
+  public nvReceiveInputs(p: any) {
+    console.log('test-component nvReceiveInputs', p);
   }
 }
-// (`
-//     <div nv-class="test.a" nv-id="'cc'">
-//       <input nv-model="test.a" nv-on:click="show(test)" />
-//       <p test-directive="{'123'}" nv-id="232" nv-if="countState(a)" nv-on:click="changeInput()">{{a}}</p>
-//       <test-component nv-repeat="man in testArray" nv-key="man.name" manName="{countState(man.name)}" nv-if="a"></test-component>
-//       <p nv-on:click="go()">container: {{countState(color)}}</p>
-//       <input nv-model="a" />
-//       <div nv-repeat="man in testArray" nv-key="man.name">
-//           <div nv-on:click="show(testArray2, '你111')" nv-text="man.name"></div>
-//           <div><p>性别：{{countState(man.sex, $index)}}</p></div>
-//           <a nv-href="countState(man.sex, $index)">a {{man.sex}}</a>
-//           <img nv-src="man.sex" nv-alt="man.sex" />
-//           <test-component nv-key="man.name" manName="{countState2(man.name, bd)}"  nv-repeat="bd in testArray2"></test-component>
-//           <p nv-key="man.name" nv-class="man.name" nv-id="bd" nv-repeat="bd in testArray2">{{bd}}</p>
-//           <input nv-on:click="show(_b, $index)" nv-repeat="_b in testArray2" nv-model="_b"  nv-class="_b" />
-//           <input nv-model="test.a"/>
-//           <div class="fuck" nv-class="man.name" nv-repeat="c in man.job" nv-key="c.id">
-//              <input nv-on:click="show(c, $index)" nv-model="c.name" nv-class="c.id" />
-//              <p test-directive="{'123'}" nv-key="man.name" nv-class="man.name" nv-id="c.name">{{man.name}}</p>
-//              <div nv-repeat="_bb in man.job">
-//               <p nv-class="_bb.id">{{_bb.name}}</p>
-//              </div>
-//           </div>
-//       </div>
-//       <router-render></router-render>
-//     </div>
-//     <p>1111</p>
-//   `)
 
 @Component({
   selector: 'container-wrap',
   template: (`
-  <div nv-class="test.a" nv-id="'cc'">
+  <div class="fucck" nv-class="test.a" nv-id="'cc'">
     <input nv-model="test.a" nv-on:click="show(test)" />
     <p test-directive="{'123'}" nv-id="232" nv-if="countState(a)" nv-on:click="changeInput()">{{a}}</p>
     <test-component nv-repeat="man in testArray" nv-key="man.name" manName="{countState(man.name)}" nv-if="a"></test-component>
     <p nv-on:click="go()">container: {{countState(color)}}</p>
-    <input nv-model="a" />
+    <input type="number" nv-model="a" />
     <div nv-repeat="man in testArray" nv-key="man.name">
         <div nv-on:click="show(testArray2, '你111')" nv-text="man.name"></div>
         <div><p>性别：{{countState(man.sex, $index)}}</p></div>
@@ -326,7 +289,7 @@ class TestComponent implements OnDestory, ReceiveProps {
            <input nv-on:click="show(c, $index)" nv-model="c.name" nv-class="c.id" />
            <p test-directive="{'123'}" nv-key="man.name" nv-class="man.name" nv-id="c.name">{{man.name}}</p>
            <div nv-repeat="_bb in man.job">
-            <p nv-class="man.name">{{test.a}}: {{man.name}} is {{_bb.name}}</p>
+            <p nv-class="man.name" nv-repeat="_test in testArray2">{{_test}}: {{man.name}} is {{_bb.name}}</p>
            </div>
         </div>
     </div>
@@ -409,9 +372,9 @@ class Container implements OnInit, AfterMount, WatchState, HasRender, RouteChang
       };
     });
     this.http$ = this.httpClient.get('/success');
-    // this.http$.subscribe({
-    //   next: this.httpHandler,
-    // });
+    this.http$.subscribe({
+      next: this.httpHandler,
+    });
     this.hss.test();
     console.log('value', this.value);
   }
@@ -437,7 +400,8 @@ class Container implements OnInit, AfterMount, WatchState, HasRender, RouteChang
     this.location.redirectTo('/R1', { b: '1' });
   }
   public countState(a: any, index: number): any {
-    if (!a) return '';
+    // if (!a) return '';
+    console.log('aaaaaaaaa', a, typeof a);
     return a;
   }
 

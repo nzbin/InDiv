@@ -1,4 +1,4 @@
-import { ElementRef, utils, Directive, OnInit, ReceiveProps, OnDestory, Input, InDiv } from '@indiv/core';
+import { ElementRef, utils, Directive, OnInit, ReceiveInputs, OnDestory, Input, Renderer } from '@indiv/core';
 import { NvLocation } from './location';
 import { RouteChange } from './router-module';
 
@@ -8,29 +8,29 @@ import { RouteChange } from './router-module';
  * @export
  * @class RouterTo
  * @implements {OnInit}
- * @implements {ReceiveProps}
+ * @implements {ReceiveInputs}
  * @implements {RouteChange}
  */
 @Directive({
   selector: 'routerTo',
 })
-export class RouterTo implements OnInit, ReceiveProps, RouteChange, OnDestory {
+export class RouterTo implements OnInit, ReceiveInputs, RouteChange, OnDestory {
   @Input('routerTo') private to: string;
   private from: string;
 
   constructor(
-    private indivInstance: InDiv,
+    private renderer: Renderer,
     private element: ElementRef,
     private location: NvLocation,
   ) { }
 
   public nvOnInit() {
     this.resetState(this.to);
-    this.indivInstance.getRenderer.addEventListener(this.element.nativeElement, 'click', this.routeTo);
+    this.renderer.addEventListener(this.element.nativeElement, 'click', this.routeTo);
   }
 
-  public nvReceiveProps(nextProps: string) {
-    this.resetState(nextProps);
+  public nvReceiveInputs(nextInputs: string) {
+    this.resetState(nextInputs);
   }
 
   public nvRouteChange(lastRoute?: string, newRoute?: string) {
@@ -38,7 +38,8 @@ export class RouterTo implements OnInit, ReceiveProps, RouteChange, OnDestory {
   }
 
   public nvOnDestory() {
-    this.indivInstance.getRenderer.removeEventListener(this.element.nativeElement, 'click', this.routeTo);
+    this.renderer.removeEventListener(this.element.nativeElement, 'click', this.routeTo);
+    this.renderer.removeAttribute(this.element.nativeElement, 'router-link-to');
   }
 
   private routeTo = () => {
@@ -46,17 +47,17 @@ export class RouterTo implements OnInit, ReceiveProps, RouteChange, OnDestory {
     const nvLocation = this.location.get();
     const currentUrl = `${nvLocation.path}${utils.buildQuery(nvLocation.query)}`;
     if (!this.to) {
-      console.error('Directive router-to on element', this.element.nativeElement, 'need a prop');
+      console.error('Directive router-to on element', this.element.nativeElement, 'need a input');
       return;
     }
     if (this.from && currentUrl === this.from) this.location.set(this.to);
     if (!this.from) this.location.set(this.to);
   }
 
-  private resetState(props: string) {
-    this.to = props;
-    this.indivInstance.getRenderer.setAttribute(this.element.nativeElement, { type: 'attribute', name: 'router-link-to', value: props });
-    this.from = this.indivInstance.getRenderer.getAttribute(this.element.nativeElement, 'router-link-from');
+  private resetState(to: string) {
+    this.to = to;
+    this.renderer.setAttribute(this.element.nativeElement, 'router-link-to', to);
+    this.from = this.renderer.getAttribute(this.element.nativeElement, 'router-link-from');
   }
 }
 
@@ -66,29 +67,28 @@ export class RouterTo implements OnInit, ReceiveProps, RouteChange, OnDestory {
  * @export
  * @class RouterFrom
  * @implements {OnInit}
- * @implements {ReceiveProps}
+ * @implements {ReceiveInputs}
  */
 @Directive({
   selector: 'routerFrom',
 })
-export class RouterFrom implements OnInit, ReceiveProps, OnDestory {
+export class RouterFrom implements OnInit, ReceiveInputs, OnDestory {
   @Input('routerFrom') private from: string;
 
   constructor(
-    private indivInstance: InDiv,
+    private renderer: Renderer,
     private element: ElementRef,
   ) { }
 
   public nvOnInit() {
-    this.indivInstance.getRenderer.setAttribute(this.element.nativeElement, { type: 'attribute', name: 'router-link-from', value: this.from });
+    this.renderer.setAttribute(this.element.nativeElement, 'router-link-from', this.from);
   }
 
-  public nvReceiveProps(nextProps: string) {
-    this.indivInstance.getRenderer.setAttribute(this.element.nativeElement, { type: 'attribute', name: 'router-link-from', value: nextProps });
+  public nvReceiveInputs(nextInputs: string) {
+    this.renderer.setAttribute(this.element.nativeElement, 'router-link-from', nextInputs);
   }
 
   public nvOnDestory() {
-    this.element.nativeElement.removeAttribute('router-link-from');
-    this.indivInstance.getRenderer.removeAttribute(this.element.nativeElement, { type: 'attribute', name: 'router-link-from', value: this.from });
+    this.renderer.removeAttribute(this.element.nativeElement, 'router-link-from');
   }
 }

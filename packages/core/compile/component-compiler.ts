@@ -27,15 +27,15 @@ export function mountComponent(componentInstance: IComponent, componentAndDirect
     if (cacheComponentIndex !== -1) cacheComponentList.splice(cacheComponentIndex, 1);
     if (cacheComponent) {
       component.instanceScope = cacheComponent.instanceScope;
-      // old props: component.instanceScope._save_props
-      // new props: component.props
-      if (!utils.isEqual(component.instanceScope._save_props, component.props)) {
-        if (component.instanceScope.nvReceiveProps) component.instanceScope.nvReceiveProps({ ...component.props });
-        component.instanceScope._save_props = component.props;
-        for (const key in component.props) if (component.instanceScope.inputPropsMap && component.instanceScope.inputPropsMap.has(key)) (component.instanceScope as any)[component.instanceScope.inputPropsMap.get(key)] = component.props[key];
+      // old inputs: component.instanceScope._save_inputs
+      // new inputs: component.inputs
+      if (!utils.isEqual(component.instanceScope._save_inputs, component.inputs)) {
+        if (component.instanceScope.nvReceiveInputs) component.instanceScope.nvReceiveInputs({ ...component.inputs });
+        component.instanceScope._save_inputs = component.inputs;
+        for (const key in component.inputs) if (component.instanceScope.inputsMap && component.instanceScope.inputsMap.has(key)) (component.instanceScope as any)[component.instanceScope.inputsMap.get(key)] = component.inputs[key];
       }
     } else {
-      component.instanceScope = buildComponentScope(component.constructorFunction, component.props, component.nativeElement as Element, componentInstance);
+      component.instanceScope = buildComponentScope(component.constructorFunction, component.inputs, component.nativeElement, componentInstance);
     }
 
     component.instanceScope.$indivInstance = componentInstance.$indivInstance;
@@ -74,7 +74,7 @@ export function componentsConstructor(componentInstance: IComponent, componentAn
     const declaration = componentInstance.declarationMap.get(component.name);
     componentInstance.componentList.push({
       nativeElement: component.nativeElement,
-      props: component.props,
+      inputs: component.inputs,
       instanceScope: null,
       constructorFunction: declaration,
     });
@@ -90,23 +90,23 @@ export function componentsConstructor(componentInstance: IComponent, componentAn
  */
 export function buildComponentsAndDirectives(vnode: Vnode, componentAndDirectives: TComAndDir): void {
   if (vnode.type === 'text') return;
-  const componentProps: any = {};
+  const componentInputs: any = {};
 
   if (vnode.attributes && vnode.attributes.length > 0) {
     vnode.attributes.forEach(attr => {
       if (attr.type === 'directive') componentAndDirectives.directives.push({
         nativeElement: vnode.nativeElement,
-        props: attr.nvValue,
+        inputs: attr.nvValue,
         name: attr.name,
       });
-      if (attr.type === 'prop') componentProps[attr.name] = attr.nvValue;
+      if (attr.type === 'prop') componentInputs[attr.name] = attr.nvValue;
     });
   }
 
   if (vnode.type === 'component') {
     componentAndDirectives.components.push({
       nativeElement: vnode.nativeElement,
-      props: componentProps,
+      inputs: componentInputs,
       name: vnode.tagName,
     });
   }
@@ -118,7 +118,7 @@ export function buildComponentsAndDirectives(vnode: Vnode, componentAndDirective
  * render Component with using nativeElement and RenderTask instance
  *
  * @export
- * @param {Element} nativeElement
+ * @param {any} nativeElement
  * @param {IComponent} componentInstance
  * @returns {Promise<IComponent>}
  */
@@ -132,7 +132,7 @@ export async function componentCompiler(nativeElement: any, componentInstance: I
       try {
         saveVnodes = ((componentInstance as any).compileInstance as Compile).startCompile();
       } catch (error) {
-        throw new Error(`Compoent ${(componentInstance.constructor as any).selector} was compiled failed!`);
+        throw new Error(`Error: ${error}, compoent ${(componentInstance.constructor as any).selector} was compiled failed!`);
       }
 
       // for save saveVnode in componentInstance
@@ -142,10 +142,18 @@ export async function componentCompiler(nativeElement: any, componentInstance: I
       saveVnodes.forEach(vnode => buildComponentsAndDirectives(vnode, componentAndDirectives));
 
       // first mount directive
-      mountDirective(componentInstance, componentAndDirectives);
+      try {
+        mountDirective(componentInstance, componentAndDirectives);
+      } catch (error) {
+        throw new Error(`Error: ${error}, directives of compoent ${(componentInstance.constructor as any).selector} were compiled failed!`);
+      }
 
       // then mount component
-      mountComponent(componentInstance, componentAndDirectives);
+      try {
+        mountComponent(componentInstance, componentAndDirectives);
+      } catch (error) {
+        throw new Error(`Error: ${error}, components of compoent ${(componentInstance.constructor as any).selector} were compiled failed!`);
+      }
 
       return componentInstance;
     })

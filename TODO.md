@@ -33,7 +33,10 @@
 - [x] module: @indiv/core @indiv/common @indiv/router @indiv/platform-browser
 - [ ] support Pipe
 - [x] props deep copy
-- [ ] 注入器冒泡至父组件注入器
+- [x] 注入器冒泡至父组件注入器
 - [x] remove DOM api in @indiv/core
-- [ ] remove State and Props in @Component and @Directive
-- [ ] string to vnode
+- [x] remove State and Props in @Component and @Directive
+- [x] string to vnode
+- [x] JIT compile (default)
+- [ ] AOT compile
+- [ ] vnode to string

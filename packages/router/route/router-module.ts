@@ -1,8 +1,7 @@
 import { IComponent, IDirective, INvModule, ComponentList, DirectiveList, factoryModule, NvModule, InDiv, utils, Vnode } from '@indiv/core';
 
-import { NvLocation } from './location';
+import { nvRouteStatus, NvLocation } from './location';
 import { RouterTo, RouterFrom } from './directives';
-import { nvRouteStatus } from './location-status';
 
 export interface RouteChange {
   nvRouteChange(lastRoute?: string, newRoute?: string): void;
@@ -47,30 +46,26 @@ export class RouteModule {
   private lastRoute: string = null;
   private hasRenderComponentList: IComponent[] = [];
   private needRedirectPath: string = null;
-  private watcher: boolean = false;
+  private isWatching: boolean = false;
   private renderRouteList: string[] = [];
   private loadModuleMap: Map<string, INvModule> = new Map();
   private canWatch: boolean = false;
 
-  // todo remove location
-  // private pathName: string;
-
-  // public get locationPathname(): string {
-  //   if (utils.isBrowser()) return location.pathname;
-  //   else return this.pathName;
-  // }
-
-  // public set locationPathname(pathName: string) {
-  //   this.pathName = pathName;
-  // }
-
+  /**
+   * Creates an instance of RouteModule.
+   * 
+   * if don't use static function forRoot, RouteModule.prototype.canWatch is false
+   * if RouteModule.prototype.canWatch is false, don't watch router
+   * if RouteModule.prototype.canWatch is true, watch router and reset RouteModule.prototype.canWatch
+   * 
+   * @param {InDiv} indivInstance
+   * @param {NvLocation} nvLocation
+   * @memberof RouteModule
+   */
   constructor(
     private indivInstance: InDiv,
     private nvLocation: NvLocation,
   ) {
-    // if don't use static function forRoot, RouteModule.prototype.canWatch is false
-    // if RouteModule.prototype.canWatch is false, don't watch router
-    // if RouteModule.prototype.canWatch is true, watch router and reset RouteModule.prototype.canWatch
     if (!RouteModule.prototype.canWatch) return;
     RouteModule.prototype.canWatch = false;
 
@@ -123,7 +118,7 @@ export class RouteModule {
     } else {
       throw new Error(`route error: no routes exit`);
     }
-    if (!utils.isBrowser()) return;
+
     RouteModule.prototype.canWatch = true;
     return RouteModule;
   }
@@ -138,9 +133,7 @@ export class RouteModule {
     if (!location.search) return {};
     const returnValue: any = {};
     const queryList = location.search.split('?')[1].split('&');
-    queryList.forEach(query => {
-      returnValue[query.split('=')[0]] = query.split('=')[1];
-    });
+    queryList.forEach(query => returnValue[query.split('=')[0]] = query.split('=')[1]);
     return returnValue;
   }
 
@@ -151,22 +144,24 @@ export class RouteModule {
    * @memberof Router
    */
   private refresh(): void {
-    if (!nvRouteStatus.nvRouteObject || !this.watcher) {
+    if (!nvRouteStatus.nvRouteObject || !this.isWatching) {
       let path;
 
-      // todo remove location
-      // if (utils.isBrowser())
-      if (nvRouteStatus.nvRootPath === '/') path = location.pathname || '/';
-      else path = location.pathname.replace(nvRouteStatus.nvRootPath, '') === '' ? '/' : location.pathname.replace(nvRouteStatus.nvRootPath, '');
+      if (utils.isBrowser()) {
+        if (nvRouteStatus.nvRootPath === '/') path = location.pathname || '/';
+        else path = location.pathname.replace(nvRouteStatus.nvRootPath, '') === '' ? '/' : location.pathname.replace(nvRouteStatus.nvRootPath, '');
 
-      nvRouteStatus.nvRouteObject = {
-        path,
-        query: this.buildObjectFromLocationSearch(),
-        data: null,
-      };
-      nvRouteStatus.nvRouteParmasObject = {};
-      this.routeWatcher();
-      this.watcher = true;
+        nvRouteStatus.nvRouteObject = {
+          path,
+          query: this.buildObjectFromLocationSearch(),
+          data: null,
+        };
+        nvRouteStatus.nvRouteParmasObject = {};
+
+        this.routeWatcher();
+      }
+
+      this.isWatching = true;
     }
     this.currentUrl = nvRouteStatus.nvRouteObject.path || '/';
     this.routesList = [];

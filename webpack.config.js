@@ -104,7 +104,6 @@ module.exports = {
           options: {
             paths: [
               path.resolve(__dirname, 'node_modules'),
-              path.resolve(__dirname, 'web/styles'),
             ],
             javascriptEnabled: true,
           },

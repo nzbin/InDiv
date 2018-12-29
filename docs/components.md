@@ -184,7 +184,7 @@ export default class AppComponent {
 InDiv 的组件之间可以 `inputs` 来通信。此外还可以通过 `service` 与 `rxjs` 来进行响应式通信。
 
 组件间通信应该是单向的，通过传递值到子组件，并通过传递一个回调方法在子组件调用来更改对应父组件的值来完成通信，`inputs` 可以是一个**被单向传递的值**，也可以是一个**提供给子组件使用的回调函数**。
-直接改变被收集的依赖时，或通过 setState 更改被收集的依赖时，被更改的依赖会被立刻改变，因此更改state的行为为 同步的。
+直接改变被收集的依赖时，或通过 setState 更改被收集的依赖时，被更改的依赖会被立刻改变，因此更改类属性的行为是**同步的**。
 但是更改收集的依赖时，会触发异步的重新渲染，并在渲染后更新子组件的 `inputs`，因此，通过在子组件中调用 `inputs` 上的方法来更新父组件的依赖状态时，子组件的 `inputs` 并不会立即更新。
 如果想知道子组件的 `inputs` 何时被更新，应该通过生命周期 nvReceiveInputs(nextInputs: any) 或 Class的getter setter方法去监听 `inputs` 的变化。
 
@@ -332,14 +332,14 @@ export default class AppComponent {
 
 之前我们已经通过认识 `inputs` 认识了 `nvReceiveInputs` 的生命周期，而下面将介绍其他生命周期钩子。
 
-* `constructor` 在类被实例化的时候回触发，你可以在这里预先定义你的 state
+* `constructor` 在类被实例化的时候回触发，你可以在这里初始化
 * `nvOnInit(): void;` constructor 之后，在这个生命周期中，可以获取 inputs，此生命周期会在开启监听前被触发，并且之后再也不会触发
 * `nvBeforeMount(): void;` 在 nvOnInit 之后，template 挂载页面之前被触发，每次触发渲染页面都会被触发
 * `nvAfterMount(): void;` 在 nvBeforeMount 之后，template 挂载页面之后被触发，每次触发渲染页面（render）都会被触发
 * `nvHasRender(): void;` 在 nvAfterMount 之后，渲染完成后被触发，每次触发渲染页面（render）都会被触发
 * `nvRouteChange(lastRoute?: string, newRoute?: string): void;` 监听路由变化，当更换路由后被触发
 * `nvOnDestory(): void;` 仅仅在路由决定销毁此组件时,或是被`nv-if`销毁组件时被触发
-* `nvWatchState(oldState?: any): void;` 监听 state 变化，当 state 被更改后触发
-* `nvReceiveInputs(nextInputs: any): void;` 监听 inputs 变化，当 inputs 即将被更改时触发
+* `nvDoCheck(): void;` 监听被监听的属性变化，当被监听的属性被更改后触发
+* `nvReceiveInputs(nextInputs: any): void;` 监听 inputs 变化，当 inputs 即将被更改时（更改前）触发
 * (原生)`getter`: 当监听 inputs 时，getter 会先于 nvReceiveInputs 被触发
-* (原生)`setter`: 当监听 属性 时，setter 会晚于 nvWatchState 被触发
+* (原生)`setter`: 当监听 属性 时，setter 会晚于 nvDoCheck 被触发

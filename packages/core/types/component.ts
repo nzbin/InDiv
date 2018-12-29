@@ -30,7 +30,7 @@ export interface IComponent {
   $indivInstance?: InDiv;
   renderTaskQueue?: RenderTaskQueue;
   dependencesList?: string[];
-  renderStatus?: 'pending' | 'available';
+  watchStatus?: 'pending' | 'available';
 
   template?: string;
   declarationMap?: Map<string, Function>;
@@ -47,7 +47,7 @@ export interface IComponent {
   nvAfterMount?(): void;
   nvOnDestory?(): void;
   nvHasRender?(): void;
-  nvWatchState?(oldState?: any): void;
+  nvDoCheck?(oldState?: any): void;
   nvRouteChange?(lastRoute: string, newRoute: string): void;
   nvReceiveInputs?(nextInputs: any): void;
   render?(): Promise<IComponent>;

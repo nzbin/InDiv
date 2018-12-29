@@ -43,14 +43,13 @@ export interface OnDestory {
   nvOnDestory(): void;
 }
 
-export interface WatchState {
+export interface DoCheck {
   /**
    * only for @Component, when state from Component instance has been changed
    *
-   * @param {*} [oldState]
-   * @memberof WatchState
+   * @memberof DoCheck
    */
-  nvWatchState(oldState?: any): void;
+  nvDoCheck(): void;
 }
 
 export interface ReceiveInputs {

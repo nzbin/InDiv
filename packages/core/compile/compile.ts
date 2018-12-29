@@ -60,8 +60,6 @@ export class Compile {
     this.fragment.forEach(child => child.parentVnode = { nativeElement: this.mountedElement });
 
     diffVnode({ childNodes: this.saveVnode, nativeElement: this.mountedElement, parentVnode: null }, { childNodes: this.fragment, nativeElement: this.mountedElement, parentVnode: null }, patchList);
-    // todo delete
-    // console.log(33333333, this.mountedElement, this.saveVnode, patchList);
     patchVnode(patchList, this.componentInstance.$indivInstance.getRenderer);
 
     this.fragment = null;

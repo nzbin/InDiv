@@ -1,8 +1,8 @@
-import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, setState, ElementRef, Watch, HasRender, Input } from '@indiv/core';
+import { InDiv, Component, Utils, NvModule, OnInit, DoCheck, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, setState, ElementRef, Watch, HasRender, Input } from '@indiv/core';
 import { RouteChange, NvLocation, RouteModule } from '@indiv/router';
 import { PlatformBrowser } from '@indiv/platform-browser';
 import { HttpClient, HttpClientResponse } from '@indiv/common';
-// import { InDiv, Component, Utils, NvModule, OnInit, WatchState, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, setState, ElementRef } from '../build/core';
+// import { InDiv, Component, Utils, NvModule, OnInit, DoCheck, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, setState, ElementRef } from '../build/core';
 // import { RouteChange, NvLocation, RouteModule } from '../build/router';
 // import { PlatformBrowser } from '../build/platform-browser';
 // import { HttpClient, HttpClientResponse } from '../build/common';
@@ -26,7 +26,7 @@ class ValueType { }
     </div>
   `),
 })
-class PComponent implements WatchState, BeforeMount, ReceiveInputs, OnDestory {
+class PComponent implements DoCheck, BeforeMount, ReceiveInputs, OnDestory {
   public setState: SetState;
   public a: any = 'a子组件';
   public b: number = 100;
@@ -67,8 +67,7 @@ class PComponent implements WatchState, BeforeMount, ReceiveInputs, OnDestory {
     this.bx(a);
   }
 
-  public nvWatchState(oldState: string) {
-    console.log('oldState Component:', oldState);
+  public nvDoCheck() {
   }
   public nvReceiveInputs(nextInputs: any) {
     console.log(1111111111111, nextInputs);
@@ -89,7 +88,7 @@ class PComponent implements WatchState, BeforeMount, ReceiveInputs, OnDestory {
         ef
         <input nv-repeat="ea in e" nv-model="ea.z" />
         <p nv-class="c" nv-if="ea.z" nv-repeat="ea in e" nv-text="ea.z" nv-on:click="showAlert(ea)"></p>
-        <p>111this.state.a：{{a}}</p>
+        <p>111this.a：{{a}}</p>
         <input nv-model="a" />
       </div>
       下面是子路由<br/>
@@ -97,7 +96,7 @@ class PComponent implements WatchState, BeforeMount, ReceiveInputs, OnDestory {
     </div>
     `),
 })
-class R1 implements OnInit, BeforeMount, WatchState, RouteChange, OnDestory {
+class R1 implements OnInit, BeforeMount, DoCheck, RouteChange, OnDestory {
   public hSr: HeroSearchService;
   public setState: SetState;
   // public props: any;
@@ -148,8 +147,7 @@ class R1 implements OnInit, BeforeMount, WatchState, RouteChange, OnDestory {
     console.log('R1 is nvRouteChange', lastRoute, newRoute);
   }
 
-  public nvWatchState(oldState: any) {
-    console.log('oldState Controller:', oldState);
+  public nvDoCheck() {
   }
   public showAlert(a: any) {
     this.location.set('/R1/C1', { a: '1' });
@@ -174,14 +172,14 @@ class R1 implements OnInit, BeforeMount, WatchState, RouteChange, OnDestory {
       <p nv-on:click="showLocation()">点击显示子路由跳转</p>
       <input nv-model="a"/>
       <br/>
-      <p nv-on:click="showAlert()">点击显示this.state.a:{{a}}</p>
+      <p nv-on:click="showAlert()">点击显示this.a:{{a}}</p>
       子组件:<br/>
       <route-child a="{a}"></route-child>
       <router-render></router-render>
     </div>
   `),
 })
-class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, OnDestory {
+class R2 implements OnInit, BeforeMount, AfterMount, DoCheck, RouteChange, OnDestory {
   public state: any;
   public a: any = 1;
   constructor(
@@ -210,8 +208,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, WatchState, RouteChange, On
     console.log('R2 is nvRouteChange', lastRoute, newRoute);
   }
 
-  public nvWatchState(oldState: any) {
-    console.log('oldState Controller:', oldState);
+  public nvDoCheck() {
   }
 
   public nvOnDestory() {
@@ -254,7 +251,7 @@ class TestComponent implements OnDestory, ReceiveInputs {
   }
 
   public click() {
-    console.log('this.state.man', this.manName);
+    console.log('this.manName', this.manName);
     this.manName = 'fuck!';
   }
 
@@ -299,7 +296,7 @@ class TestComponent implements OnDestory, ReceiveInputs {
 `),
 })
 
-class Container implements OnInit, AfterMount, WatchState, HasRender, RouteChange {
+class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
   public ss: HeroSearchService;
   public ss2: HeroSearchService1;
   public state: any;
@@ -400,30 +397,24 @@ class Container implements OnInit, AfterMount, WatchState, HasRender, RouteChang
     this.location.redirectTo('/R1', { b: '1' });
   }
   public countState(a: any, index: number): any {
-    // if (!a) return '';
-    console.log('aaaaaaaaa', a, typeof a);
     return a;
   }
 
   public countState2(a: any, index: number): any {
-    // console.log(9998888, '1fuck', index);
-    // if (!index) return index;
     return index;
   }
   public show(a: any, index?: string) {
     console.log('aaaa', a);
     console.log('$index', index);
-    // console.log('testArray2', this.state.testArray2);
     console.log('testArray2', this.testArray2);
   }
 
   public showInput(event: any, index: number) {
-    // this.state.testArray2[index] = event.target.value;
     this.testArray2[index] = event.target.value;
   }
 
-  public nvWatchState(oldState: any) {
-    console.log(33333445, 'oldState Controller:', oldState);
+  public nvDoCheck() {
+    console.log(999999, 'container do check!');
   }
 
   public changeInput() {
@@ -486,12 +477,12 @@ class Container implements OnInit, AfterMount, WatchState, HasRender, RouteChang
         ],
       }],
     });
+    this.a = 100;
   }
 
   private httpHandler = (value: any) => {
-    // this.state.a = 100;
-    // this.a = 100;
     this.a = 0;
+    this.b = 44;
     console.log(33333, 'from container', value);
   }
 }

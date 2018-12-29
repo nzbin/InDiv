@@ -23,6 +23,7 @@ export abstract class Renderer {
    * @memberof Renderer
    */
   public abstract nativeElementToVnode(nativeElement: any, parseVnodeOptions?: ParseOptions): Vnode[];
+
   /**
    * get nativeElement by TagName
    *
@@ -32,6 +33,7 @@ export abstract class Renderer {
    * @memberof Renderer
    */
   public abstract getElementsByTagName(name: string): any;
+
   /**
    * check nativeElement has childnodes or not
    *
@@ -41,6 +43,7 @@ export abstract class Renderer {
    * @memberof Renderer
    */
   public abstract hasChildNodes(nativeElement: any): boolean;
+
   /**
    * get childnodes by nativeElement
    *
@@ -50,6 +53,7 @@ export abstract class Renderer {
    * @memberof Renderer
    */
   public abstract getChildNodes(nativeElement: any): any[];
+
   /**
    * remove child from nativeElement
    *
@@ -59,6 +63,7 @@ export abstract class Renderer {
    * @memberof Renderer
    */
   public abstract removeChild(parent: any, child: any): void;
+
   /**
    * append child to nativeElement
    *
@@ -68,6 +73,7 @@ export abstract class Renderer {
    * @memberof Renderer
    */
   public abstract appendChild(parent: any, child: any): void;
+
   /**
    * insert child to nativeElement by index
    *
@@ -78,6 +84,7 @@ export abstract class Renderer {
    * @memberof Renderer
    */
   public abstract insertBefore(parent: any, child: any, index: number): void;
+
   /**
    * check parent nativeElement is containted with child nativeElement
    *
@@ -88,6 +95,7 @@ export abstract class Renderer {
    * @memberof Renderer
    */
   public abstract isContainted(parent: any, child: any): boolean;
+
   /**
    * create nativeElement by tagName
    *
@@ -97,6 +105,7 @@ export abstract class Renderer {
    * @memberof Renderer
    */
   public abstract creatElement(tagName: string): any;
+
   /**
    * create nativeElement by value
    *
@@ -106,6 +115,7 @@ export abstract class Renderer {
    * @memberof Renderer
    */
   public abstract creatTextElement(value: string): any;
+
   /**
    * get attribute by name from nativeElement
    *
@@ -116,6 +126,7 @@ export abstract class Renderer {
    * @memberof Renderer
    */
   public abstract getAttribute(element: any, name: string): any;
+
   /**
    * set attribute to nativeElement
    *
@@ -126,6 +137,7 @@ export abstract class Renderer {
    * @memberof Renderer
    */
   public abstract setAttribute(element: any, name: string, value: any): void;
+
   /**
    * set nv attribute to nativeElement 
    *
@@ -136,6 +148,7 @@ export abstract class Renderer {
    * @memberof Renderer
    */
   public abstract setNvAttribute(element: any, name: string, value: any): void;
+
   /**
    * remove attribute from nativeElement
    *
@@ -146,6 +159,7 @@ export abstract class Renderer {
    * @memberof Renderer
    */
   public abstract removeAttribute(element: any, name: string, value?: any): void;
+
   /**
    * remove nv attribute from nativeElement
    *
@@ -156,6 +170,7 @@ export abstract class Renderer {
    * @memberof Renderer
    */
   public abstract removeNvAttribute(element: any, name: string, value?: any): void;
+
   /**
    * set nodeValue to nativeElement
    *
@@ -165,6 +180,7 @@ export abstract class Renderer {
    * @memberof Renderer
    */
   public abstract setNodeValue(element: any, nodeValue: any): void;
+
   /**
    * set value to nativeElement like input
    *
@@ -174,6 +190,7 @@ export abstract class Renderer {
    * @memberof Renderer
    */
   public abstract setValue(element: any, value: any): void;
+
   /**
    * remove eventListener from nativeElement
    *
@@ -184,6 +201,7 @@ export abstract class Renderer {
    * @memberof Renderer
    */
   public abstract removeEventListener(element: any, eventType: string, handler: any): void;
+
   /**
    * add eventListener from nativeElement
    *
@@ -194,5 +212,35 @@ export abstract class Renderer {
    * @memberof Renderer
    */
   public abstract addEventListener(element: any, eventType: string, handler: any): void;
-  // todo setStyle removeStyle getStyle
+
+  /**
+   * set a style to nativeElement
+   *
+   * @abstract
+   * @param {*} element
+   * @param {string} name
+   * @param {*} value
+   * @memberof Renderer
+   */
+  public abstract setStyle(element: any, name: string, value: any): void;
+
+  /**
+   * remove a style to nativeElement
+   *
+   * @abstract
+   * @param {*} element
+   * @param {string} name
+   * @memberof Renderer
+   */
+  public abstract removeStyle(element: any, name: string): void;
+
+  /**
+   * get a style from nativeElement
+   *
+   * @abstract
+   * @param {*} element
+   * @param {string} name
+   * @memberof Renderer
+   */
+  public abstract getStyle(element: any, name: string): void;
 }

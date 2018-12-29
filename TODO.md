@@ -17,7 +17,7 @@
 - [x] support Service(now changed to @Injectable)
 - [x] support JavaScript and TypeScript
 - [x] IOC and DI
-- [x] SSR 服务端渲染
+- [ ] SSR 服务端渲染 platform-server
 - [x] route lazy load
 - [x] async template render
 - [x] optimize setState

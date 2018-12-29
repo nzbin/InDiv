@@ -1,0 +1,35 @@
+{
+  "name": "@indiv/platform-server",
+  "version": "0.0.0",
+  "description": "一个 web mvvm 库。A web mvvm library.",
+  "main": "../../build/platform-server/index.js",
+  "types": "../../build/platform-server/index.d.ts",
+  "files": [
+    "../../build/platform-server"
+  ],
+  "keywords": [
+    "mvvm",
+    "view",
+    "front-end",
+    "DOM",
+    "render",
+    "Virtual DOM",
+    "platform server"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DimaLiLongJi/InDiv.git"
+  },
+  "author": "DimaLiLongJi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DimaLiLongJi/InDiv/issues"
+  },
+  "homepage": "https://github.com/DimaLiLongJi/InDiv#readme",
+  "dependencies": {
+    "@babel/runtime-corejs2": "^7.1.2"
+  },
+  "peerDependencies": {
+    "@indiv/core": "0.0.0-PLACEHOLDER"
+  }
+}

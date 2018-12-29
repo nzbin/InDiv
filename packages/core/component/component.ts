@@ -18,7 +18,7 @@ export type TComponentOptions = {
  * to decorate an InDiv component
  * render function comes from InDiv instance, you can set it by youself
  * 
- * renderStatus: 'pending' | 'available', to controll watcher and render will be called or not in dependencesList
+ * watchStatus: 'pending' | 'available', to controll watcher and render will be called or not in dependencesList
  *
  * @template Props
  * @template Vm
@@ -33,7 +33,7 @@ export function Component(options: TComponentOptions): (_constructor: Function) 
     const vm: IComponent = _constructor.prototype;
     vm.template = options.template;
 
-    vm.renderStatus = 'available';
+    vm.watchStatus = 'available';
 
     vm.privateInjector = new Injector();
     if (options.providers && options.providers.length > 0) {

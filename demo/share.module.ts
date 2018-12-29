@@ -1,12 +1,8 @@
-import { InDiv, Component, NvModule, HasRender, OnInit, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, setState, Directive, ElementRef, Input } from '@indiv/core';
+import { Component, NvModule, HasRender, OnInit, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, setState, Directive, ElementRef, Input, Renderer } from '@indiv/core';
 import { RouteChange, RouteModule, TRouter } from '@indiv/router'; 
 // import { InDiv, Component, NvModule, HasRender, OnInit, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, setState, Directive, ElementRef } from '../build/core';
 // import { RouteChange, RouteModule, TRouter } from '../build/router';  
 import { HeroSearchService, HeroSearchService2 } from './service';
-
-interface Props {
-  a: number;
-}
 
 @Component({
   selector: 'route-child',
@@ -199,16 +195,15 @@ class TestDirective implements OnInit, RouteChange, ReceiveInputs {
   constructor(
     private hss: HeroSearchService,
     private element: ElementRef,
-    private indiv: InDiv,
+    private renderer: Renderer,
   ) {}
 
   public nvOnInit() {
     console.log(5555, 'init TestDirective', this.testDirective);
     console.log(666666, 'init TestDirective element', this.element);
-    console.log(777777, 'init TestDirective indiv', this.indiv);
     this.hss.test();
-    this.element.nativeElement.addEventListener('mouseover', this.changeColor);
-    this.element.nativeElement.addEventListener('mouseout', this.removeColor);
+    this.renderer.addEventListener(this.element.nativeElement, 'mouseover', this.changeColor);
+    this.renderer.addEventListener(this.element.nativeElement, 'mouseout', this.removeColor);
   }
   public nvRouteChange(lastRoute?: string, newRoute?: string) {
     console.log(5555, 'nvRouteChange TestDirective', newRoute);
@@ -218,10 +213,10 @@ class TestDirective implements OnInit, RouteChange, ReceiveInputs {
   }
 
   public changeColor = () => {
-    this.element.nativeElement.style.color = 'red';
+    this.renderer.setStyle(this.element.nativeElement, 'color', 'red');
   }
   public removeColor = () => {
-    this.element.nativeElement.style.color = 'black';
+    this.renderer.removeStyle(this.element.nativeElement, 'color');
   }
 }
 

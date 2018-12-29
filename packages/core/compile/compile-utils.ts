@@ -560,7 +560,17 @@ export class CompileUtil {
         if (/^\".*\"$/.test(arg)) return argsList.push(arg.match(/^\"(.*)\"$/)[1]);
         if (!/^\'.*\'$/.test(arg) && !/^\".*\"$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
       });
+
+      const saveWatchStatus = (vm as IComponent).watchStatus;
+      if (saveWatchStatus === 'available') (vm as IComponent).watchStatus = 'pending';
+
       fn.apply(vm, argsList);
+
+      if (saveWatchStatus === 'available') {
+        (vm as IComponent).watchStatus = 'available';
+        if ((vm as IComponent).nvDoCheck) (vm as IComponent).nvDoCheck();
+        (vm as IComponent).render();
+      }
     };
     if (eventType && fn) {
       const sameEventType = vnode.eventTypes.find(_eventType => _eventType.type === eventType);

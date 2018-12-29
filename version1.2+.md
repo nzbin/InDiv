@@ -155,7 +155,7 @@ current version: v1.2.1
   - **Please use `setState` after lifecycle `constructor()` and `nvOnInit`**, and you can change or set value for `this.state` without `setState` in lifecycle `constructor()` and `nvOnInit`
   - **From v1.2.1, we have removed `setState, setLocation, getLocation`, and you can use `setState, setLocation, getLocation` from `import { setState, getLocation, setLocation } from 'indiv'`**
   - After `Class`'s `constructor`, u can use `this.props` in any lifecycle
-  - Use `nvOnInit` and `nvReceiveInputs(nextInputs: any): void;` to receive props and set `props` in `state`
+  - Use `nvOnInit` and `nvReceiveProps(nextProps: any): void;` to receive props and set `props` in `state`
   - Use `setLocation` and `getLocation` to controll route or get route info
   - Use `Component` in `template`
 
@@ -177,17 +177,17 @@ current version: v1.2.1
       1. action of set value of `state` or using `setState` is a **synchronous action**
       2. action of using callback function from `props` to change `state` which comes from `parent Component` in `child Component` is a synchronous action
       3. rerender of Component is an **asynchronous action**, and after rerendering `props` can be changed in `child Component`
-      4. so after using callback function from `props` to change `state` which comes from `parent Component` in `child Component`, `props` in `child Component` can't be changed immediately because of out render mechanism is asynchronous render.You should use `nvReceiveInputs(nextInputs: any): void;` to watch `props` changes
+      4. so after using callback function from `props` to change `state` which comes from `parent Component` in `child Component`, `props` in `child Component` can't be changed immediately because of out render mechanism is asynchronous render.You should use `nvReceiveProps(nextProps: any): void;` to watch `props` changes
       5. from v1.2.1 we has remove `setState` in `Component` instance, and u can use `setState` from `import { setState } from 'indiv'`
 
   -  typescript
 
     - To use decorator `Component` declare `template` and `state`
-    - To implements interface `OnInit, BeforeMount, AfterMount, HasRender, OnDestory, ReceiveInputs, WatchState, RouteChange` to use lifecycle hooks
+    - To implements interface `OnInit, BeforeMount, AfterMount, HasRender, OnDestory, ReceiveProps, WatchState, RouteChange` to use lifecycle hooks
     - To use decorator `Injected` to declare which need to be injected `Service` in `constructor`'s arguments of `Component`**
 
     ```typescript
-    import { Injected, Component, OnInit, AfterMount, ReceiveInputs, SetLocation, GetLocation, SetState, setLocation, getLocation, setState } from 'indiv';
+    import { Injected, Component, OnInit, AfterMount, ReceiveProps, SetLocation, GetLocation, SetState, setLocation, getLocation, setState } from 'indiv';
 
     @Injected
     @Component({
@@ -207,7 +207,7 @@ current version: v1.2.1
         }
       ]
     })
-    class Container implements OnInit, AfterMount, ReceiveInputs {
+    class Container implements OnInit, AfterMount, ReceiveProps {
       public ss: HeroSearchService;
       public state: any;
       public setLocation: SetLocation;
@@ -235,8 +235,8 @@ current version: v1.2.1
         console.log('nvAfterMount Container');
       }
 
-      public nvReceiveInputs(nextInputs: any) {
-        this.state.a = nextInputs.test;
+      public nvReceiveProps(nextProps: any) {
+        this.state.a = nextProps.test;
       }
 
       public go() {
@@ -280,8 +280,8 @@ current version: v1.2.1
         this.state.a = this.props.test;
         console.log('nvOnInit Container');
       }
-      nvReceiveInputs(nextInputs) {
-        this.state.a = nextInputs.test;
+      nvReceiveProps(nextProps) {
+        this.state.a = nextProps.test;
       }
 
       go() {
@@ -752,7 +752,7 @@ current version: v1.2.1
 
     - You can initialize state in life cycle hooks `constructor nvOnInit`, after that u must use `setState` add listener for additional attributes on state
     - After `constructor` u can get this.props and use it
-    - On `nvReceiveInputs` u can receive new props in argument `nextInputs` and use old props with `this.props`
+    - On `nvReceiveProps` u can receive new props in argument `nextProps` and use old props with `this.props`
 
     ```typescript
       constructor()
@@ -763,7 +763,7 @@ current version: v1.2.1
       nvOnDestory(): void;
       nvWatchState(oldState?: any): void;
       nvRouteChange(lastRoute?: string, newRoute?: string): void;
-      nvReceiveInputs(nextInputs: any): void;
+      nvReceiveProps(nextProps: any): void;
       setter
       getter
     ```

@@ -1,6 +1,28 @@
 import { Injectable, utils } from '@indiv/core';
 
-import { nvRouteStatus } from './location-status';
+export type NvRouteObject = {
+  path: string;
+  query?: {
+    [props: string]: any;
+  };
+  data?: any;
+};
+
+export const nvRouteStatus: {
+  nvRouteObject: NvRouteObject,
+  nvRouteParmasObject: {
+    [props: string]: any;
+  },
+  nvRootPath: string,
+} = {
+  nvRouteObject: {
+    path: null,
+    query: {},
+    data: null,
+  },
+  nvRouteParmasObject: {},
+  nvRootPath: '/',
+};
 
 @Injectable()
 export class NvLocation {
@@ -81,4 +103,4 @@ export class NvLocation {
     nvRouteStatus.nvRouteObject = { path, query, data };
     nvRouteStatus.nvRouteParmasObject = {};
   }
-} 
+}

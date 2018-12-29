@@ -176,4 +176,16 @@ export class PlatfromBrowserRenderer extends Renderer {
   public addEventListener(element: Element, eventType: string, handler: any): void {
     element.addEventListener(eventType, handler);
   }
+
+  public setStyle(element: HTMLElement, name: string, value: any): void {
+    element.style[name as any] = value;
+  }
+
+  public removeStyle(element: HTMLElement, name: string): void {
+    element.style[name as any] = "";
+  }
+
+  public getStyle(element: HTMLElement, name: string): any {
+    return element.style[name as any];
+  }
 }

@@ -1,6 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   entry: {
@@ -26,7 +26,7 @@ module.exports = {
   },
 
   plugins: [
-    new ExtractTextPlugin({
+    new MiniCssExtractPlugin({
       filename: '[name].css',
     }),
     new webpack.DefinePlugin({
@@ -82,34 +82,17 @@ module.exports = {
     },
     {
       test: /\.css$/,
-      use: ExtractTextPlugin.extract({
-        use: [{
-          loader: 'css-loader',
-          options: {
-            minimize: true,
-          },
-        }],
-        fallback: 'style-loader',
-      }),
+      use: [
+        { loader: MiniCssExtractPlugin.loader, },
+        'css-loader',
+      ],
     }, {
       test: /\.less$/,
-      use: ExtractTextPlugin.extract({
-        use: [{
-          loader: 'css-loader',
-          options: {
-            minimize: true,
-          },
-        }, {
-          loader: 'less-loader',
-          options: {
-            paths: [
-              path.resolve(__dirname, 'node_modules'),
-            ],
-            javascriptEnabled: true,
-          },
-        }],
-        fallback: 'style-loader',
-      }),
+      use: [
+        { loader: MiniCssExtractPlugin.loader, },
+        'css-loader',
+        'less-loader'
+      ],
     }],
   }
 };

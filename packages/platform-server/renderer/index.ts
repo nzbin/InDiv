@@ -1,2 +1,2 @@
-export * from './plugins';
+export * from './document';
 export * from './renderer';

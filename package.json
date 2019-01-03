@@ -48,6 +48,7 @@
     "@babel/plugin-syntax-dynamic-import": "^7.0.0",
     "@babel/plugin-transform-runtime": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
+    "@babel/runtime-corejs2": "^7.2.0",
     "awesome-typescript-loader": "^5.2.1",
     "babel-eslint": "^8.2.0",
     "babel-loader": "^8.0.4",
@@ -79,7 +80,6 @@
     "webpack-cli": "^3.1.2"
   },
   "dependencies": {
-    "@babel/runtime-corejs2": "^7.1.2",
     "axios": "^0.18.0",
     "reflect-metadata": "^0.1.12",
     "rxjs": "^6.3.3"

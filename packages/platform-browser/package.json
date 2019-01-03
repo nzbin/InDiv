@@ -27,7 +27,6 @@
   },
   "homepage": "https://github.com/DimaLiLongJi/InDiv#readme",
   "dependencies": {
-    "@babel/runtime-corejs2": "^7.1.2"
   },
   "peerDependencies": {
     "@indiv/core": "0.0.0-PLACEHOLDER"

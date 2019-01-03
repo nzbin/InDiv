@@ -1,5 +1,6 @@
 import { IComponent } from '../types';
-import { Vnode, TAttributes, isFromVM, buildProps } from "../vnode";
+import { Vnode, TAttributes } from "../vnode";
+import { isFromVM, buildProps, argumentsIsReady, getVMFunctionArguments, getValueByValue, getVMVal, getVMFunction, setVMVal } from './utils';
 
 /**
  * compile util for nv-repeat DOM
@@ -18,42 +19,6 @@ export class CompileRepeatUtil {
    */
   constructor(fragment?: Vnode[]) {
     this.fragment = fragment;
-  }
-
-  /**
-   * get value by key and anthor value
-   *
-   * @param {*} vm
-   * @param {string} exp
-   * @param {string} key
-   * @returns {*}
-   * @memberof CompileRepeatUtil
-   */
-  public _getValueByValue(vm: any, exp: string, key: string): any {
-    const valueList = exp.replace(/\(.*\)/, '').split('.');
-    let value = vm;
-    valueList.forEach((v, index) => {
-      if (v === key && index === 0) return;
-      value = value[v];
-    });
-    return value;
-  }
-
-  /**
-   * get value of VM
-   *
-   * @param {*} vm
-   * @param {string} exp
-   * @returns {*}
-   * @memberof CompileRepeatUtil
-   */
-  public _getVMVal(vm: any, exp: string): any {
-    const valueList = exp.replace(/\(.*\)/, '').split('.');
-    let value = vm;
-    valueList.forEach(v => {
-      value = value[v];
-    });
-    return value;
   }
 
   /**
@@ -79,59 +44,6 @@ export class CompileRepeatUtil {
   }
 
   /**
-   * get Function for vm
-   *
-   * @param {*} vm
-   * @param {string} exp
-   * @returns {Function}
-   * @memberof CompileUtil
-   */
-  public _getVMFunction(vm: any, exp: string): Function {
-    const fnList = exp.replace(/\(.*\)/, '').split('.');
-    let fn = vm;
-    fnList.forEach(f => {
-      fn = fn[f];
-    });
-    return fn as Function;
-  }
-
-  /**
-   * get Function arguments for vm
-   *
-   * @param {*} vm
-   * @param {string} exp
-   * @param {Vnode} vnode
-   * @param {string} key
-   * @param {*} val
-   * @returns {any[]}
-   * @memberof CompileRepeatUtil
-   */
-  public _getVMFunctionArguments(vm: any, exp: string, vnode: Vnode, key?: string, val?: any): any[] {
-    const args = exp.match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
-    const argsList: any[] = [];
-    const utilVm = this;
-    args.forEach(arg => {
-      if (arg === '') return false;
-      if (arg === '$element') return argsList.push(vnode.nativeElement);
-      if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
-      if (arg === 'null') return argsList.push(null);
-      if (arg === 'undefined') return argsList.push(undefined);
-      if (isFromVM(vm, arg)) return argsList.push(utilVm._getVMVal(vm, arg));
-      if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
-      if (/^\".*\"$/.test(arg)) return argsList.push(arg.match(/^\"(.*)\"$/)[1]);
-      if (!/^\'.*\'$/.test(arg) && !/^\".*\"$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
-      if (arg.indexOf(key) === 0 || arg.indexOf(`${key}.`) === 0) return argsList.push(utilVm._getVMRepeatVal(val, arg, key));
-      if (vnode.repeatData) {
-        // $index in this
-        Object.keys(vnode.repeatData).forEach(data => {
-          if (arg.indexOf(data) === 0 || arg.indexOf(`${data}.`) === 0) return argsList.push(utilVm._getValueByValue(vnode.repeatData[data], arg, data));
-        });
-      }
-    });
-    return argsList;
-  }
-
-  /**
    * set value by key and anthor value
    *
    * @param {*} vm
@@ -154,27 +66,6 @@ export class CompileRepeatUtil {
   }
 
   /**
-   * set value from vm instance
-   *
-   * @param {*} vm
-   * @param {string} exp
-   * @param {*} value
-   * @memberof CompileRepeatUtil
-   */
-  public _setVMVal(vm: any, exp: string, value: any): void {
-    let vmValue: any = null;
-    const keyList = exp.split('.');
-    if (keyList.length === 1) vm[exp] = value;
-    else {
-      keyList.forEach((key, index) => {
-        if (index === 0) vmValue = vm[key];
-        if (index !== 0 && index !== keyList.length - 1) vmValue = vmValue[key];
-        if (index === keyList.length - 1) vmValue[key] = value;
-      });
-    }
-  }
-
-  /**
    * bind handler for nv irective
    *
    * @param {Vnode} vnode
@@ -192,13 +83,13 @@ export class CompileRepeatUtil {
     if (/^.*\(.*\)$/.test(exp)) {
       if (dir === 'model') throw new Error(`directive: nv-model can't use ${exp} as value`);
       // if Function() need function return value
-      const fn = this._getVMFunction(vm, exp);
-      const argsList = this._getVMFunctionArguments(vm, exp, vnode, key, val);
+      const fn = getVMFunction(vm, exp);
+      const argsList = getVMFunctionArguments(vm, exp, vnode);
       value = fn.apply(vm, argsList);
       // repeat value
-    } else if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) value = this._getVMRepeatVal(repeatValue, exp, key);
+    } else if (exp === key || exp.indexOf(`${key}.`) === 0) value = this._getVMRepeatVal(repeatValue, exp, key);
     // normal value
-    else if (isFromVM(vm, exp)) value = this._getVMVal(vm, exp);
+    else if (isFromVM(vm, exp)) value = getVMVal(vm, exp);
     else if (exp === '$index') value = index;
     else if (/^\'.*\'$/.test(exp)) value = exp.match(/^\'(.*)\'$/)[1];
     else if (/^\".*\"$/.test(exp)) value = exp.match(/^\"(.*)\"$/)[1];
@@ -208,7 +99,7 @@ export class CompileRepeatUtil {
     else if (exp === 'undefined') value = undefined;
     else if (vnode.repeatData) {
       Object.keys(vnode.repeatData).forEach(data => {
-        if (exp.indexOf(data) === 0 || exp.indexOf(`${data}.`) === 0) value = this._getValueByValue(vnode.repeatData[data], exp, data);
+        if (exp === data || exp.indexOf(`${data}.`) === 0) value = getValueByValue(vnode.repeatData[data], exp, data);
       });
     } else throw new Error(`directive: nv-${dir} can't use recognize this value ${exp}`);
 
@@ -217,10 +108,10 @@ export class CompileRepeatUtil {
     switch (dir) {
       case 'model': {
         let watchData;
-        if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
+        if (exp === key || exp.indexOf(`${key}.`) === 0) {
           watchData = watchValue;
         } else {
-          watchData = this._getVMVal(vm, exp);
+          watchData = getVMVal(vm, exp);
         }
         this.modelUpdater(vnode, value, exp, key, index, watchData, vm);
         break;
@@ -266,15 +157,15 @@ export class CompileRepeatUtil {
       if (textList && textList.length > 0) {
         for (let i = 0; i < textList.length; i++) {
           const exp = textList[i].replace('{{', '').replace('}}', '');
-          if (/^.*\(.*\)$/.test(exp)) {
-            const fn = this._getVMFunction(vm, exp);
-            const argsList = this._getVMFunctionArguments(vm, exp, vnode, key, val);
+          if (/^.*\(.*\)$/.test(exp) && argumentsIsReady(exp, vnode, vm)) {
+            const fn = getVMFunction(vm, exp);
+            const argsList = getVMFunctionArguments(vm, exp, vnode);
             vnode.nodeValue = vnode.nodeValue.replace(textList[i], fn.apply(vm, argsList));
-          } else if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) vnode.nodeValue = vnode.nodeValue.replace(textList[i], this._getVMRepeatVal(val, exp, key));
-          else if (isFromVM(vm, exp)) vnode.nodeValue = vnode.nodeValue.replace(textList[i], this._getVMVal(vm, exp));
+          } else if (exp === key || exp.indexOf(`${key}.`) === 0) vnode.nodeValue = vnode.nodeValue.replace(textList[i], this._getVMRepeatVal(val, exp, key));
+          else if (isFromVM(vm, exp)) vnode.nodeValue = vnode.nodeValue.replace(textList[i], getVMVal(vm, exp));
           else if (vnode.repeatData) {
             Object.keys(vnode.repeatData).forEach(data => {
-              if (exp.indexOf(data) === 0 || exp.indexOf(`${data}.`) === 0) vnode.nodeValue = vnode.nodeValue.replace(textList[i], this._getValueByValue(vnode.repeatData[data], exp, data));
+              if (exp === data || exp.indexOf(`${data}.`) === 0) vnode.nodeValue = vnode.nodeValue.replace(textList[i], getValueByValue(vnode.repeatData[data], exp, data));
             });
           } else throw new Error(`directive: {{${exp}}} can\'t use recognize ${exp}`);
         }
@@ -304,11 +195,11 @@ export class CompileRepeatUtil {
       event.preventDefault();
       if (isFromVM(vm, exp)) {
         if ((event.target as HTMLInputElement).value === watchData) return;
-        utilVm._setVMVal(vm, exp, (event.target as HTMLInputElement).value);
-      } else if (exp.indexOf(key) === 0 || exp.indexOf(`${key}.`) === 0) {
+        setVMVal(vm, exp, (event.target as HTMLInputElement).value);
+      } else if (exp === key || exp.indexOf(`${key}.`) === 0) {
         if (typeof watchData[index] !== 'object') watchData[index] = (event.target as HTMLInputElement).value;
         if (typeof watchData[index] === 'object') {
-          let vals = utilVm._getValueByValue(watchData[index], exp, key);
+          let vals = getValueByValue(watchData[index], exp, key);
           vals = (event.target as HTMLInputElement).value;
           utilVm._setValueByValue(watchData[index], exp, key, vals);
         }
@@ -431,7 +322,7 @@ export class CompileRepeatUtil {
   public eventHandler(vnode: Vnode, vm: any, exp: string, eventName: string, key: string, val: any): void {
     const eventType = eventName.split(':')[1];
 
-    const fn = this._getVMFunction(vm, exp);
+    const fn = getVMFunction(vm, exp);
     const args = exp.match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
 
     const utilVm = this;
@@ -444,15 +335,15 @@ export class CompileRepeatUtil {
         if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
         if (arg === 'null') return argsList.push(null);
         if (arg === 'undefined') return argsList.push(undefined);
-        if (isFromVM(vm, arg)) return argsList.push(utilVm._getVMVal(vm, arg));
+        if (isFromVM(vm, arg)) return argsList.push(getVMVal(vm, arg));
         if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
         if (/^\".*\"$/.test(arg)) return argsList.push(arg.match(/^\"(.*)\"$/)[1]);
         if (!/^\'.*\'$/.test(arg) && !/^\".*\"$/.test(arg) && /^[0-9]*$/.test(arg)) return argsList.push(Number(arg));
-        if (arg.indexOf(key) === 0 || arg.indexOf(`${key}.`) === 0) return argsList.push(utilVm._getVMRepeatVal(val, arg, key));
+        if (arg === key || arg.indexOf(`${key}.`) === 0) return argsList.push(utilVm._getVMRepeatVal(val, arg, key));
         if (vnode.repeatData) {
           // $index in this
           Object.keys(vnode.repeatData).forEach(data => {
-            if (arg.indexOf(data) === 0 || arg.indexOf(`${data}.`) === 0) return argsList.push(utilVm._getValueByValue(vnode.repeatData[data], arg, data));
+            if (arg === data || arg.indexOf(`${data}.`) === 0) return argsList.push(getValueByValue(vnode.repeatData[data], arg, data));
           });
         }
       });
@@ -497,7 +388,7 @@ export class CompileRepeatUtil {
       const propValue = prop[1];
       let _prop = null;
       if (/^.*\(.*\)$/.test(propValue)) {
-        const fn = this._getVMFunction(vm, propValue);
+        const fn = getVMFunction(vm, propValue);
         const args = propValue.match(/\((.*)\)/)[1].replace(/\s+/g, '').split(',');
         const argsList: any[] = [];
         args.forEach(arg => {
@@ -506,14 +397,14 @@ export class CompileRepeatUtil {
           if (arg === 'true' || arg === 'false') return argsList.push(arg === 'true');
           if (arg === 'null') return argsList.push(null);
           if (arg === 'undefined') return argsList.push(undefined);
-          if (isFromVM(vm, arg)) return argsList.push(this._getVMVal(vm, arg));
+          if (isFromVM(vm, arg)) return argsList.push(getVMVal(vm, arg));
           if (/^\'.*\'$/.test(arg)) return argsList.push(arg.match(/^\'(.*)\'$/)[1]);
           if (/^\".*\"$/.test(arg)) return argsList.push(arg.match(/^\"(.*)\"$/)[1]);
           if (!/^\'.*\'$/.test(arg) && !/^\".*\"$/.test(arg) && /^[0-9]*$/g.test(arg)) return argsList.push(Number(arg));
           if (vnode.repeatData) {
             // $index in this
             Object.keys(vnode.repeatData).forEach(data => {
-              if (arg.indexOf(data) === 0 || arg.indexOf(`${data}.`) === 0) return argsList.push(this._getValueByValue(vnode.repeatData[data], arg, data));
+              if (arg === data || arg.indexOf(`${data}.`) === 0) return argsList.push(getValueByValue(vnode.repeatData[data], arg, data));
             });
           }
         });
@@ -524,12 +415,12 @@ export class CompileRepeatUtil {
       const valueList = propValue.split('.');
       const key = valueList[0];
       if (isFromVM(vm, propValue)) {
-        _prop = this._getVMVal(vm, propValue);
+        _prop = getVMVal(vm, propValue);
         attr.nvValue = buildProps(_prop, vm);
         return;
       }
       if (vnode.repeatData && vnode.repeatData.hasOwnProperty(key)) {
-        _prop = this._getValueByValue(vnode.repeatData[key], propValue, key);
+        _prop = getValueByValue(vnode.repeatData[key], propValue, key);
         attr.nvValue = buildProps(_prop, vm);
         return;
       }

@@ -286,7 +286,10 @@ class TestComponent implements OnDestory, ReceiveInputs {
            <input nv-on:click="show(c, $index)" nv-model="c.name" nv-class="c.id" />
            <p test-directive="{'123'}" nv-key="man.name" nv-class="man.name" nv-id="c.name">{{man.name}}</p>
            <div nv-repeat="_bb in man.job">
-            <p nv-class="man.name" nv-repeat="_test in testArray2">{{_test}}: {{man.name}} is {{_bb.name}}</p>
+            <p nv-class="man.name" nv-repeat="_test in testArray2">
+              {{_test}}: {{man.name}} is {{_bb.name}}
+              <a nv-class="_bbc" nv-repeat="_bbc in testArray2">{{man.name}} {{_bb.name}}</a>
+            </p>
            </div>
         </div>
     </div>
@@ -325,25 +328,25 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
         },
       ],
     },
-    // {
-    //   name: 'nina',
-    //   sex: '女',
-    //   // job: ['老师', '英语老师', '美1'],
-    //   job: [
-    //     {
-    //       id: 1,
-    //       name: '老师',
-    //     },
-    //     {
-    //       id: 2,
-    //       name: '英语老师',
-    //     },
-    //     {
-    //       id: 3,
-    //       name: '美',
-    //     },
-    //   ],
-    // }
+    {
+      name: 'nina',
+      sex: '女',
+      // job: ['老师', '英语老师', '美1'],
+      job: [
+        {
+          id: 1,
+          name: '老师',
+        },
+        {
+          id: 2,
+          name: '英语老师',
+        },
+        {
+          id: 3,
+          name: '美',
+        },
+      ],
+    },
   ];
   public testArray2: any = ['程序员2', '码农2', '架构师2'];
   // public testArray2: any = ['程序员2'];

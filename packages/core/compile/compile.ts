@@ -1,7 +1,5 @@
-import {
-  parseTemplateToVnode, Vnode, ParseOptions, IPatchList, diffVnode, patchVnode,
-  isRepeatNode, isElementNode, isTextNode, isDirective, isEventDirective, isPropOrNvDirective,
-} from '../vnode';
+import { parseTemplateToVnode, Vnode, ParseOptions, IPatchList, diffVnode, patchVnode, isRepeatNode, isElementNode, isTextNode, isDirective, isEventDirective, isPropOrNvDirective } from '../vnode';
+import { argumentsIsReady, valueIsReady } from './utils';
 import { CompileUtil } from './compile-utils';
 import { IComponent } from '../types';
 
@@ -128,18 +126,16 @@ export class Compile {
     if (nodeAttrs) {
       nodeAttrs.forEach(attr => {
         const attrName = attr.name;
+        const exp = attr.value;
+        const dir = attrName.substring(3);
+
         const compileUtil = new CompileUtil(fragment);
-        if (isDirective(attr.type)) {
-          const dir = attrName.substring(3);
-          const exp = attr.value;
-          compileUtil.bind(vnode, this.componentInstance, exp, dir);
+        if (isDirective(attr.type) && valueIsReady(exp, vnode, this.componentInstance)) compileUtil.bind(vnode, this.componentInstance, exp, dir);
+        if (isEventDirective(attr.type) && valueIsReady(exp, vnode, this.componentInstance)) compileUtil.eventHandler(vnode, this.componentInstance, exp, dir);
+        if (isPropOrNvDirective(attr.type)) {
+          const _exp = /^\{(.+)\}$/.exec(exp)[1];
+          if (valueIsReady(_exp, vnode, this.componentInstance) && argumentsIsReady(_exp, vnode, this.componentInstance)) compileUtil.propHandler(vnode, this.componentInstance, attr);
         }
-        if (isEventDirective(attr.type)) {
-          const dir = attrName.substring(3);
-          const exp = attr.value;
-          compileUtil.eventHandler(vnode, this.componentInstance, exp, dir);
-        }
-        if (isPropOrNvDirective(attr.type) && !isRepeatNode(vnode)) compileUtil.propHandler(vnode, this.componentInstance, attr);
       });
     }
   }

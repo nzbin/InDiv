@@ -48,7 +48,7 @@ export function createNativeElementAndChildrens(createdVnode: Vnode, renderer: R
     createdVnode.childNodes.forEach(childNode => createNativeElementAndChildrens(childNode, renderer));
   }
 
-  if (!index) renderer.appendChild(createdVnode.parentVnode.nativeElement, createdVnode.nativeElement);
+  if (!index && index !== 0) renderer.appendChild(createdVnode.parentVnode.nativeElement, createdVnode.nativeElement);
   else renderer.insertBefore(createdVnode.parentVnode.nativeElement, createdVnode.nativeElement, index);
 }
 
@@ -87,12 +87,12 @@ export function patchVnode(patchList: IPatchList[], renderer: Renderer): void {
       case 1: {
         if (patch.parentVnode.childNodes[patch.newIndex]) {
           patch.changedVnode.parentVnode = patch.parentVnode;
-          createNativeElementAndChildrens(patch.changedVnode, renderer, patch.newIndex);
           patch.parentVnode.childNodes.splice(patch.newIndex, 0, patch.changedVnode);
+          createNativeElementAndChildrens(patch.changedVnode, renderer, patch.newIndex);
         } else {
           patch.changedVnode.parentVnode = patch.parentVnode;
-          createNativeElementAndChildrens(patch.changedVnode, renderer);
           patch.parentVnode.childNodes.push(patch.changedVnode);
+          createNativeElementAndChildrens(patch.changedVnode, renderer);
         }
         break;
       }

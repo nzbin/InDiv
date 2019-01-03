@@ -2,9 +2,15 @@
 
 **门面模式是对象的结构模式，外部与一个子系统的通信必须通过一个统一的门面对象进行。门面模式提供一个高层次的接口，使得子系统更易于使用。**
 
-为了使 InDiv 能在不同平台使用，在设计初期，InDiv 就避免使用特定平台代码进行渲染。
+InDiv 其中的一个设计目标是使平台与 DOM 独立。
 
-因此抽象出了一个类似DOM api的类 `Render` 来执行特定平台的渲染代码。
+DOM 是复杂的，因此使组件与它分离，会让我们的应用程序，更容易测试与重构。
+
+另外的好处是，由于这种解耦，使得我们的应用能够运行在其它平台 (比如：Node.js、WebWorkers、NativeScript 等)。
+
+为了能够支持跨平台，InDiv 通过抽象层封装了不同平台的差异。比如定义了抽象类 `Renderer`。此外还定义了以下引用类型：`ElementRef`。
+
+因此抽象出了一个类似DOM api的类 `Renderer` 来执行特定平台的渲染代码。
 
 > @indiv/core/vnode/renderer.ts
 
@@ -35,6 +41,6 @@ export abstract class Renderer {
 }
 ```
 
-通过制定不同平台的 `Render` ， InDiv 不关心渲染的方法，InDiv 核心仅仅作为一个api消费者调用封装好的方法进行渲染。
+通过制定不同平台的 `Renderer` ， InDiv 不关心渲染的方法，InDiv 核心仅仅作为一个api消费者调用封装好的方法进行渲染。
 
 并且在组件内部如果想操控视图也仅仅通过依赖注入注入 `Render` 实例并操作 `ElementRef`实例的 `nativeElement`。

@@ -39,4 +39,4 @@
 - [x] string to vnode
 - [x] JIT compile (default)
 - [ ] AOT compile
-- [ ] vnode to string
+- [x] vnode to string

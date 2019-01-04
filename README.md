@@ -1,5 +1,8 @@
 # 关于 InDiv
 
+本库版本对应 InDiv 2.0.0 + 版本（@indiv）
+旧版本indiv v1.20 + 移至[markdown](https://github.com/DimaLiLongJi/InDiv/blob/master/version1.2%2B.md)
+
 ## 什么是InDiv
 
 #### InDiv 是一个mvvm库。它能帮你构建 Web 应用。InDiv 字符串模板、依赖注入和一些实践于一身。

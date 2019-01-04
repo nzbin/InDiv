@@ -23,6 +23,7 @@
   ],
   "scripts": {
     "start": "npm run clean && webpack --watch --mode=development & nodemon app.js",
+    "start:js": "npm run build && webpack --watch --env=testjs --mode=development & nodemon app.js",
     "start:docs": "docsify serve ./docs --port 2334",
     "clean": "rm -rf build dist .rpt2_cache",
     "build": "npm run clean && npm run build:core && npm run build:platform-browser && npm run build:common && npm run build:router",

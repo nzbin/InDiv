@@ -1,6 +1,6 @@
 {
   "name": "@indiv/platform-browser",
-  "version": "0.0.0",
+  "version": "0.0.1-alpha.0",
   "description": "一个 web mvvm 库。A web mvvm library.",
   "main": "../../build/platform-browser/index.js",
   "types": "../../build/platform-browser/index.d.ts",

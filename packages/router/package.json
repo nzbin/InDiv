@@ -1,0 +1,33 @@
+{
+  "name": "@indiv/router",
+  "version": "0.0.0",
+  "description": "一个 web mvvm 库。A web mvvm library.",
+  "main": "../../build/router/index.js",
+  "types": "../../build/router/index.d.ts",
+  "files": [
+    "../../build/router"
+  ],
+  "keywords": [
+    "mvvm",
+    "view",
+    "front-end",
+    "router",
+    "DOM",
+    "framework"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DimaLiLongJi/InDiv.git"
+  },
+  "author": "DimaLiLongJi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DimaLiLongJi/InDiv/issues"
+  },
+  "homepage": "https://github.com/DimaLiLongJi/InDiv#readme",
+  "dependencies": {
+  },
+  "peerDependencies": {
+    "@indiv/core": "0.0.0-PLACEHOLDER"
+  }
+}

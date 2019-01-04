@@ -1,0 +1,42 @@
+- [x] 类分离，通过use来绑定方法
+- [x] route
+- [x] 子路由(2/2)
+- [X] 组件化(3/3)
+- [x] 模块化 + NvModule
+- [X] 双向绑定
+- [x] 公共类提取
+- [x] 数据劫持
+- [x] 视图模板
+- [x] Template Syntax: nv-text nv-html nv-model nv-class nv-repeat nv-key nv-if nv-src nv-href(7/7)
+- [x] 组件props
+- [x] 组件渲染
+- [x] 组件中使用组件
+- [x] 改用 history的pushState并删除通过锚点的路由
+- [x] 监听路由变化动态渲染(2/2)
+- [x] Virtual DOM
+- [x] support Service(now changed to @Injectable)
+- [x] support JavaScript and TypeScript
+- [x] IOC and DI
+- [ ] SSR 服务端渲染 platform-server
+- [x] route lazy load
+- [x] async template render
+- [x] optimize setState
+- [x] support directive
+- [x] HTTP client
+- [x] rewrite IOC container
+- [x] 模板可以接受字符串及数字等
+- [x] 指令可以不接受props
+- [x] 优化编译 存储上次 Vnode 结构
+- [x] 移除 InDiv 实例中 setRenderModule 和 getRenderModule，RouteModule直接使用 InDiv 实例中 getBootstrapComponent 属性获得初始化的组件
+- [ ] @indiv/cli
+- [x] Injectable provideIn
+- [x] module: @indiv/core @indiv/common @indiv/router @indiv/platform-browser
+- [ ] support Pipe
+- [x] props deep copy
+- [x] 注入器冒泡至父组件注入器
+- [x] remove DOM api in @indiv/core
+- [x] remove State and Props in @Component and @Directive
+- [x] string to vnode
+- [x] JIT compile (default)
+- [ ] AOT compile
+- [x] vnode to string

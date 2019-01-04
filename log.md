@@ -83,3 +83,19 @@
 25. 2018-10-6 `NvModule` now can use `NvModule` in `exports` and  removed `setState, setLocation, getLocation`. From v1.2.1 you can use `setState, setLocation, getLocation` from `import { setState, getLocation, setLocation } from 'indiv'`
 
 26. 2018-10-31 add render task in `platform-browser/render` to replace `render`
+
+27. 2018-11-02 add route lazy load and allow `@NvModule` can use service from it's `providers`
+
+28. 2018-11-04 add build/without-polyfill 
+
+29. 2018-11-05 add HttpClient
+
+30. 2018-11-10 add RootModule
+
+31. 2018-11-12 remove `@Inject`
+
+32. 2018-11-15 add ElementRef for @Component and @Directive
+
+33. 2018-11-16 remove `$.` in template syntax
+
+34. 2018-11-19 change to new Injector

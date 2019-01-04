@@ -17,7 +17,6 @@
     "no-string-literal": true,
     "no-switch-case-fall-through": true,
     "no-unreachable": true,
-    "no-unused-variable": [ true ],
     "radix": true,
     "new-parens": true,
     "no-angle-bracket-type-assertion": true,
@@ -33,6 +32,7 @@
     "no-invalid-this": false,
     "no-reference": true,
     "no-unused-expression": true,
+    "no-unused-variable": true,
     "no-use-before-declare": true,
     "no-var-keyword": true,
     "one-line": [

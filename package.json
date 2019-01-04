@@ -1,6 +1,6 @@
 {
   "name": "indiv",
-  "version": "1.2.1",
+  "version": "2.0.0",
   "description": "一个 web mvvm 库。A web mvvm library.",
   "main": "build/index.js",
   "types": "build/index.d.ts",
@@ -22,12 +22,14 @@
     "SSR"
   ],
   "scripts": {
-    "start": "parcel watch ./demo/index.ts -d dist & nodemon app.js",
-    "start-ts": "parcel ./demo/index-ts.html -d dist --open",
-    "start-js": "parcel ./demo/index.html -d dist --open",
-    "build-parcel": "rm -rf build && parcel build ./src/index.ts --no-source-maps -d build && cp -r src/index.d.ts build",
-    "build": "rm -rf build && rollup --config rollup.typescript.config.js && rollup -c && rm -rf build/bundle.js",
-    "pub-prod": "npm run build && npm publish"
+    "start": "npm run clean && webpack --watch --mode=development & nodemon app.js",
+    "start:docs": "docsify serve ./docs --port 2334",
+    "clean": "rm -rf build dist .rpt2_cache",
+    "build": "npm run clean && npm run build:core && npm run build:platform-browser && npm run build:common && npm run build:router",
+    "build:core": "rm -rf build/core && rollup --config packages/core/rollup.typescript.config.js && rollup --config packages/core/rollup.config.js && rm -rf build/core/bundle.js",
+    "build:platform-browser": "rm -rf build/platform-browser && rollup --config packages/platform-browser/rollup.typescript.config.js && rollup --config packages/platform-browser/rollup.config.js && rm -rf build/platform-browser/bundle.js",
+    "build:common": "rm -rf build/common && rollup --config packages/common/rollup.typescript.config.js && rollup --config packages/common/rollup.config.js && rm -rf build/common/bundle.js && rm -rf build/platform-browser/bundle.js",
+    "build:router": "rm -rf build/router && rollup --config packages/router/rollup.typescript.config.js && rollup --config packages/router/rollup.config.js && rm -rf build/router/bundle.js"
   },
   "repository": {
     "type": "git",
@@ -41,9 +43,18 @@
   "homepage": "https://github.com/DimaLiLongJi/InDiv#readme",
   "devDependencies": {
     "@babel/core": "^7.1.2",
+    "@babel/plugin-proposal-class-properties": "^7.2.1",
+    "@babel/plugin-proposal-decorators": "^7.2.2",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
     "@babel/plugin-transform-runtime": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
+    "@babel/runtime-corejs2": "^7.2.0",
+    "@types/jsdom": "^12.2.1",
+    "awesome-typescript-loader": "^5.2.1",
     "babel-eslint": "^8.2.0",
+    "babel-loader": "^8.0.4",
+    "babel-plugin-dynamic-import-webpack": "^1.1.0",
+    "css-loader": "^1.0.1",
     "ejs": "^2.6.1",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^11.1.1",
@@ -53,21 +64,26 @@
     "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-react": "^7.5.1",
     "express": "^4.16.3",
+    "lerna": "^3.5.0",
+    "less-loader": "^4.1.0",
+    "mini-css-extract-plugin": "^0.5.0",
     "nodemon": "^1.17.5",
-    "parcel-bundler": "1.9.7",
     "rollup": "^0.66.6",
     "rollup-plugin-babel": "^4.0.3",
     "rollup-plugin-commonjs": "^9.2.0",
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-typescript2": "^0.17.1",
     "rollup-plugin-uglify": "^6.0.0",
+    "style-loader": "^0.23.1",
     "tslint": "^5.11.0",
-    "typescript": "^3.1.3"
+    "typescript": "^3.1.3",
+    "webpack": "^4.26.1",
+    "webpack-cli": "^3.1.2"
   },
   "dependencies": {
-    "@babel/runtime-corejs2": "^7.1.2",
     "axios": "^0.18.0",
-    "easier-cookie": "^1.1.1",
-    "reflect-metadata": "^0.1.12"
+    "jsdom": "^13.1.0",
+    "reflect-metadata": "^0.1.12",
+    "rxjs": "^6.3.3"
   }
 }

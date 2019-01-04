@@ -4,11 +4,13 @@
 /dist
 /tmp
 /out-tsc
+/build/*
 .cache
 .rpt2_cache
 
 # dependencies
 /node_modules
+/packages/**/node_modules
 
 # IDEs and editors
 /.idea

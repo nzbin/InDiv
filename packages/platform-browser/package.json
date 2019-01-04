@@ -1,0 +1,34 @@
+{
+  "name": "@indiv/platform-browser",
+  "version": "0.0.0",
+  "description": "一个 web mvvm 库。A web mvvm library.",
+  "main": "../../build/platform-browser/index.js",
+  "types": "../../build/platform-browser/index.d.ts",
+  "files": [
+    "../../build/platform-browser"
+  ],
+  "keywords": [
+    "mvvm",
+    "view",
+    "front-end",
+    "DOM",
+    "render",
+    "Virtual DOM",
+    "platform browser"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DimaLiLongJi/InDiv.git"
+  },
+  "author": "DimaLiLongJi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DimaLiLongJi/InDiv/issues"
+  },
+  "homepage": "https://github.com/DimaLiLongJi/InDiv#readme",
+  "dependencies": {
+  },
+  "peerDependencies": {
+    "@indiv/core": "0.0.0-PLACEHOLDER"
+  }
+}

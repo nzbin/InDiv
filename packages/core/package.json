@@ -1,6 +1,9 @@
 {
   "name": "@indiv/core",
-  "version": "0.0.0",
+  "version": "0.0.1-alpha.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "一个 web mvvm 库。A web mvvm library.",
   "main": "../../build/core/index.js",
   "types": "../../build/core/index.d.ts",
@@ -30,7 +33,5 @@
   "homepage": "https://github.com/DimaLiLongJi/InDiv#readme",
   "dependencies": {
     "reflect-metadata": "^0.1.12"
-  },
-  "peerDependencies": {
   }
 }

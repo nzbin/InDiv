@@ -9,7 +9,7 @@
 
 2. `bootstrapModule(Nvmodule: Function): void` InDiv实例启动引导 根模块app.module.ts 的入口。传入根模块并开始相关模块的初始化。
 
-3. `init(): void` 初始化 InDiv 应用，整个应用中的初始化方法。
+3. `async init<R = Element>(): Promise<void>` 初始化 InDiv 应用会先渲染根模块的`bootstrap`，整个应用中的初始化方法。
 
 4. `renderComponent<R = Element>(BootstrapComponent: Function, nativeElement: R, otherModule?: INvModule, initVnode?: Vnode[]): Promise<IComponent>` 渲染组件的公共方法，`RouteModule`中 多次使用。可以为即将实例化的组件指定其他的模块及被提前分配的虚拟DOM结构。
 

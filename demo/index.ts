@@ -2,12 +2,6 @@ import { InDiv, Component, Utils, NvModule, OnInit, DoCheck, BeforeMount, AfterM
 import { RouteChange, NvLocation, RouteModule } from '@indiv/router';
 import { PlatformBrowser } from '@indiv/platform-browser';
 import { HttpClient, HttpClientResponse } from '@indiv/common';
-// import { InDiv, Component, Utils, NvModule, OnInit, DoCheck, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, setState, ElementRef } from '../build/core';
-// import { RouteChange, NvLocation, RouteModule } from '../build/router';
-// import { PlatformBrowser } from '../build/platform-browser';
-// import { HttpClient, HttpClientResponse } from '../build/common';
-
-
 import { Observable } from 'rxjs';
 
 import { SharedModule } from './share.module';

@@ -44,8 +44,7 @@ export class InDiv {
   public use(Plugin: Type<IPlugin>): number {
     const newPlugin = new Plugin();
     newPlugin.bootstrap(this);
-    this.pluginList.push(newPlugin);
-    return this.pluginList.length - 1;
+    return this.pluginList.push(newPlugin) - 1;
   }
 
   /**
@@ -170,14 +169,14 @@ export class InDiv {
    * init InDiv and renderModuleBootstrap()
    *
    * @template R
-   * @returns {void}
+   * @returns {Promise<void>}
    * @memberof InDiv
    */
-  public init<R = Element>(): void {
+  public async init<R = Element>(): Promise<void> {
     if (!utils.isBrowser()) return;
     if (!this.rootModule) throw new Error('must use bootstrapModule to declare a root NvModule before init');
     if (!this.renderer) throw new Error('must use plugin of platform to set a renderer in InDiv!');
-    this.renderModuleBootstrap<R>();
+    await this.renderModuleBootstrap<R>();
   }
 
   /**

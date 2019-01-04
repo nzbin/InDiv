@@ -1,6 +1,9 @@
 {
   "name": "@indiv/common",
-  "version": "0.0.1-alpha.0",
+  "version": "0.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "一个 web mvvm 库。A web mvvm library.",
   "main": "../../build/common/index.js",
   "types": "../../build/common/index.d.ts",

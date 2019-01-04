@@ -1,6 +1,6 @@
 {
   "name": "@indiv/router",
-  "version": "0.0.1-alpha.0",
+  "version": "0.0.0",
   "description": "一个 web mvvm 库。A web mvvm library.",
   "main": "../../build/router/index.js",
   "types": "../../build/router/index.d.ts",

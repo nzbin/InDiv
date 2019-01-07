@@ -559,7 +559,7 @@ class M1 {
   }
 }
 
-export const inDiv = new InDiv();
+const inDiv = new InDiv();
 inDiv.bootstrapModule(M1);
 inDiv.use(PlatformBrowser);
 inDiv.init();

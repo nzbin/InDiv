@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+// const render = require('./render');
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.set('views', './demo');
 app.use(express.static(path.join(__dirname, 'dist')));
 
 app.use('/demo', (req, res, next) => {
+  // render(req.url);
   res.render('index-app.html');
 });
 

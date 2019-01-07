@@ -1,5 +1,7 @@
-import { TRouter } from '@indiv/router';
-import { Vnode, InDiv } from '@indiv/core';
+import { TRouter, NvLocation, TChildModule, TLoadChild } from '@indiv/router';
+import { InDiv, INvModule, factoryModule } from '@indiv/core';
+
+const nvLocation = new NvLocation();
 
 /**
  * build path to route
@@ -21,7 +23,7 @@ export function buildPath(url: string): string[] {
  * @param {NvModule} rootModule
  * @returns array<string>
  */
-export async function generalDistributeRoutes(routes: TRouter[], routesList: TRouter[], renderRouteList: string[], indivInstance: InDiv): Promise<void> {
+export async function generalDistributeRoutes(routes: TRouter[], routesList: TRouter[], renderRouteList: string[], indiv: InDiv, loadModuleMap: Map<string, INvModule>): Promise<void> {
   for (let index = 0; index < renderRouteList.length; index++) {
     const path = renderRouteList[index];
     if (index === 0) {
@@ -30,28 +32,22 @@ export async function generalDistributeRoutes(routes: TRouter[], routesList: TRo
 
       if (/^\/\:.+/.test(rootRoute.path)) {
         const key = rootRoute.path.split('/:')[1];
-        // nvRouteStatus.nvRouteParmasObject[key] = path;
+        nvLocation.get().params[key] = path;
       }
 
       routesList.push(rootRoute);
 
-      // push root component in InDiv instance
-      // this.hasRenderComponentList.push(this.indivInstance.getBootstrapComponent);
-
-      // if (index === renderRouteList.length - 1) this.routerChangeEvent(index);
-
-      // if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo) && (index + 1) === renderRouteList.length) {
-      //   this.needRedirectPath = rootRoute.redirectTo;
-      //   renderRouteList.push(rootRoute.redirectTo);
-      //   return;
-      // }
+      if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo) && (index + 1) === renderRouteList.length) {
+        await generalDistributeRoutes(routes, routesList, buildPath(rootRoute.redirectTo), indiv, loadModuleMap);
+        return;
+      }
     } else {
       const lastRoute = routesList[index - 1].children;
       if (!lastRoute || !(lastRoute instanceof Array)) throw new Error('route error: routes not exit or routes must be an array!');
       const route = lastRoute.find(r => r.path === `/${path}` || /^\/\:.+/.test(r.path));
       if (!route) throw new Error(`route error: wrong route instantiation: ${this.currentUrl}`);
 
-      const nativeElement = indivInstance.getRenderer.getElementsByTagName('router-render')[index - 1];
+      const nativeElement = indiv.getRenderer.getElementsByTagName('router-render')[index - 1];
 
       let FindComponent = null;
       let currentUrlPath = '';
@@ -62,32 +58,92 @@ export async function generalDistributeRoutes(routes: TRouter[], routesList: TRo
       currentUrlPath += route.path;
 
       if (route.component) {
-        const findComponentFromModuleResult = this.findComponentFromModule(route.component, currentUrlPath);
+        const findComponentFromModuleResult = findComponentFromModule(route.component, currentUrlPath, indiv, loadModuleMap);
         FindComponent = findComponentFromModuleResult.component;
-        await indivInstance.renderComponent(FindComponent, nativeElement, findComponentFromModuleResult.loadModule, null);
+        await indiv.renderComponent(FindComponent, nativeElement, findComponentFromModuleResult.loadModule, null);
       }
       if (route.loadChild) {
-        const loadModule = await this.NvModuleFactoryLoader(route.loadChild, currentUrlPath);
+        const loadModule = await NvModuleFactoryLoader(route.loadChild, currentUrlPath, loadModuleMap);
         FindComponent = loadModule.bootstrap;
-        await indivInstance.renderComponent(FindComponent, nativeElement, loadModule, null);
+        await indiv.renderComponent(FindComponent, nativeElement, loadModule, null);
       }
 
       if (!route.component && !route.redirectTo && !route.loadChild) throw new Error(`route error: path ${route.path} need a component which has children path or need a  redirectTo which has't children path`);
 
       if (/^\/\:.+/.test(route.path)) {
         const key = route.path.split('/:')[1];
-        // nvRouteStatus.nvRouteParmasObject[key] = path;
+        nvLocation.get().params[key] = path;
       }
       routesList.push(route);
 
-      // if (component) this.hasRenderComponentList.push(component);
-
-      // if (index === renderRouteList.length - 1) this.routerChangeEvent(index);
-
-      // if (route.redirectTo && /^\/.*/.test(route.redirectTo) && (index + 1) === renderRouteList.length) {
-      //   this.needRedirectPath = route.redirectTo;
-      //   return;
-      // }
+      if (route.redirectTo && /^\/.*/.test(route.redirectTo) && (index + 1) === renderRouteList.length) {
+        await generalDistributeRoutes(routes, routesList, buildPath(route.redirectTo), indiv, loadModuleMap);
+        return;
+      }
     }
   }
+}
+
+/**
+ * find component from loadModule or rootModule
+ * 
+ * if this.loadModuleMap.size === 0, only in rootModule
+ * if has loadModule, return component in loadModule firstly
+ * 
+ *
+ * @private
+ * @param {string} selector
+ * @param {string} currentUrlPath
+ * @returns {{ component: Function, loadModule: INvModule }}
+ * @memberof Router
+ */
+export function findComponentFromModule(selector: string, currentUrlPath: string, indiv: InDiv, loadModuleMap: Map<string, INvModule>): { component: Function, loadModule: INvModule } {
+  if (loadModuleMap.size === 0) return {
+    component: indiv.getDeclarations.find((component: any) => component.selector === selector && component.nvType === 'nvComponent'),
+    loadModule: null,
+  };
+
+  let component = null;
+  let loadModule = null;
+  loadModuleMap.forEach((value, key) => {
+    if (new RegExp(`^${key}.*`).test(currentUrlPath)) {
+      component = value.declarations.find((component: any) => component.selector === selector && component.nvType === 'nvComponent');
+      loadModule = value;
+    }
+  });
+  if (!component) {
+    component = indiv.getDeclarations.find((component: any) => component.selector === selector && component.nvType === 'nvComponent');
+    loadModule = null;
+  }
+
+  return { component, loadModule };
+}
+
+/**
+ * build Module and return Component for route.loadChild
+ *
+ * @private
+ * @param {(TChildModule | TLoadChild)} loadChild
+ * @returns {Promise<INvModule>}
+ * @memberof Router
+ */
+export async function NvModuleFactoryLoader(loadChild: TChildModule | TLoadChild, currentUrlPath: string, loadModuleMap: Map<string, INvModule>): Promise<INvModule> {
+  if (loadModuleMap.has(currentUrlPath)) return loadModuleMap.get(currentUrlPath);
+
+  let loadModule = null;
+
+  // export default
+  if (!(loadChild as TLoadChild).child)
+  loadModule = (await (loadChild as TChildModule)()).default;
+
+  // export
+  if ((loadChild as TLoadChild).child)
+  loadModule = (await (loadChild as TLoadChild).child())[loadChild.name];
+
+  if (!loadModule) throw new Error('load child failed, please check your routes.');
+
+  const loadModuleInstance = factoryModule(loadModule, loadModule.prototype.privateInjector, this.indivInstance);
+  loadModuleMap.set(currentUrlPath, loadModuleInstance);
+
+  return loadModuleInstance;
 }

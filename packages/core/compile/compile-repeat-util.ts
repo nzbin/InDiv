@@ -355,8 +355,11 @@ export class CompileRepeatUtil {
 
       if (saveWatchStatus === 'available') {
         (vm as IComponent).watchStatus = 'available';
-        if ((vm as IComponent).nvDoCheck) (vm as IComponent).nvDoCheck();
-        (vm as IComponent).render();
+        if ((vm as IComponent).isWaitingRender && (vm as IComponent).nvDoCheck) (vm as IComponent).nvDoCheck();
+        if ((vm as IComponent).isWaitingRender) {
+          (vm as IComponent).render();
+          (vm as IComponent).isWaitingRender = false;
+        }
       }
     };
     if (eventType && fn) {

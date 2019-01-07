@@ -31,6 +31,7 @@ export interface IComponent {
   renderTaskQueue?: RenderTaskQueue;
   dependencesList?: string[];
   watchStatus?: 'pending' | 'available';
+  isWaitingRender?: boolean;
 
   template?: string;
   declarationMap?: Map<string, Function>;

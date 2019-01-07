@@ -25,9 +25,9 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
   const byTag = {};
   let inComponent = false;
 
-  template.replace(tagRegex, (tag: any, index: number): any => {
+  template.replace(tagRegex, (tag: string, index: number): string => {
     if (inComponent) {
-      if (tag !== ('</' + current.tagName + '>')) return;
+      if (tag !== `</${current.tagName}>`) return;
       else inComponent = false;
     }
 

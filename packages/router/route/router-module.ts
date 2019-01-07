@@ -224,10 +224,10 @@ export class RouteModule {
    * if has rendered Routes, it will find which is different and render it
    *  
    * @private
-   * @returns {Promise<IComponent>}
+   * @returns {Promise<void>}
    * @memberof Router
    */
-  private async insertRenderRoutes(): Promise<IComponent> {
+  private async insertRenderRoutes(): Promise<void> {
     const lastRouteList = this.lastRoute === '/' ? ['/'] : this.lastRoute.split('/');
     lastRouteList[0] = '/';
 
@@ -329,10 +329,10 @@ export class RouteModule {
    * first render
    *  
    * @private
-   * @returns {Promise<IComponent>}
+   * @returns {Promise<void>}
    * @memberof Router
    */
-  private async generalDistributeRoutes(): Promise<IComponent> {
+  private async generalDistributeRoutes(): Promise<void> {
     for (let index = 0; index < this.renderRouteList.length; index++) {
       const path = this.renderRouteList[index];
       if (index === 0) {

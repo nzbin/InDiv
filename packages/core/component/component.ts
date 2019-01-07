@@ -34,6 +34,7 @@ export function Component(options: TComponentOptions): (_constructor: Function) 
     vm.template = options.template;
 
     vm.watchStatus = 'available';
+    vm.isWaitingRender = false;
 
     vm.privateInjector = new Injector();
     if (options.providers && options.providers.length > 0) {

@@ -36,7 +36,7 @@ export function watchData(data: any, propertyName: string, target: IComponent, w
         if (target.watchStatus === 'available') {
           if (watcher) watcher();
           if (render) render();
-        }
+        } else target.isWaitingRender = true;
       },
     });
   }
@@ -72,7 +72,7 @@ export function watchDataByKey(target: IComponent, propertyName: string, watcher
       if (target.watchStatus === 'available') {
         if (watcher) watcher();
         if (render) render();
-      }
+      } else target.isWaitingRender = true;
     },
   });
 }

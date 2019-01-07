@@ -371,6 +371,13 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
     });
     this.hss.test();
     console.log('value', this.value);
+    setTimeout(() => {
+      this.setState({
+        test: {
+          a: 5,
+        },
+      });
+    }, 1000); 
   }
 
   public nvRouteChange(lastRoute?: string, newRoute?: string) {
@@ -404,6 +411,14 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
     console.log('aaaa', a);
     console.log('$index', index);
     console.log('testArray2', this.testArray2);
+    setTimeout(() => {
+      this.setState({
+        test: {
+          a: 5,
+        },
+      });
+    }, 2000); 
+    this.test.a = 222;
   }
 
   public showInput(event: any, index: number) {

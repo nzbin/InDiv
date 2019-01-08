@@ -14,7 +14,8 @@ export class PlatformServer implements IPlugin {
   public bootstrap(indivInstance: InDiv): void {
     const rootElement = _document.createElement('div');
     rootElement.id = 'root';
-    indivInstance.setRootElement(rootElement);
+    _document.documentElement.appendChild(rootElement);
+    indivInstance.setRootElement(_document.getElementById('root'));
     indivInstance.setRenderer(PlatfromServerRenderer);
   }
 }

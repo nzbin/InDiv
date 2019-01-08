@@ -1,6 +1,5 @@
 import { INvModule, IComponent } from '../types';
 
-import { utils } from '../utils';
 import { factoryCreator } from '../di';
 import { factoryModule } from '../nv-module';
 import { Renderer, Vnode } from '../vnode';
@@ -173,7 +172,6 @@ export class InDiv {
    * @memberof InDiv
    */
   public async init<R = Element>(): Promise<void> {
-    if (!utils.isBrowser()) return;
     if (!this.rootModule) throw new Error('must use bootstrapModule to declare a root NvModule before init');
     if (!this.renderer) throw new Error('must use plugin of platform to set a renderer in InDiv!');
     await this.renderModuleBootstrap<R>();

@@ -5,7 +5,6 @@ import { Compile } from './compile';
 import { buildComponentScope } from './compiler-utils';
 import { Vnode } from '../vnode';
 import { mountDirective } from './directive-compiler';
-import { async } from '_@types_q@1.5.1@@types/q';
 
 /**
  * mountComponent for Components in Component
@@ -139,7 +138,7 @@ export function complieDirectivesAndComponents(nativeElement: any, componentInst
   const componentAndDirectives: TComAndDir = { components: [], directives: [] };
   saveVnodes.forEach(vnode => buildComponentsAndDirectives(vnode, componentAndDirectives));
 
-  // first mount directive
+  // firstly mount directive
   try {
     mountDirective(componentInstance, componentAndDirectives);
   } catch (error) {
@@ -165,9 +164,7 @@ export function complieDirectivesAndComponents(nativeElement: any, componentInst
 export async function componentCompiler(nativeElement: any, componentInstance: IComponent): Promise<IComponent> {
   return Promise.resolve()
     .then(() => {
-      if (utils.isBrowser()) {
-        requestAnimationFrame(() => complieDirectivesAndComponents(nativeElement, componentInstance));
-      } else complieDirectivesAndComponents(nativeElement, componentInstance);
+      complieDirectivesAndComponents(nativeElement, componentInstance);
       return componentInstance;
     })
     .catch(e => {

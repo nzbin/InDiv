@@ -266,7 +266,7 @@ export class RouteModule {
         let currentUrlPath = '';
 
         // build current url with route.path
-        // bucause route has been pushed to this.routesList, don't use to += path
+        // because route has been pushed to this.routesList, don't use to += path
         this.routesList.forEach((r, index) => { if (index !== 0) currentUrlPath += r.path; });
 
         if (needRenderRoute.component) {
@@ -343,8 +343,6 @@ export class RouteModule {
           const key = rootRoute.path.split('/:')[1];
           nvRouteStatus.nvRouteParmasObject[key] = path;
         }
-
-        if (!utils.isBrowser()) return;
 
         this.routesList.push(rootRoute);
 

@@ -15,10 +15,7 @@ import { PlatformServer } from './platform-server';
  */
 // export async function renderToString(indiv: InDiv, url?: string, routes?: TRouter[]): Promise<string> {
 export async function renderToString(rootModule: Function): Promise<string> {
-  console.log(134333);
-  if (!_document.getElementById('root')) return '';
-
-  _document.getElementById('root').innerHTML = '';
+  if (_document.getElementById('root')) _document.getElementById('root').innerHTML = '';
 
   const inDiv = new InDiv();
   inDiv.bootstrapModule(rootModule);
@@ -32,6 +29,5 @@ export async function renderToString(rootModule: Function): Promise<string> {
   //   await generalDistributeRoutes(routes, routesList, renderRouteList, indiv, loadModuleMap);
   // }
   const returnString = _document.getElementById('root').innerHTML;
-  console.log(234333, returnString);
   return returnString.replace(/^(\<div\>)/g, '').replace(/(\<\/div\>$)/g, '');
 }

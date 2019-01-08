@@ -3,6 +3,7 @@ import { Injector } from '../di';
 import { RenderTaskQueue } from '../render';
 import { InDiv } from '../indiv';
 import { Vnode } from '../vnode';
+import { Compile } from '../compile';
 
 export type TComAndDir = {
   components: {
@@ -32,6 +33,7 @@ export interface IComponent {
   dependencesList?: string[];
   watchStatus?: 'pending' | 'available';
   isWaitingRender?: boolean;
+  compileInstance?: Compile;
 
   template?: string;
   declarationMap?: Map<string, Function>;

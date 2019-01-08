@@ -1,8 +1,8 @@
 import { InDiv, INvModule } from '@indiv/core';
-import { TRouter } from '@indiv/router';
+// import { TRouter } from '@indiv/router';
 import { _document } from '../renderer';
 import { PlatformServer } from './platform-server';
-import { buildPath, generalDistributeRoutes } from '../router';
+// import { buildPath, generalDistributeRoutes } from '../router';
 
 /**
  * render a Indiv app to string
@@ -13,21 +13,25 @@ import { buildPath, generalDistributeRoutes } from '../router';
  * @param {TRouter[]} [routes]
  * @returns {Promise<string>}
  */
-export async function renderToString(indiv: InDiv, url?: string, routes?: TRouter[]): Promise<string> {
+// export async function renderToString(indiv: InDiv, url?: string, routes?: TRouter[]): Promise<string> {
+export async function renderToString(rootModule: Function): Promise<string> {
+  console.log(134333);
   if (!_document.getElementById('root')) return '';
 
   _document.getElementById('root').innerHTML = '';
 
-  indiv.use(PlatformServer);
-  await indiv.init();
+  const inDiv = new InDiv();
+  inDiv.bootstrapModule(rootModule);
+  inDiv.use(PlatformServer);
+  await inDiv.init();
 
-  if (url && routes) {
-    const renderRouteList = buildPath(url);
-    const routesList: TRouter[] = [];
-    const loadModuleMap: Map<string, INvModule> = new Map();
-    await generalDistributeRoutes(routes, routesList, renderRouteList, indiv, loadModuleMap);
-  }
-
+  // if (url && routes) {
+  //   const renderRouteList = buildPath(url);
+  //   const routesList: TRouter[] = [];
+  //   const loadModuleMap: Map<string, INvModule> = new Map();
+  //   await generalDistributeRoutes(routes, routesList, renderRouteList, indiv, loadModuleMap);
+  // }
   const returnString = _document.getElementById('root').innerHTML;
+  console.log(234333, returnString);
   return returnString.replace(/^(\<div\>)/g, '').replace(/(\<\/div\>$)/g, '');
 }

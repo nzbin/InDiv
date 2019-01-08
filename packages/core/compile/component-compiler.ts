@@ -5,6 +5,7 @@ import { Compile } from './compile';
 import { buildComponentScope } from './compiler-utils';
 import { Vnode } from '../vnode';
 import { mountDirective } from './directive-compiler';
+import { async } from '_@types_q@1.5.1@@types/q';
 
 /**
  * mountComponent for Components in Component
@@ -115,6 +116,45 @@ export function buildComponentsAndDirectives(vnode: Vnode, componentAndDirective
 }
 
 /**
+ * compile all Directives and Components in Component
+ *
+ * @export
+ * @param {*} nativeElement
+ * @param {IComponent} componentInstance
+ */
+export function complieDirectivesAndComponents(nativeElement: any, componentInstance: IComponent): void {
+  // compile has been added into Component instance by dirty method
+  if (!componentInstance.compileInstance) componentInstance.compileInstance = new Compile(nativeElement, componentInstance);
+
+  let saveVnodes: Vnode[] = [];
+  try {
+    saveVnodes = componentInstance.compileInstance.startCompile();
+  } catch (error) {
+    throw new Error(`Error: ${error}, compoent ${(componentInstance.constructor as any).selector} was compiled failed!`);
+  }
+
+  // for save saveVnode in componentInstance
+  componentInstance.saveVnode = saveVnodes;
+
+  const componentAndDirectives: TComAndDir = { components: [], directives: [] };
+  saveVnodes.forEach(vnode => buildComponentsAndDirectives(vnode, componentAndDirectives));
+
+  // first mount directive
+  try {
+    mountDirective(componentInstance, componentAndDirectives);
+  } catch (error) {
+    throw new Error(`Error: ${error}, directives of compoent ${(componentInstance.constructor as any).selector} were compiled failed!`);
+  }
+
+  // then mount component
+  try {
+    mountComponent(componentInstance, componentAndDirectives);
+  } catch (error) {
+    throw new Error(`Error: ${error}, components of compoent ${(componentInstance.constructor as any).selector} were compiled failed!`);
+  }
+}
+
+/**
  * render Component with using nativeElement and RenderTask instance
  *
  * @export
@@ -125,36 +165,9 @@ export function buildComponentsAndDirectives(vnode: Vnode, componentAndDirective
 export async function componentCompiler(nativeElement: any, componentInstance: IComponent): Promise<IComponent> {
   return Promise.resolve()
     .then(() => {
-      // compile has been added into Component instance by dirty method
-      if (!(componentInstance as any).compileInstance) ((componentInstance as any).compileInstance as Compile) = new Compile(nativeElement, componentInstance);
-
-      let saveVnodes: Vnode[] = [];
-      try {
-        saveVnodes = ((componentInstance as any).compileInstance as Compile).startCompile();
-      } catch (error) {
-        throw new Error(`Error: ${error}, compoent ${(componentInstance.constructor as any).selector} was compiled failed!`);
-      }
-
-      // for save saveVnode in componentInstance
-      componentInstance.saveVnode = saveVnodes;
-
-      const componentAndDirectives: TComAndDir = { components: [], directives: [] };
-      saveVnodes.forEach(vnode => buildComponentsAndDirectives(vnode, componentAndDirectives));
-
-      // first mount directive
-      try {
-        mountDirective(componentInstance, componentAndDirectives);
-      } catch (error) {
-        throw new Error(`Error: ${error}, directives of compoent ${(componentInstance.constructor as any).selector} were compiled failed!`);
-      }
-
-      // then mount component
-      try {
-        mountComponent(componentInstance, componentAndDirectives);
-      } catch (error) {
-        throw new Error(`Error: ${error}, components of compoent ${(componentInstance.constructor as any).selector} were compiled failed!`);
-      }
-
+      if (utils.isBrowser()) {
+        requestAnimationFrame(() => complieDirectivesAndComponents(nativeElement, componentInstance));
+      } else complieDirectivesAndComponents(nativeElement, componentInstance);
       return componentInstance;
     })
     .catch(e => {

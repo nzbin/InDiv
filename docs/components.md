@@ -156,7 +156,7 @@ import { Component, setState, SetState, Watch } from '@indiv/core';
     template: (`
         <div class="app-component-container">
           <input nv-model="name"/>
-          <p on-on:click="@addAge()">name: {{name}}</p>
+          <p on-on:click="addAge()">name: {{name}}</p>
         </div>
     `),
 })

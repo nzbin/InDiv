@@ -258,10 +258,10 @@ export class InDiv {
    * @returns {Promise<IComponent>}
    * @memberof InDiv
    */
-  private componentRender<R = Element>(component: IComponent, nativeElement: R, initVnode?: Vnode[]): Promise<IComponent> {
+  private async componentRender<R = Element>(component: IComponent, nativeElement: R, initVnode?: Vnode[]): Promise<IComponent> {
     // if has initVnode, assign initVnode for component.saveVnode 
     if (initVnode) component.saveVnode = initVnode;
     component.nativeElement = nativeElement;
-    return component.render();
+    return await component.render();
   }
 }

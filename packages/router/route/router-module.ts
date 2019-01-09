@@ -73,25 +73,14 @@ export class RouteModule {
     if (!nvRouteStatus.nvRootPath) nvRouteStatus.nvRootPath = '/';
     this.indivInstance.setRouteDOMKey('router-render');
 
-    this.refresh = this.refresh.bind(this);
+    // if isn't browser, will auto watch nvRouteStatus.nvRouteObject
+    if (!utils.isBrowser()) {
+      this.routeWatcher();
+      return;
+    }
 
-    if (!utils.isBrowser()) return;
-
-    window.addEventListener('load', this.refresh, false);
-    window.addEventListener('popstate', () => {
-      let path;
-      if (nvRouteStatus.nvRootPath === '/') {
-        path = location.pathname || '/';
-      } else {
-        path = location.pathname.replace(nvRouteStatus.nvRootPath, '') === '' ? '/' : location.pathname.replace(nvRouteStatus.nvRootPath, '');
-      }
-      nvRouteStatus.nvRouteObject = {
-        path,
-        query: {},
-        data: null,
-      };
-      nvRouteStatus.nvRouteParmasObject = {};
-    }, false);
+    // if is browser, will watch nvRouteStatus.nvRouteObject by 'load' event of window
+    window.addEventListener('load', () => this.refresh(), false);
   }
 
   /**
@@ -145,9 +134,8 @@ export class RouteModule {
    */
   private refresh(): void {
     if (!nvRouteStatus.nvRouteObject || !this.isWatching) {
-      let path;
-
       if (utils.isBrowser()) {
+        let path;
         if (nvRouteStatus.nvRootPath === '/') path = location.pathname || '/';
         else path = location.pathname.replace(nvRouteStatus.nvRootPath, '') === '' ? '/' : location.pathname.replace(nvRouteStatus.nvRootPath, '');
 
@@ -157,12 +145,11 @@ export class RouteModule {
           data: null,
         };
         nvRouteStatus.nvRouteParmasObject = {};
-
-        this.routeWatcher();
       }
 
-      this.isWatching = true;
+      this.routeWatcher();
     }
+    console.log(444444444, 'route refresh', nvRouteStatus.nvRouteObject);
     this.currentUrl = nvRouteStatus.nvRouteObject.path || '/';
     this.routesList = [];
     this.renderRouteList = this.currentUrl === '/' ? ['/'] : this.currentUrl.split('/');
@@ -177,7 +164,7 @@ export class RouteModule {
    * @returns
    * @memberof RouteModule
    */
-  private routeWatcher() {
+  private routeWatcher(): void {
     const routeModuleInstance = this;
     let val = nvRouteStatus.nvRouteObject;
     Object.defineProperty(nvRouteStatus, 'nvRouteObject', {
@@ -192,6 +179,7 @@ export class RouteModule {
         if (newVal.path !== _val.path) routeModuleInstance.refresh();
       },
     });
+    this.isWatching = true;
   }
 
   /**
@@ -491,8 +479,8 @@ export class RouteModule {
    * @returns {Promise<IComponent>}
    * @memberof Router
    */
-  private instantiateComponent(FindComponent: Function, nativeElement: Element, loadModule: INvModule, initVnode: Vnode[]): Promise<IComponent> {
-    return this.indivInstance.renderComponent(FindComponent, nativeElement, loadModule, initVnode);
+  private async instantiateComponent(FindComponent: Function, nativeElement: Element, loadModule: INvModule, initVnode: Vnode[]): Promise<IComponent> {
+    return await this.indivInstance.renderComponent(FindComponent, nativeElement, loadModule, initVnode);
   }
 
   /**

@@ -1,6 +1,5 @@
 import { DirectiveList, IDirective } from './directive';
 import { Injector } from '../di';
-import { RenderTaskQueue } from '../render';
 import { InDiv } from '../indiv';
 import { Vnode } from '../vnode';
 import { Compile } from '../compile';
@@ -29,7 +28,6 @@ export interface IComponent {
   _save_inputs?: any;
   nativeElement?: Element | any;
   $indivInstance?: InDiv;
-  renderTaskQueue?: RenderTaskQueue;
   dependencesList?: string[];
   watchStatus?: 'pending' | 'available';
   isWaitingRender?: boolean;
@@ -54,5 +52,5 @@ export interface IComponent {
   nvRouteChange?(lastRoute: string, newRoute: string): void;
   nvReceiveInputs?(nextInputs: any): void;
   render?(): Promise<IComponent>;
-  compiler?(nativeElement: Element | any, componentInstace: IComponent): Promise<IComponent>;
+  compiler?(nativeElement: Element | any, componentInstace: IComponent): IComponent;
 }

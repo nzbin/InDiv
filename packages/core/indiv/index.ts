@@ -49,11 +49,11 @@ export class InDiv {
   /**
    * set component Renderer
    *
-   * @param {Renderer} renderer
+   * @param {any} NewRenderer
    * @memberof InDiv
    */
-  public setRenderer(NerRenderer: any): void {
-    const _renderer = new NerRenderer();
+  public setRenderer(NewRenderer: any): void {
+    const _renderer = new NewRenderer();
     if (_renderer instanceof Renderer) this.renderer = _renderer;
     else throw new Error('Custom Renderer must extend class Renderer!');
   }
@@ -171,10 +171,10 @@ export class InDiv {
    * @returns {Promise<void>}
    * @memberof InDiv
    */
-  public async init<R = Element>(): Promise<void> {
+  public async init<R = Element>(): Promise<IComponent> {
     if (!this.rootModule) throw new Error('must use bootstrapModule to declare a root NvModule before init');
     if (!this.renderer) throw new Error('must use plugin of platform to set a renderer in InDiv!');
-    await this.renderModuleBootstrap<R>();
+    return await this.renderModuleBootstrap<R>();
   }
 
   /**

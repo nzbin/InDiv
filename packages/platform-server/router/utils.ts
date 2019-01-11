@@ -1,4 +1,4 @@
-import { TRouter, NvLocation, TChildModule, TLoadChild } from '@indiv/router';
+import { TRouter, NvLocation } from '@indiv/router';
 import { InDiv, INvModule, factoryModule } from '@indiv/core';
 
 const nvLocation = new NvLocation();
@@ -6,8 +6,9 @@ const nvLocation = new NvLocation();
 /**
  * build path to route
  *
+ * @export
  * @param {string} url
- * @returns array<string>
+ * @returns {string[]}
  */
 export function buildPath(url: string): string[] {
   const renderRouteList = url === '/' ? ['/'] : url.split('/');
@@ -18,10 +19,13 @@ export function buildPath(url: string): string[] {
 /**
  * find route via rootModule
  *
- * @param {array<string>} pathList
- * @param {array<Route>} routes
- * @param {NvModule} rootModule
- * @returns array<string>
+ * @export
+ * @param {TRouter[]} routes
+ * @param {TRouter[]} routesList
+ * @param {string[]} renderRouteList
+ * @param {InDiv} indiv
+ * @param {Map<string, INvModule>} loadModuleMap
+ * @returns {Promise<void>}
  */
 export async function generalDistributeRoutes(routes: TRouter[], routesList: TRouter[], renderRouteList: string[], indiv: InDiv, loadModuleMap: Map<string, INvModule>): Promise<void> {
   for (let index = 0; index < renderRouteList.length; index++) {
@@ -63,7 +67,7 @@ export async function generalDistributeRoutes(routes: TRouter[], routesList: TRo
         await indiv.renderComponent(FindComponent, nativeElement, findComponentFromModuleResult.loadModule, null);
       }
       if (route.loadChild) {
-        const loadModule = await NvModuleFactoryLoader(route.loadChild, currentUrlPath, loadModuleMap);
+        const loadModule = NvModuleFactoryLoader((route.loadChild as Function), currentUrlPath, indiv, loadModuleMap);
         FindComponent = loadModule.bootstrap;
         await indiv.renderComponent(FindComponent, nativeElement, loadModule, null);
       }
@@ -89,13 +93,13 @@ export async function generalDistributeRoutes(routes: TRouter[], routesList: TRo
  * 
  * if this.loadModuleMap.size === 0, only in rootModule
  * if has loadModule, return component in loadModule firstly
- * 
  *
- * @private
+ * @export
  * @param {string} selector
  * @param {string} currentUrlPath
+ * @param {InDiv} indiv
+ * @param {Map<string, INvModule>} loadModuleMap
  * @returns {{ component: Function, loadModule: INvModule }}
- * @memberof Router
  */
 export function findComponentFromModule(selector: string, currentUrlPath: string, indiv: InDiv, loadModuleMap: Map<string, INvModule>): { component: Function, loadModule: INvModule } {
   if (loadModuleMap.size === 0) return {
@@ -122,27 +126,21 @@ export function findComponentFromModule(selector: string, currentUrlPath: string
 /**
  * build Module and return Component for route.loadChild
  *
- * @private
- * @param {(TChildModule | TLoadChild)} loadChild
- * @returns {Promise<INvModule>}
- * @memberof Router
+ * @export
+ * @param {Function} loadChild
+ * @param {string} currentUrlPath
+ * @param {InDiv} indivInstance
+ * @param {Map<string, INvModule>} loadModuleMap
+ * @returns {INvModule}
  */
-export async function NvModuleFactoryLoader(loadChild: TChildModule | TLoadChild, currentUrlPath: string, loadModuleMap: Map<string, INvModule>): Promise<INvModule> {
+export function NvModuleFactoryLoader(loadChild: Function, currentUrlPath: string, indivInstance: InDiv, loadModuleMap: Map<string, INvModule>): INvModule {
   if (loadModuleMap.has(currentUrlPath)) return loadModuleMap.get(currentUrlPath);
 
-  let loadModule = null;
-
-  // export default
-  if (!(loadChild as TLoadChild).child)
-  loadModule = (await (loadChild as TChildModule)()).default;
-
-  // export
-  if ((loadChild as TLoadChild).child)
-  loadModule = (await (loadChild as TLoadChild).child())[loadChild.name];
+  const loadModule = loadChild;
 
   if (!loadModule) throw new Error('load child failed, please check your routes.');
 
-  const loadModuleInstance = factoryModule(loadModule, loadModule.prototype.privateInjector, this.indivInstance);
+  const loadModuleInstance = factoryModule(loadModule, loadModule.prototype.privateInjector, indivInstance);
   loadModuleMap.set(currentUrlPath, loadModuleInstance);
 
   return loadModuleInstance;

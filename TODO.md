@@ -17,7 +17,6 @@
 - [x] support Service(now changed to @Injectable)
 - [x] support JavaScript and TypeScript
 - [x] IOC and DI
-- [ ] SSR 服务端渲染 platform-server
 - [x] route lazy load
 - [x] async template render
 - [x] optimize setState
@@ -28,15 +27,16 @@
 - [x] 指令可以不接受props
 - [x] 优化编译 存储上次 Vnode 结构
 - [x] 移除 InDiv 实例中 setRenderModule 和 getRenderModule，RouteModule直接使用 InDiv 实例中 getBootstrapComponent 属性获得初始化的组件
-- [ ] @indiv/cli
 - [x] Injectable provideIn
 - [x] module: @indiv/core @indiv/common @indiv/router @indiv/platform-browser
-- [ ] support Pipe
 - [x] props deep copy
 - [x] 注入器冒泡至父组件注入器
 - [x] remove DOM api in @indiv/core
 - [x] remove State and Props in @Component and @Directive
 - [x] string to vnode
 - [x] JIT compile (default)
-- [ ] AOT compile
 - [x] vnode to string
+- [x] SSR 服务端渲染 server side render: @indiv/platform-server
+- [ ] @indiv/cli
+- [ ] AOT compile
+- [ ] support Pipe

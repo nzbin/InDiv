@@ -8,9 +8,10 @@
 * **Virtual DOM:** rewrite virtual DOM and renderer
 
 <a name="0.0.1-alpha.1"></a>
-# [0.0.1-alpha.1](https://github.com/DimaLiLongJi/InDiv/releases/tag/v0.0.1-alpha.1) (2019-01-08)
+# [0.0.1-alpha.1](https://github.com/DimaLiLongJi/InDiv/releases/tag/v0.0.1-alpha.1) (2019-01-11)
 
 
 ### Features
 
-* **package:** add `requestAnimationFrame` in compile method of @indiv/core
+* **package:** optimize render in @indiv/core
+* **package:** add package of server side render: @indiv/platform-server

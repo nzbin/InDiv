@@ -13,7 +13,7 @@ import { mountDirective } from './directive-compiler';
  * @param {IComponent} componentInstance
  * @param {TComAndDir} componentAndDirectives
  */
-export function mountComponent(componentInstance: IComponent, componentAndDirectives: TComAndDir): void {
+export async function mountComponent(componentInstance: IComponent, componentAndDirectives: TComAndDir): Promise<void> {
   const cacheComponentList: ComponentList<IComponent>[] = [...componentInstance.componentList];
   componentsConstructor(componentInstance, componentAndDirectives);
   const componentListLength = componentInstance.componentList.length;
@@ -54,7 +54,7 @@ export function mountComponent(componentInstance: IComponent, componentAndDirect
   // after mount
   for (let i = 0; i < componentListLength; i++) {
     const component = componentInstance.componentList[i];
-    component.instanceScope.render();
+    await component.instanceScope.render();
     if (component.instanceScope.nvAfterMount) component.instanceScope.nvAfterMount();
   }
   if (componentInstance.nvHasRender) componentInstance.nvHasRender();
@@ -115,13 +115,14 @@ export function buildComponentsAndDirectives(vnode: Vnode, componentAndDirective
 }
 
 /**
- * compile all Directives and Components in Component
+ * render Component with using nativeElement and RenderTask instance
  *
  * @export
- * @param {*} nativeElement
+ * @param {any} nativeElement
  * @param {IComponent} componentInstance
+ * @returns {Promise<IComponent>}
  */
-export function complieDirectivesAndComponents(nativeElement: any, componentInstance: IComponent): void {
+export function componentCompiler(nativeElement: any, componentInstance: IComponent): IComponent {
   // compile has been added into Component instance by dirty method
   if (!componentInstance.compileInstance) componentInstance.compileInstance = new Compile(nativeElement, componentInstance);
 
@@ -151,23 +152,6 @@ export function complieDirectivesAndComponents(nativeElement: any, componentInst
   } catch (error) {
     throw new Error(`Error: ${error}, components of compoent ${(componentInstance.constructor as any).selector} were compiled failed!`);
   }
-}
 
-/**
- * render Component with using nativeElement and RenderTask instance
- *
- * @export
- * @param {any} nativeElement
- * @param {IComponent} componentInstance
- * @returns {Promise<IComponent>}
- */
-export async function componentCompiler(nativeElement: any, componentInstance: IComponent): Promise<IComponent> {
-  return Promise.resolve()
-    .then(() => {
-      complieDirectivesAndComponents(nativeElement, componentInstance);
-      return componentInstance;
-    })
-    .catch(e => {
-      throw new Error(`component ${(componentInstance.constructor as any).selector} render failed: ${e}`);
-    });
+  return componentInstance;
 }

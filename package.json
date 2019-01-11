@@ -24,14 +24,15 @@
     "start": "npm run clean && webpack --watch --mode=development & nodemon app.js",
     "start:js": "npm run build && webpack --watch --env=testjs --mode=development & nodemon app.js",
     "start:docs": "docsify serve ./docs --port 2334",
-    "test:ssr": "rm -rf ../indiv-ssr-demo/node_modules/@indiv && npm run build && cp -r build ../indiv-ssr-demo/node_modules/@indiv && npm run clean",
+    "test:ssr": "rm -rf ./ssr-demo/node_modules/@indiv && npm run build && cp -r build ./ssr-demo/node_modules/@indiv && npm run clean",
     "clean": "rm -rf build dist .rpt2_cache",
     "build": "npm run clean && npm run build:core && npm run build:platform-browser && npm run build:common && npm run build:router && npm run build:platform-server",
     "build:core": "rm -rf build/core && rollup --config packages/core/rollup.typescript.config.js && rollup --config packages/core/rollup.config.js && rm -rf build/core/bundle.js",
     "build:platform-browser": "rm -rf build/platform-browser && rollup --config packages/platform-browser/rollup.typescript.config.js && rollup --config packages/platform-browser/rollup.config.js && rm -rf build/platform-browser/bundle.js",
     "build:common": "rm -rf build/common && rollup --config packages/common/rollup.typescript.config.js && rollup --config packages/common/rollup.config.js && rm -rf build/common/bundle.js && rm -rf build/platform-browser/bundle.js",
     "build:router": "rm -rf build/router && rollup --config packages/router/rollup.typescript.config.js && rollup --config packages/router/rollup.config.js && rm -rf build/router/bundle.js",
-    "build:platform-server": "rm -rf build/platform-server && rollup --config packages/platform-server/rollup.typescript.config.js && rollup --config packages/platform-server/rollup.config.js && rm -rf build/platform-server/bundle.js"
+    "build:platform-server": "rm -rf build/platform-server && rollup --config packages/platform-server/rollup.typescript.config.js && rollup --config packages/platform-server/rollup.config.js && rm -rf build/platform-server/bundle.js",
+    "publish:beta": "npm run build && lerna publish --npm-tag=beta && npm run clean"
   },
   "repository": {
     "type": "git",

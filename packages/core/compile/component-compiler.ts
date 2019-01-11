@@ -13,7 +13,7 @@ import { mountDirective } from './directive-compiler';
  * @param {IComponent} componentInstance
  * @param {TComAndDir} componentAndDirectives
  */
-export function mountComponent(componentInstance: IComponent, componentAndDirectives: TComAndDir): void {
+export async function mountComponent(componentInstance: IComponent, componentAndDirectives: TComAndDir): Promise<void> {
   const cacheComponentList: ComponentList<IComponent>[] = [...componentInstance.componentList];
   componentsConstructor(componentInstance, componentAndDirectives);
   const componentListLength = componentInstance.componentList.length;
@@ -54,7 +54,7 @@ export function mountComponent(componentInstance: IComponent, componentAndDirect
   // after mount
   for (let i = 0; i < componentListLength; i++) {
     const component = componentInstance.componentList[i];
-    component.instanceScope.render();
+    await component.instanceScope.render();
     if (component.instanceScope.nvAfterMount) component.instanceScope.nvAfterMount();
   }
   if (componentInstance.nvHasRender) componentInstance.nvHasRender();
@@ -122,42 +122,36 @@ export function buildComponentsAndDirectives(vnode: Vnode, componentAndDirective
  * @param {IComponent} componentInstance
  * @returns {Promise<IComponent>}
  */
-export async function componentCompiler(nativeElement: any, componentInstance: IComponent): Promise<IComponent> {
-  return Promise.resolve()
-    .then(() => {
-      // compile has been added into Component instance by dirty method
-      if (!(componentInstance as any).compileInstance) ((componentInstance as any).compileInstance as Compile) = new Compile(nativeElement, componentInstance);
+export function componentCompiler(nativeElement: any, componentInstance: IComponent): IComponent {
+  // compile has been added into Component instance by dirty method
+  if (!componentInstance.compileInstance) componentInstance.compileInstance = new Compile(nativeElement, componentInstance);
 
-      let saveVnodes: Vnode[] = [];
-      try {
-        saveVnodes = ((componentInstance as any).compileInstance as Compile).startCompile();
-      } catch (error) {
-        throw new Error(`Error: ${error}, compoent ${(componentInstance.constructor as any).selector} was compiled failed!`);
-      }
+  let saveVnodes: Vnode[] = [];
+  try {
+    saveVnodes = componentInstance.compileInstance.startCompile();
+  } catch (error) {
+    throw new Error(`Error: ${error}, compoent ${(componentInstance.constructor as any).selector} was compiled failed!`);
+  }
 
-      // for save saveVnode in componentInstance
-      componentInstance.saveVnode = saveVnodes;
+  // for save saveVnode in componentInstance
+  componentInstance.saveVnode = saveVnodes;
 
-      const componentAndDirectives: TComAndDir = { components: [], directives: [] };
-      saveVnodes.forEach(vnode => buildComponentsAndDirectives(vnode, componentAndDirectives));
+  const componentAndDirectives: TComAndDir = { components: [], directives: [] };
+  saveVnodes.forEach(vnode => buildComponentsAndDirectives(vnode, componentAndDirectives));
 
-      // first mount directive
-      try {
-        mountDirective(componentInstance, componentAndDirectives);
-      } catch (error) {
-        throw new Error(`Error: ${error}, directives of compoent ${(componentInstance.constructor as any).selector} were compiled failed!`);
-      }
+  // firstly mount directive
+  try {
+    mountDirective(componentInstance, componentAndDirectives);
+  } catch (error) {
+    throw new Error(`Error: ${error}, directives of compoent ${(componentInstance.constructor as any).selector} were compiled failed!`);
+  }
 
-      // then mount component
-      try {
-        mountComponent(componentInstance, componentAndDirectives);
-      } catch (error) {
-        throw new Error(`Error: ${error}, components of compoent ${(componentInstance.constructor as any).selector} were compiled failed!`);
-      }
+  // then mount component
+  try {
+    mountComponent(componentInstance, componentAndDirectives);
+  } catch (error) {
+    throw new Error(`Error: ${error}, components of compoent ${(componentInstance.constructor as any).selector} were compiled failed!`);
+  }
 
-      return componentInstance;
-    })
-    .catch(e => {
-      throw new Error(`component ${(componentInstance.constructor as any).selector} render failed: ${e}`);
-    });
+  return componentInstance;
 }

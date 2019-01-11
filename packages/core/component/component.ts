@@ -2,7 +2,6 @@ import { IComponent, TInjectTokenProvider, TUseClassProvider, TUseValueProvider 
 
 import { WatcherDependences } from './watch';
 import { injected, Injector } from '../di';
-import { render } from '../render';
 import { collectDependencesFromViewModel } from './utils';
 import { componentCompiler } from '../compile';
 
@@ -34,6 +33,7 @@ export function Component(options: TComponentOptions): (_constructor: Function) 
     vm.template = options.template;
 
     vm.watchStatus = 'available';
+    vm.isWaitingRender = false;
 
     vm.privateInjector = new Injector();
     if (options.providers && options.providers.length > 0) {
@@ -60,7 +60,12 @@ export function Component(options: TComponentOptions): (_constructor: Function) 
       (this as IComponent).dependencesList.forEach(dependence => WatcherDependences(this, dependence));
     };
 
-    vm.render = render;
+    vm.render = function (): Promise<IComponent> {
+      const nativeElement = (this as IComponent).nativeElement;
+      return Promise.resolve().then(() => {
+        return (this as IComponent).compiler(nativeElement, this);
+      });
+    };
     vm.compiler = componentCompiler;
   };
 }

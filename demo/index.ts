@@ -2,12 +2,6 @@ import { InDiv, Component, Utils, NvModule, OnInit, DoCheck, BeforeMount, AfterM
 import { RouteChange, NvLocation, RouteModule } from '@indiv/router';
 import { PlatformBrowser } from '@indiv/platform-browser';
 import { HttpClient, HttpClientResponse } from '@indiv/common';
-// import { InDiv, Component, Utils, NvModule, OnInit, DoCheck, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, setState, ElementRef } from '../build/core';
-// import { RouteChange, NvLocation, RouteModule } from '../build/router';
-// import { PlatformBrowser } from '../build/platform-browser';
-// import { HttpClient, HttpClientResponse } from '../build/common';
-
-
 import { Observable } from 'rxjs';
 
 import { SharedModule } from './share.module';
@@ -377,6 +371,13 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
     });
     this.hss.test();
     console.log('value', this.value);
+    setTimeout(() => {
+      this.setState({
+        test: {
+          a: 5,
+        },
+      });
+    }, 1000); 
   }
 
   public nvRouteChange(lastRoute?: string, newRoute?: string) {
@@ -410,6 +411,14 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
     console.log('aaaa', a);
     console.log('$index', index);
     console.log('testArray2', this.testArray2);
+    setTimeout(() => {
+      this.setState({
+        test: {
+          a: 5,
+        },
+      });
+    }, 2000); 
+    this.test.a = 222;
   }
 
   public showInput(event: any, index: number) {

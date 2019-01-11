@@ -19,7 +19,7 @@ export type TRouter = {
   redirectTo?: string;
   component?: string;
   children?: TRouter[];
-  loadChild?: TLoadChild | TChildModule;
+  loadChild?: TLoadChild | TChildModule | Function;
 };
 
 @NvModule({
@@ -73,11 +73,11 @@ export class RouteModule {
     if (!nvRouteStatus.nvRootPath) nvRouteStatus.nvRootPath = '/';
     this.indivInstance.setRouteDOMKey('router-render');
 
-    this.refresh = this.refresh.bind(this);
-
+    // if isn't browser, will auto watch nvRouteStatus.nvRouteObject
     if (!utils.isBrowser()) return;
 
-    window.addEventListener('load', this.refresh, false);
+    // if is browser, will watch nvRouteStatus.nvRouteObject by 'load' event of window
+    window.addEventListener('load', () => this.refresh(), false);
     window.addEventListener('popstate', () => {
       let path;
       if (nvRouteStatus.nvRootPath === '/') {
@@ -146,22 +146,17 @@ export class RouteModule {
   private refresh(): void {
     if (!nvRouteStatus.nvRouteObject || !this.isWatching) {
       let path;
+      if (nvRouteStatus.nvRootPath === '/') path = location.pathname || '/';
+      else path = location.pathname.replace(nvRouteStatus.nvRootPath, '') === '' ? '/' : location.pathname.replace(nvRouteStatus.nvRootPath, '');
 
-      if (utils.isBrowser()) {
-        if (nvRouteStatus.nvRootPath === '/') path = location.pathname || '/';
-        else path = location.pathname.replace(nvRouteStatus.nvRootPath, '') === '' ? '/' : location.pathname.replace(nvRouteStatus.nvRootPath, '');
+      nvRouteStatus.nvRouteObject = {
+        path,
+        query: this.buildObjectFromLocationSearch(),
+        data: null,
+      };
+      nvRouteStatus.nvRouteParmasObject = {};
 
-        nvRouteStatus.nvRouteObject = {
-          path,
-          query: this.buildObjectFromLocationSearch(),
-          data: null,
-        };
-        nvRouteStatus.nvRouteParmasObject = {};
-
-        this.routeWatcher();
-      }
-
-      this.isWatching = true;
+      this.routeWatcher();
     }
     this.currentUrl = nvRouteStatus.nvRouteObject.path || '/';
     this.routesList = [];
@@ -177,7 +172,7 @@ export class RouteModule {
    * @returns
    * @memberof RouteModule
    */
-  private routeWatcher() {
+  private routeWatcher(): void {
     const routeModuleInstance = this;
     let val = nvRouteStatus.nvRouteObject;
     Object.defineProperty(nvRouteStatus, 'nvRouteObject', {
@@ -192,6 +187,7 @@ export class RouteModule {
         if (newVal.path !== _val.path) routeModuleInstance.refresh();
       },
     });
+    this.isWatching = true;
   }
 
   /**
@@ -224,10 +220,10 @@ export class RouteModule {
    * if has rendered Routes, it will find which is different and render it
    *  
    * @private
-   * @returns {Promise<IComponent>}
+   * @returns {Promise<void>}
    * @memberof Router
    */
-  private async insertRenderRoutes(): Promise<IComponent> {
+  private async insertRenderRoutes(): Promise<void> {
     const lastRouteList = this.lastRoute === '/' ? ['/'] : this.lastRoute.split('/');
     lastRouteList[0] = '/';
 
@@ -266,7 +262,7 @@ export class RouteModule {
         let currentUrlPath = '';
 
         // build current url with route.path
-        // bucause route has been pushed to this.routesList, don't use to += path
+        // because route has been pushed to this.routesList, don't use to += path
         this.routesList.forEach((r, index) => { if (index !== 0) currentUrlPath += r.path; });
 
         if (needRenderRoute.component) {
@@ -275,7 +271,7 @@ export class RouteModule {
           component = await this.instantiateComponent(FindComponent, nativeElement, findComponentFromModuleResult.loadModule, initVnode);
         }
         if (needRenderRoute.loadChild) {
-          const loadModule = await this.NvModuleFactoryLoader(needRenderRoute.loadChild, currentUrlPath);
+          const loadModule = await this.NvModuleFactoryLoader(needRenderRoute.loadChild as TChildModule | TLoadChild, currentUrlPath);
           FindComponent = loadModule.bootstrap;
           component = await this.instantiateComponent(FindComponent, nativeElement, loadModule, initVnode);
         }
@@ -329,10 +325,10 @@ export class RouteModule {
    * first render
    *  
    * @private
-   * @returns {Promise<IComponent>}
+   * @returns {Promise<void>}
    * @memberof Router
    */
-  private async generalDistributeRoutes(): Promise<IComponent> {
+  private async generalDistributeRoutes(): Promise<void> {
     for (let index = 0; index < this.renderRouteList.length; index++) {
       const path = this.renderRouteList[index];
       if (index === 0) {
@@ -343,8 +339,6 @@ export class RouteModule {
           const key = rootRoute.path.split('/:')[1];
           nvRouteStatus.nvRouteParmasObject[key] = path;
         }
-
-        if (!utils.isBrowser()) return;
 
         this.routesList.push(rootRoute);
 
@@ -384,7 +378,7 @@ export class RouteModule {
           component = await this.instantiateComponent(FindComponent, nativeElement, findComponentFromModuleResult.loadModule, initVnode);
         }
         if (route.loadChild) {
-          const loadModule = await this.NvModuleFactoryLoader(route.loadChild, currentUrlPath);
+          const loadModule = await this.NvModuleFactoryLoader(route.loadChild as TChildModule | TLoadChild, currentUrlPath);
           FindComponent = loadModule.bootstrap;
           component = await this.instantiateComponent(FindComponent, nativeElement, loadModule, initVnode);
         }
@@ -493,8 +487,8 @@ export class RouteModule {
    * @returns {Promise<IComponent>}
    * @memberof Router
    */
-  private instantiateComponent(FindComponent: Function, nativeElement: Element, loadModule: INvModule, initVnode: Vnode[]): Promise<IComponent> {
-    return this.indivInstance.renderComponent(FindComponent, nativeElement, loadModule, initVnode);
+  private async instantiateComponent(FindComponent: Function, nativeElement: Element, loadModule: INvModule, initVnode: Vnode[]): Promise<IComponent> {
+    return await this.indivInstance.renderComponent(FindComponent, nativeElement, loadModule, initVnode);
   }
 
   /**

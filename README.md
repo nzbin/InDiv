@@ -1,6 +1,6 @@
 # 关于 InDiv
 
-本库版本对应 InDiv 2.0.0 + 版本（@indiv）
+本库版本对应 InDiv 2.0.0 + 版本（@indiv）[文档](https://dimalilongji.github.io/InDiv/)
 旧版本indiv v1.20 + 移至[markdown](https://github.com/DimaLiLongJi/InDiv/blob/master/version1.2%2B.md)
 
 ## 什么是InDiv

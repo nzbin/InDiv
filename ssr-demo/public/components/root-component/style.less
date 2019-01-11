@@ -1,0 +1,30 @@
+.app-container {
+  .github-corner {
+    border-bottom: 0;
+    position: fixed;
+    right: 0;
+    text-decoration: none;
+    top: 0;
+    z-index: 1;
+    color: #1976d2;
+    p {
+      float: left;
+      margin-top: 10px;
+    }
+    svg {
+      color: #fff;
+      fill: var(--theme-color,#1976d2);
+      height: 80px;
+      width: 80px;
+    }
+  }
+
+  &.close {
+    .side-bar-container {
+      width: 0px;
+    }
+    .page-container {
+      margin-left: 0px;
+    }
+  }
+}

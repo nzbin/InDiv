@@ -26,9 +26,9 @@ export function parseTag(tag: string, directives: string[]): Vnode {
     template: tag,
   };
 
-  // const attrRE = /[\w-:]+(\=['"]([^=-]*)['"]){0,1}/g;
+  // const attrRegex = /[\w-:]+(\=['"]([^=-]*)['"]){0,1}/g;
   // todo optimize regular expressions
-  const attrRE = /[\w-:]+((\=[']([^']*)['])|(\=["]([^"]*)["])){0,1}/g;
+  const attrRegex = /[\w-:]+((\=[']([^']*)['])|(\=["]([^"]*)["])){0,1}/g;
   const voidElementList = [
     'area',
     'base',
@@ -48,7 +48,7 @@ export function parseTag(tag: string, directives: string[]): Vnode {
     'wbr',
   ];
 
-  tag.match(attrRE).forEach((attr, index) => {
+  tag.match(attrRegex).forEach((attr, index) => {
     if (index === 0) {
       if (voidElementList.indexOf(attr) !== -1 || tag.charAt(tag.length - 2) === '/') vNodeOptions.voidElement = true;
       vNodeOptions.tagName = attr;

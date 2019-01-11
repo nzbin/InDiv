@@ -1,6 +1,5 @@
 import { INvModule, IComponent } from '../types';
 
-import { utils } from '../utils';
 import { factoryCreator } from '../di';
 import { factoryModule } from '../nv-module';
 import { Renderer, Vnode } from '../vnode';
@@ -44,18 +43,17 @@ export class InDiv {
   public use(Plugin: Type<IPlugin>): number {
     const newPlugin = new Plugin();
     newPlugin.bootstrap(this);
-    this.pluginList.push(newPlugin);
-    return this.pluginList.length - 1;
+    return this.pluginList.push(newPlugin) - 1;
   }
 
   /**
    * set component Renderer
    *
-   * @param {Renderer} renderer
+   * @param {any} NewRenderer
    * @memberof InDiv
    */
-  public setRenderer(NerRenderer: any): void {
-    const _renderer = new NerRenderer();
+  public setRenderer(NewRenderer: any): void {
+    const _renderer = new NewRenderer();
     if (_renderer instanceof Renderer) this.renderer = _renderer;
     else throw new Error('Custom Renderer must extend class Renderer!');
   }
@@ -170,14 +168,13 @@ export class InDiv {
    * init InDiv and renderModuleBootstrap()
    *
    * @template R
-   * @returns {void}
+   * @returns {Promise<void>}
    * @memberof InDiv
    */
-  public init<R = Element>(): void {
-    if (!utils.isBrowser()) return;
+  public async init<R = Element>(): Promise<IComponent> {
     if (!this.rootModule) throw new Error('must use bootstrapModule to declare a root NvModule before init');
     if (!this.renderer) throw new Error('must use plugin of platform to set a renderer in InDiv!');
-    this.renderModuleBootstrap<R>();
+    return await this.renderModuleBootstrap<R>();
   }
 
   /**
@@ -261,10 +258,10 @@ export class InDiv {
    * @returns {Promise<IComponent>}
    * @memberof InDiv
    */
-  private componentRender<R = Element>(component: IComponent, nativeElement: R, initVnode?: Vnode[]): Promise<IComponent> {
+  private async componentRender<R = Element>(component: IComponent, nativeElement: R, initVnode?: Vnode[]): Promise<IComponent> {
     // if has initVnode, assign initVnode for component.saveVnode 
     if (initVnode) component.saveVnode = initVnode;
     component.nativeElement = nativeElement;
-    return component.render();
+    return await component.render();
   }
 }

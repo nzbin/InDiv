@@ -1,0 +1,63 @@
+@import '../components/root-component/style';
+@import '../components/side-bars/style';
+
+.page-container {
+  margin-left: 200px;
+  padding: 20px 3rem 1rem;
+  height: auto;
+  transition: margin .25s ease;
+  overflow-x: hidden;
+}
+
+.info-content {
+  margin: 0 0 24px;
+  h1 {
+    font-size: 24px;
+    font-weight: 500;
+    margin: 8px 0;
+  }
+  p {
+    font-size: 14px;
+    line-height: 24px;
+    letter-spacing: .3px;
+    font-weight: 400;
+    display: block;
+    -webkit-margin-before: 1em;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+  }
+  .child-info {
+    margin-left: 30px;
+    h2 {
+      font-size: 18px;
+      font-weight: 800;
+      margin: 32px 0 24px;
+      clear: both;
+    }
+    .pchild {
+      padding: 10px;
+      margin: 20px auto;
+      border-left: 8px solid #1976d2;
+      background-color: rgba(25, 118, 210, .05);
+      p {
+        font-size: 14px;
+        line-height: 24px;
+        letter-spacing: .3px;
+        font-weight: 400;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .page-container {
+    margin-left: 150px;
+    padding: 20px 10px !important;
+  }
+  .info-content {
+    .child-info {
+      margin-left: 10px;
+    }
+  }
+}

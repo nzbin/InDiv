@@ -24,6 +24,18 @@ const routes: IndivRouter.TRouter[] = [
                     {
                         path: '/component',
                         component: 'docs-component-container',
+                        children: [
+                            {
+                                path: '/component-docs',
+                                component: 'docs-template-container',
+                                children: [
+                                    {
+                                        path: '/1docs',
+                                        redirectTo: '/ssr',
+                                    }
+                                ]
+                            }
+                        ]
                     },
                     {
                         path: '/template',

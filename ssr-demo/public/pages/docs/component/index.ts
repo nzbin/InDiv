@@ -37,6 +37,7 @@ interface Info {
           <code-shower codes="{code.code}" nv-if="code.code"></code-shower>
         </div>
       </div>
+      <router-render></router-render>
     </div>
   `),
   // providers: [

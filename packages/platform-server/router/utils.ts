@@ -1,8 +1,6 @@
 import { TRouter, NvLocation } from '@indiv/router';
 import { InDiv, INvModule, factoryModule } from '@indiv/core';
 
-const nvLocation = new NvLocation();
-
 /**
  * build path to route
  *
@@ -28,6 +26,8 @@ export function buildPath(url: string): string[] {
  * @returns {Promise<void>}
  */
 export async function generalDistributeRoutes(routes: TRouter[], routesList: TRouter[], renderRouteList: string[], indiv: InDiv, loadModuleMap: Map<string, INvModule>): Promise<void> {
+  const nvLocation = new NvLocation();
+
   for (let index = 0; index < renderRouteList.length; index++) {
     const path = renderRouteList[index];
     if (index === 0) {

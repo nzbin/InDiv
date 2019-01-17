@@ -1,10 +1,10 @@
-import { InDiv, Component, Utils, NvModule, OnInit, DoCheck, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, setState, ElementRef, Watch, HasRender, Input } from '@indiv/core';
+import { InDiv, Component, Utils, NvModule, OnInit, DoCheck, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, setState, ElementRef, HasRender, Input, ViewChild, ViewChildren } from '@indiv/core';
 import { RouteChange, NvLocation, RouteModule } from '@indiv/router';
 import { PlatformBrowser } from '@indiv/platform-browser';
 import { HttpClient, HttpClientResponse } from '@indiv/common';
 import { Observable } from 'rxjs';
 
-import { SharedModule } from './share.module';
+import { SharedModule, TestDirective } from './share.module';
 import { HeroSearchService, HeroSearchService1, HeroSearchService2 } from './service';
 import { PrivateService } from './private.service';
 
@@ -263,7 +263,7 @@ class TestComponent implements OnDestory, ReceiveInputs {
   template: (`
   <div class="fucck" nv-class="test.a" nv-id="'cc'">
     <input nv-model="test.a" nv-on:click="show(test)" />
-    <p test-directive="{'123'}" nv-id="232" nv-if="countState(a)" nv-on:click="changeInput()">{{a}}</p>
+    <p test-directive="{test.a}" nv-id="232" nv-if="countState(a)" nv-on:click="changeInput()">{{a}}</p>
     <test-component nv-repeat="man in testArray" nv-key="man.name" manName="{countState(man.name)}" nv-if="a"></test-component>
     <p nv-on:click="go()">container: {{countState(color)}}</p>
     <input type="number" nv-model="a" />
@@ -348,6 +348,9 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
   public setState: SetState;
   public http$: Observable<HttpClientResponse>;
 
+  @ViewChild('test-component') private testComponent: TestComponent[];
+  @ViewChildren(TestDirective) private testDirective: TestDirective[];
+
   constructor(
     private hss: HeroSearchService,
     private value: ValueType,
@@ -366,9 +369,9 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
       };
     });
     this.http$ = this.httpClient.get('/success');
-    this.http$.subscribe({
-      next: this.httpHandler,
-    });
+    // this.http$.subscribe({
+    //   next: this.httpHandler,
+    // });
     this.hss.test();
     console.log('value', this.value);
     setTimeout(() => {
@@ -389,12 +392,12 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
   }
 
   public nvAfterMount() {
-    console.log('nvAfterMount Container');
+    console.log('nvAfterMount Container', 222222, this.testComponent, this.testDirective);
     // document.getElementById('1').className = '3333';
   }
 
   public nvHasRender() {
-    console.log('nvHasRender Container');
+    console.log('nvHasRender Container', 33333333, this.testComponent, this.testDirective);
   }
 
   public go() {

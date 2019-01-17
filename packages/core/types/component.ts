@@ -17,10 +17,10 @@ export type TComAndDir = {
   }[];
 };
 
-export type ComponentList<C> = {
+export type ComponentList = {
   nativeElement: any;
   inputs: any;
-  instanceScope: C;
+  instanceScope: IComponent;
   constructorFunction: Function;
 };
 
@@ -35,9 +35,11 @@ export interface IComponent {
 
   template?: string;
   declarationMap?: Map<string, Function>;
-  inputsMap?: Map<string, string>;
-  componentList?: ComponentList<IComponent>[];
-  directiveList?: DirectiveList<IDirective>[];
+  inputsList?: { propertyName: string; inputName: string;  }[];
+  viewChildList?: { propertyName: string; selector: string | Function; }[];
+  viewChildrenList?: { propertyName: string; selector: string | Function; }[];
+  componentList?: ComponentList[];
+  directiveList?: DirectiveList[];
   otherInjector?: Injector;
   privateInjector?: Injector;
   saveVnode?: Vnode[];
@@ -52,5 +54,5 @@ export interface IComponent {
   nvRouteChange?(lastRoute: string, newRoute: string): void;
   nvReceiveInputs?(nextInputs: any): void;
   render?(): Promise<IComponent>;
-  compiler?(nativeElement: Element | any, componentInstace: IComponent): IComponent;
+  compiler?(nativeElement: Element | any, componentInstace: IComponent): Promise<IComponent>;
 }

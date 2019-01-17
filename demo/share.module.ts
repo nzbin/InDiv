@@ -190,7 +190,7 @@ const routes: TRouter[] = [
 @Directive({
   selector: 'test-directive',
 })
-class TestDirective implements OnInit, RouteChange, ReceiveInputs {
+export class TestDirective implements OnInit, RouteChange, ReceiveInputs {
   @Input('test-directive') public testDirective: string;
   constructor(
     private hss: HeroSearchService,

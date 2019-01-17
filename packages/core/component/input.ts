@@ -10,14 +10,10 @@ import { IComponent, IDirective } from '../types';
  * @param {string} [name]
  * @returns
  */
-export function Input(name?: string) {
+export function Input(input?: string) {
   return function (target: IComponent | IDirective, propertyName: string) {
-      const propName = name ? name : propertyName;
-      const inputName = propertyName;
-      if (target.inputsMap && !target.inputsMap.has(propName)) target.inputsMap.set(propName, inputName);
-      if (!target.inputsMap) {
-        target.inputsMap = new Map();
-        target.inputsMap.set(propName, inputName);
-      }
+      const inputName = input ? input : propertyName;
+      if (!target.inputsList) target.inputsList = [];
+      target.inputsList.push({ propertyName, inputName });
   };
 }

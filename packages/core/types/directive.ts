@@ -1,10 +1,10 @@
 import { Injector } from '../di';
 import { InDiv } from '../indiv';
 
-export type DirectiveList<C> = {
+export type DirectiveList = {
     nativeElement: any;
     inputs: any;
-    instanceScope: C;
+    instanceScope: IDirective;
     constructorFunction: Function;
 };
 
@@ -13,10 +13,9 @@ export interface IDirective {
     _save_inputs?: any;
     nativeElement?: Element | any;
     $indivInstance?: InDiv | any;
-
     declarationMap?: Map<string, Function>;
-    inputsMap?: Map<string, string>;
-    directiveList?: DirectiveList<IDirective>[];
+    inputsList?: { propertyName: string; inputName: string; }[];
+    directiveList?: DirectiveList[];
     otherInjector?: Injector;
     privateInjector?: Injector;
 

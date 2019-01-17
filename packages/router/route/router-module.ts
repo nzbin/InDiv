@@ -428,11 +428,11 @@ export class RouteModule {
    * emit nvRouteChange and nvOnDestory for Components with recursion
    * 
    * @private
-   * @param {ComponentList<IComponent>[]} componentList
+   * @param {ComponentList[]} componentList
    * @param {string} event
    * @memberof Router
    */
-  private emitComponentEvent(componentList: ComponentList<IComponent>[], event: string): void {
+  private emitComponentEvent(componentList: ComponentList[], event: string): void {
     if (event === 'nvRouteChange') {
       componentList.forEach(component => {
         if (component.instanceScope.nvRouteChange) component.instanceScope.nvRouteChange(this.lastRoute, this.currentUrl);
@@ -453,11 +453,11 @@ export class RouteModule {
    * emit nvRouteChange and nvOnDestory for Directives with recursion
    *
    * @private
-   * @param {DirectiveList<IDirective>[]} directiveList
+   * @param {DirectiveList[]} directiveList
    * @param {string} event
    * @memberof RouteModule
    */
-  private emitDirectiveEvent(directiveList: DirectiveList<IDirective>[], event: string): void {
+  private emitDirectiveEvent(directiveList: DirectiveList[], event: string): void {
     if (event === 'nvRouteChange') {
       directiveList.forEach(directive => {
         if (directive.instanceScope.nvRouteChange) directive.instanceScope.nvRouteChange(this.lastRoute, this.currentUrl);

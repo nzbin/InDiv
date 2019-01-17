@@ -222,10 +222,10 @@ export class InDiv {
     const template = component.template;
     if (template && typeof template === 'string' && nativeElement) {
       if (component.nvBeforeMount) component.nvBeforeMount();
+      await this.componentRender<R>(component, nativeElement, initVnode);
 
-      const _component = await this.componentRender<R>(component, nativeElement, initVnode);
-      if (_component.nvAfterMount) _component.nvAfterMount();
-      return _component;
+      if (component.nvAfterMount) component.nvAfterMount();
+      return component;
 
     } else {
       throw new Error('renderBootstrap failed: template or rootDom is not exit');
@@ -255,13 +255,13 @@ export class InDiv {
    * @param {IComponent} component
    * @param {R} nativeElement
    * @param {Vnode[]} [initVnode]
-   * @returns {Promise<IComponent>}
+   * @returns {Promise<void>}
    * @memberof InDiv
    */
-  private async componentRender<R = Element>(component: IComponent, nativeElement: R, initVnode?: Vnode[]): Promise<IComponent> {
+  private async componentRender<R = Element>(component: IComponent, nativeElement: R, initVnode?: Vnode[]): Promise<void> {
     // if has initVnode, assign initVnode for component.saveVnode 
     if (initVnode) component.saveVnode = initVnode;
     component.nativeElement = nativeElement;
-    return await component.render();
+    await component.render();
   }
 }

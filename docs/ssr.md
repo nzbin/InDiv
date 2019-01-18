@@ -54,7 +54,7 @@ module.exports = app;
 import IndivPlatformServer = require('@indiv/platform-server');
 import RootModule = require('./public/app.module');
 
-async function render(url: string, rootPath: string): Promise<string> {
+async function render(path: string, query: any, rootPath: string): Promise<string> {
     const _string = await IndivPlatformServer.renderToString(RootModule.default);
     return _string;
 }
@@ -85,7 +85,7 @@ app.use(express.static(path.join(__dirname, 'dist')));
 app.use('/demo', async(req, res) => {
   // 获得渲染出的字符串
   const render = require('./render');
-  const content = await render.render(req.url, '/indiv-doc');
+  const content = await render.render(req.url, req.query, '/demo');
   // 渲染至模板中
   res.render('index.html',{
     content,
@@ -137,12 +137,14 @@ const routes: IndivRouter.TRouter[] = [
   },
 ];
 
-async function render(url: string, rootPath: string): Promise<string> {
+async function render(path: string, query: any, rootPath: string): Promise<string> {
     const routeConfig = {
+        path,
+        query,
         routes,
         rootPath,
     };
-    const _string = await IndivPlatformServer.renderToString(RootModule.default, url, routeConfig);
+    const _string = await IndivPlatformServer.renderToString(RootModule.default, routeConfig);
     return _string;
 }
 

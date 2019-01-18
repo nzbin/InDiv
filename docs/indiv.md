@@ -36,3 +36,7 @@
 12. `setRootElement(node: any): void` 设置整个应用挂载的节点，不一定是Element类型，可以是任意类型仅仅为编译器使用，常用用于跨平台渲染
 
 13. `get getRootElement(): any` 获取整个应用挂载的节点，不一定是Element类型，可以是任意类型仅仅为编译器使用，常用用于跨平台渲染
+
+14. `setIndivEnv(env: string, isServerRendering?: boolean): void` 设置env环境变量及是否服务端渲染
+
+15. `get getIndivEnv(): { isServerRendering: boolean; indivEnv: string; }` 获取env环境变量及是否服务端渲染

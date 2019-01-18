@@ -154,7 +154,7 @@ export class CompileUtil {
 
     const func = (event: Event) => {
       event.preventDefault();
-      if (!utils.isBrowser()) return;
+      if (!utils.hasWindowAndDocument()) return;
       if (isFromVM(vm, exp)) setVMVal(vm, exp, (event.target as HTMLInputElement).value);
     };
 

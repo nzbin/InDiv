@@ -4,7 +4,7 @@ import { _document, PlatfromServerRenderer } from '../renderer';
 /**
  * indiv plugin for platform server
  * 
- * includes setRootElement and setRenderer
+ * includes setIndivEnv, setRootElement and setRenderer
  *
  * @export
  * @class PlatformServer
@@ -15,6 +15,7 @@ export class PlatformServer implements IPlugin {
     const rootElement = _document.createElement('div');
     rootElement.id = 'root';
     _document.documentElement.appendChild(rootElement);
+    indivInstance.setIndivEnv('server', true);
     indivInstance.setRootElement(_document.getElementById('root'));
     indivInstance.setRenderer(PlatfromServerRenderer);
   }

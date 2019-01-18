@@ -1,4 +1,4 @@
-import { Injectable, utils } from '@indiv/core';
+import { Injectable, utils, InDiv } from '@indiv/core';
 
 export type NvRouteObject = {
   path: string;
@@ -26,27 +26,17 @@ export const nvRouteStatus: {
 
 @Injectable()
 export class NvLocation {
+  constructor(private indivInstance: InDiv) {}
+
   /**
    * get route in @Component or @Directive
    *
    * get nvRouteObject and nvRouteParmasObject in InDiv
    * 
    * @export
-   * @returns {{
-   *   path?: string;
-   *   query?: any;
-   *   params?: any;
-   *   data?: any;
-   *   rootPath?: string;
-   * }}
+   * @returns {{ path?: string; query?: any; params?: any; data?: any; rootPath?: string; }}
    */
-  public get(): {
-    path?: string;
-    query?: any;
-    params?: any;
-    data?: any;
-    rootPath?: string;
-  } {
+  public get = (): { path?: string; query?: any; params?: any; data?: any; rootPath?: string; } => {
     return {
       path: nvRouteStatus.nvRouteObject.path,
       query: nvRouteStatus.nvRouteObject.query,
@@ -68,9 +58,9 @@ export class NvLocation {
    * @param {string} [title]
    * @returns {void}
    */
-  public set(path: string, query?: any, data?: any, title?: string): void {
+  public set = (path: string, query?: any, data?: any, title?: string): void => {
     const rootPath = nvRouteStatus.nvRootPath === '/' ? '' : nvRouteStatus.nvRootPath;
-    if (utils.isBrowser()) {
+    if (!this.indivInstance.getIndivEnv.isServerRendering) {
       history.pushState(
         { path, query, data },
         title,
@@ -91,9 +81,9 @@ export class NvLocation {
    * @param {string} [title]
    * @memberof NvLocation
    */
-  public redirectTo(path: string, query?: any, data?: any, title?: string): void {
+  public redirectTo = (path: string, query?: any, data?: any, title?: string): void => {
     const rootPath = nvRouteStatus.nvRootPath === '/' ? '' : nvRouteStatus.nvRootPath;
-    if (utils.isBrowser()) {
+    if (!this.indivInstance.getIndivEnv.isServerRendering) {
       history.replaceState(
         { path, query, data },
         title,

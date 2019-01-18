@@ -1,5 +1,5 @@
 import { Subscription } from 'rxjs';
-import { Component, OnInit, OnDestory, Input } from '@indiv/core';
+import { Component, OnInit, OnDestory, Input, HasRender, AfterMount } from '@indiv/core';
 import { RouteChange, NvLocation } from '@indiv/router';
 
 import { navs } from '../../constants/nav';
@@ -34,7 +34,7 @@ type nav = {
     `),
 })
 
-export default class SideBar implements OnInit, RouteChange, OnDestory {
+export default class SideBar implements OnInit, RouteChange, OnDestory, HasRender, AfterMount {
     public navs: nav[] = navs();
     public num: number = 1;
     public subscribeToken: Subscription;
@@ -45,6 +45,14 @@ export default class SideBar implements OnInit, RouteChange, OnDestory {
         private location: NvLocation,
     ) {
         this.subscribeToken = this.testS.subscribe(this.subscribe);
+    }
+
+    public nvAfterMount() {
+        console.log(33333, 'SideBar nvAfterMount')
+    }
+
+    public nvHasRender() {
+        console.log(44444, 'SideBar nvHasRender')
     }
 
     public subscribe(value: any) {

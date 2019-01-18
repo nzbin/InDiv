@@ -3,3 +3,4 @@ export * from './utils';
 export * from './watch';
 export * from './input';
 export * from './view-child';
+export * from './element-ref';

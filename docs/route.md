@@ -60,7 +60,7 @@ export default class AppModule {}
 
 `routes` 是一个多维数组，数组的每一项都拥有下面五个key值：
 
-  1. `path: string;` 定义路由的路径，在`routes`数组的第一层只允许拥有一个对象，相应地 `path` 应该为 `/`，该项只需要写在该层级的路径即可
+  1. `path: string;` 定义路由的路径，在`routes`数组的第一层只允许拥有一个对象，相应地 `path` 应该为 `/`，该项只需要写在该层级的路径即可。
   2. `redirectTo?: string;` 当完整的路由到这一层级时，将被重定向到另外一个路径中，需要写除根路径之外的完整路径。该路由可以拥有 `children`
   3. `component?: string;` 路由到达该层级需要加载的组件`selector`，该`selector`需要是 在根模块中声明的组件`selector` 或是 被导入的组件`selector`
   4. `children?: TRouter[];` 该层级路由的子路由
@@ -77,6 +77,8 @@ export default class AppModule {}
   ```
 
 **需要注意的是位于数组最顶层的 `path: '/'` 必须指定，但是不能指定`component` 和 `loadChild`，因为根模块的`bootstrap`将取代这一项**
+
+你也可以写动态路由`/:someId`,这样可以在 `NvLocation`的`get`方法返回的`params`里面找到`key`为`someId`的动态路由值。
 
 现在让我们为路由多加一层 `/a` 并让根路径直接重定向到 `/a`，首先再写一个组件作为路由渲染的视图组件导入根模块并配置路由的`child`
 

@@ -1,4 +1,4 @@
-import { IComponent, IDirective, INvModule, ComponentList, DirectiveList, factoryModule, NvModule, InDiv, utils, Vnode } from '@indiv/core';
+import { IComponent, INvModule, ComponentList, DirectiveList, factoryModule, NvModule, InDiv, Vnode, utils } from '@indiv/core';
 
 import { nvRouteStatus, NvLocation } from './location';
 import { RouterTo, RouterFrom } from './directives';
@@ -74,7 +74,7 @@ export class RouteModule {
     this.indivInstance.setRouteDOMKey('router-render');
 
     // if isn't browser, will auto watch nvRouteStatus.nvRouteObject
-    if (!utils.isBrowser()) return;
+    if (!utils.hasWindowAndDocument()) return;
 
     // if is browser, will watch nvRouteStatus.nvRouteObject by 'load' event of window
     window.addEventListener('load', () => this.refresh(), false);

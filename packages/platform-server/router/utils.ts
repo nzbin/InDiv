@@ -26,7 +26,7 @@ export function buildPath(url: string): string[] {
  * @returns {Promise<void>}
  */
 export async function generalDistributeRoutes(routes: TRouter[], routesList: TRouter[], renderRouteList: string[], indiv: InDiv, loadModuleMap: Map<string, INvModule>): Promise<void> {
-  const nvLocation = new NvLocation();
+  const nvLocation = new NvLocation(indiv);
 
   for (let index = 0; index < renderRouteList.length; index++) {
     const path = renderRouteList[index];

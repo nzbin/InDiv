@@ -1,4 +1,4 @@
-import { IDirective, DirectiveList, IComponent, TComAndDir } from '../types';
+import { DirectiveList, IComponent, TComAndDir } from '../types';
 
 import { utils } from '../utils';
 import { buildDirectiveScope } from './compiler-utils';

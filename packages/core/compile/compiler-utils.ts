@@ -1,6 +1,7 @@
 import { IComponent, IDirective } from '../types';
 
-import { InDiv, ElementRef } from '../indiv';
+import { InDiv } from '../indiv';
+import { ElementRef } from '../component';
 import { factoryCreator } from '../di';
 import { Renderer } from '../vnode';
 

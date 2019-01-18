@@ -37,7 +37,7 @@
 - [x] JIT compile (default)
 - [x] vnode to string
 - [x] SSR 服务端渲染 server side render: @indiv/platform-server
-- [ ] @ViewChild @ViewChildren
+- [x] @ViewChild @ViewChildren
 - [ ] @indiv/cli
 - [ ] AOT compile
 - [ ] support Pipe

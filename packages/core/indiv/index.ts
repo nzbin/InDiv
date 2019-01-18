@@ -3,13 +3,7 @@ import { INvModule, IComponent } from '../types';
 import { factoryCreator } from '../di';
 import { factoryModule } from '../nv-module';
 import { Renderer, Vnode } from '../vnode';
-
-export class ElementRef<R = HTMLElement> {
-  public nativeElement: R;
-  constructor(node: R) {
-    this.nativeElement = node;
-  }
-}
+import { ElementRef } from '../component';
 
 interface Type<T = any> extends Function {
   new(...args: any[]): T;
@@ -32,6 +26,8 @@ export class InDiv {
   private declarations: Function[];
   private bootstrapComponent: IComponent;
   private renderer: Renderer;
+  private isServerRendering: boolean = false;
+  private indivEnv: string = 'browser';
 
   /**
    * for using plugin class, use bootstrap method of plugin instance and return plugin's id in this.pluginList
@@ -149,6 +145,29 @@ export class InDiv {
   }
 
   /**
+   * set env and isServerRendering for indiv env
+   *
+   * @param {string} env
+   * @param {boolean} [isServerRendering]
+   * @memberof InDiv
+   */
+  public setIndivEnv(env: string, isServerRendering?: boolean): void {
+    this.indivEnv = env;
+    if (arguments.length === 2) this.isServerRendering = isServerRendering;
+  }
+
+  /**
+   * get env and isServerRendering for indiv env
+   *
+   * @readonly
+   * @type {{ isServerRendering: boolean; indivEnv: string; }}
+   * @memberof InDiv
+   */
+  public get getIndivEnv(): { isServerRendering: boolean; indivEnv: string; } {
+    return { isServerRendering: this.isServerRendering, indivEnv: this.indivEnv };
+  }
+
+  /**
    * bootstrap NvModule
    * 
    * if not use Route it will be used
@@ -224,7 +243,7 @@ export class InDiv {
       if (component.nvBeforeMount) component.nvBeforeMount();
       await this.componentRender<R>(component, nativeElement, initVnode);
 
-      if (component.nvAfterMount) component.nvAfterMount();
+      if (component.nvAfterMount && !this.isServerRendering) component.nvAfterMount();
       return component;
 
     } else {

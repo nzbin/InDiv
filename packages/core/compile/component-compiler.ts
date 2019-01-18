@@ -5,7 +5,7 @@ import { Compile } from './compile';
 import { buildComponentScope } from './compiler-utils';
 import { Vnode } from '../vnode';
 import { mountDirective } from './directive-compiler';
-import { buildViewChild, buildViewChildren  } from '../component';
+import { buildViewChild, buildViewChildren } from '../component';
 
 /**
  * mountComponent for Components in Component
@@ -16,6 +16,7 @@ import { buildViewChild, buildViewChildren  } from '../component';
  */
 export async function mountComponent(componentInstance: IComponent, componentAndDirectives: TComAndDir): Promise<void> {
   const cacheComponentList: ComponentList[] = [...componentInstance.componentList];
+  const foundCacheComponentList: ComponentList[] = [];
   componentsConstructor(componentInstance, componentAndDirectives);
   const componentListLength = componentInstance.componentList.length;
   for (let i = 0; i < componentListLength; i++) {
@@ -24,8 +25,11 @@ export async function mountComponent(componentInstance: IComponent, componentAnd
     const cacheComponentIndex = cacheComponentList.findIndex(cache => cache.nativeElement === component.nativeElement);
     const cacheComponent = cacheComponentList[cacheComponentIndex];
 
-    // clear cache and the rest need to be destoried
-    if (cacheComponentIndex !== -1) cacheComponentList.splice(cacheComponentIndex, 1);
+    // clear cache, the rest need to be destoried, and push cacheComponent to foundCacheComponentList
+    if (cacheComponentIndex !== -1) {
+      cacheComponentList.splice(cacheComponentIndex, 1);
+      foundCacheComponentList.push(cacheComponent);
+    }
     if (cacheComponent) {
       component.instanceScope = cacheComponent.instanceScope;
       // old inputs: component.instanceScope._save_inputs
@@ -51,7 +55,7 @@ export async function mountComponent(componentInstance: IComponent, componentAnd
 
     if (component.instanceScope.nvOnInit && !cacheComponent) component.instanceScope.nvOnInit();
     if (component.instanceScope.watchData && !cacheComponent) component.instanceScope.watchData();
-    if (component.instanceScope.nvBeforeMount) component.instanceScope.nvBeforeMount();
+    if (component.instanceScope.nvBeforeMount && !cacheComponent) component.instanceScope.nvBeforeMount();
   }
   // the rest should use nvOnDestory
   const cacheComponentListLength = cacheComponentList.length;
@@ -60,11 +64,14 @@ export async function mountComponent(componentInstance: IComponent, componentAnd
     if (cache.instanceScope.nvOnDestory) cache.instanceScope.nvOnDestory();
   }
 
-  // after mount
+  // render, only component which isn't rendered will be rendered and called 
   for (let i = 0; i < componentListLength; i++) {
     const component = componentInstance.componentList[i];
-    await component.instanceScope.render();
-    if (component.instanceScope.nvAfterMount) component.instanceScope.nvAfterMount();
+    if (!foundCacheComponentList.find(cache => cache.nativeElement === component.nativeElement)) {
+      await component.instanceScope.render();
+      // isServerRendering won't call nvAfterMount
+      if (component.instanceScope.nvAfterMount && !component.instanceScope.$indivInstance.getIndivEnv.isServerRendering) component.instanceScope.nvAfterMount();
+    }
   }
 
   // build @ViewChild

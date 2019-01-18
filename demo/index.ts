@@ -229,7 +229,7 @@ class R2 implements OnInit, BeforeMount, AfterMount, DoCheck, RouteChange, OnDes
       <p nv-on:click="click()">测试repeat组件: {{manName}}</p>
     </div>`),
 })
-class TestComponent implements OnDestory, ReceiveInputs {
+class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
   public state: any;
   @Input() public manName: any;
 
@@ -249,6 +249,13 @@ class TestComponent implements OnDestory, ReceiveInputs {
     this.manName = 'fuck!';
   }
 
+  public nvHasRender() {
+    console.log('TestComponent HasRender');
+  }
+
+  public nvAfterMount() {
+    console.log('TestComponent AfterMount');
+  }
   public nvOnDestory() {
     console.log('TestComponent OnDestory');
   }
@@ -348,7 +355,9 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
   public setState: SetState;
   public http$: Observable<HttpClientResponse>;
 
-  @ViewChild('test-component') private testComponent: TestComponent[];
+  @ViewChild('test-component') private testComponent: TestComponent;
+  @ViewChild('router-render') private routerRenderElementRef: ElementRef;
+  @ViewChildren('test-directive') private testDirectiveString: TestDirective[];
   @ViewChildren(TestDirective) private testDirective: TestDirective[];
 
   constructor(
@@ -391,13 +400,12 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
     console.log('nvOnInit Container', this.location.get());
   }
 
-  public nvAfterMount() {
-    console.log('nvAfterMount Container', 222222, this.testComponent, this.testDirective);
-    // document.getElementById('1').className = '3333';
+  public nvHasRender() {
+    console.log('nvHasRender Container', 33333333, this.testComponent, this.testDirective, this.routerRenderElementRef, this.testDirectiveString);
   }
 
-  public nvHasRender() {
-    console.log('nvHasRender Container', 33333333, this.testComponent, this.testDirective);
+  public nvAfterMount() {
+    console.log('nvAfterMount Container', 222222, this.testComponent, this.testDirective, this.routerRenderElementRef, this.testDirectiveString);
   }
 
   public go() {

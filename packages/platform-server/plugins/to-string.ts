@@ -1,5 +1,5 @@
 import { InDiv, INvModule } from '@indiv/core';
-import { TRouter, nvRouteStatus, NvLocation } from '@indiv/router';
+import { TRouter, NvLocation } from '@indiv/router';
 import { _document } from '../renderer';
 import { PlatformServer } from './platform-server';
 import { buildPath, generalDistributeRoutes } from '../router';
@@ -31,7 +31,7 @@ export async function renderToString(rootModule: Function, routeConfig?: {
   inDiv.use(PlatformServer);
   await inDiv.init();
   if (routeConfig) {
-    const nvLocatiton = new NvLocation();
+    const nvLocatiton = new NvLocation(inDiv);
     nvLocatiton.set(routeConfig.path, routeConfig.query);
     const renderRouteList = buildPath(routeConfig.path);
     const routesList: TRouter[] = [];

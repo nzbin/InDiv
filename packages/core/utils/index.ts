@@ -154,12 +154,12 @@ export class Utils {
   }
 
   /**
-   * judge evn is browser or node
+   * judge evn has window and document
    *
    * @returns {boolean}
    * @memberof Utils
    */
-  public isBrowser(): boolean {
+  public hasWindowAndDocument(): boolean {
     return typeof window !== 'undefined' && typeof window.document !== 'undefined';
   }
 }

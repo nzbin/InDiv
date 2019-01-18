@@ -1,4 +1,4 @@
-import { IDirective, DirectiveList, IComponent, TComAndDir } from '../types';
+import { DirectiveList, IComponent, TComAndDir } from '../types';
 
 import { utils } from '../utils';
 import { buildDirectiveScope } from './compiler-utils';
@@ -11,7 +11,7 @@ import { buildDirectiveScope } from './compiler-utils';
  * @param {TComAndDir} componentAndDirectives
  */
 export function mountDirective(componentInstance: IComponent, componentAndDirectives: TComAndDir): void {
-  const cacheDirectiveList: DirectiveList<IDirective>[] = [...componentInstance.directiveList];
+  const cacheDirectiveList: DirectiveList[] = [...componentInstance.directiveList];
   directivesConstructor(componentInstance, componentAndDirectives);
   const directiveListLength = componentInstance.directiveList.length;
   for (let i = 0; i < directiveListLength; i++) {
@@ -29,7 +29,13 @@ export function mountDirective(componentInstance: IComponent, componentAndDirect
       if (!utils.isEqual(directive.instanceScope._save_inputs, directive.inputs)) {
         if (directive.instanceScope.nvReceiveInputs) directive.instanceScope.nvReceiveInputs(directive.inputs);
         directive.instanceScope._save_inputs = directive.inputs;
-        if (directive.instanceScope.inputsMap && directive.instanceScope.inputsMap.has((directive.instanceScope as any).constructor.selector)) (directive.instanceScope as any)[directive.instanceScope.inputsMap.get((directive.instanceScope as any).constructor.selector)] = directive.inputs;
+
+        if (directive.instanceScope.inputsList) {
+          directive.instanceScope.inputsList.forEach(({ propertyName, inputName }) => {
+            if (inputName === (directive.instanceScope as any).constructor.selector) (directive.instanceScope as any)[propertyName] = directive.inputs;
+          });
+        }
+
       }
     } else {
       directive.instanceScope = buildDirectiveScope(directive.constructorFunction, directive.inputs, directive.nativeElement, componentInstance);

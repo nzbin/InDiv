@@ -26,7 +26,7 @@ const routes: IndivRouter.TRouter[] = [
                         component: 'docs-component-container',
                         children: [
                             {
-                                path: '/component-docs',
+                                path: '/:id',
                                 component: 'docs-template-container',
                                 children: [
                                     {
@@ -79,12 +79,14 @@ const routes: IndivRouter.TRouter[] = [
     },
 ];
 
-async function render(url: string, rootPath: string): Promise<string> {
+async function render(path: string, query: any, rootPath: string): Promise<string> {
     const routeConfig = {
+        path,
+        query,
         routes,
         rootPath,
     };
-    const _string = await IndivPlatformServer.renderToString(RootModule.default, url, routeConfig);
+    const _string = await IndivPlatformServer.renderToString(RootModule.default, routeConfig);
     return _string;
 }
 

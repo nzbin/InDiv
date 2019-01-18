@@ -1,6 +1,7 @@
 import { IComponent, IDirective } from '../types';
 
-import { InDiv, ElementRef } from '../indiv';
+import { InDiv } from '../indiv';
+import { ElementRef } from '../component';
 import { factoryCreator } from '../di';
 import { Renderer } from '../vnode';
 
@@ -25,7 +26,14 @@ export function buildComponentScope(ComponentClass: Function, inputs: any, nativ
   // _save_inputs in @Component for save props states
   _component._save_inputs = inputs;
   _component.nativeElement = nativeElement;
-  for (const key in inputs) if (_component.inputsMap && _component.inputsMap.has(key)) (_component as any)[_component.inputsMap.get(key)] = inputs[key];
+
+  for (const key in inputs) {
+    if (_component.inputsList) {
+      _component.inputsList.forEach(({ propertyName, inputName }) => {
+        if (inputName === key) (_component as any)[propertyName] = inputs[key];
+      });
+    }
+  }
 
   componentInstance.declarationMap.forEach((declaration, key) => {
     if (!_component.declarationMap.has(key)) _component.declarationMap.set(key, declaration);
@@ -57,7 +65,12 @@ export function buildDirectiveScope(DirectiveClass: Function, inputs: any, nativ
 
   _directive._save_inputs = inputs;
   _directive.nativeElement = nativeElement;
-  if (_directive.inputsMap && _directive.inputsMap.has((DirectiveClass as any).selector)) (_directive as any)[_directive.inputsMap.get((DirectiveClass as any).selector)] = inputs;
+
+  if (_directive.inputsList) {
+    _directive.inputsList.forEach(({ propertyName, inputName }) => {
+      if (inputName === (DirectiveClass as any).selector) (_directive as any)[propertyName] = inputs;
+    });
+  }
 
   componentInstance.declarationMap.forEach((declaration, key) => {
     if (!_directive.declarationMap.has(key)) _directive.declarationMap.set(key, declaration);

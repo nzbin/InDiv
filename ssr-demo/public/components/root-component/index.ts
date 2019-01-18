@@ -1,4 +1,4 @@
-import { Component } from '@indiv/core';
+import { Component, HasRender, AfterMount } from '@indiv/core';
 
 @Component({
     selector: 'root-component',
@@ -13,10 +13,17 @@ import { Component } from '@indiv/core';
         </div>
     `),
 })
-export default class RootComponent {
+export default class RootComponent implements HasRender, AfterMount {
     public showSideBar = 'open';
     public currentVersion = 'v1.2.2';
 
+    public nvAfterMount() {
+        console.log(11111111, 'RootComponent nvAfterMount')
+    }
+
+    public nvHasRender() {
+        console.log(2222222, 'RootComponent nvHasRender')
+    }
 
     public changeShowSideBar() {
         if (this.showSideBar === 'open') {

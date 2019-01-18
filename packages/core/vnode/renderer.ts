@@ -29,7 +29,7 @@ export abstract class Renderer {
    *
    * @abstract
    * @param {string} name
-   * @returns {*}
+   * @returns {any[]}
    * @memberof Renderer
    */
   public abstract getElementsByTagName(name: string): any;

@@ -324,22 +324,83 @@ export default class AppComponent {
 ```
 
 
+## 试图查询
+
+`@ViewChild @ViewChildren`属性装饰器，用于配置一个视图查询，获取模板中子元素，子组件或子指令。
+
+当render阶段结束后，在`HasRender`和`nvAfterMount`生命周期可以获得被修饰的属性。
+
+如果视图的 DOM 发生了变化，出现了匹配该选择器的新的子节点，该属性就会被更新。
+
+`@ViewChild` 和 `@ViewChildren`用法：
+
+  1. 当参数为`string`时，如果为该组件可以使用的组件或指令的`selector`，则属性为匹配到的**组件或指令实例**的第一项或是全部
+  2. 当参数为`string`时，如果为该组件内部某个元素的`tag name`，则属性为匹配到的**ElementRef实例**的第一项或是全部
+  3. 当参数为`Function`时，如果为该组件可以使用的组件或指令的`class`，则属性为匹配到的**组件或指令实例**的第一项或是全部
+
+```typescript
+import { Component, setState, SetState, Watch, ViewChild, ElementRef } from '@indiv/core';
+import ShowAgeComponent from 'components/show-age/show-age.component';
+
+@Component({
+    selector: 'app-component',
+    template: (`
+        <div class="app-component-container">
+          <input nv-model="name"/>
+          <p on-on:click="addAge()">name: {{name}}</p>
+          <show-age age="{age}" upDateAge="{upDateAge}"></show-age>
+        </div>
+    `),
+})
+export default class AppComponent {
+  public name: string = 'InDiv';
+  @Watch() public age: number;
+
+  @ViewChild('show-age') public showAgeInstance: ShowAgeComponent;
+  @ViewChildren('show-age') public showAgeInstances: ShowAgeComponent[];
+  @ViewChild(ShowAgeComponent) public showAgeInstance: ShowAgeComponent;
+  @ViewChildren(ShowAgeComponent) public showAgeInstances: ShowAgeComponent[];
+  @ViewChild('p') public pElement: ElementRef;
+  @ViewChildren('p') public pElements: ElementRef[];
+
+  public setState: SetState;
+
+  constructor() {
+    this.setState = setState;
+  }
+
+  public addAge(): void {
+    this.setState({ age: 24 });
+  }
+
+  public upDateAge(age: number) {
+    this.age = age;
+    // this.setState({ age: 24 });
+  }
+}
+```
+
+
 ## 生命周期
 
 每个组件都有一个被 InDiv 管理的生命周期。
 生命周期钩子其实就是定义在实例中的一些方法，在 InDiv 中，通过不同的时刻调用不同的生命周期钩子，赋予你在它们发生时采取行动的能力。
 在 TypeScript 中，引用 InDiv 提供的 interface，通过 implements 的方式让类去实现被预先定义好的生命周期，而在 JavaScript 中，你只能自己手动去定义应该实现的生命周期方法。
 
-之前我们已经通过认识 `inputs` 认识了 `nvReceiveInputs` 的生命周期，而下面将介绍其他生命周期钩子。
+之前我们已经通过认识 `inputs` 认识了 `nvReceiveInputs` 的生命周期，而下面将**按照触发顺序**介绍其他生命周期钩子。
 
 * `constructor` 在类被实例化的时候回触发，你可以在这里初始化
 * `nvOnInit(): void;` constructor 之后，在这个生命周期中，可以获取 inputs，此生命周期会在开启监听前被触发，并且之后再也不会触发
-* `nvBeforeMount(): void;` 在 nvOnInit 之后，template 挂载页面之前被触发，每次触发渲染页面都会被触发
-* `nvAfterMount(): void;` 在 nvBeforeMount 之后，template 挂载页面之后被触发，每次触发渲染页面（render）都会被触发
-* `nvHasRender(): void;` 在 nvAfterMount 之后，渲染完成后被触发，每次触发渲染页面（render）都会被触发
+* `nvBeforeMount(): void;` 在 nvOnInit 之后，template 挂载页面之前被触发，有组件第一次渲染页面（render）前会被触发
+* `nvHasRender(): void;` 在 nvAfterMount 之后，渲染完成后被触发，每次触发渲染页面（render）都会被触发**服务端时将无法触发此钩子（不包括此钩子）之后的钩子**
+* `nvAfterMount(): void;` 在 nvBeforeMount 之后，template 挂载页面之后被触发，只有组件第一次渲染页面（render）后挂载实例到DOM上时会被触发
 * `nvRouteChange(lastRoute?: string, newRoute?: string): void;` 监听路由变化，当更换路由后被触发
 * `nvOnDestory(): void;` 仅仅在路由决定销毁此组件时,或是被`nv-if`销毁组件时被触发
 * `nvDoCheck(): void;` 监听被监听的属性变化，当被监听的属性被更改后触发
 * `nvReceiveInputs(nextInputs: any): void;` 监听 inputs 变化，当 inputs 即将被更改时（更改前）触发
 * (原生)`getter`: 当监听 inputs 时，getter 会先于 nvReceiveInputs 被触发
 * (原生)`setter`: 当监听 属性 时，setter 会晚于 nvDoCheck 被触发
+
+关于子组件的生命周期，当父组件render时，**只会render新实例化的子组件**，不会再次render已经实例化的子组件。
+
+子组件的render由内部的状态控制。

@@ -30,6 +30,6 @@
   },
   "homepage": "https://github.com/DimaLiLongJi/InDiv#readme",
   "peerDependencies": {
-    "@indiv/core": "0.0.0-PLACEHOLDER"
+    "@indiv/core": "^0.0.0-PLACEHOLDER"
   }
 }

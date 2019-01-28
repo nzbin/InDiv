@@ -1,11 +1,6 @@
 import { IComponent, INvModule, ComponentList, DirectiveList, factoryModule, NvModule, InDiv, Vnode, utils } from '@indiv/core';
-
 import { nvRouteStatus, NvLocation } from './location';
 import { RouterTo, RouterFrom } from './directives';
-
-export interface RouteChange {
-  nvRouteChange(lastRoute?: string, newRoute?: string): void;
-}
 
 export type TChildModule = () => Promise<any>;
 

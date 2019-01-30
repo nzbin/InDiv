@@ -1,5 +1,5 @@
 import { InDiv, Component, Utils, NvModule, OnInit, DoCheck, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, setState, ElementRef, HasRender, Input, ViewChild, ViewChildren } from '@indiv/core';
-import { RouteChange, NvLocation, RouteModule } from '@indiv/router';
+import { RouteChange, NvLocation, RouteModule, RouteCanActive } from '@indiv/router';
 import { PlatformBrowser } from '@indiv/platform-browser';
 import { HttpClient, HttpClientResponse } from '@indiv/common';
 import { Observable } from 'rxjs';
@@ -17,6 +17,7 @@ class ValueType { }
       <p nv-if="e" nv-class="a" nv-repeat="da in d"  nv-on:click="componentClick(d)">你好： {{da.z}}</p>
       state.d: <input nv-repeat="da in d" nv-model="da.z" />
       <p nv-on:click="sendProps(5)">props from component.state.a: {{ax}}</p>
+      <test-component manName="{a}"></test-component>
     </div>
   `),
 })
@@ -90,33 +91,37 @@ class PComponent implements DoCheck, BeforeMount, ReceiveInputs, OnDestory {
     </div>
     `),
 })
-class R1 implements OnInit, BeforeMount, DoCheck, RouteChange, OnDestory {
+class R1 implements OnInit, BeforeMount, DoCheck, RouteChange, OnDestory, RouteCanActive {
   public hSr: HeroSearchService;
   public setState: SetState;
   // public props: any;
   public a: string = 'a11';
   public b: number = 2;
-  public d: any[] = [{
-    z: 111111111111111,
-    b: 'a',
-    show: true,
-  },
-                     {
-    z: 33333333333333,
-    b: 'a',
-    show: true,
-  }];
+  public d: any[] = [
+    {
+      z: 111111111111111,
+      b: 'a',
+      show: true,
+    },
+    {
+      z: 33333333333333,
+      b: 'a',
+      show: true,
+    },
+  ];
   public c: string = 'c';
-  public e: any = [{
-    z: 232323,
-    b: 'a',
-    show: true,
-  },
-                   {
-    z: 1111,
-    b: 'a',
-    show: false,
-  }];
+  public e: any = [
+    {
+      z: 232323,
+      b: 'a',
+      show: true,
+    },
+    {
+      z: 1111,
+      b: 'a',
+      show: false,
+    },
+  ];
   public f: boolean = true;
 
   constructor(
@@ -128,6 +133,12 @@ class R1 implements OnInit, BeforeMount, DoCheck, RouteChange, OnDestory {
     this.setState = setState;
     console.log(9999888777, 'from R1', this.element, this.indiv);
     this.heroSearchService.test();
+  }
+
+  public nvRouteCanActive(lastRoute: string): boolean {
+    console.log('R1 is nvRouteCanActive', 444444, lastRoute);
+    // this.location.set('/');
+    return true;
   }
 
   public nvOnInit() {
@@ -389,7 +400,7 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
           a: 5,
         },
       });
-    }, 1000); 
+    }, 1000);
   }
 
   public nvRouteChange(lastRoute?: string, newRoute?: string) {
@@ -428,7 +439,7 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
           a: 5,
         },
       });
-    }, 2000); 
+    }, 2000);
     this.test.a = 222;
   }
 
@@ -442,63 +453,63 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
 
   public changeInput() {
     this.setState({
-    color: "green",
-    a: 5,
-    testArray: [
-      {
-        name: 'gerry',
-        sex: '女',
-        job: [
-          {
-            id: 1,
-            name: '程序员',
-          },
-          {
-            id: 2,
-            name: '码农',
-          },
-          {
-            id: 3,
-            name: '帅',
-          },
-        ],
-      },
-      {
-        name: 'gerry2',
-        sex: '男2',
-        job: [
-          {
-            id: 1,
-            name: '程序员2',
-          },
-          {
-            id: 2,
-            name: '码农2',
-          },
-          {
-            id: 3,
-            name: '帅2',
-          },
-        ],
-      },
-      {
-        name: 'nina',
-        sex: '男',
-        job: [
-          {
-            id: 1,
-            name: '老师',
-          },
-          {
-            id: 2,
-            name: '英语老师',
-          },
-          {
-            id: 3,
-            name: '美',
-          },
-        ],
-      }],
+      color: "green",
+      a: 5,
+      testArray: [
+        {
+          name: 'gerry',
+          sex: '女',
+          job: [
+            {
+              id: 1,
+              name: '程序员',
+            },
+            {
+              id: 2,
+              name: '码农',
+            },
+            {
+              id: 3,
+              name: '帅',
+            },
+          ],
+        },
+        {
+          name: 'gerry2',
+          sex: '男2',
+          job: [
+            {
+              id: 1,
+              name: '程序员2',
+            },
+            {
+              id: 2,
+              name: '码农2',
+            },
+            {
+              id: 3,
+              name: '帅2',
+            },
+          ],
+        },
+        {
+          name: 'nina',
+          sex: '男',
+          job: [
+            {
+              id: 1,
+              name: '老师',
+            },
+            {
+              id: 2,
+              name: '英语老师',
+            },
+            {
+              id: 3,
+              name: '美',
+            },
+          ],
+        }],
     });
     this.a = 100;
   }

@@ -139,11 +139,10 @@ const routes: TRouter[] = [
       {
         path: '/R1',
         component: 'R1',
-        // redirectTo: '/R2',
-        // loadChild: {
-        //   name: 'TestLoadchildModule',
-        //   module: () => import('./loadChild'),
-        // },
+        routeCanActive: (lastRoute: string) => {
+          // return false;
+          return true;
+        },
         children: [
           {
             path: '/C1',

@@ -40,6 +40,10 @@ const routes: IndivRouter.TRouter[] = [
                     {
                         path: '/template',
                         component: 'docs-template-container',
+                        routeCanActive: () => {
+                            console.log(9999999, 'docs-template-container')
+                            return false;
+                        },
                     },
                     {
                         path: '/service',

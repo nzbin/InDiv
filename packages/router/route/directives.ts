@@ -1,6 +1,6 @@
 import { ElementRef, utils, Directive, OnInit, ReceiveInputs, OnDestory, Input, Renderer } from '@indiv/core';
 import { NvLocation } from './location';
-import { RouteChange } from './router-module';
+import { RouteChange } from './lifecycle';
 
 /**
  * @Directive can be used as `router-to=""`

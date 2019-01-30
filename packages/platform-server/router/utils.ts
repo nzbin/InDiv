@@ -1,5 +1,12 @@
-import { TRouter, NvLocation } from '@indiv/router';
+import { TRouter, NvLocation, IComponentWithRoute } from '@indiv/router';
 import { InDiv, INvModule, factoryModule } from '@indiv/core';
+
+export type RouteCongfig = {
+  path?: string,
+  query?: any,
+  routes?: TRouter[],
+  nvRootPath?: string,
+};
 
 /**
  * build path to route
@@ -18,21 +25,21 @@ export function buildPath(url: string): string[] {
  * find route via rootModule
  *
  * @export
- * @param {TRouter[]} routes
+ * @param {RouteCongfig} routeConfig
  * @param {TRouter[]} routesList
  * @param {string[]} renderRouteList
  * @param {InDiv} indiv
  * @param {Map<string, INvModule>} loadModuleMap
  * @returns {Promise<void>}
  */
-export async function generalDistributeRoutes(routes: TRouter[], routesList: TRouter[], renderRouteList: string[], indiv: InDiv, loadModuleMap: Map<string, INvModule>): Promise<void> {
+export async function generalDistributeRoutes(routeConfig: RouteCongfig, routesList: TRouter[], renderRouteList: string[], indiv: InDiv, loadModuleMap: Map<string, INvModule>): Promise<void> {
   const nvLocation = new NvLocation(indiv);
 
   for (let index = 0; index < renderRouteList.length; index++) {
     const path = renderRouteList[index];
     if (index === 0) {
-      const rootRoute = routes.find(route => route.path === `${path}` || /^\/\:.+/.test(route.path));
-      if (!rootRoute) throw new Error(`route error: wrong route instantiation in generalDistributeRoutes: ${this.currentUrl}`);
+      const rootRoute = routeConfig.routes.find(route => route.path === `${path}` || /^\/\:.+/.test(route.path));
+      if (!rootRoute) throw new Error(`route error: wrong route instantiation in generalDistributeRoutes: ${routeConfig.path}`);
 
       if (/^\/\:.+/.test(rootRoute.path)) {
         const key = rootRoute.path.split('/:')[1];
@@ -42,18 +49,19 @@ export async function generalDistributeRoutes(routes: TRouter[], routesList: TRo
       routesList.push(rootRoute);
 
       if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo) && (index + 1) === renderRouteList.length) {
-        await generalDistributeRoutes(routes, routesList, buildPath(rootRoute.redirectTo), indiv, loadModuleMap);
+        await generalDistributeRoutes(routeConfig, routesList, buildPath(rootRoute.redirectTo), indiv, loadModuleMap);
         return;
       }
     } else {
       const lastRoute = routesList[index - 1].children;
       if (!lastRoute || !(lastRoute instanceof Array)) throw new Error('route error: routes not exit or routes must be an array!');
       const route = lastRoute.find(r => r.path === `/${path}` || /^\/\:.+/.test(r.path));
-      if (!route) throw new Error(`route error: wrong route instantiation: ${this.currentUrl}`);
+      if (!route) throw new Error(`route error: wrong route instantiation: ${routeConfig.path}`);
 
       const nativeElement = indiv.getRenderer.getElementsByTagName('router-render')[index - 1];
 
       let FindComponent = null;
+      let component: IComponentWithRoute = null;
       let currentUrlPath = '';
 
       // build current url with route.path
@@ -64,13 +72,18 @@ export async function generalDistributeRoutes(routes: TRouter[], routesList: TRo
       if (route.component) {
         const findComponentFromModuleResult = findComponentFromModule(route.component, currentUrlPath, indiv, loadModuleMap);
         FindComponent = findComponentFromModuleResult.component;
-        await indiv.renderComponent(FindComponent, nativeElement, findComponentFromModuleResult.loadModule, null);
+        component = indiv.initComponent(FindComponent, nativeElement, findComponentFromModuleResult.loadModule);
       }
       if (route.loadChild) {
         const loadModule = NvModuleFactoryLoader((route.loadChild as Function), currentUrlPath, indiv, loadModuleMap);
         FindComponent = loadModule.bootstrap;
-        await indiv.renderComponent(FindComponent, nativeElement, loadModule, null);
+        component = indiv.initComponent(FindComponent, nativeElement, loadModule);
       }
+
+      // navigation guards: route.routeCanActive component.nvRouteCanActive
+      if (route.routeCanActive && !route.routeCanActive('/', routeConfig.path)) break;
+      if (component.nvRouteCanActive && !component.nvRouteCanActive('/', routeConfig.path)) break;
+      await indiv.runComponentRenderer(component, nativeElement);
 
       if (!route.component && !route.redirectTo && !route.loadChild) throw new Error(`route error: path ${route.path} need a component which has children path or need a  redirectTo which has't children path`);
 
@@ -81,7 +94,7 @@ export async function generalDistributeRoutes(routes: TRouter[], routesList: TRo
       routesList.push(route);
 
       if (route.redirectTo && /^\/.*/.test(route.redirectTo) && (index + 1) === renderRouteList.length) {
-        await generalDistributeRoutes(routes, routesList, buildPath(route.redirectTo), indiv, loadModuleMap);
+        await generalDistributeRoutes(routeConfig, routesList, buildPath(route.redirectTo), indiv, loadModuleMap);
         return;
       }
     }
@@ -91,7 +104,7 @@ export async function generalDistributeRoutes(routes: TRouter[], routesList: TRo
 /**
  * find component from loadModule or rootModule
  * 
- * if this.loadModuleMap.size === 0, only in rootModule
+ * if loadModuleMap.size === 0, only in rootModule
  * if has loadModule, return component in loadModule firstly
  *
  * @export

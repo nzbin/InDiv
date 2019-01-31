@@ -47,7 +47,7 @@ export default class DocsTemplateContainer implements HasRender, RouteCanActive 
   }
 
   public nvRouteCanActive(lastRoute?: string, newRoute?: string): boolean {
-    console.log('DocsTemplateContainer nvRouteCanActive', lastRoute, newRoute);
-    return true;
+    console.log(1111, 'DocsTemplateContainer nvRouteCanActive', lastRoute, newRoute);
+    return false;
   }
 }

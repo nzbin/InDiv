@@ -43,8 +43,4 @@ import TestService from '../service/test.service';
     ],
     bootstrap: DocsContainer,
 })
-export default class DocsModule {
-    constructor () {
-        console.log(3333);
-    }
-}
+export default class DocsModule {}

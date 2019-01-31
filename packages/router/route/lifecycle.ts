@@ -1,5 +1,5 @@
 export interface RouteChange {
-  nvRouteChange(lastRoute?: string, newRoute?: string): void;
+  nvRouteChange(lastRoute: string, newRoute: string): void;
 }
 
 export interface RouteCanActive {

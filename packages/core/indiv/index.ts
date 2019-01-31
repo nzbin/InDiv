@@ -198,6 +198,8 @@ export class InDiv {
 
   /**
    * method of Component's initialization
+   * 
+   * init component and watch data
    *
    * @template R
    * @param {Function} BootstrapComponent
@@ -238,7 +240,9 @@ export class InDiv {
   }
 
   /**
-   * run renderer of Component
+   * run renderer of Component by async
+   * 
+   * will call lifecycle nvBeforeMount, nvHasRender, nvAfterMount
    *
    * @template R
    * @param {IComponent} component

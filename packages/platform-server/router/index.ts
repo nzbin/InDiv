@@ -1,4 +1,4 @@
-import { TRouter, NvLocation, IComponentWithRoute } from '@indiv/router';
+import { TRouter, NvLocation, IComponentWithRoute, IDirectiveWithRoute } from '@indiv/router';
 import { InDiv, INvModule, factoryModule } from '@indiv/core';
 
 export type RouteCongfig = {
@@ -47,6 +47,9 @@ export async function generalDistributeRoutes(routeConfig: RouteCongfig, routesL
       }
 
       routesList.push(rootRoute);
+
+      if (rootRoute.routeCanActive) rootRoute.routeCanActive('/', routeConfig.path);
+      if ((indiv.getBootstrapComponent as IComponentWithRoute).nvRouteCanActive) (indiv.getBootstrapComponent as IComponentWithRoute).nvRouteCanActive('/', routeConfig.path);
 
       if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo) && (index + 1) === renderRouteList.length) {
         await generalDistributeRoutes(routeConfig, routesList, buildPath(rootRoute.redirectTo), indiv, loadModuleMap);

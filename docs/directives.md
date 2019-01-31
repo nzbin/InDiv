@@ -218,7 +218,6 @@ export default class AppComponent {
 * `constructor` 在类被实例化的时候回触发，你可以在这里初始化
 * `nvOnInit(): void;` constructor 之后，在这个生命周期中，可以获取 inputs，此生命周期会在开启监听前被触发，并且之后再也不会触发
 * `nvHasRender(): void;` 在 nvAfterMount 之后，渲染完成后被触发，每次触发渲染页面（render）都会被触发
-* `nvRouteChange(lastRoute?: string, newRoute?: string): void;` 监听路由变化，当更换路由后被触发
 * `nvOnDestory(): void;` 仅仅在路由决定销毁此组件时,或是被`nv-if`销毁组件时被触发
 * `nvReceiveInputs(nextInputs: any): void;` 监听 inputs 变化，当 inputs 即将被更改时（更改前）触发
 * (原生)`getter`: 当监听 inputs 时，getter 会先于 nvReceiveInputs 被触发

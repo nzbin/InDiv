@@ -33,7 +33,7 @@ export class RouterTo implements OnInit, ReceiveInputs, RouteChange, OnDestory {
     this.resetState(nextInputs);
   }
 
-  public nvRouteChange(lastRoute?: string, newRoute?: string) {
+  public nvRouteChange(lastRoute: string, newRoute: string) {
     this.resetState(this.to);
   }
 

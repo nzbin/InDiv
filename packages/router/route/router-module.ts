@@ -1,4 +1,4 @@
-import { IComponent, INvModule, ComponentList, DirectiveList, factoryModule, NvModule, InDiv, Vnode, utils } from '@indiv/core';
+import { IComponent, INvModule, ComponentList, DirectiveList, factoryModule, NvModule, InDiv, Vnode, utils, IDirective } from '@indiv/core';
 import { nvRouteStatus, NvLocation } from './location';
 import { RouterTo, RouterFrom } from './directives';
 
@@ -6,6 +6,9 @@ export type TChildModule = () => Promise<any>;
 
 export interface IComponentWithRoute extends IComponent {
   nvRouteCanActive?: (lastRoute: string, newRoute: string) => boolean;
+  nvRouteChange?: (lastRoute?: string, newRoute?: string) => void;
+}
+export interface IDirectiveWithRoute extends IDirective {
   nvRouteChange?: (lastRoute?: string, newRoute?: string) => void;
 }
 
@@ -352,6 +355,8 @@ export class RouteModule {
         // push root component in InDiv instance
         this.hasRenderComponentList.push(this.indivInstance.getBootstrapComponent);
 
+        if (rootRoute.routeCanActive) rootRoute.routeCanActive(this.lastRoute, this.currentUrl);
+        if ((this.indivInstance.getBootstrapComponent as IComponentWithRoute).nvRouteCanActive) (this.indivInstance.getBootstrapComponent as IComponentWithRoute).nvRouteCanActive(this.lastRoute, this.currentUrl);
         if (index === this.renderRouteList.length - 1) this.routerChangeEvent(index);
 
         if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo) && (index + 1) === this.renderRouteList.length) {
@@ -447,7 +452,7 @@ export class RouteModule {
   private emitComponentEvent(componentList: ComponentList[], event: string): void {
     if (event === 'nvRouteChange') {
       componentList.forEach(component => {
-        if (component.instanceScope.nvRouteChange) component.instanceScope.nvRouteChange(this.lastRoute, this.currentUrl);
+        if ((component.instanceScope as IComponentWithRoute).nvRouteChange) (component.instanceScope as IComponentWithRoute).nvRouteChange(this.lastRoute, this.currentUrl);
       });
     }
     if (event === 'nvOnDestory') {
@@ -470,7 +475,7 @@ export class RouteModule {
   private emitDirectiveEvent(directiveList: DirectiveList[], event: string): void {
     if (event === 'nvRouteChange') {
       directiveList.forEach(directive => {
-        if (directive.instanceScope.nvRouteChange) directive.instanceScope.nvRouteChange(this.lastRoute, this.currentUrl);
+        if ((directive.instanceScope as IDirectiveWithRoute).nvRouteChange) (directive.instanceScope as IDirectiveWithRoute).nvRouteChange(this.lastRoute, this.currentUrl);
       });
     }
     if (event === 'nvOnDestory') {

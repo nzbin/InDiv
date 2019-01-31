@@ -119,6 +119,10 @@ module.exports = app;
 
 配置下根路径`rootPath`和`routes`配置就可以渲染出指定`url`的字符串DOM。
 
+**注意**：
+  - 服务端并不会执行路由配置的路由守卫 `routeChange` 和组件路由生命周期 `nvRouteChange`
+  - 组件生命周期只会执行 `nvOnInit`， `nvBeforeMount`， `nvHasRender`，这三个生命周期，此外均不会执行，**注意RXJS的订阅，尽量不要在服务端环境下订阅**
+
 > render.ts
 
 ```typescript

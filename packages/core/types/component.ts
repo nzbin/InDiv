@@ -51,7 +51,6 @@ export interface IComponent {
   nvOnDestory?(): void;
   nvHasRender?(): void;
   nvDoCheck?(oldState?: any): void;
-  nvRouteChange?(lastRoute: string, newRoute: string): void;
   nvReceiveInputs?(nextInputs: any): void;
   render?(): Promise<IComponent>;
   compiler?(nativeElement: Element | any, componentInstace: IComponent): Promise<IComponent>;

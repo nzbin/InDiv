@@ -24,6 +24,5 @@ export interface IDirective {
     nvAfterMount?(): void;
     nvOnDestory?(): void;
     nvHasRender?(): void;
-    nvRouteChange?(lastRoute: string, newRoute: string): void;
     nvReceiveInputs?(nextInputs: any): void;
 }

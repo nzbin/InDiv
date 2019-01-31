@@ -458,3 +458,116 @@ NvModule 级的依赖提供商可以在 `@NgModule()` `providers` 元数据中�
 但一旦 懒加载的模块中的 `providers` 依赖提供商 并不存在对应的 DI令牌 ，则 `RouteModule` 会去 根注入器 继续寻找依赖及实例。
 
 所以，想要在 **懒加载模块与根模块之间的组件** 实现通信，请不要在懒加载模块中声明 **公用的依赖提供商**。
+
+
+## 路由守卫
+
+通过路由，任何用户都能在任何时候导航到任何地方。 但有时候这样是不对的。
+
+  - 该用户可能无权导航到目标组件。
+  - 可能用户得先登录（认证）。
+  - 在显示目标组件前，你可能得先获取某些数据。
+  - 你可能要询问用户：你是否要放弃本次更改，而不用保存它们？
+
+1. 你可以往路由配置中添加守卫，来处理这些场景。
+
+  在路由配置中添加 `routeCanActive?: (lastRoute: string, newRoute: string) => boolean;` 和 `routeChange?: (lastRoute?: string, newRoute?: string) => void;`
+
+  `routeCanActive` 守卫返回一个值，以控制路由器的行为：如果它返回 true，导航过程会继续。如果它返回 false，导航过程就会终止，且用户留在原地，在路由守卫中处理该用户到该去的地方。
+
+  `routeChange` 当前路由组件实例化之后，路由变化会触发该方法，可以在该方法里记录用户导航记录。
+
+
+  > app.module.ts
+
+  ```typescript
+  import { NvModule } from '@indiv/core';
+  import { TRouter, RouteModule } from '@indiv/router';
+  import AppComponent from './app.component';
+  import ShowAgeComponent from './components/show-age/show-age.component';
+  import ChangeColorDirective from './directives/change-color.directive';
+  import TestService from './provides/test.service';
+
+  const routes: TRouter[] = [
+    {
+      path: '/',
+      redirectTo: '/a',
+      routeCanActive: (lastRoute: string, newRoute: string) => {
+        console.log('path / can be active');
+        return true;
+      },
+      nvRouteChange: (lastRoute: string, newRoute: string) => {
+        console.log('path / has changed');
+      },
+      children: [
+        path: '/a',
+        loadChild: () => import('./components/page-a/page-a.component'),
+      ]
+    },
+  ];
+  ```
+
+2. 组件路由生命周期
+
+  通过实现 `RouteChange` `RouteCanActive` 接口，实现 `nvRouteChange(lastRoute: string, newRoute: string): void;` 和 `nvRouteCanActive(lastRoute: string, newRoute: string): boolean;` 两个路由生命周期来实现上面相同的作用。
+
+
+  `nvRouteCanActive` 守卫返回一个值，以控制路由器的行为：如果它返回 true，导航过程会继续。如果它返回 false，导航过程就会终止，且用户留在原地，在路由守卫中处理该用户到该去的地方。 **根模块`bootstrap`引导组件的`nvRouteCanActive`会触发，但无论返回true false都不会影响根路由的渲染**
+
+  `nvRouteChange` 当前路由挂载组件实例化之后，路由变化会触发该方法，可以在该方法里记录用户导航记录。并且**该路由组件内所有指令和组件都会触发该生命周期**。
+
+  > app.component.ts
+
+  ```typescript
+  import { Component, setState, SetState, Watch } from '@indiv/core';
+  import { RouteChange, RouteCanActive } from '@indiv/router';
+  import TestService from './provides/test.service';
+
+  @Component({
+      selector: 'app-component',
+      template: (`
+          <div class="app-component-container">
+            <input nv-model="name"/>
+            <a router-to="routeTo">点击跳转到/a</a>
+            <p on-on:click="addAge()" change-color="{color}">name: {{name}}</p>
+            <show-age age="{age}" uupDateAge="{@upDateAge}"></show-age>
+            <router-render></router-render>
+          </div>
+      `),
+  })
+  export default class AppComponent implements RouteChange, RouteCanActive {
+    public name: string = 'InDiv';
+    @Watch() public age: number;
+    public color: string = 'red';
+
+    public setState: SetState;
+
+    constructor(
+      private testService: TestService
+    ) {
+      this.setState = setState;
+      console.log(this.testService.count); // 1
+      this.testService.count = 2; // 2
+    }
+
+    public nvRouteChange(lastRoute: string, newRoute: string) {
+      console.log('AppComponent is nvRouteChange', lastRoute, newRoute);
+    }
+
+    public nvRouteCanActive(lastRoute: string, newRoute: string): boolean {
+      console.log('AppComponent is nvRouteCanActive', lastRoute, newRoute);
+      return true;
+    }
+
+    public addAge(): void {
+      this.setState({ age: 24 });
+    }
+
+    public upDateAge(age: number) {
+      this.age = age;
+      // this.setState({ age: 24 });
+    }
+  }
+  ```
+
+  建议使用组件的路由生命周期，因为可以通过组件实例或服务获得数据。

@@ -204,7 +204,7 @@ export class TestDirective implements OnInit, RouteChange, ReceiveInputs {
     this.renderer.addEventListener(this.element.nativeElement, 'mouseover', this.changeColor);
     this.renderer.addEventListener(this.element.nativeElement, 'mouseout', this.removeColor);
   }
-  public nvRouteChange(lastRoute?: string, newRoute?: string) {
+  public nvRouteChange(lastRoute: string, newRoute: string) {
     console.log(5555, 'nvRouteChange TestDirective', newRoute);
   }
   public nvReceiveInputs(nextInputs: any): void {

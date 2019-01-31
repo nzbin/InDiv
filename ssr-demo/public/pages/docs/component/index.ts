@@ -1,6 +1,6 @@
 import { Subscription } from 'rxjs';
 import { Component, HasRender, DoCheck, OnInit, OnDestory,  } from '@indiv/core';
-import { RouteChange } from '@indiv/router';
+import { RouteChange, RouteCanActive } from '@indiv/router';
 import { componentInfo } from '../../../constants/component';
 
 import TestService from '../../../service/test.service';

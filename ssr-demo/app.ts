@@ -16,7 +16,7 @@ app.use(express.static(path.join(__dirname, 'dist')));
 app.use('/indiv-doc', async(req, res) => {
   const render = require('./render');
   const content = await render.render(req.url, req.query, '/indiv-doc');
-  console.log(2221111, content);
+  // console.log(2221111, content);
   res.render('dev.html', {
     content,
   });

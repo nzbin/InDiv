@@ -24,6 +24,22 @@ export const nvRouteStatus: {
   nvRootPath: '/',
 };
 
+const lastNvRouteObject: {
+  path: string;
+  params?: any;
+  query?: {
+    [props: string]: any;
+  };
+  data?: any;
+  rootPath?: string;
+} = {
+  path: nvRouteStatus.nvRouteObject.path,
+  query: nvRouteStatus.nvRouteObject.query,
+  params: nvRouteStatus.nvRouteParmasObject,
+  data: nvRouteStatus.nvRouteObject.data,
+  rootPath: nvRouteStatus.nvRootPath,
+};
+
 @Injectable()
 export class NvLocation {
   constructor(private indivInstance: InDiv) {}

@@ -139,11 +139,10 @@ const routes: TRouter[] = [
       {
         path: '/R1',
         component: 'R1',
-        // redirectTo: '/R2',
-        // loadChild: {
-        //   name: 'TestLoadchildModule',
-        //   module: () => import('./loadChild'),
-        // },
+        routeCanActive: (lastRoute: string) => {
+          // return false;
+          return true;
+        },
         children: [
           {
             path: '/C1',
@@ -205,7 +204,7 @@ export class TestDirective implements OnInit, RouteChange, ReceiveInputs {
     this.renderer.addEventListener(this.element.nativeElement, 'mouseover', this.changeColor);
     this.renderer.addEventListener(this.element.nativeElement, 'mouseout', this.removeColor);
   }
-  public nvRouteChange(lastRoute?: string, newRoute?: string) {
+  public nvRouteChange(lastRoute: string, newRoute: string) {
     console.log(5555, 'nvRouteChange TestDirective', newRoute);
   }
   public nvReceiveInputs(nextInputs: any): void {

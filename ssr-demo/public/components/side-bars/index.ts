@@ -64,7 +64,7 @@ export default class SideBar implements OnInit, RouteChange, OnDestory, HasRende
         console.log('SideBar onInit', this.navs);
     }
 
-    public nvRouteChange(lastRoute?: string, newRoute?: string): void {
+    public nvRouteChange(lastRoute: string, newRoute: string): void {
         this.showColor();
     }
 

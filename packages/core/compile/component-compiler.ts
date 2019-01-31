@@ -1,4 +1,4 @@
-import { IComponent, ComponentList, TComAndDir } from '../types';
+import { IComponent, ComponentList, TComAndDir, DirectiveList } from '../types';
 
 import { utils } from '../utils';
 import { Compile } from './compile';
@@ -6,6 +6,30 @@ import { buildComponentScope } from './compiler-utils';
 import { Vnode } from '../vnode';
 import { mountDirective } from './directive-compiler';
 import { buildViewChild, buildViewChildren } from '../component';
+
+/**
+ * use lifecycle nvDestory for @Directive
+ *
+ * @param {DirectiveList[]} directiveList
+ */
+function emitDirectiveDestory(directiveList: DirectiveList[]): void {
+  directiveList.forEach(directive => {
+    if (directive.instanceScope.nvOnDestory) directive.instanceScope.nvOnDestory();
+  });
+}
+
+/**
+ * use lifecycle nvDestory for @Component
+ *
+ * @param {ComponentList[]} componentList
+ */
+function emitComponentDestory(componentList: ComponentList[]): void {
+  componentList.forEach(component => {
+    if (component.instanceScope.nvOnDestory) component.instanceScope.nvOnDestory();
+    emitDirectiveDestory(component.instanceScope.directiveList);
+    emitComponentDestory(component.instanceScope.componentList);
+  });
+}
 
 /**
  * mountComponent for Components in Component
@@ -57,11 +81,13 @@ export async function mountComponent(componentInstance: IComponent, componentAnd
     if (component.instanceScope.watchData && !cacheComponent) component.instanceScope.watchData();
     if (component.instanceScope.nvBeforeMount && !cacheComponent) component.instanceScope.nvBeforeMount();
   }
-  // the rest should use nvOnDestory
+  // the rest should use nvOnDestory to destory
   const cacheComponentListLength = cacheComponentList.length;
   for (let i = 0; i < cacheComponentListLength; i++) {
     const cache = cacheComponentList[i];
     if (cache.instanceScope.nvOnDestory) cache.instanceScope.nvOnDestory();
+    emitDirectiveDestory(cache.instanceScope.directiveList);
+    emitComponentDestory(cache.instanceScope.componentList);
   }
 
   // render, only component which isn't rendered will be rendered and called 

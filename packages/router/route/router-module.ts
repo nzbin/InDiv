@@ -1,13 +1,16 @@
-import { IComponent, INvModule, ComponentList, DirectiveList, factoryModule, NvModule, InDiv, Vnode, utils } from '@indiv/core';
-
+import { IComponent, INvModule, ComponentList, DirectiveList, factoryModule, NvModule, InDiv, Vnode, utils, IDirective } from '@indiv/core';
 import { nvRouteStatus, NvLocation } from './location';
 import { RouterTo, RouterFrom } from './directives';
 
-export interface RouteChange {
-  nvRouteChange(lastRoute?: string, newRoute?: string): void;
-}
-
 export type TChildModule = () => Promise<any>;
+
+export interface IComponentWithRoute extends IComponent {
+  nvRouteCanActive?: (lastRoute: string, newRoute: string) => boolean;
+  nvRouteChange?: (lastRoute?: string, newRoute?: string) => void;
+}
+export interface IDirectiveWithRoute extends IDirective {
+  nvRouteChange?: (lastRoute?: string, newRoute?: string) => void;
+}
 
 export type TLoadChild = {
   name: string;
@@ -20,6 +23,8 @@ export type TRouter = {
   component?: string;
   children?: TRouter[];
   loadChild?: TLoadChild | TChildModule | Function;
+  routeCanActive?: (lastRoute: string, newRoute: string) => boolean;
+  routeChange?: (lastRoute?: string, newRoute?: string) => void;
 };
 
 @NvModule({
@@ -44,7 +49,7 @@ export class RouteModule {
   private routesList: TRouter[] = [];
   private currentUrl: string = '';
   private lastRoute: string = null;
-  private hasRenderComponentList: IComponent[] = [];
+  private hasRenderComponentList: IComponentWithRoute[] = [];
   private needRedirectPath: string = null;
   private isWatching: boolean = false;
   private renderRouteList: string[] = [];
@@ -194,10 +199,10 @@ export class RouteModule {
    * distribute routes and decide insert or general Routes
    * 
    * @private
-   * @returns {Promise<any>}
+   * @returns {Promise<void>}
    * @memberof Router
    */
-  private async distributeRoutes(): Promise<any> {
+  private async distributeRoutes(): Promise<void> {
     if (this.lastRoute && this.lastRoute !== this.currentUrl) {
       // has rendered
       nvRouteStatus.nvRouteParmasObject = {};
@@ -268,13 +273,18 @@ export class RouteModule {
         if (needRenderRoute.component) {
           const findComponentFromModuleResult = this.findComponentFromModule(needRenderRoute.component, currentUrlPath);
           FindComponent = findComponentFromModuleResult.component;
-          component = await this.instantiateComponent(FindComponent, nativeElement, findComponentFromModuleResult.loadModule, initVnode);
+          component = this.initComponent(FindComponent, nativeElement, findComponentFromModuleResult.loadModule);
         }
         if (needRenderRoute.loadChild) {
           const loadModule = await this.NvModuleFactoryLoader(needRenderRoute.loadChild as TChildModule | TLoadChild, currentUrlPath);
           FindComponent = loadModule.bootstrap;
-          component = await this.instantiateComponent(FindComponent, nativeElement, loadModule, initVnode);
+          component = this.initComponent(FindComponent, nativeElement, loadModule);
         }
+
+        // navigation guards: route.routeCanActive component.nvRouteCanActive
+        if (needRenderRoute.routeCanActive && !needRenderRoute.routeCanActive(this.lastRoute, this.currentUrl)) break;
+        if (component.nvRouteCanActive && !component.nvRouteCanActive(this.lastRoute, this.currentUrl)) break;
+        await this.runRender(component, nativeElement, initVnode);
 
         if (FindComponent) {
           // insert needRenderComponent on index in this.hasRenderComponentList
@@ -345,6 +355,8 @@ export class RouteModule {
         // push root component in InDiv instance
         this.hasRenderComponentList.push(this.indivInstance.getBootstrapComponent);
 
+        if (rootRoute.routeCanActive) rootRoute.routeCanActive(this.lastRoute, this.currentUrl);
+        if ((this.indivInstance.getBootstrapComponent as IComponentWithRoute).nvRouteCanActive) (this.indivInstance.getBootstrapComponent as IComponentWithRoute).nvRouteCanActive(this.lastRoute, this.currentUrl);
         if (index === this.renderRouteList.length - 1) this.routerChangeEvent(index);
 
         if (rootRoute.redirectTo && /^\/.*/.test(rootRoute.redirectTo) && (index + 1) === this.renderRouteList.length) {
@@ -375,13 +387,18 @@ export class RouteModule {
         if (route.component) {
           const findComponentFromModuleResult = this.findComponentFromModule(route.component, currentUrlPath);
           FindComponent = findComponentFromModuleResult.component;
-          component = await this.instantiateComponent(FindComponent, nativeElement, findComponentFromModuleResult.loadModule, initVnode);
+          component = this.initComponent(FindComponent, nativeElement, findComponentFromModuleResult.loadModule);
         }
         if (route.loadChild) {
           const loadModule = await this.NvModuleFactoryLoader(route.loadChild as TChildModule | TLoadChild, currentUrlPath);
           FindComponent = loadModule.bootstrap;
-          component = await this.instantiateComponent(FindComponent, nativeElement, loadModule, initVnode);
+          component = this.initComponent(FindComponent, nativeElement, loadModule);
         }
+
+        // navigation guards: route.routeCanActive component.nvRouteCanActive
+        if (route.routeCanActive && !route.routeCanActive(this.lastRoute, this.currentUrl)) break;
+        if (component.nvRouteCanActive && !component.nvRouteCanActive(this.lastRoute, this.currentUrl)) break;
+        await this.runRender(component, nativeElement, initVnode);
 
         if (!route.component && !route.redirectTo && !route.loadChild) throw new Error(`route error: path ${route.path} need a component which has children path or need a  redirectTo which has't children path`);
 
@@ -435,9 +452,7 @@ export class RouteModule {
   private emitComponentEvent(componentList: ComponentList[], event: string): void {
     if (event === 'nvRouteChange') {
       componentList.forEach(component => {
-        if (component.instanceScope.nvRouteChange) component.instanceScope.nvRouteChange(this.lastRoute, this.currentUrl);
-        this.emitDirectiveEvent(component.instanceScope.directiveList, event);
-        this.emitComponentEvent(component.instanceScope.componentList, event);
+        if ((component.instanceScope as IComponentWithRoute).nvRouteChange) (component.instanceScope as IComponentWithRoute).nvRouteChange(this.lastRoute, this.currentUrl);
       });
     }
     if (event === 'nvOnDestory') {
@@ -460,7 +475,7 @@ export class RouteModule {
   private emitDirectiveEvent(directiveList: DirectiveList[], event: string): void {
     if (event === 'nvRouteChange') {
       directiveList.forEach(directive => {
-        if (directive.instanceScope.nvRouteChange) directive.instanceScope.nvRouteChange(this.lastRoute, this.currentUrl);
+        if ((directive.instanceScope as IDirectiveWithRoute).nvRouteChange) (directive.instanceScope as IDirectiveWithRoute).nvRouteChange(this.lastRoute, this.currentUrl);
       });
     }
     if (event === 'nvOnDestory') {
@@ -477,18 +492,33 @@ export class RouteModule {
    * 
    * if argument has loadModule, use loadModule
    * if argument has'nt loadModule, use rootModule in InDiv
-   * if argument has initVnode, will use initVnode fro new Component instance
    *
    * @private
    * @param {Function} FindComponent
    * @param {Element} nativeElement
-   * @param {INvModule} [loadModule]
-   * @param {Vnode[]} [initVnode]
-   * @returns {Promise<IComponent>}
-   * @memberof Router
+   * @param {INvModule} loadModule
+   * @returns {IComponentWithRoute}
+   * @memberof RouteModule
    */
-  private async instantiateComponent(FindComponent: Function, nativeElement: Element, loadModule: INvModule, initVnode: Vnode[]): Promise<IComponent> {
-    return await this.indivInstance.renderComponent(FindComponent, nativeElement, loadModule, initVnode);
+  private initComponent(FindComponent: Function, nativeElement: Element, loadModule: INvModule): IComponentWithRoute {
+    return this.indivInstance.initComponent(FindComponent, nativeElement, loadModule);
+  }
+
+  /**
+   * run renderer of Component
+   * 
+   * if argument has initVnode, will use initVnode fro new Component instance
+   *
+   * @private
+   * @template R
+   * @param {IComponentWithRoute} FindComponent
+   * @param {R} nativeElement
+   * @param {Vnode[]} [initVnode]
+   * @returns {Promise<IComponentWithRoute>}
+   * @memberof RouteModule
+   */
+  private runRender<R = Element>(FindComponent: IComponentWithRoute, nativeElement: R, initVnode?: Vnode[]): Promise<IComponentWithRoute> {
+    return this.indivInstance.runComponentRenderer(FindComponent, nativeElement, initVnode);
   }
 
   /**

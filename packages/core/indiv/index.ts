@@ -197,21 +197,18 @@ export class InDiv {
   }
 
   /**
-   * expose function for render Component
+   * method of Component's initialization
    * 
-   * if otherModule don't has use rootModule
-   * if has otherModule, build component will use privateInjector from loadModule instead of rootInjector
-   * if has initVnode, it will use initVnode for new Component
+   * init component and watch data
    *
    * @template R
    * @param {Function} BootstrapComponent
    * @param {R} nativeElement
    * @param {INvModule} [otherModule]
-   * @param {Vnode[]} [initVnode]
-   * @returns {Promise<IComponent>}
+   * @returns {IComponent}
    * @memberof InDiv
    */
-  public async renderComponent<R = Element>(BootstrapComponent: Function, nativeElement: R, otherModule?: INvModule, initVnode?: Vnode[]): Promise<IComponent> {
+  public initComponent<R = Element>(BootstrapComponent: Function, nativeElement: R, otherModule?: INvModule): IComponent {
     const provideAndInstanceMap = new Map();
     provideAndInstanceMap.set(InDiv, this);
     provideAndInstanceMap.set(ElementRef, new ElementRef<R>(nativeElement));
@@ -238,10 +235,27 @@ export class InDiv {
     if (component.nvOnInit) component.nvOnInit();
     if (component.watchData) component.watchData();
     if (!component.template) throw new Error('must decaler this.template in bootstrap()');
+
+    return component;
+  }
+
+  /**
+   * run renderer of Component by async
+   * 
+   * will call lifecycle nvBeforeMount, nvHasRender, nvAfterMount
+   *
+   * @template R
+   * @param {IComponent} component
+   * @param {R} nativeElement
+   * @param {Vnode[]} [initVnode]
+   * @returns {Promise<IComponent>}
+   * @memberof InDiv
+   */
+  public async runComponentRenderer<R = Element>(component: IComponent, nativeElement: R, initVnode?: Vnode[]): Promise<IComponent> {
     const template = component.template;
     if (template && typeof template === 'string' && nativeElement) {
       if (component.nvBeforeMount) component.nvBeforeMount();
-      await this.componentRender<R>(component, nativeElement, initVnode);
+      await this.render<R>(component, nativeElement, initVnode);
 
       if (component.nvAfterMount && !this.isServerRendering) component.nvAfterMount();
       return component;
@@ -249,6 +263,26 @@ export class InDiv {
     } else {
       throw new Error('renderBootstrap failed: template or rootDom is not exit');
     }
+  }
+
+  /**
+   * expose function for render Component
+   * 
+   * if otherModule don't has use rootModule
+   * if has otherModule, build component will use privateInjector from loadModule instead of rootInjector
+   * if has initVnode, it will use initVnode for new Component
+   *
+   * @template R
+   * @param {Function} BootstrapComponent
+   * @param {R} nativeElement
+   * @param {INvModule} [otherModule]
+   * @param {Vnode[]} [initVnode]
+   * @returns {Promise<IComponent>}
+   * @memberof InDiv
+   */
+  public renderComponent<R = Element>(BootstrapComponent: Function, nativeElement: R, otherModule?: INvModule, initVnode?: Vnode[]): Promise<IComponent> {
+    const component = this.initComponent(BootstrapComponent, nativeElement, otherModule);
+    return this.runComponentRenderer(component, nativeElement, initVnode);
   }
 
   /**
@@ -277,7 +311,7 @@ export class InDiv {
    * @returns {Promise<void>}
    * @memberof InDiv
    */
-  private async componentRender<R = Element>(component: IComponent, nativeElement: R, initVnode?: Vnode[]): Promise<void> {
+  private async render<R = Element>(component: IComponent, nativeElement: R, initVnode?: Vnode[]): Promise<void> {
     // if has initVnode, assign initVnode for component.saveVnode 
     if (initVnode) component.saveVnode = initVnode;
     component.nativeElement = nativeElement;

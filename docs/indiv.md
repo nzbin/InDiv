@@ -40,3 +40,7 @@
 14. `setIndivEnv(env: string, isServerRendering?: boolean): void` 设置env环境变量及是否服务端渲染
 
 15. `get getIndivEnv(): { isServerRendering: boolean; indivEnv: string; }` 获取env环境变量及是否服务端渲染
+
+16. `initComponent<R = Element>(BootstrapComponent: Function, nativeElement: R, otherModule?: INvModule): IComponent` 实例化组件，并开启数据监听， 触发`OnInit`
+
+17. `async runComponentRenderer<R = Element>(component: IComponent, nativeElement: R, initVnode?: Vnode[]): Promise<IComponent>` 异步渲染组件，`BeforeMount HasRender AfterMount`

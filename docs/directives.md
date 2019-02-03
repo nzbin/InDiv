@@ -92,7 +92,7 @@ export default class AppModule {}
 > app.component.ts
 
 ```typescript
-import { Component, setState, SetState, Watch } from '@indiv/core';
+import { Component, StateSetter, SetState, Watch } from '@indiv/core';
 
 @Component({
     selector: 'app-component',
@@ -108,11 +108,9 @@ export default class AppComponent {
   public name: string = 'InDiv';
   @Watch() public age: number;
 
-  public setState: SetState;
+  @StateSetter() public setState: SetState;
 
-  constructor() {
-    this.setState = setState;
-  }
+  constructor() {}
 
   public addAge(): void {
     this.setState({ age: 24 });
@@ -170,7 +168,7 @@ export default class ChangeColorDirective implements ReceiveInputs {
 > app.component.ts
 
 ```typescript
-import { Component, setState, SetState, Watch } from '@indiv/core';
+import { Component, SetState, Watch } from '@indiv/core';
 
 @Component({
     selector: 'app-component',
@@ -187,11 +185,9 @@ export default class AppComponent {
   @Watch() public age: number;
   public color: string = 'red';
 
-  public setState: SetState;
+  @StateSetter() public setState: SetState;
 
-  constructor() {
-    this.setState = setState;
-  }
+  constructor() {}
 
   public addAge(): void {
     this.setState({ age: 24 });

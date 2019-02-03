@@ -1,4 +1,4 @@
-import { InDiv, Component, Utils, NvModule, OnInit, DoCheck, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, setState, ElementRef, HasRender, Input, ViewChild, ViewChildren } from '@indiv/core';
+import { InDiv, Component, Utils, NvModule, OnInit, DoCheck, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, ElementRef, HasRender, Input, ViewChild, ViewChildren, StateSetter, Watch } from '@indiv/core';
 import { RouteChange, NvLocation, RouteModule, RouteCanActive } from '@indiv/router';
 import { PlatformBrowser } from '@indiv/platform-browser';
 import { HttpClient, HttpClientResponse } from '@indiv/common';
@@ -22,7 +22,7 @@ class ValueType { }
   `),
 })
 class PComponent implements DoCheck, BeforeMount, ReceiveInputs, OnDestory {
-  public setState: SetState;
+  @StateSetter() public setState: SetState;
   public a: any = 'a子组件';
   public b: number = 100;
   public c: string = '<p>1111</p>';
@@ -41,9 +41,7 @@ class PComponent implements DoCheck, BeforeMount, ReceiveInputs, OnDestory {
 
   constructor(
     private element: ElementRef,
-  ) {
-    this.setState = setState;
-  }
+  ) {}
 
   public nvBeforeMount() {
     console.log('nvBeforeMount props11');
@@ -93,8 +91,7 @@ class PComponent implements DoCheck, BeforeMount, ReceiveInputs, OnDestory {
 })
 class R1 implements OnInit, BeforeMount, DoCheck, RouteChange, OnDestory, RouteCanActive {
   public hSr: HeroSearchService;
-  public setState: SetState;
-  // public props: any;
+  @StateSetter() public setState: SetState;
   public a: string = 'a11';
   public b: number = 2;
   public d: any[] = [
@@ -130,7 +127,6 @@ class R1 implements OnInit, BeforeMount, DoCheck, RouteChange, OnDestory, RouteC
     private element: ElementRef,
     private indiv: InDiv,
   ) {
-    this.setState = setState;
     console.log(9999888777, 'from R1', this.element, this.indiv);
     this.heroSearchService.test();
   }
@@ -279,7 +275,7 @@ class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
 @Component({
   selector: 'container-wrap',
   template: (`
-  <div class="fucck" nv-class="test.a" nv-id="'cc'">
+  <div class="fucck" nv-class="test.b" nv-id="'cc'">
     <input nv-model="test.a" nv-on:click="show(test)" />
     <p test-directive="{test.a}" nv-id="232" nv-if="countState(a)" nv-on:click="changeInput()">{{a}}</p>
     <test-component nv-repeat="man in testArray" nv-key="man.name" manName="{countState(man.name)}" nv-if="a"></test-component>
@@ -312,6 +308,7 @@ class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
 })
 
 class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
+  @Watch() public aaaaa: number;
   public ss: HeroSearchService;
   public ss2: HeroSearchService1;
   public state: any;
@@ -363,7 +360,7 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
   public testArray2: any = ['程序员2', '码农2', '架构师2'];
   // public testArray2: any = ['程序员2'];
   public props: any;
-  public setState: SetState;
+  @StateSetter() public setState: SetState;
   public http$: Observable<HttpClientResponse>;
 
   @ViewChild('test-component') private testComponent: TestComponent;
@@ -381,7 +378,6 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
     private privateService: PrivateService,
   ) {
     this.privateService.change();
-    this.setState = setState;
     console.log(99988, 'from Container', this.element, this.indiv, this.privateService.isPrivate);
     this.httpClient.createResponseInterceptor((value: HttpClientResponse) => {
       return {
@@ -412,11 +408,11 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
   }
 
   public nvHasRender() {
-    console.log('nvHasRender Container', 33333333, this.testComponent, this.testDirective, this.routerRenderElementRef, this.testDirectiveString);
+    console.log('nvHasRender Container', 33333333, this, this.testComponent, this.testDirective, this.routerRenderElementRef, this.testDirectiveString);
   }
 
   public nvAfterMount() {
-    console.log('nvAfterMount Container', 222222, this.testComponent, this.testDirective, this.routerRenderElementRef, this.testDirectiveString);
+    console.log('nvAfterMount Container', 222222, this, this.testComponent, this.testDirective, this.routerRenderElementRef, this.testDirectiveString);
   }
 
   public go() {

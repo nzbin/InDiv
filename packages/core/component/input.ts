@@ -7,13 +7,14 @@ import { IComponent, IDirective } from '../types';
  * if you set param name, so the property name of instance will receive prop of param name
  *
  * @export
- * @param {string} [name]
- * @returns
+ * @param {string} [input]
+ * @returns {((target: IComponent | IDirective, propertyName: string) => any)}
  */
-export function Input(input?: string) {
-  return function (target: IComponent | IDirective, propertyName: string) {
+export function Input(input?: string): (target: IComponent | IDirective, propertyName: string) => any {
+  return function (target: IComponent | IDirective, propertyName: string): any {
       const inputName = input ? input : propertyName;
       if (!target.inputsList) target.inputsList = [];
       target.inputsList.push({ propertyName, inputName });
+      return (target as any)[propertyName];
   };
 }

@@ -4,8 +4,9 @@ import {
     Utils,
     NvModule,
     Injectable,
-    setState,
+    StateSetter,
     Input,
+    Watch,
   } from '../build/core';
   import {
     NvLocation,
@@ -74,11 +75,11 @@ import {
     static injectTokens = [
       HeroSearchService2
     ];
+    @StateSetter() setState;
     @Input('aa') b;
     constructor(heroSearchService2) {
       this.heroSearchService = heroSearchService2;
       this.heroSearchService.test();
-      this.setState = setState;
       this.a = 'a';
       this.d = [{
           z: 111111111111111,
@@ -107,6 +108,7 @@ import {
   })
   class PCChild {
     @Input() ax;
+    @StateSetter() setState;
     constructor() {
       this.a = 'a';
       this.d = [{
@@ -118,7 +120,6 @@ import {
           b: 'a',
         },
       ];
-      this.setState = setState;
     }
     nvHasRender() {
       console.log('PCChild: this.ax', this.ax);
@@ -143,6 +144,7 @@ import {
   class PComponent {
     @Input('ax') ax;
     @Input('getProps') getProps;
+    @StateSetter() setState;
     nvOnInit() {
       this.a = 'a子组件';
       this.c = '<p>1111</p>';
@@ -156,7 +158,6 @@ import {
         },
       ];
       this.e = true;
-      this.setState = setState;
     }
     nvBeforeMount() {
       console.log('nvBeforeMount props11', this.props);
@@ -204,6 +205,8 @@ import {
     `),
   })
   class R1 {
+    @StateSetter() setState;
+    @Watch() aaaa;
     static injectTokens = [
       HeroSearchService,
       Utils,
@@ -214,7 +217,6 @@ import {
       utils,
       location
     ) {
-      this.setState = setState;
       this.location = location;
       this.heroSearchService = heroSearchService;
       this.heroSearchService.test();
@@ -260,7 +262,7 @@ import {
     }
     getProps(a) {
       // alert('里面传出来了');
-      console.log('被触发了！', a);
+      console.log('被触发了！', a, this);
       this.setState({
         a: a
       });
@@ -286,6 +288,7 @@ import {
       HeroSearchService1,
       NvLocation,
     ];
+    @StateSetter() setState;
     constructor(
       heroSearchService1,
       location,
@@ -293,7 +296,6 @@ import {
       this.heroSearchService1 = heroSearchService1;
       this.a = 1;
       this.location = location;
-      this.setState = setState;
     }
     nvOnInit() {
       console.log('this.$location222', this.location.get());

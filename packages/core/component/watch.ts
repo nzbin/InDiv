@@ -57,7 +57,7 @@ export function watchData(data: any, propertyName: string, target: IComponent, w
  * @returns {void}
  */
 export function watchDataByKey(target: IComponent, propertyName: string, watcher?: TFnWatcher, render?: TFnRender): void {
-  if (!target || typeof target !== 'object' || !(target as Object).hasOwnProperty(propertyName)) return;
+  if (!target || typeof target !== 'object') return;
   let data = (target as any)[propertyName];
   Object.defineProperty(target, propertyName, {
     configurable: true,
@@ -107,11 +107,12 @@ export function WatcherDependences(target: any, propertyName: string) {
  * add watch property in prototype chain of instance
  *
  * @export
- * @returns
+ * @returns {(target: any, propertyName: string) => any}
  */
-export function Watch() {
-  return function (target: any, propertyName: string) {
+export function Watch(): (target: any, propertyName: string) => any {
+  return function (target: any, propertyName: string): any {
     if (target.dependencesList && target.dependencesList.indexOf(propertyName) === -1) target.dependencesList.push(propertyName);
     if (!target.dependencesList) target.dependencesList = [propertyName];
+    return (target as any)[propertyName];
   };
 }

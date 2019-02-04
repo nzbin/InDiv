@@ -1,7 +1,5 @@
-import { Component, NvModule, HasRender, OnInit, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, setState, Directive, ElementRef, Input, Renderer } from '@indiv/core';
+import { Component, NvModule, HasRender, OnInit, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, Directive, ElementRef, Input, Renderer, StateSetter } from '@indiv/core';
 import { RouteChange, RouteModule, TRouter } from '@indiv/router'; 
-// import { InDiv, Component, NvModule, HasRender, OnInit, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, setState, Directive, ElementRef } from '../build/core';
-// import { RouteChange, RouteModule, TRouter } from '../build/router';  
 import { HeroSearchService, HeroSearchService2 } from './service';
 
 @Component({
@@ -14,7 +12,7 @@ import { HeroSearchService, HeroSearchService2 } from './service';
   `),
 })
 class RouteChild implements OnInit, HasRender, ReceiveInputs, OnDestory {
-  public setState: SetState;
+  @StateSetter() public setState: SetState;
   public heroSearchService: HeroSearchService2;
   @Input() public a: string = 'a';
   public b: any;
@@ -34,7 +32,6 @@ class RouteChild implements OnInit, HasRender, ReceiveInputs, OnDestory {
   ) {
     console.log('fuck this.heroSearchService2', this.heroSearchService2, this.element);
     this.heroSearchService2.test();
-    this.setState = setState;
   }
 
   public nvOnInit() {
@@ -81,12 +78,10 @@ class PCChild implements OnInit, BeforeMount, AfterMount, ReceiveInputs, OnDesto
           b: 'a',
         },
       ];
-  public setState: SetState;
+  @StateSetter() public setState: SetState;
   constructor(
     private element: ElementRef,
-  ) {
-    this.setState = setState;
-  }
+  ) {}
 
   public nvHasRender() {
     console.log('PCChild hasRender : this.props', this.b, this.element);

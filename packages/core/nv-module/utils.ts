@@ -5,6 +5,26 @@ import { Renderer } from '../vnode';
 import { InDiv } from '../indiv';
 
 /**
+ * get NvModule instance from rootInjector
+ *
+ * use this method get NvModule instance, if want to get it from rootInjector as singleton instance
+ * 
+ * @export
+ * @param {Function} FindNvModule
+ * @param {Injector} [otherInjector]
+ * @param {InDiv} [indivInstance]
+ * @returns {INvModule}
+ */
+export function getModuleFromRootInjector(FindNvModule: Function, otherInjector?: Injector, indivInstance?: InDiv): INvModule {
+  let moduleFound: INvModule;
+  if (!rootInjector.getInstance(FindNvModule)) {
+    moduleFound = factoryModule(FindNvModule, otherInjector, indivInstance);
+    rootInjector.setInstance(FindNvModule, moduleFound);
+  } else moduleFound = rootInjector.getInstance(FindNvModule);
+  return moduleFound;
+}
+
+/**
  * build provider list in module
  * 
  * otherInjector first
@@ -45,7 +65,7 @@ function buildImports(moduleInstance: INvModule, indivInstance?: InDiv, otherInj
   for (let i = 0; i < length; i++) {
     const ModuleImport = moduleInstance.imports[i];
     // push InDiv instance
-    const moduleImport = factoryModule(ModuleImport, otherInjector, indivInstance);
+    const moduleImport = getModuleFromRootInjector(ModuleImport, otherInjector, indivInstance);
     // build exports
     if (moduleImport.exportsList) {
       const exportsLength = moduleImport.exportsList.length;
@@ -94,7 +114,7 @@ function buildExports(moduleInstance: INvModule, indivInstance?: InDiv, otherInj
     const ModuleExport = moduleInstance.exports[i];
     // if export is NvModule, exports from NvModule will be exported again from this module
     if ((ModuleExport as any).nvType === 'nvModule') {
-      const moduleInstanceOfExport = factoryModule(ModuleExport, otherInjector, indivInstance);
+      const moduleInstanceOfExport = getModuleFromRootInjector(ModuleExport, otherInjector, indivInstance);
       const moduleInstanceOfExportLength = moduleInstanceOfExport.exportsList.length;
       for (let j = 0; j < moduleInstanceOfExportLength; j++) {
         const moduleExportFromModuleOfExport = moduleInstanceOfExport.exportsList[j];

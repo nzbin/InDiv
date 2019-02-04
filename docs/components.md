@@ -112,7 +112,11 @@ export default class AppComponent {
 }
 ```
 
-当然在具体业务中，但是内部使用了`Object.defineProperty`这个api，数组及一些的更改无法被监听到。因此在生命周期 `constructor` 和 `nvOnInit` 之后，组件实例上的变量增加删除或数组的一些方法将无法更新视图，因此我们需要引入一个新的方法 `setState` 来重新设置状态收集及监听。
+当然在具体业务中，但是内部使用了`Object.defineProperty`这个api，数组及一些的更改无法被监听到。
+
+因此在生命周期 `constructor` 和 `nvOnInit` 之后，组件实例上的变量增加删除或数组的一些方法将无法更新视图。
+
+因此我们需要引入一个新的方法 `setState` 来重新设置状态收集及监听。
 
 > app.component.ts
 
@@ -144,12 +148,42 @@ export default class AppComponent {
 }
 ```
 
+或者用一个更优雅的办法，**`v2.0.1`新增了属性装饰器 `StateSetter`**，替换 `setState` 方法，使用装饰器省略手动赋值来达到更优雅地OOP。
+
+> app.component.ts
+
+```typescript
+import { Component, StateSetter, SetState } from '@indiv/core';
+
+@Component({
+    selector: 'app-component',
+    template: (`
+        <div class="app-component-container">
+          <input nv-model="name"/>
+          <p on-on:click="addAge()">name: {{name}}</p>
+        </div>
+    `),
+})
+export default class AppComponent {
+  public name: string = 'InDiv';
+  public age: number;
+
+  @StateSetter() public setState: SetState;
+
+  constructor() {}
+
+  public addAge(): void {
+    this.setState({ age: 24 });
+  }
+}
+```
+
 像上面的例子中，因为在编译时仅仅将 组件模板 中的成员变量收集起来做监听，因此`age`并没有在监听。可是如果我们想让`age`的变化也引起一次更新，那么就需要引入新的注解 `@Watch` 来告诉组件，除了模板上用到的，还有其他需要监听变化的成员变量。
 
 > app.component.ts
 
 ```typescript
-import { Component, setState, SetState, Watch } from '@indiv/core';
+import { Component, StateSetter, SetState, Watch } from '@indiv/core';
 
 @Component({
     selector: 'app-component',
@@ -164,11 +198,9 @@ export default class AppComponent {
   public name: string = 'InDiv';
   @Watch() public age: number;
 
-  public setState: SetState;
+  @StateSetter() public setState: SetState;
 
-  constructor() {
-    this.setState = setState;
-  }
+  constructor() {}
 
   public addAge(): void {
     this.setState({ age: 24 });
@@ -195,7 +227,7 @@ InDiv 的组件之间可以 `inputs` 来通信。此外还可以通过 `service`
 > components/show-age/show-age.component.ts
 
 ```typescript
-import { Component, setState, SetState, nvReceiveInputs, Input } from '@indiv/core';
+import { Component, StateSetter, SetState, nvReceiveInputs, Input } from '@indiv/core';
 
 @Component({
     selector: 'show-age',
@@ -204,11 +236,9 @@ import { Component, setState, SetState, nvReceiveInputs, Input } from '@indiv/co
 export default class ShowAgeComponent implements nvReceiveInputs {
   @Input() public age: number;
 
-  public setState: SetState;
+  @StateSetter() public setState: SetState;
 
-  constructor() {
-    this.setState = setState;
-  }
+  constructor() {}
 
   public nvReceiveInputs(nextInputs: { age: number }): void {
     this.age = nextInputs.age;
@@ -223,7 +253,7 @@ export default class ShowAgeComponent implements nvReceiveInputs {
 > components/show-age/show-age.component.ts
 
 ```typescript
-import { Component, setState, SetState, nvReceiveInputs, Input } from '@indiv/core';
+import { Component, StateSetter, SetState, nvReceiveInputs, Input } from '@indiv/core';
 
 @Component({
     selector: 'show-age',
@@ -233,11 +263,9 @@ export default class ShowAgeComponent implements nvReceiveInputs {
   @Input() public age: number;
   @Input() public upDateAge: (age: number) => void;
 
-  public setState: SetState;
+  @StateSetter() public setState: SetState;
 
-  constructor() {
-    this.setState = setState;
-  }
+  constructor() {}
 
   public nvReceiveInputs(nextInputs: { age: number }): void {
     this.age = nextInputs.age;
@@ -258,7 +286,7 @@ export default class ShowAgeComponent implements nvReceiveInputs {
 > components/show-age/show-age.component.ts
 
 ```typescript
-import { Component, setState, SetState, nvReceiveInputs, Input } from '@indiv/core';
+import { Component, StateSetter, SetState, nvReceiveInputs, Input } from '@indiv/core';
 
 @Component({
     selector: 'show-age',
@@ -268,11 +296,9 @@ export default class ShowAgeComponent implements nvReceiveInputs {
   @Input('age') public age: number;
   @Input('upDateAge') public changeAge: (age: number) => void;
 
-  public setState: SetState;
+  @StateSetter() public setState: SetState;
 
-  constructor() {
-    this.setState = setState;
-  }
+  constructor() {}
 
   public nvReceiveInputs(nextInputs: { age: number }): void {
     this.age = nextInputs.age;
@@ -290,7 +316,7 @@ export default class ShowAgeComponent implements nvReceiveInputs {
 > app.component.ts
 
 ```typescript
-import { Component, setState, SetState, Watch } from '@indiv/core';
+import { Component, StateSetter, SetState, Watch } from '@indiv/core';
 
 @Component({
     selector: 'app-component',
@@ -306,11 +332,9 @@ export default class AppComponent {
   public name: string = 'InDiv';
   @Watch() public age: number;
 
-  public setState: SetState;
+  @StateSetter() public setState: SetState;
 
-  constructor() {
-    this.setState = setState;
-  }
+  constructor() {}
 
   public addAge(): void {
     this.setState({ age: 24 });
@@ -324,7 +348,7 @@ export default class AppComponent {
 ```
 
 
-## 试图查询
+## 视图查询
 
 `@ViewChild @ViewChildren`属性装饰器，用于配置一个视图查询，获取模板中子元素，子组件或子指令。
 
@@ -339,7 +363,7 @@ export default class AppComponent {
   3. 当参数为`Function`时，如果为该组件可以使用的组件或指令的`class`，则属性为匹配到的**组件或指令实例**的第一项或是全部
 
 ```typescript
-import { Component, setState, SetState, Watch, ViewChild, ElementRef } from '@indiv/core';
+import { Component, StateSetter, SetState, Watch, ViewChild, ElementRef } from '@indiv/core';
 import ShowAgeComponent from 'components/show-age/show-age.component';
 
 @Component({
@@ -363,11 +387,9 @@ export default class AppComponent {
   @ViewChild('p') public pElement: ElementRef;
   @ViewChildren('p') public pElements: ElementRef[];
 
-  public setState: SetState;
+  @StateSetter() public setState: SetState;
 
-  constructor() {
-    this.setState = setState;
-  }
+  constructor() {}
 
   public addAge(): void {
     this.setState({ age: 24 });

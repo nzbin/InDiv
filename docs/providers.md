@@ -91,7 +91,7 @@ export default class AppModule {}
 > app.component.ts
 
 ```typescript
-import { Component, setState, SetState, Watch } from '@indiv/core';
+import { Component, StateSetter, SetState, Watch } from '@indiv/core';
 import TestService from './provides/test.service';
 
 @Component({
@@ -109,12 +109,11 @@ export default class AppComponent {
   @Watch() public age: number;
   public color: string = 'red';
 
-  public setState: SetState;
+  @StateSetter() public setState: SetState;
 
   constructor(
     private testService: TestService
   ) {
-    this.setState = setState;
     console.log(this.testService.count); // 1
     this.testService.count = 2; // 2
   }
@@ -139,7 +138,7 @@ export default class AppComponent {
 > components/show-age/show-age.component.ts
 
 ```typescript
-import { Component, setState, SetState, nvReceiveInputs, Input } from '@indiv/core';
+import { Component, StateSetter, SetState, nvReceiveInputs, Input } from '@indiv/core';
 import TestService from '../provides/test.service';
 
 @Component({
@@ -151,13 +150,12 @@ export default class ShowAgeComponent implements nvReceiveInputs {
   @Input('age') public age: number;
   @Input('upDateAge') public changeAge: (age: number) => void;
 
-  public setState: SetState;
+  @StateSetter() public setState: SetState;
 
   constructor(
     private testService: TestService
   ) {
     console.log(this.testService.count); // 1
-    this.setState = setState;
   }
 
   public nvReceiveInputs(nextInputs: { age: number }): void {
@@ -232,7 +230,7 @@ constructor(private testService: TestService)
 > components/show-age/show-age.component.ts
 
 ```javascript
-import { Component, Input } from '@indiv/core';
+import { Component, Input, StateSetter } from '@indiv/core';
 import TestService from '../provides/test.service';
 
 @Component({
@@ -243,6 +241,7 @@ import TestService from '../provides/test.service';
 export default class ShowAgeComponent {
   @Input('age') age;
   @Input('upDateAge') changeAge;
+  @StateSetter() setState;
 
   static injectTokens = [
     TestService
@@ -250,7 +249,6 @@ export default class ShowAgeComponent {
 
   constructor(testService) {
     this.testService = testService;
-    this.setState = setState;
     console.log(this.testService.count); // 1
   }
 

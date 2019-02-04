@@ -85,7 +85,7 @@ export default class AppModule {}
 > components/page-a/page-a.component.ts
 
 ```typescript
-import { Component, setState, SetState, nvReceiveInputs } from '@indiv/core';
+import { Component, nvReceiveInputs } from '@indiv/core';
 
 @Component({
     selector: 'page-a',
@@ -144,7 +144,7 @@ export default class AppModule {}
 > app.component.ts
 
 ```typescript
-import { Component, setState, SetState, Watch } from '@indiv/core';
+import { Component, StateSetter, SetState, Watch } from '@indiv/core';
 import TestService from './provides/test.service';
 
 @Component({
@@ -162,12 +162,11 @@ export default class AppComponent {
   @Watch() public age: number;
   public color: string = 'red';
 
-  public setState: SetState;
+  @StateSetter() public setState: SetState;
 
   constructor(
     private testService: TestService
   ) {
-    this.setState = setState;
     console.log(this.testService.count); // 1
     this.testService.count = 2; // 2
   }
@@ -203,7 +202,7 @@ interface NvLocation {
 > app.component.ts
 
 ```typescript
-import { Component, setState, SetState, Watch } from '@indiv/core';
+import { Component, StateSetter, SetState, Watch } from '@indiv/core';
 import { NvLocation } from '@indiv/router';
 import TestService from './provides/test.service';
 
@@ -223,13 +222,12 @@ export default class AppComponent {
   @Watch() public age: number;
   public color: string = 'red';
 
-  public setState: SetState;
+  @StateSetter() public setState: SetState;
 
   constructor(
     private testService: TestService,
     private nvLocation: NvLocation
   ) {
-    this.setState = setState;
     console.log(this.testService.count); // 1
     this.testService.count = 2; // 2
   }
@@ -252,7 +250,7 @@ export default class AppComponent {
 > app.component.ts
 
 ```typescript
-import { Component, setState, SetState, Watch } from '@indiv/core';
+import { Component, StateSetter, SetState, Watch } from '@indiv/core';
 import TestService from './provides/test.service';
 
 @Component({
@@ -272,12 +270,11 @@ export default class AppComponent {
   @Watch() public age: number;
   public color: string = 'red';
 
-  public setState: SetState;
+  @StateSetter() public setState: SetState;
 
   constructor(
     private testService: TestService
   ) {
-    this.setState = setState;
     console.log(this.testService.count); // 1
     this.testService.count = 2; // 2
   }
@@ -519,7 +516,7 @@ NvModule 级的依赖提供商可以在 `@NgModule()` `providers` 元数据中�
   > app.component.ts
 
   ```typescript
-  import { Component, setState, SetState, Watch } from '@indiv/core';
+  import { Component, StateSetter, SetState, Watch } from '@indiv/core';
   import { RouteChange, RouteCanActive } from '@indiv/router';
   import TestService from './provides/test.service';
 
@@ -540,12 +537,11 @@ NvModule 级的依赖提供商可以在 `@NgModule()` `providers` 元数据中�
     @Watch() public age: number;
     public color: string = 'red';
 
-    public setState: SetState;
+    @StateSetter() public setState: SetState;
 
     constructor(
       private testService: TestService
     ) {
-      this.setState = setState;
       console.log(this.testService.count); // 1
       this.testService.count = 2; // 2
     }

@@ -15,7 +15,7 @@
 > app.component.ts
 
 ```typescript
-import { Component, setState, SetState, Watch } from '@indiv/core';
+import { Component, StateSetter, SetState, Watch } from '@indiv/core';
 
 @Component({
     selector: 'app-component',
@@ -32,11 +32,9 @@ export default class AppComponent {
   @Watch() public age: number;
   public list: number[] = [1, 2, 3, 4];
 
-  public setState: SetState;
+  @StateSetter() public setState: SetState;
 
-  constructor() {
-    this.setState = setState;
-  }
+  constructor() {}
 
   public addAge(): void {
     this.setState({
@@ -88,7 +86,7 @@ export function collectDependencesFromViewModel(componentInstance: IComponent): 
 > app.component.ts
 
 ```typescript
-import { Component, setState, SetState, Watch } from '@indiv/core';
+import { Component, StateSetter, SetState, Watch } from '@indiv/core';
 
 @Component({
     selector: 'app-component',
@@ -105,11 +103,9 @@ export default class AppComponent {
   @Watch() public age: number;
   public list: number[] = [1, 2, 3, 4];
 
-  public setState: SetState;
+  @StateSetter() public setState: SetState;
 
-  constructor() {
-    this.setState = setState;
-  }
+  constructor() {}
 
   public addAge(): void {
     this.setState({

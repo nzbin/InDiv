@@ -90,12 +90,13 @@ export function buildViewChildren(component: IComponent): void {
  *
  * @export
  * @param {(Function | string)} selector
- * @returns
+ * @returns {(target: IComponent, propertyName: string) => any}
  */
-export function ViewChild(selector: Function | string) {
-  return function (target: IComponent, propertyName: string) {
+export function ViewChild(selector: Function | string): (target: IComponent, propertyName: string) => any {
+  return function (target: IComponent, propertyName: string): any {
     if (!target.viewChildList) target.viewChildList = [];
     target.viewChildList.push({ propertyName, selector });
+    return (target as any)[propertyName];
   };
 }
 
@@ -111,11 +112,12 @@ export function ViewChild(selector: Function | string) {
  *
  * @export
  * @param {(Function | string)} selector
- * @returns
+ * @returns {(target: IComponent, propertyName: string) => any}
  */
-export function ViewChildren(selector: Function | string) {
-  return function (target: IComponent, propertyName: string) {
+export function ViewChildren(selector: Function | string): (target: IComponent, propertyName: string) => any {
+  return function (target: IComponent, propertyName: string): any {
     if (!target.viewChildrenList) target.viewChildrenList = [];
     target.viewChildrenList.push({ selector, propertyName });
+    return (target as any)[propertyName];
   };
 }

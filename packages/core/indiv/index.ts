@@ -1,7 +1,7 @@
 import { INvModule, IComponent } from '../types';
 
 import { factoryCreator } from '../di';
-import { factoryModule } from '../nv-module';
+import { getModuleFromRootInjector } from '../nv-module';
 import { Renderer, Vnode } from '../vnode';
 import { ElementRef } from '../component';
 
@@ -179,7 +179,7 @@ export class InDiv {
   public bootstrapModule(Nvmodule: Function): void {
     if (!Nvmodule) throw new Error('must send a root module');
 
-    this.rootModule = factoryModule(Nvmodule, null, this);
+    this.rootModule = getModuleFromRootInjector(Nvmodule, null, this);
     this.declarations = [...this.rootModule.declarations];
   }
 

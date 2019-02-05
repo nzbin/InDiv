@@ -544,7 +544,7 @@ export class RouteModule {
 
     if (!loadModule) throw new Error('load child failed, please check your routes.');
 
-    const loadModuleInstance = factoryModule(loadModule, loadModule.prototype.privateInjector, this.indivInstance);
+    const loadModuleInstance = factoryModule(loadModule, loadModule.prototype.privateInjector);
     this.loadModuleMap.set(currentUrlPath, loadModuleInstance);
 
     return loadModuleInstance;

@@ -1,9 +1,6 @@
 import { IComponent, IDirective } from '../types';
-
-import { InDiv } from '../indiv';
 import { ElementRef } from '../component';
 import { factoryCreator } from '../di';
-import { Renderer } from '../vnode';
 
 /**
  * build scope for Components in Component
@@ -11,15 +8,13 @@ import { Renderer } from '../vnode';
  * @export
  * @param {Function} ComponentClass
  * @param {*} inputs
- * @param {any} nativeElement
+ * @param {*} nativeElement
  * @param {IComponent} componentInstance
  * @returns {IComponent}
  */
 export function buildComponentScope(ComponentClass: Function, inputs: any, nativeElement: any, componentInstance: IComponent): IComponent {
   const provideAndInstanceMap = new Map();
-  if (componentInstance.$indivInstance) provideAndInstanceMap.set(InDiv, componentInstance.$indivInstance);
   provideAndInstanceMap.set(ElementRef, new ElementRef(nativeElement));
-  provideAndInstanceMap.set(Renderer, componentInstance.$indivInstance.getRenderer);
 
   const _component: IComponent = factoryCreator(ComponentClass, componentInstance.otherInjector, provideAndInstanceMap);
 
@@ -51,15 +46,13 @@ export function buildComponentScope(ComponentClass: Function, inputs: any, nativ
  * @export
  * @param {Function} DirectiveClass
  * @param {*} inputs
- * @param {any} nativeElement
+ * @param {*} nativeElement
  * @param {IComponent} componentInstance
  * @returns {IComponent}
  */
 export function buildDirectiveScope(DirectiveClass: Function, inputs: any, nativeElement: any, componentInstance: IComponent): IComponent {
   const provideAndInstanceMap = new Map();
-  if (componentInstance.$indivInstance) provideAndInstanceMap.set(InDiv, componentInstance.$indivInstance);
   provideAndInstanceMap.set(ElementRef, new ElementRef(nativeElement));
-  provideAndInstanceMap.set(Renderer, componentInstance.$indivInstance.getRenderer);
 
   const _directive: IDirective = factoryCreator(DirectiveClass, componentInstance.otherInjector, provideAndInstanceMap);
 

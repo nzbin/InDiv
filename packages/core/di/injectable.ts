@@ -28,7 +28,6 @@ export type TInjectableOptions = {
 export function Injectable(options?: TInjectableOptions): (_constructor: Function) => void {
   return function (_constructor: Function): void {
       injected(_constructor);
-      (_constructor as any).isSingletonMode = true;
       if (options && options.isSingletonMode === false) (_constructor as any).isSingletonMode = false;
       if (options && options.providedIn && (options.providedIn as any).nvType === 'nvModule') {
         if (options.providedIn === 'root') rootInjector.setProvider(_constructor, _constructor);

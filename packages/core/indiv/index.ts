@@ -1,6 +1,5 @@
 import { INvModule, IComponent } from '../types';
-
-import { factoryCreator } from '../di';
+import { factoryCreator, rootInjector } from '../di';
 import { getModuleFromRootInjector } from '../nv-module';
 import { Renderer, Vnode } from '../vnode';
 import { ElementRef } from '../component';
@@ -30,6 +29,18 @@ export class InDiv {
   private indivEnv: string = 'browser';
 
   /**
+   * create an instance of InDiv
+   * 
+   * set provider and instance in rootInjector
+   * 
+   * @memberof InDiv
+   */
+  constructor() {
+    rootInjector.setProvider(InDiv, InDiv);
+    rootInjector.setInstance(InDiv, this);
+  }
+
+  /**
    * for using plugin class, use bootstrap method of plugin instance and return plugin's id in this.pluginList
    *
    * @param {Type<IPlugin>} Modal
@@ -45,13 +56,16 @@ export class InDiv {
   /**
    * set component Renderer
    *
-   * @param {any} NewRenderer
+   * @param {*} NewRenderer
    * @memberof InDiv
    */
   public setRenderer(NewRenderer: any): void {
     const _renderer = new NewRenderer();
-    if (_renderer instanceof Renderer) this.renderer = _renderer;
-    else throw new Error('Custom Renderer must extend class Renderer!');
+    if (_renderer instanceof Renderer) {
+      this.renderer = _renderer;
+      rootInjector.setProvider(Renderer, NewRenderer);
+      rootInjector.setInstance(Renderer, this.renderer);
+    } else throw new Error('Custom Renderer must extend class Renderer!');
   }
 
   /**
@@ -179,7 +193,7 @@ export class InDiv {
   public bootstrapModule(Nvmodule: Function): void {
     if (!Nvmodule) throw new Error('must send a root module');
 
-    this.rootModule = getModuleFromRootInjector(Nvmodule, null, this);
+    this.rootModule = getModuleFromRootInjector(Nvmodule, null);
     this.declarations = [...this.rootModule.declarations];
   }
 
@@ -210,9 +224,7 @@ export class InDiv {
    */
   public initComponent<R = Element>(BootstrapComponent: Function, nativeElement: R, otherModule?: INvModule): IComponent {
     const provideAndInstanceMap = new Map();
-    provideAndInstanceMap.set(InDiv, this);
     provideAndInstanceMap.set(ElementRef, new ElementRef<R>(nativeElement));
-    provideAndInstanceMap.set(Renderer, this.getRenderer);
 
     const otherInjector = otherModule ? otherModule.privateInjector : null;
     const component: IComponent = factoryCreator(BootstrapComponent, otherInjector, provideAndInstanceMap);

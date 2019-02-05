@@ -376,9 +376,10 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
     private element: ElementRef,
     private indiv: InDiv,
     private privateService: PrivateService,
+    private sharedModule: SharedModule,
   ) {
     this.privateService.change();
-    console.log(99988, 'from Container', this.element, this.indiv, this.privateService.isPrivate);
+    console.log(99988, 'from Container', this.sharedModule, this.element, this.indiv, this.privateService.isPrivate);
     this.httpClient.createResponseInterceptor((value: HttpClientResponse) => {
       return {
         data: value.data,

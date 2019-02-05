@@ -1,3 +1,14 @@
+<a name="2.0.2"></a>
+# [2.0.2](https://github.com/DimaLiLongJi/InDiv/releases/tag/2.0.2) (2019-02-05)
+
+
+### Features
+
+* **package:@indiv/core** now `NvModule` can be injected as singleton dependency in DI
+* **package:@indiv/core** optimize DI in `Indiv` and `Renderer`
+
+
+
 <a name="2.0.1"></a>
 # [2.0.1](https://github.com/DimaLiLongJi/InDiv/releases/tag/2.0.1) (2019-02-04)
 

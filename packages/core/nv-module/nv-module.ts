@@ -1,6 +1,5 @@
 import { INvModule, TUseClassProvider, TUseValueProvider } from '../types';
-
-import { injected, Injector } from '../di';
+import { injected, Injector, rootInjector } from '../di';
 
 export type TNvModuleOptions = {
   imports?: Function[];
@@ -14,6 +13,8 @@ export type TNvModuleOptions = {
  * Decorator @NvModule
  * 
  * to decorate an InDiv NvModule
+ * @NvModule is injectable, and will be injected in rootInjector
+ * you can use NvModule as injectable token to get singleton instance of @NvModule in constructor
  *
  * @export
  * @param {TNvModuleOptions} options
@@ -34,5 +35,6 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
       vm.exportsList = [];
     }
     if (options.bootstrap) vm.bootstrap = options.bootstrap;
+    rootInjector.setProvider(_constructor, _constructor);
   };
 }

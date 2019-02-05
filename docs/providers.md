@@ -44,9 +44,9 @@ Injectable 符号，并且给服务类添加了 @Injectable() 装饰器。 它�
 `providedIn`: 服务被直接注入哪个 Injector。
 
   1. 如果是`'root'`，该服务将直接被注入至根注入器 `rootInjector`，全局都可以直接使用该服务。
-  2. 如果是一个具体的模块类，那么该服务将被注入该具体模块类的元数据 `provides` 中。 
+  2. 如果是一个具体的模块类，那么该服务将被注入该具体模块类的 `provides` 中。 
 
-关于 `providedIn`, **使用该方法时要注意模块的循环引用，在非更建议使用模块的元数据 `provides` 手动指定服务提供商**
+关于 `providedIn`, **使用该方法时要注意模块的循环引用，更建议使用`providedIn: root`和模块的元数据 `provides` 手动指定服务提供商**
 
 更建议使用在懒加载模块中，创建一个共享的模块，然后将服务的`providedIn`指定为该共享模块，再导入该共享模块到指定的懒加载模块中。
 
@@ -263,3 +263,27 @@ export default class ShowAgeComponent {
 ```
 
 `injectTokens`数组中值的顺序与类`constructor`参数的顺序一致。
+
+
+## 可被注入的依赖
+
+现在服务，组件，指令，模块都可以使用依赖注入系统来从 IOC容器 中获得依赖实例。
+
+可被注入的依赖主要分为下面几类：
+
+1. 默认依赖
+
+  - `InDiv`： 获取整个应用的 `InDiv` 实例，来使用一些方法
+  - `Renderer`： 获取整个应用的渲染器实例，可以用来操作视图
+  - `ElementRef`： 获取组件或指令绑定的具体视图
+
+2. 服务，被 `Injectable` 注解过的实例，可以为单例也可以为非单例
+
+3. 模块（v2.0.2开始支持），被`NvModule` 注解过的全局模块单例
+
+4. 其他依赖
+   
+   - `NvLocation`： `@indiv/router` 提供的路由服务
+   - `HttpClient`： `@indiv/common` 提供的http服务
+
+**组件和指令因为是非单例，可以同时存在多个，所以未被放入IOC容器内**

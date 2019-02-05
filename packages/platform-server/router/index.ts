@@ -1,4 +1,4 @@
-import { TRouter, NvLocation, IComponentWithRoute, IDirectiveWithRoute } from '@indiv/router';
+import { TRouter, NvLocation, IComponentWithRoute } from '@indiv/router';
 import { InDiv, INvModule, factoryModule } from '@indiv/core';
 
 export type RouteCongfig = {
@@ -78,7 +78,7 @@ export async function generalDistributeRoutes(routeConfig: RouteCongfig, routesL
         component = indiv.initComponent(FindComponent, nativeElement, findComponentFromModuleResult.loadModule);
       }
       if (route.loadChild) {
-        const loadModule = NvModuleFactoryLoader((route.loadChild as Function), currentUrlPath, indiv, loadModuleMap);
+        const loadModule = NvModuleFactoryLoader((route.loadChild as Function), currentUrlPath, loadModuleMap);
         FindComponent = loadModule.bootstrap;
         component = indiv.initComponent(FindComponent, nativeElement, loadModule);
       }
@@ -145,18 +145,17 @@ export function findComponentFromModule(selector: string, currentUrlPath: string
  * @export
  * @param {Function} loadChild
  * @param {string} currentUrlPath
- * @param {InDiv} indivInstance
  * @param {Map<string, INvModule>} loadModuleMap
  * @returns {INvModule}
  */
-export function NvModuleFactoryLoader(loadChild: Function, currentUrlPath: string, indivInstance: InDiv, loadModuleMap: Map<string, INvModule>): INvModule {
+export function NvModuleFactoryLoader(loadChild: Function, currentUrlPath: string, loadModuleMap: Map<string, INvModule>): INvModule {
   if (loadModuleMap.has(currentUrlPath)) return loadModuleMap.get(currentUrlPath);
 
   const loadModule = loadChild;
 
   if (!loadModule) throw new Error('load child failed, please check your routes.');
 
-  const loadModuleInstance = factoryModule(loadModule, loadModule.prototype.privateInjector, indivInstance);
+  const loadModuleInstance = factoryModule(loadModule, loadModule.prototype.privateInjector);
   loadModuleMap.set(currentUrlPath, loadModuleInstance);
 
   return loadModuleInstance;

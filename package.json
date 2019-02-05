@@ -32,7 +32,8 @@
     "build:common": "rm -rf build/common && rollup --config packages/common/rollup.typescript.config.js && rollup --config packages/common/rollup.config.js && rm -rf build/common/bundle.js && rm -rf build/platform-browser/bundle.js",
     "build:router": "rm -rf build/router && rollup --config packages/router/rollup.typescript.config.js && rollup --config packages/router/rollup.config.js && rm -rf build/router/bundle.js",
     "build:platform-server": "rm -rf build/platform-server && rollup --config packages/platform-server/rollup.typescript.config.js && rollup --config packages/platform-server/rollup.config.js && rm -rf build/platform-server/bundle.js",
-    "publish: beta": "npm run build && lerna publish --dist-tag=beta --force-publish=*"
+    "publish: beta": "npm run build && lerna publish --dist-tag=beta --force-publish=*",
+    "publish: prod": "npm run build && lerna publish  --force-publish=*"
   },
   "repository": {
     "type": "git",

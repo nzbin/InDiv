@@ -13,7 +13,6 @@ export class Compile {
   public mountedElement: any;
   public fragment: Vnode[];
   public saveVnode: Vnode[];
-  public initVnode: Vnode[];
   public parseVnodeOptions: ParseOptions;
 
   /**
@@ -24,16 +23,8 @@ export class Compile {
    */
   constructor(el: any, componentInstance: IComponent) {
     this.componentInstance = componentInstance;
-    this.initVnode = parseTemplateToVnode(componentInstance.template);
     this.mountedElement = el;
-    this.parseVnodeOptions = {
-      components: [],
-      directives: [],
-    };
-    this.componentInstance.declarationMap.forEach((value, key) => {
-      if (this.parseVnodeOptions.components.indexOf(key) === -1 && (value as any).nvType === 'nvComponent') this.parseVnodeOptions.components.push(key);
-      if (this.parseVnodeOptions.directives.indexOf(key) === -1 && (value as any).nvType === 'nvDirective') this.parseVnodeOptions.directives.push(key);
-    });
+    if (componentInstance.parseVnodeOptions) this.parseVnodeOptions = componentInstance.parseVnodeOptions;
     if (componentInstance.saveVnode) this.saveVnode = componentInstance.saveVnode;
   }
 
@@ -51,8 +42,7 @@ export class Compile {
 
     if (!this.saveVnode) this.saveVnode = this.componentInstance.$indivInstance.getRenderer.nativeElementToVnode(this.mountedElement, this.parseVnodeOptions);
 
-    const templateVnode = parseTemplateToVnode(this.componentInstance.template, this.parseVnodeOptions);
-    this.compileVnode(templateVnode);
+    this.compileVnode(this.componentInstance.templateVnode);
 
     const patchList: IPatchList[] = [];
     this.fragment.forEach(child => child.parentVnode = { nativeElement: this.mountedElement });

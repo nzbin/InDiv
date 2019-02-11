@@ -48,9 +48,9 @@ export function buildComponentScope(ComponentClass: Function, inputs: any, nativ
  * @param {*} inputs
  * @param {*} nativeElement
  * @param {IComponent} componentInstance
- * @returns {IComponent}
+ * @returns {IDirective}
  */
-export function buildDirectiveScope(DirectiveClass: Function, inputs: any, nativeElement: any, componentInstance: IComponent): IComponent {
+export function buildDirectiveScope(DirectiveClass: Function, inputs: any, nativeElement: any, componentInstance: IComponent): IDirective {
   const provideAndInstanceMap = new Map();
   provideAndInstanceMap.set(ElementRef, new ElementRef(nativeElement));
 

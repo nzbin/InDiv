@@ -1,7 +1,7 @@
-import { DirectiveList, IDirective } from './directive';
+import { DirectiveList } from './directive';
 import { Injector } from '../di';
 import { InDiv } from '../indiv';
-import { Vnode } from '../vnode';
+import { Vnode, ParseOptions } from '../vnode';
 import { Compile } from '../compile';
 
 export type TComAndDir = {
@@ -42,6 +42,10 @@ export interface IComponent {
   directiveList?: DirectiveList[];
   otherInjector?: Injector;
   privateInjector?: Injector;
+
+  // compile template from string to templateVnode
+  parseVnodeOptions?: ParseOptions;
+  templateVnode?: Vnode[];
   saveVnode?: Vnode[];
 
   nvOnInit?(): void;

@@ -23,6 +23,7 @@ export type TNvModuleOptions = {
 export function NvModule(options: TNvModuleOptions): (_constructor: Function) => void {
   return function (_constructor: Function): void {
     injected(_constructor);
+    rootInjector.setProvider(_constructor, _constructor);
     (_constructor as any).nvType = 'nvModule';
     const vm = _constructor.prototype as INvModule;
     vm.privateInjector = new Injector();
@@ -35,6 +36,5 @@ export function NvModule(options: TNvModuleOptions): (_constructor: Function) =>
       vm.exportsList = [];
     }
     if (options.bootstrap) vm.bootstrap = options.bootstrap;
-    rootInjector.setProvider(_constructor, _constructor);
   };
 }

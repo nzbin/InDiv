@@ -62,9 +62,9 @@ export function injectionCreator(_constructor: Function, otherInjector?: Injecto
         if (findService.isSingletonMode === false) return args.push(factoryCreator(findService, otherInjector, provideAndInstanceMap));
         // if service is a singleton service
         else {
-            const findServiceInStance = fromInjector.getInstance(key) ? fromInjector.getInstance(key) : null;
+            const findServiceInStance = fromInjector.getInstance(key);
             if (findServiceInStance) args.push(findServiceInStance);
-            if (!findServiceInStance) {
+            else {
                 const serviceInStance = factoryCreator(findService, otherInjector, provideAndInstanceMap);
                 fromInjector.setInstance(key, serviceInStance);
                 args.push(serviceInStance);

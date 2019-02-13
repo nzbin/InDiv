@@ -1,6 +1,5 @@
 import { IDirective, TInjectTokenProvider, TUseClassProvider, TUseValueProvider } from '../types';
-
-import { injected, Injector } from '../di';
+import { injected, Injector, rootInjector } from '../di';
 
 export type TDirectiveOptions = {
   selector: string;
@@ -18,6 +17,8 @@ export type TDirectiveOptions = {
 export function Directive(options: TDirectiveOptions): (_constructor: Function) => void {
   return function (_constructor: Function): void {
     injected(_constructor);
+    (_constructor as any).isSingletonMode = false;
+    rootInjector.setProvider(_constructor, _constructor);
     (_constructor as any).nvType = 'nvDirective';
     (_constructor as any).selector = options.selector;
     const vm: IDirective = _constructor.prototype;

@@ -1,7 +1,7 @@
 import { IComponent, TInjectTokenProvider, TUseClassProvider, TUseValueProvider } from '../types';
 
 import { WatcherDependences } from './watch';
-import { injected, Injector } from '../di';
+import { injected, Injector, rootInjector } from '../di';
 import { collectDependencesFromViewModel } from './utils';
 import { componentCompiler } from '../compile';
 
@@ -27,6 +27,8 @@ export type TComponentOptions = {
 export function Component(options: TComponentOptions): (_constructor: Function) => void {
   return function (_constructor: Function): void {
     injected(_constructor);
+    (_constructor as any).isSingletonMode = false;
+    rootInjector.setProvider(_constructor, _constructor);
     (_constructor as any).nvType = 'nvComponent';
     (_constructor as any).selector = options.selector;
     const vm: IComponent = _constructor.prototype;

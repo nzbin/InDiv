@@ -3,7 +3,7 @@ import { IComponent, ComponentList, TComAndDir, DirectiveList } from '../types';
 import { utils } from '../utils';
 import { Compile } from './compile';
 import { buildComponentScope } from './compiler-utils';
-import { Vnode } from '../vnode';
+import { Vnode, parseTemplateToVnode } from '../vnode';
 import { mountDirective } from './directive-compiler';
 import { buildViewChild, buildViewChildren } from '../component';
 
@@ -171,21 +171,32 @@ export function buildComponentsAndDirectives(vnode: Vnode, componentAndDirective
  * @returns {Promise<IComponent>}
  */
 export async function componentCompiler(nativeElement: any, componentInstance: IComponent): Promise<IComponent> {
-  // compile has been added into Component instance by dirty method
+  // for compile, @Component must init parseVnodeOptions, templateVnode and compileInstance
+  if (!componentInstance.parseVnodeOptions) {
+    componentInstance.parseVnodeOptions = {
+      components: [],
+      directives: [],
+    };
+    componentInstance.declarationMap.forEach((value, key) => {
+      if (componentInstance.parseVnodeOptions.components.indexOf(key) === -1 && (value as any).nvType === 'nvComponent') componentInstance.parseVnodeOptions.components.push(key);
+      if (componentInstance.parseVnodeOptions.directives.indexOf(key) === -1 && (value as any).nvType === 'nvDirective') componentInstance.parseVnodeOptions.directives.push(key);
+    });
+  }
+  if (!componentInstance.templateVnode) componentInstance.templateVnode = parseTemplateToVnode(componentInstance.template, componentInstance.parseVnodeOptions);
   if (!componentInstance.compileInstance) componentInstance.compileInstance = new Compile(nativeElement, componentInstance);
 
-  let saveVnodes: Vnode[] = [];
+  let saveVnode: Vnode[] = [];
   try {
-    saveVnodes = componentInstance.compileInstance.startCompile();
+    saveVnode = componentInstance.compileInstance.startCompile();
   } catch (error) {
     throw new Error(`Error: ${error}, compoent ${(componentInstance.constructor as any).selector} was compiled failed!`);
   }
 
   // for save saveVnode in componentInstance
-  componentInstance.saveVnode = saveVnodes;
+  componentInstance.saveVnode = saveVnode;
 
   const componentAndDirectives: TComAndDir = { components: [], directives: [] };
-  saveVnodes.forEach(vnode => buildComponentsAndDirectives(vnode, componentAndDirectives));
+  saveVnode.forEach(vnode => buildComponentsAndDirectives(vnode, componentAndDirectives));
 
   // firstly mount directive
   try {

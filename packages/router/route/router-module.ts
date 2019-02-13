@@ -283,13 +283,13 @@ export class RouteModule {
 
         // navigation guards: route.routeCanActive component.nvRouteCanActive
         if (needRenderRoute.routeCanActive && !needRenderRoute.routeCanActive(this.lastRoute, this.currentUrl)) break;
-        if (component.nvRouteCanActive && !component.nvRouteCanActive(this.lastRoute, this.currentUrl)) break;
-        await this.runRender(component, nativeElement, initVnode);
 
         if (FindComponent) {
           // insert needRenderComponent on index in this.hasRenderComponentList
           // and remove other component which index >= index of FindComponent
           if (component) {
+            if (component.nvRouteCanActive && !component.nvRouteCanActive(this.lastRoute, this.currentUrl)) break;
+            await this.runRender(component, nativeElement, initVnode);
             if (this.hasRenderComponentList[index]) this.hasRenderComponentList.splice(index, 0, component);
             if (!this.hasRenderComponentList[index]) this.hasRenderComponentList[index] = component;
           } else {
@@ -397,8 +397,6 @@ export class RouteModule {
 
         // navigation guards: route.routeCanActive component.nvRouteCanActive
         if (route.routeCanActive && !route.routeCanActive(this.lastRoute, this.currentUrl)) break;
-        if (component.nvRouteCanActive && !component.nvRouteCanActive(this.lastRoute, this.currentUrl)) break;
-        await this.runRender(component, nativeElement, initVnode);
 
         if (!route.component && !route.redirectTo && !route.loadChild) throw new Error(`route error: path ${route.path} need a component which has children path or need a  redirectTo which has't children path`);
 
@@ -408,8 +406,12 @@ export class RouteModule {
         }
         this.routesList.push(route);
 
-        if (component) this.hasRenderComponentList.push(component);
-
+        if (component) {
+          if (component.nvRouteCanActive && !component.nvRouteCanActive(this.lastRoute, this.currentUrl)) break;
+          await this.runRender(component, nativeElement, initVnode);
+          this.hasRenderComponentList.push(component);
+        }
+        
         if (index === this.renderRouteList.length - 1) this.routerChangeEvent(index);
 
         if (route.redirectTo && /^\/.*/.test(route.redirectTo) && (index + 1) === this.renderRouteList.length) {

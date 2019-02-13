@@ -7,6 +7,10 @@
 * **package:@indiv/core** save `parseVnodeOptions` and `templateVnode` in Component instance，now will compile template to vnode once
 * **package:@indiv/core** now `@Component` and `@Directive` can be found in `provide` of `rootInjector` as unsingleton instance
 
+### Fix
+
+* **package:@indiv/route** fix `RouteCanActive` with `redirectTo`
+
 
 
 <a name="2.0.2"></a>

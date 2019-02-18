@@ -25,6 +25,7 @@
     "start:js": "npm run build && webpack --watch --env=testjs --mode=development & nodemon app.js",
     "start:docs": "docsify serve ./docs --port 2334",
     "test:ssr": "rm -rf ./ssr-demo/node_modules/@indiv && npm run build && cp -r build ./ssr-demo/node_modules/@indiv && npm run clean",
+    "test:aot-loader": "npm run clean && npm run build:aot-loader && webpack --config webpack.test-loader.config.js --watch --mode=development & nodemon app.js",
     "clean": "rm -rf build dist .rpt2_cache",
     "build": "npm run clean && npm run build:core && npm run build:platform-browser && npm run build:common && npm run build:router && npm run build:platform-server",
     "build:core": "rm -rf build/core && rollup --config packages/core/rollup.typescript.config.js && rollup --config packages/core/rollup.config.js && rm -rf build/core/bundle.js",
@@ -32,6 +33,7 @@
     "build:common": "rm -rf build/common && rollup --config packages/common/rollup.typescript.config.js && rollup --config packages/common/rollup.config.js && rm -rf build/common/bundle.js && rm -rf build/platform-browser/bundle.js",
     "build:router": "rm -rf build/router && rollup --config packages/router/rollup.typescript.config.js && rollup --config packages/router/rollup.config.js && rm -rf build/router/bundle.js",
     "build:platform-server": "rm -rf build/platform-server && rollup --config packages/platform-server/rollup.typescript.config.js && rollup --config packages/platform-server/rollup.config.js && rm -rf build/platform-server/bundle.js",
+    "build:aot-loader": "rm -rf build/aot-loader && rollup --config packages/aot-loader/rollup.typescript.config.js && rollup --config packages/aot-loader/rollup.config.js && rm -rf build/aot-loader/bundle.js",
     "merge:master": "git checkout master && git pull && git checkout develop && git pull && git merge master --no-ff && git push",
     "publish:beta": "npm run build && lerna publish --dist-tag=beta --force-publish=* && npm run merge:master",
     "publish:prod": "npm run build && lerna publish  --force-publish=* && npm run merge:master"
@@ -55,6 +57,7 @@
     "@babel/preset-env": "^7.1.0",
     "@babel/runtime-corejs2": "^7.2.0",
     "@types/jsdom": "^12.2.1",
+    "@types/loader-utils": "^1.1.3",
     "awesome-typescript-loader": "^5.2.1",
     "babel-eslint": "^8.2.0",
     "babel-loader": "^8.0.4",
@@ -88,6 +91,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "jsdom": "^13.1.0",
+    "loader-utils": "^1.2.3",
     "reflect-metadata": "^0.1.12",
     "rxjs": "^6.3.3"
   }

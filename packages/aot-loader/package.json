@@ -1,0 +1,40 @@
+{
+  "name": "@indiv/aot-loader",
+  "version": "2.0.3",
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "一个 web mvvm 库。A web mvvm library.",
+  "main": "../../build/aot-loader/index.js",
+  "types": "../../build/aot-loader/index.d.ts",
+  "files": [
+    "../../build/aot-loader"
+  ],
+  "keywords": [
+    "mvvm",
+    "view",
+    "front-end",
+    "router",
+    "DOM",
+    "framework",
+    "aot-loader",
+    "webpack"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DimaLiLongJi/InDiv.git"
+  },
+  "author": "DimaLiLongJi",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DimaLiLongJi/InDiv/issues"
+  },
+  "homepage": "https://github.com/DimaLiLongJi/InDiv#readme",
+  "dependencies": {
+    "loader-utils": "^1.2.3"
+  },
+  "peerDependencies": {
+    "@indiv/core": "^0.0.0-PLACEHOLDER",
+    "webpack": "^4.29.4"
+  }
+}

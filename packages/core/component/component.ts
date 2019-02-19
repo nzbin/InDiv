@@ -62,7 +62,7 @@ export function Component(options: TComponentOptions): (_constructor: Function) 
       (this as IComponent).dependencesList.forEach(dependence => WatcherDependences(this, dependence));
     };
 
-    vm.render = function (): Promise<IComponent> {
+    vm.render = async function (): Promise<IComponent> {
       const nativeElement = (this as IComponent).nativeElement;
       return Promise.resolve().then(() => {
         return (this as IComponent).compiler(nativeElement, this);

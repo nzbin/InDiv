@@ -5,7 +5,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = () => {
   return {
     entry: {
-      'app': './demo/index.loader.ts',
+      'app': './loader-demo/index.ts',
     },
 
     output: {
@@ -64,7 +64,6 @@ module.exports = () => {
           ],
           exclude: [path.resolve(__dirname, 'node_modules')],
           use: [
-            // path.resolve(__dirname, 'build/aot-loader/index.js'),
             {
               loader: 'babel-loader',
               options: {
@@ -78,7 +77,7 @@ module.exports = () => {
               },
             },
             "awesome-typescript-loader",
-            path.resolve(__dirname, 'build/aot-loader/index.js'),
+            path.resolve(__dirname, 'build/indiv-loader/index.js'),
           ],
         },
         {

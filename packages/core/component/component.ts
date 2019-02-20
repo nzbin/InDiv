@@ -7,7 +7,8 @@ import { componentCompiler } from '../compile';
 
 export type TComponentOptions = {
   selector: string;
-  template: string;
+  template?: string;
+  templateUrl?: string;
   providers?: (Function | TUseClassProvider | TUseValueProvider)[];
 };
 

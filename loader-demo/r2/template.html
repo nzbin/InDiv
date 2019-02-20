@@ -1,0 +1,9 @@
+<div>
+  <p nv-on:click="showLocation()">点击显示子路由跳转</p>
+  <input nv-model="a"/>
+  <br/>
+  <p nv-on:click="showAlert()">点击显示this.a:{{a}}</p>
+  子组件:<br/>
+  <route-child a="{a}"></route-child>
+  <router-render></router-render>
+</div>

@@ -23,12 +23,13 @@
   "include": [
     "src/**/*",
     "demo/**/*",
+    "loader-demo/**/*",
     "packages/**/*"
   ],
   "exclude": [
     "node_modules",
     "build",
     "dist",
-    "ssr-demo"
+    "ssr-demo",
   ]
 }

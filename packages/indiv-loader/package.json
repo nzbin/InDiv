@@ -1,14 +1,14 @@
 {
-  "name": "@indiv/aot-loader",
+  "name": "@indiv/indiv-loader",
   "version": "2.0.3",
   "publishConfig": {
     "access": "public"
   },
   "description": "一个 web mvvm 库。A web mvvm library.",
-  "main": "../../build/aot-loader/index.js",
-  "types": "../../build/aot-loader/index.d.ts",
+  "main": "../../build/indiv-loader/index.js",
+  "types": "../../build/indiv-loader/index.d.ts",
   "files": [
-    "../../build/aot-loader"
+    "../../build/indiv-loader"
   ],
   "keywords": [
     "mvvm",
@@ -17,7 +17,7 @@
     "router",
     "DOM",
     "framework",
-    "aot-loader",
+    "indiv-loader",
     "webpack"
   ],
   "repository": {

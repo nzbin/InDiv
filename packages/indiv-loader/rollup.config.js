@@ -6,9 +6,9 @@ import babel from 'rollup-plugin-babel';
 import pkg from './package.json'
 
 export default {
-  input: 'build/aot-loader/bundle.js',
+  input: 'build/indiv-loader/bundle.js',
   output: [{
-    file: 'build/aot-loader/index.js',
+    file: 'build/indiv-loader/index.js',
     format: 'cjs',
     exports: 'named',
   }, ],

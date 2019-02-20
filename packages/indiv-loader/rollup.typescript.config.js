@@ -5,9 +5,9 @@ import resolve from 'rollup-plugin-node-resolve';
 import pkg from './package.json'
 
 export default {
-  input: 'packages/aot-loader/index.ts',
+  input: 'packages/indiv-loader/index.ts',
   output: [{
-    file: 'build/aot-loader/bundle.js',
+    file: 'build/indiv-loader/bundle.js',
     format: 'cjs',
   }, ],
   external: [
@@ -18,7 +18,7 @@ export default {
     typescript({
       typescript: require('typescript'),
       rollupCommonJSResolveHack: true,
-      tsconfig: "packages/aot-loader/tsconfig.json",
+      tsconfig: "packages/indiv-loader/tsconfig.json",
     }),
     resolve({
       jsnext: true,

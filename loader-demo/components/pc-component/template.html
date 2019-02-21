@@ -1,0 +1,6 @@
+<div>
+  <p nv-if="e" nv-class="a" nv-repeat="da in d"  nv-on:click="componentClick(d)">你好： {{da.z}}</p>
+  state.d: <input nv-repeat="da in d" nv-model="da.z" />
+  <p nv-on:click="sendProps(5)">props from component.state.a: {{ax}}</p>
+  <test-component manName="{a}"></test-component>
+</div>

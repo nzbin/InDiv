@@ -7,7 +7,8 @@ import { componentCompiler } from '../compile';
 
 export type TComponentOptions = {
   selector: string;
-  template: string;
+  template?: string;
+  templateUrl?: string;
   providers?: (Function | TUseClassProvider | TUseValueProvider)[];
 };
 
@@ -32,7 +33,7 @@ export function Component(options: TComponentOptions): (_constructor: Function) 
     (_constructor as any).nvType = 'nvComponent';
     (_constructor as any).selector = options.selector;
     const vm: IComponent = _constructor.prototype;
-    vm.template = options.template;
+    if (options.template) vm.template = options.template;
 
     vm.watchStatus = 'available';
     vm.isWaitingRender = false;
@@ -62,7 +63,7 @@ export function Component(options: TComponentOptions): (_constructor: Function) 
       (this as IComponent).dependencesList.forEach(dependence => WatcherDependences(this, dependence));
     };
 
-    vm.render = function (): Promise<IComponent> {
+    vm.render = async function (): Promise<IComponent> {
       const nativeElement = (this as IComponent).nativeElement;
       return Promise.resolve().then(() => {
         return (this as IComponent).compiler(nativeElement, this);

@@ -39,5 +39,5 @@
 - [x] SSR 服务端渲染 server side render: @indiv/platform-server
 - [x] @ViewChild @ViewChildren
 - [ ] @indiv/cli
-- [ ] AOT compile
+- [x] AOT compile
 - [ ] support Pipe

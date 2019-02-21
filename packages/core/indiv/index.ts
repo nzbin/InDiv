@@ -246,7 +246,7 @@ export class InDiv {
 
     if (component.nvOnInit) component.nvOnInit();
     if (component.watchData) component.watchData();
-    if (!component.template) throw new Error('must decaler this.template in bootstrap()');
+    if (!component.template) throw new Error('must set template or templateUrl in bootstrap component');
 
     return component;
   }

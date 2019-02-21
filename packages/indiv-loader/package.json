@@ -1,23 +1,24 @@
 {
-  "name": "@indiv/platform-server",
+  "name": "@indiv/indiv-loader",
   "version": "2.0.3",
   "publishConfig": {
     "access": "public"
   },
   "description": "一个 web mvvm 库。A web mvvm library.",
-  "main": "../../build/platform-server/index.js",
-  "types": "../../build/platform-server/index.d.ts",
+  "main": "../../build/indiv-loader/index.js",
+  "types": "../../build/indiv-loader/index.d.ts",
   "files": [
-    "../../build/platform-server"
+    "../../build/indiv-loader"
   ],
   "keywords": [
     "mvvm",
     "view",
     "front-end",
+    "router",
     "DOM",
-    "render",
-    "Virtual DOM",
-    "platform server"
+    "framework",
+    "indiv-loader",
+    "webpack"
   ],
   "repository": {
     "type": "git",
@@ -30,13 +31,10 @@
   },
   "homepage": "https://github.com/DimaLiLongJi/InDiv#readme",
   "dependencies": {
-    "jsdom": "^13.1.0"
-  },
-  "devDependencies": {
-    "@types/jsdom": "^12.2.1"
+    "loader-utils": "^1.2.3",
+    "recast": "^0.17.3"
   },
   "peerDependencies": {
-    "@indiv/core": "^2.0.4",
-    "@indiv/router": "^2.0.4"
+    "webpack": "^4.29.4"
   }
 }

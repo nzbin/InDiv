@@ -8,6 +8,7 @@
   - [路由](route)
   - [InDiv](indiv)
   - [插件](plugins)
+  - [编译](compile)
 
 - 基本原理
   - [依赖注入](di)

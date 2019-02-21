@@ -131,7 +131,7 @@ class TestComponent {
 }
 ```
 
-此时，`PrivateService` 将作为该组件的依赖从组建的`privateInjector`取出并被注入组建实例。而且该服务是仅仅针对每个组件实例唯一。
+此时，`PrivateService` 将作为该组件的依赖从组件的`privateInjector`取出并被注入组件实例。而且该服务是仅仅针对每个组件实例唯一。
 
 
 ## 多级注入器

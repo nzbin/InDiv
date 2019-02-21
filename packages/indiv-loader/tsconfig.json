@@ -3,7 +3,7 @@
   "buildOnSave": false,
   "compilerOptions": {
     "baseUrl": "./",
-    "module": "esNext",
+    "module": "es2015",
     "moduleResolution": "node",
     "target": "es5",
     "emitDecoratorMetadata": true,
@@ -15,21 +15,12 @@
     "inlineSourceMap": true,
     "noEmitHelpers": false,
     "lib": ["dom", "es2015.promise", "es5", "es2017"],
-    "declaration": false,
+    "declaration": true,
     "paths": {
-      "@indiv/*": ["./packages/*"]
-    },
+      "@indiv/*": ["../*"],
+    }
   },
-  "include": [
-    "src/**/*",
-    "demo/**/*",
-    "loader-demo/**/*",
-    "packages/**/*"
-  ],
   "exclude": [
     "node_modules",
-    "build",
-    "dist",
-    "ssr-demo",
   ]
 }

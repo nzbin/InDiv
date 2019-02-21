@@ -1,3 +1,21 @@
+<a name="2.0.4"></a>
+# [2.0.4](https://github.com/DimaLiLongJi/InDiv/releases/tag/2.0.4) (2019-02-21)
+
+
+### Features
+
+* **package:@indiv/core** add `templateUrl` in `@Component`
+* **package:@indiv/indiv-loader** add webpack loader for AOT
+
+### Fix
+
+* **package:@indiv/common** fix npm peerDependencies version
+* **package:@indiv/platform-browser** fix npm peerDependencies version
+* **package:@indiv/platform-server** fix npm peerDependencies version
+* **package:@indiv/router** fix npm peerDependencies version
+
+
+
 <a name="2.0.3"></a>
 # [2.0.3](https://github.com/DimaLiLongJi/InDiv/releases/tag/2.0.3) (2019-02-15)
 

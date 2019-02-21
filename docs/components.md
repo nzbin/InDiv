@@ -44,10 +44,11 @@ export default class AppComponent {}
 
 这个装饰器是强制性的，每个被创建的 InDiv 组件都需要使用 `@Component`。
 
-`@Component` 接收三个参数，`selector: string;` `template: string;` `providers?: (Function | TUseClassProvider | TUseValueProvider)[];`
+`@Component` 接收4个参数：
 
 * `selector: string;`  作为组件被渲染成 DOM 的标签，类似于 `<div></div>`
-* `template: string;` 视图模板，用来声明被渲染的视图
+* `template?: string;` 字符串模板，用来声明被渲染的视图
+* `templateUrl?: string;` **v2.0.4新增** HTML模板，用来声明被渲染的视图，`template` 与 `templateUrl` 需要二选一使用，并且需要使用 `@indiv/indiv-loader` 进行编译处理
 * `providers?: (Function | { provide: any; useClass: Function; } | { provide: any; useValue: any; })[];` 声明可以被组件注入的服务，这个我们放到服务再讲
 
 现在我们将 `AppComponent` 在 `app.module.ts` 中声明一下并放入引导启动的 `bootstrap`中。启动http服务就可以看到页面上渲染出 `AppComponent` 的模板了。
@@ -148,7 +149,7 @@ export default class AppComponent {
 }
 ```
 
-或者用一个更优雅的办法，**`v2.0.1`新增了属性装饰器 `StateSetter`**，替换 `setState` 方法，使用装饰器省略手动赋值来达到更优雅地OOP。
+或者用一个更优雅的办法，**v2.0.1新增了属性装饰器 `StateSetter`**，替换 `setState` 方法，使用装饰器省略手动赋值来达到更优雅地OOP。
 
 > app.component.ts
 

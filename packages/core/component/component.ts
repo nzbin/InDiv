@@ -33,7 +33,7 @@ export function Component(options: TComponentOptions): (_constructor: Function) 
     (_constructor as any).nvType = 'nvComponent';
     (_constructor as any).selector = options.selector;
     const vm: IComponent = _constructor.prototype;
-    vm.template = options.template;
+    if (options.template) vm.template = options.template;
 
     vm.watchStatus = 'available';
     vm.isWaitingRender = false;

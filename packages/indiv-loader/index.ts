@@ -1,7 +1,6 @@
-// import { getOptions } from 'loader-utils';
+import { getOptions } from 'loader-utils';
 import { loader } from 'webpack';
 import recast from 'recast';
-import typescriptParser from 'recast/parsers/typescript';
 import { classDecoratorCompiler, classPropertyCompiler } from './compiler';
 
 /**
@@ -13,7 +12,16 @@ import { classDecoratorCompiler, classPropertyCompiler } from './compiler';
  */
 export default function indivLoader(source: string): string {
   const that: loader.LoaderContext = this;
+
   const rootPath: string = that.context;
+  const options: { useTypeScript?: boolean } = getOptions(that);
+
+  // use typeScript compiler
+  let useTypeScript = false;
+  if (/\.ts$/.test(that.resourcePath) || /\.tsx$/.test(that.resourcePath)) useTypeScript = true;
+  if (/\.js$/.test(that.resourcePath) || /\.jsx$/.test(that.resourcePath)) useTypeScript = false;
+  if (options && options.useTypeScript) useTypeScript = true;
+
   const parseVnodeOptions: {
     components: string[],
     directives: string[],
@@ -22,14 +30,12 @@ export default function indivLoader(source: string): string {
     directives: [],
   };
   const componentMap = new Map<string, { templateString: string; classBody: any }>();
-  // const options = getOptions(that);
 
   // build templateUrl from Decorator
   let ast;
   try {
-    ast = recast.parse(source, {
-      parser: typescriptParser,
-    });
+    if (useTypeScript) ast = recast.parse(source, { parser: require('recast/parsers/typescript') });
+    if (!useTypeScript) ast = recast.parse(source, { parser: require('recast/parsers/babel') });
     ast.program.body.forEach((body: any) => {
       if (body.type === 'ClassDeclaration') classDecoratorCompiler(rootPath, body, parseVnodeOptions, componentMap);
       if (body.type === 'ExportNamedDeclaration' || body.type === 'ExportDefaultDeclaration') {
@@ -38,12 +44,11 @@ export default function indivLoader(source: string): string {
     });
   } catch (e) {
     that.emitError(e);
-    console.error('indiv-loader compile error: ', e);
   }
 
   // build ast with templateUrl
   componentMap.forEach((templateInfo) => {
-    classPropertyCompiler(templateInfo, source);
+    classPropertyCompiler(templateInfo, useTypeScript);
   });
 
   return recast.print(ast).code;

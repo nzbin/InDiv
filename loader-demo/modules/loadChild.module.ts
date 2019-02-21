@@ -1,11 +1,10 @@
 import { NvModule, InDiv } from '@indiv/core';
-// import { NvModule, InDiv } from '../build/core';
 
-import { HeroSearchService, HeroSearchService1, HeroSearchService2 } from './service';
+import { HeroSearchService, HeroSearchService1, HeroSearchService2 } from '../services/service';
 import { SharedModule } from './share.module';
-import { TestLoadchildComponent, R2 } from './load-child-component';
+import { TestLoadchildComponent, R2 } from '../components/load-child-component';
 
-import './private.service';
+import '../services/private.service';
 
 @NvModule({
   imports: [

@@ -12,7 +12,9 @@ export default {
   }, ],
   external: [
     ...Object.keys(pkg.dependencies || {}),
-    ...Object.keys(pkg.peerDependencies || {})
+    ...Object.keys(pkg.peerDependencies || {}),
+    'fs',
+    'path',
   ],
   plugins: [
     typescript({
@@ -22,7 +24,9 @@ export default {
     }),
     resolve({
       jsnext: true,
-      main: true
+      main: true,
+      browser: false,
+      preferBuiltins:true
     }),
     commonjs(),
   ],

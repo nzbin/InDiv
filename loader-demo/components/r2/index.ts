@@ -1,6 +1,6 @@
 import { Component, OnInit, DoCheck, BeforeMount, AfterMount, OnDestory, ElementRef } from '@indiv/core';
 import { RouteChange, NvLocation } from '@indiv/router';
-import { HeroSearchService, HeroSearchService1 } from '../service';
+import { HeroSearchService, HeroSearchService1 } from '../../services/service';
 
 @Component({
   selector: 'R2',

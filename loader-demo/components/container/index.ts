@@ -3,10 +3,11 @@ import { RouteChange, NvLocation } from '@indiv/router';
 import { HttpClient, HttpClientResponse } from '@indiv/common';
 import { Observable } from 'rxjs';
 
-import { SharedModule, TestDirective } from '../share.module';
-import { HeroSearchService, HeroSearchService1, ValueType } from '../service';
-import { PrivateService } from '../private.service';
-import { TestComponent } from '../test-component';
+import { SharedModule } from '../../modules/share.module';
+import { HeroSearchService, HeroSearchService1, ValueType } from '../../services/service';
+import { PrivateService } from '../../services/private.service';
+import { TestComponent } from '../../components/test-component';
+import { TestDirective } from '../../directives/test-directive';
 
 @Component({
   selector: 'container-wrap',

@@ -2,10 +2,10 @@ const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-module.exports = () => {
+module.exports = (env) => {
   return {
     entry: {
-      'app': './loader-demo/index.ts',
+      'app': env === 'testjs' ? './loader-demo/index.js' : './loader-demo/index.ts',
     },
 
     output: {
@@ -56,7 +56,13 @@ module.exports = () => {
                 'dynamic-import-webpack',
               ],
             },
-          }, ],
+          }, {
+            loader: path.resolve(__dirname, 'build/indiv-loader/index.js'),
+            options: {
+              useTypeScript: false
+            }
+          }
+        ],
         },
         {
           test: [

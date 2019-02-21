@@ -1,8 +1,8 @@
 import { Component, ElementRef, InDiv, Watch, HasRender } from '@indiv/core';
 // import { Component, ElementRef, InDiv } from '../build/core';
 
-import { HeroSearchService } from '../service';
-import { PrivateService } from '../private.service';
+import { HeroSearchService } from '../../services/service';
+import { PrivateService } from '../../services/private.service';
 
 @Component({
   selector: 'test-loadchild-component',

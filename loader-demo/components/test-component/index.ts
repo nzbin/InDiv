@@ -3,10 +3,7 @@ import { HttpClient } from '@indiv/common';
 
 @Component({
   selector: 'test-component',
-  template: (`
-    <div>
-      <p nv-on:click="click()">测试repeat组件: {{manName}}</p>
-    </div>`),
+  templateUrl: './template.html',
 })
 export class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
   public state: any;

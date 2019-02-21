@@ -5,10 +5,10 @@
     "access": "public"
   },
   "description": "一个 web mvvm 库。A web mvvm library.",
-  "main": "../../build/indiv-loader/index.js",
-  "types": "../../build/indiv-loader/index.d.ts",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
   "files": [
-    "../../build/indiv-loader"
+    "build"
   ],
   "keywords": [
     "mvvm",
@@ -18,7 +18,9 @@
     "DOM",
     "framework",
     "indiv-loader",
-    "webpack"
+    "webpack",
+    "loader",
+    "webpack-loader"
   ],
   "repository": {
     "type": "git",

@@ -6,9 +6,9 @@ import babel from 'rollup-plugin-babel';
 import pkg from './package.json'
 
 export default {
-  input: 'build/platform-browser/bundle.js',
+  input: 'packages/platform-browser/build/bundle.js',
   output: [{
-    file: 'build/platform-browser/index.js',
+    file: 'packages/platform-browser/build/index.js',
     format: 'cjs',
     exports: 'named',
   }, ],

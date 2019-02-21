@@ -7,7 +7,7 @@ import pkg from './package.json'
 export default {
   input: 'packages/platform-browser/index.ts',
   output: [{
-    file: 'build/platform-browser/bundle.js',
+    file: 'packages/platform-browser/build/bundle.js',
     format: 'cjs',
   }, ],
   external: [

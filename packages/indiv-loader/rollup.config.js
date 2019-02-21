@@ -6,9 +6,9 @@ import babel from 'rollup-plugin-babel';
 import pkg from './package.json'
 
 export default {
-  input: 'build/indiv-loader/bundle.js',
+  input: 'packages/indiv-loader/build/bundle.js',
   output: [{
-    file: 'build/indiv-loader/index.js',
+    file: 'packages/indiv-loader/build/index.js',
     format: 'cjs',
     exports: 'named',
   }, ],

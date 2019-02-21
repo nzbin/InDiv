@@ -7,7 +7,7 @@ import pkg from './package.json'
 export default {
   input: 'packages/indiv-loader/index.ts',
   output: [{
-    file: 'build/indiv-loader/bundle.js',
+    file: 'packages/indiv-loader/build/bundle.js',
     format: 'cjs',
   }, ],
   external: [

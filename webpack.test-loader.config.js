@@ -57,7 +57,7 @@ module.exports = (env) => {
               ],
             },
           }, {
-            loader: path.resolve(__dirname, 'build/indiv-loader/index.js'),
+            loader: path.resolve(__dirname, 'packages/indiv-loader/build/index.js'),
             options: {
               useTypeScript: false
             }
@@ -83,7 +83,7 @@ module.exports = (env) => {
               },
             },
             "awesome-typescript-loader",
-            path.resolve(__dirname, 'build/indiv-loader/index.js'),
+            path.resolve(__dirname, 'packages/indiv-loader/build/index.js'),
           ],
         },
         {

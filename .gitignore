@@ -13,6 +13,7 @@
 /node_modules
 /ssr-demo/node_modules
 /packages/**/node_modules
+/packages/**/build
 
 # IDEs and editors
 /.idea

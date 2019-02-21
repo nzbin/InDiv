@@ -1,3 +1,21 @@
+<a name="2.0.5"></a>
+# [2.0.5](https://github.com/DimaLiLongJi/InDiv/releases/tag/2.0.5) (2019-02-21)
+
+I am sorry, that npm packages are empty.
+
+Now from v2.0.5 all will not be empty.
+
+### Fix
+
+* **package:@indiv/core** fix npm
+* **package:@indiv/common** fix npm
+* **package:@indiv/platform-browser** fix npm
+* **package:@indiv/platform-server** fix npm
+* **package:@indiv/router** fix npm
+* **package:@indiv/indiv-loader** fix npm
+
+
+
 <a name="2.0.4"></a>
 # [2.0.4](https://github.com/DimaLiLongJi/InDiv/releases/tag/2.0.4) (2019-02-21)
 

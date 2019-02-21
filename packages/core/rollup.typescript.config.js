@@ -7,7 +7,7 @@ import pkg from './package.json'
 export default {
   input: 'packages/core/index.ts',
   output: [{
-    file: 'build/core/bundle.js',
+    file: 'packages/core/build/bundle.js',
     format: 'cjs',
   }, ],
   external: [

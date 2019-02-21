@@ -7,17 +7,17 @@ import {
   StateSetter,
   Input,
   Watch,
-} from '../build/core';
+} from '../packages/core/build';
 import {
   NvLocation,
   RouteModule
-} from '../build/router';
+} from '../packages/router/build';
 import {
   HttpClient
-} from '../build/common';
+} from '../packages/common/build';
 import {
   PlatformBrowser
-} from '../build/platform-browser';
+} from '../packages/platform-browser/build';
 
 
 @Injectable({

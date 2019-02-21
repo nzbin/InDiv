@@ -7,7 +7,7 @@ import pkg from './package.json'
 export default {
   input: 'packages/router/index.ts',
   output: [{
-    file: 'build/router/bundle.js',
+    file: 'packages/router/build/bundle.js',
     format: 'cjs',
   }, ],
   external: [

@@ -74,7 +74,7 @@ export default class AppComponent {
 
 ## webpack
 
-v2.0.4 开始，增加了新的包 `@indiv/indiv-loader` 作为编译 InDiv 应用的一个 webpack loader。
+V2.0.5 开始，增加了新的包 `@indiv/indiv-loader` 作为编译 InDiv 应用的一个 webpack loader。
 
 得益于 AST ，通过 `@indiv/indiv-loader`，将 HTML 模板编译成一个组件的属性，组件就能拿到并渲染了。
 

@@ -149,7 +149,7 @@ export default class AppComponent {
 }
 ```
 
-或者用一个更优雅的办法，**v2.0.1新增了属性装饰器 `StateSetter`**，替换 `setState` 方法，使用装饰器省略手动赋值来达到更优雅地OOP。
+或者用一个更优雅的办法，使用属性装饰器 `StateSetter` 替换手动赋值 `setState` 方法，使用装饰器省略手动赋值来达到更优雅地OOP。
 
 > app.component.ts
 

@@ -279,7 +279,7 @@ export default class ShowAgeComponent {
 
 2. 服务，被 `Injectable` 注解过的实例，可以为单例也可以为非单例
 
-3. 模块（v2.0.2开始支持），被`NvModule` 注解过的全局模块单例
+3. 模块，被`NvModule` 注解过的全局模块单例
 
 4. 其他依赖
    

@@ -22,9 +22,9 @@ $ npm i --save @indiv/core @indiv/common @indiv/platform-browser @indiv/router
 
 关于 `@indiv/core` `@indiv/common` `@indiv/platform-browser` `@indiv/router` 等npm包，
 
-在 InDiv v2.0.0 开始，将使用分包代替原来的 `indiv` npm包，因此 npm包`indiv` 最高的版本号只到 v1.2.1。
+在 InDiv v2.0.5 开始，将使用分包代替原来的 `indiv` npm包，因此 npm包`indiv` 最高的版本号只到 v1.2.1。
 
-而新的分包 `@indiv/core` `@indiv/common` `@indiv/platform-browser` `@indiv/router` 为保持版本号统一将从 v2.0.0 开始迭代。
+而新的分包 `@indiv/core` `@indiv/common` `@indiv/platform-browser` `@indiv/router` 为保持版本号统一将从 v2.0.5 开始迭代。
 
 关于新的包：
 

@@ -12,7 +12,7 @@
 
 - 基本原理
   - [依赖注入](di)
-  - [状态收集](stateCollection)
+  - [依赖收集](dependenceCollection)
   - [虚拟DOM](vnode)
   - [跨平台渲染](render)
   - [服务端渲染](ssr)

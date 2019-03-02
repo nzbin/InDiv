@@ -117,7 +117,7 @@ export default class AppComponent {
 
 因此在生命周期 `constructor` 和 `nvOnInit` 之后，组件实例上的变量增加删除或数组的一些方法将无法更新视图。
 
-因此我们需要引入一个新的方法 `setState` 来重新设置状态收集及监听。
+因此我们需要引入一个新的方法 `setState` 来重新设置依赖收集及监听。
 
 > app.component.ts
 

@@ -152,7 +152,7 @@ import TestService from './provides/test.service';
     template: (`
         <div class="app-component-container">
           <input nv-model="name"/>
-          <p on-on:click="addAge()" change-color="{color}">name: {{name}}</p>
+          <p nv-on:click="addAge()" change-color="{color}">name: {{name}}</p>
           <show-age age="{age}" uupDateAge="{@upDateAge}"></show-age>
         </div>
     `),
@@ -211,7 +211,7 @@ import TestService from './provides/test.service';
     template: (`
         <div class="app-component-container">
           <input nv-model="name"/>
-          <p on-on:click="addAge()" change-color="{color}">name: {{name}}</p>
+          <p nv-on:click="addAge()" change-color="{color}">name: {{name}}</p>
           <show-age age="{age}" uupDateAge="{@upDateAge}"></show-age>
           <router-render></router-render>
         </div>
@@ -259,7 +259,7 @@ import TestService from './provides/test.service';
         <div class="app-component-container">
           <input nv-model="name"/>
           <a router-to="routeTo">点击跳转到/a</a>
-          <p on-on:click="addAge()" change-color="{color}">name: {{name}}</p>
+          <p nv-on:click="addAge()" change-color="{color}">name: {{name}}</p>
           <show-age age="{age}" uupDateAge="{@upDateAge}"></show-age>
           <router-render></router-render>
         </div>
@@ -526,7 +526,7 @@ NvModule 级的依赖提供商可以在 `@NgModule()` `providers` 元数据中�
           <div class="app-component-container">
             <input nv-model="name"/>
             <a router-to="routeTo">点击跳转到/a</a>
-            <p on-on:click="addAge()" change-color="{color}">name: {{name}}</p>
+            <p nv-on:click="addAge()" change-color="{color}">name: {{name}}</p>
             <show-age age="{age}" uupDateAge="{@upDateAge}"></show-age>
             <router-render></router-render>
           </div>

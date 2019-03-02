@@ -99,7 +99,7 @@ import { Component, StateSetter, SetState, Watch } from '@indiv/core';
     template: (`
         <div class="app-component-container">
           <input nv-model="name"/>
-          <p on-on:click="addAge()" change-color>name: {{name}}</p>
+          <p nv-on:click="addAge()" change-color>name: {{name}}</p>
           <show-age age="{age}" uupDateAge="{upDateAge}"></show-age>
         </div>
     `),
@@ -175,7 +175,7 @@ import { Component, SetState, Watch } from '@indiv/core';
     template: (`
         <div class="app-component-container">
           <input nv-model="name"/>
-          <p on-on:click="addAge()" change-color="{color}">name: {{name}}</p>
+          <p nv-on:click="addAge()" change-color="{color}">name: {{name}}</p>
           <show-age age="{age}" uupDateAge="{@upDateAge}"></show-age>
         </div>
     `),

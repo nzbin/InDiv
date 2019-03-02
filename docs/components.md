@@ -129,7 +129,7 @@ import { Component, setState, SetState } from '@indiv/core';
     template: (`
         <div class="app-component-container">
           <input nv-model="name"/>
-          <p on-on:click="addAge()">name: {{name}}</p>
+          <p nv-on:click="addAge()">name: {{name}}</p>
         </div>
     `),
 })
@@ -161,7 +161,7 @@ import { Component, StateSetter, SetState } from '@indiv/core';
     template: (`
         <div class="app-component-container">
           <input nv-model="name"/>
-          <p on-on:click="addAge()">name: {{name}}</p>
+          <p nv-on:click="addAge()">name: {{name}}</p>
         </div>
     `),
 })
@@ -191,7 +191,7 @@ import { Component, StateSetter, SetState, Watch } from '@indiv/core';
     template: (`
         <div class="app-component-container">
           <input nv-model="name"/>
-          <p on-on:click="addAge()">name: {{name}}</p>
+          <p nv-on:click="addAge()">name: {{name}}</p>
         </div>
     `),
 })
@@ -219,7 +219,7 @@ InDiv 的组件之间可以 `inputs` 来通信。此外还可以通过 `service`
 组件间通信应该是单向的，通过传递值到子组件，并通过传递一个回调方法在子组件调用来更改对应父组件的值来完成通信，`inputs` 可以是一个**被单向传递的值**，也可以是一个**提供给子组件使用的回调函数**。
 直接改变被收集的依赖时，或通过 setState 更改被收集的依赖时，被更改的依赖会被立刻改变，因此更改类属性的行为是**同步的**。
 但是更改收集的依赖时，会触发异步的重新渲染，并在渲染后更新子组件的 `inputs`，因此，通过在子组件中调用 `inputs` 上的方法来更新父组件的依赖状态时，子组件的 `inputs` 并不会立即更新。
-如果想知道子组件的 `inputs` 何时被更新，应该通过生命周期 nvReceiveInputs(nextInputs: any) 或 Class的getter setter方法去监听 `inputs` 的变化。
+如果想知道子组件的 `inputs` 何时被更新，应该通过生命周期 `nvReceiveInputs(nextInputs: any)` 或 Class的 `getter` `setter` 方法去监听 `inputs` 的变化。
 
 我们在 components 文件夹下面写一个组件: `<show-age></show-age>`
 
@@ -324,7 +324,7 @@ import { Component, StateSetter, SetState, Watch } from '@indiv/core';
     template: (`
         <div class="app-component-container">
           <input nv-model="name"/>
-          <p on-on:click="addAge()">name: {{name}}</p>
+          <p nv-on:click="addAge()">name: {{name}}</p>
           <show-age age="{age}" upDateAge="{upDateAge}"></show-age>
         </div>
     `),
@@ -372,7 +372,7 @@ import ShowAgeComponent from 'components/show-age/show-age.component';
     template: (`
         <div class="app-component-container">
           <input nv-model="name"/>
-          <p on-on:click="addAge()">name: {{name}}</p>
+          <p nv-on:click="addAge()">name: {{name}}</p>
           <show-age age="{age}" upDateAge="{upDateAge}"></show-age>
         </div>
     `),

@@ -22,7 +22,7 @@ import { Component, StateSetter, SetState, Watch } from '@indiv/core';
     template: (`
         <div class="app-component-container">
           <input nv-model="name"/>
-          <p on-on:click="addAge()" nv-repeat="li in list">id{{li}}name: {{name}}</p>
+          <p nv-on:click="addAge()" nv-repeat="li in list">id{{li}}name: {{name}}</p>
           <show-age age="{age}" upDateAge="{upDateAge}"></show-age>
         </div>
     `),
@@ -93,7 +93,7 @@ import { Component, StateSetter, SetState, Watch } from '@indiv/core';
     template: (`
         <div class="app-component-container">
           <input nv-model="name"/>
-          <p on-on:click="addAge()" nv-repeat="li in list">id{{li}}name: {{name}}</p>
+          <p nv-on:click="addAge()" nv-repeat="li in list">id{{li}}name: {{name}}</p>
           <show-age age="{age}" upDateAge="{upDateAge}"></show-age>
         </div>
     `),

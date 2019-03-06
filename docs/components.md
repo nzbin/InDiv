@@ -414,11 +414,11 @@ export default class AppComponent {
 
 * `constructor` 在类被实例化的时候回触发，你可以在这里初始化
 * `nvOnInit(): void;` constructor 之后，在这个生命周期中，可以获取 inputs，此生命周期会在开启监听前被触发，并且之后再也不会触发
-* `nvBeforeMount(): void;` 在 nvOnInit 之后，template 挂载页面之前被触发，有组件第一次渲染页面（render）前会被触发
-* `nvHasRender(): void;` 在 nvAfterMount 之后，渲染完成后被触发，每次触发渲染页面（render）都会被触发**服务端时将无法触发此钩子（不包括此钩子）之后的钩子**
+* `nvBeforeMount(): void;` 在 nvOnInit 之后，template 挂载页面之前被触发，有组件第一次渲染页面（render）前会被触发**同步更改成员变量无法触发视图更新**
+* `nvHasRender(): void;` 在 nvAfterMount 之后，渲染完成后被触发，每次触发渲染页面（render）都会被触发**同步更改成员变量无法触发视图更新** **服务端时将无法触发此钩子（不包括此钩子）之后的钩子**
 * `nvAfterMount(): void;` 在 nvBeforeMount 之后，template 挂载页面之后被触发，只有组件第一次渲染页面（render）后挂载实例到DOM上时会被触发
 * `nvOnDestory(): void;` 仅仅在路由决定销毁此组件时,或是被`nv-if`销毁组件时被触发
-* `nvDoCheck(): void;` 监听被监听的属性变化，当被监听的属性被更改后触发
+* `nvDoCheck(): void;` 监听被监听的属性变化，当被监听的属性被更改后触发**不能同步更改成员变量，会导致爆栈**
 * `nvReceiveInputs(nextInputs: any): void;` 监听 inputs 变化，当 inputs 即将被更改时（更改前）触发
 * (原生)`getter`: 当监听 inputs 时，getter 会先于 nvReceiveInputs 被触发
 * (原生)`setter`: 当监听 属性 时，setter 会晚于 nvDoCheck 被触发

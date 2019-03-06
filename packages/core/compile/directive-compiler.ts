@@ -2,6 +2,7 @@ import { DirectiveList, IComponent, TComAndDir } from '../types';
 
 import { utils } from '../utils';
 import { buildDirectiveScope } from './compiler-utils';
+import { lifecycleCaller } from '../lifecycle';
 
 /**
  * mountDirective for Directives in Component
@@ -43,7 +44,7 @@ export function mountDirective(componentInstance: IComponent, componentAndDirect
 
     directive.instanceScope.$indivInstance = componentInstance.$indivInstance;
 
-    if (directive.instanceScope.nvOnInit && !cacheDirective) directive.instanceScope.nvOnInit();
+    if (!cacheDirective) lifecycleCaller(directive.instanceScope, 'nvOnInit');
   }
   // the rest should use nvOnDestory
   const cacheDirectiveListLength = cacheDirectiveList.length;
@@ -55,7 +56,7 @@ export function mountDirective(componentInstance: IComponent, componentAndDirect
   // after mount
   for (let i = 0; i < directiveListLength; i++) {
     const directive = componentInstance.directiveList[i];
-    if (directive.instanceScope.nvHasRender) directive.instanceScope.nvHasRender();
+    lifecycleCaller(directive.instanceScope, 'nvHasRender');
   }
 }
 

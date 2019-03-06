@@ -6,6 +6,7 @@ import { buildComponentScope } from './compiler-utils';
 import { Vnode, parseTemplateToVnode } from '../vnode';
 import { mountDirective } from './directive-compiler';
 import { buildViewChild, buildViewChildren } from '../component';
+import { lifecycleCaller } from '../lifecycle';
 
 /**
  * use lifecycle nvDestory for @Directive
@@ -14,7 +15,7 @@ import { buildViewChild, buildViewChildren } from '../component';
  */
 function emitDirectiveDestory(directiveList: DirectiveList[]): void {
   directiveList.forEach(directive => {
-    if (directive.instanceScope.nvOnDestory) directive.instanceScope.nvOnDestory();
+    lifecycleCaller(directive.instanceScope, 'nvOnDestory');
   });
 }
 
@@ -25,7 +26,7 @@ function emitDirectiveDestory(directiveList: DirectiveList[]): void {
  */
 function emitComponentDestory(componentList: ComponentList[]): void {
   componentList.forEach(component => {
-    if (component.instanceScope.nvOnDestory) component.instanceScope.nvOnDestory();
+    lifecycleCaller(component.instanceScope, 'nvOnDestory');
     emitDirectiveDestory(component.instanceScope.directiveList);
     emitComponentDestory(component.instanceScope.componentList);
   });
@@ -77,9 +78,11 @@ export async function mountComponent(componentInstance: IComponent, componentAnd
 
     component.instanceScope.$indivInstance = componentInstance.$indivInstance;
 
-    if (component.instanceScope.nvOnInit && !cacheComponent) component.instanceScope.nvOnInit();
-    if (component.instanceScope.watchData && !cacheComponent) component.instanceScope.watchData();
-    if (component.instanceScope.nvBeforeMount && !cacheComponent) component.instanceScope.nvBeforeMount();
+    if (!cacheComponent) {
+      lifecycleCaller(component.instanceScope, 'nvOnInit');
+      lifecycleCaller(component.instanceScope, 'watchData');
+      lifecycleCaller(component.instanceScope, 'nvBeforeMount');
+    }
   }
   // the rest should use nvOnDestory to destory
   const cacheComponentListLength = cacheComponentList.length;
@@ -96,7 +99,7 @@ export async function mountComponent(componentInstance: IComponent, componentAnd
     if (!foundCacheComponentList.find(cache => cache.nativeElement === component.nativeElement)) {
       await component.instanceScope.render();
       // isServerRendering won't call nvAfterMount
-      if (component.instanceScope.nvAfterMount && !component.instanceScope.$indivInstance.getIndivEnv.isServerRendering) component.instanceScope.nvAfterMount();
+      if (!component.instanceScope.$indivInstance.getIndivEnv.isServerRendering) lifecycleCaller(component.instanceScope, 'nvAfterMount');
     }
   }
 
@@ -104,8 +107,6 @@ export async function mountComponent(componentInstance: IComponent, componentAnd
   buildViewChild(componentInstance);
   // build @ViewChildren
   buildViewChildren(componentInstance);
-
-  if (componentInstance.nvHasRender) componentInstance.nvHasRender();
 }
 
 /**
@@ -171,6 +172,7 @@ export function buildComponentsAndDirectives(vnode: Vnode, componentAndDirective
  * @returns {Promise<IComponent>}
  */
 export async function componentCompiler(nativeElement: any, componentInstance: IComponent): Promise<IComponent> {
+  console.log(9999991, nativeElement);
   // for compile, @Component must init parseVnodeOptions, templateVnode and compileInstance
   if (!componentInstance.parseVnodeOptions) {
     componentInstance.parseVnodeOptions = {
@@ -208,6 +210,7 @@ export async function componentCompiler(nativeElement: any, componentInstance: I
   // then mount component
   try {
     await mountComponent(componentInstance, componentAndDirectives);
+    lifecycleCaller(componentInstance, 'nvHasRender');
   } catch (error) {
     throw new Error(`Error: ${error}, components of compoent ${(componentInstance.constructor as any).selector} were compiled failed!`);
   }

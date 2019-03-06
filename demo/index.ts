@@ -276,6 +276,7 @@ class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
   selector: 'container-wrap',
   template: (`
   <div class="fucck" nv-class="test.b" nv-id="'cc'">
+    <p>{{testNumber}}</p>
     <input nv-model="test.a" nv-on:click="show(test)" />
     <p test-directive="{test.a}" nv-id="232" nv-if="countState(a)" nv-on:click="changeInput()">{{a}}</p>
     <test-component nv-repeat="man in testArray" nv-key="man.name" manName="{countState(man.name)}" nv-if="a"></test-component>
@@ -312,6 +313,7 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
   public ss: HeroSearchService;
   public ss2: HeroSearchService1;
   public state: any;
+  public testNumber: number = 4;
   public color: any = 'red';
   public test: any = {
     a: 3,
@@ -391,13 +393,13 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
     // });
     this.hss.test();
     console.log('value', this.value);
-    setTimeout(() => {
-      this.setState({
-        test: {
-          a: 5,
-        },
-      });
-    }, 1000);
+    // setTimeout(() => {
+    //   this.setState({
+    //     test: {
+    //       a: 5,
+    //     },
+    //   });
+    // }, 1000);
   }
 
   public nvRouteChange(lastRoute?: string, newRoute?: string) {
@@ -408,11 +410,21 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
     console.log('nvOnInit Container', this.location.get());
   }
 
+  public nvBeforeMount() {
+    // this.testNumber = 11;
+    // this.testNumber = 12;
+    console.log('nvBeforeMount Container');
+  }
+
   public nvHasRender() {
+    this.testNumber = 6;
+    this.testNumber = 7;
     console.log('nvHasRender Container', 33333333, this, this.testComponent, this.testDirective, this.routerRenderElementRef, this.testDirectiveString);
   }
 
   public nvAfterMount() {
+    // this.testNumber = 8;
+    // this.testNumber = 9;
     console.log('nvAfterMount Container', 222222, this, this.testComponent, this.testDirective, this.routerRenderElementRef, this.testDirectiveString);
   }
 

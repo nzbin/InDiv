@@ -1,4 +1,4 @@
-import { InDiv, Component, OnInit, DoCheck, AfterMount, SetState, ElementRef, HasRender, ViewChild, ViewChildren, StateSetter, Watch } from '@indiv/core';
+import { InDiv, Component, OnInit, DoCheck, AfterMount, SetState, ElementRef, HasRender, ViewChild, ViewChildren, StateSetter, Watch, BeforeMount } from '@indiv/core';
 import { RouteChange, NvLocation } from '@indiv/router';
 import { HttpClient, HttpClientResponse } from '@indiv/common';
 import { Observable } from 'rxjs';
@@ -13,8 +13,9 @@ import { TestDirective } from '../../directives/test-directive';
   selector: 'container-wrap',
   templateUrl: './template.html',
 })
-export default class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
+export default class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange, BeforeMount {
   @Watch() public aaaaa: number;
+  public testNumber: number = 4;
   public ss: HeroSearchService;
   public ss2: HeroSearchService1;
   public state: any;
@@ -97,13 +98,13 @@ export default class Container implements OnInit, AfterMount, DoCheck, HasRender
     // });
     this.hss.test();
     console.log('value', this.value);
-    setTimeout(() => {
-      this.setState({
-        test: {
-          a: 5,
-        },
-      });
-    }, 1000);
+    // setTimeout(() => {
+    //   this.setState({
+    //     test: {
+    //       a: 5,
+    //     },
+    //   });
+    // }, 1000);
   }
 
   public nvRouteChange(lastRoute?: string, newRoute?: string) {
@@ -111,14 +112,31 @@ export default class Container implements OnInit, AfterMount, DoCheck, HasRender
   }
 
   public nvOnInit() {
+    this.testNumber = 1;
+    this.testNumber = 2;
     console.log('nvOnInit Container', this.location.get());
   }
 
+  public nvBeforeMount() {
+    this.testNumber = 3;
+    this.testNumber = 4;
+    console.log('nvBeforeMount Container');
+  }
+
   public nvHasRender() {
+    // this.testNumber = 5;
+    // this.testNumber = 6;
     console.log('nvHasRender Container', 33333333, this, this.testComponent, this.testDirective, this.routerRenderElementRef, this.testDirectiveString);
   }
 
+  public nvDoCheck() {
+    console.log(999999, 'container do check!');
+  }
+
   public nvAfterMount() {
+    this.testNumber = 7;
+    this.testNumber = 8;
+    this.setState({testNumber: 100});
     console.log('nvAfterMount Container', 222222, this, this.testComponent, this.testDirective, this.routerRenderElementRef, this.testDirectiveString);
   }
 
@@ -148,10 +166,6 @@ export default class Container implements OnInit, AfterMount, DoCheck, HasRender
 
   public showInput(event: any, index: number) {
     this.testArray2[index] = event.target.value;
-  }
-
-  public nvDoCheck() {
-    console.log(999999, 'container do check!');
   }
 
   public changeInput() {

@@ -38,6 +38,9 @@
 - [x] vnode to string
 - [x] SSR 服务端渲染 server side render: @indiv/platform-server
 - [x] @ViewChild @ViewChildren
-- [ ] @indiv/cli
 - [x] AOT compile
+- [x] lifecycleCaller
+- [ ] `<nv-content></nv-content>` and @ContentChild @ContentChildren
+- [ ] 注释节点
 - [ ] support Pipe
+- [ ] @indiv/cli

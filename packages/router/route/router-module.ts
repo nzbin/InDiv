@@ -1,4 +1,4 @@
-import { IComponent, INvModule, ComponentList, DirectiveList, factoryModule, NvModule, InDiv, Vnode, utils, IDirective } from '@indiv/core';
+import { IComponent, INvModule, ComponentList, DirectiveList, factoryModule, NvModule, InDiv, Vnode, utils, IDirective, lifecycleCaller } from '@indiv/core';
 import { nvRouteStatus, NvLocation } from './location';
 import { RouterTo, RouterFrom } from './directives';
 
@@ -435,7 +435,7 @@ export class RouteModule {
       this.emitDirectiveEvent(component.directiveList, 'nvRouteChange');
       this.emitComponentEvent(component.componentList, 'nvRouteChange');
       if (i >= index + 1) {
-        if (component.nvOnDestory) component.nvOnDestory();
+        lifecycleCaller(component, 'nvOnDestory');
         this.emitDirectiveEvent(component.directiveList, 'nvOnDestory');
         this.emitComponentEvent(component.componentList, 'nvOnDestory');
       }
@@ -459,7 +459,7 @@ export class RouteModule {
     }
     if (event === 'nvOnDestory') {
       componentList.forEach(component => {
-        if (component.instanceScope.nvOnDestory) component.instanceScope.nvOnDestory();
+        lifecycleCaller(component.instanceScope, 'nvOnDestory');
         this.emitDirectiveEvent(component.instanceScope.directiveList, event);
         this.emitComponentEvent(component.instanceScope.componentList, event);
       });
@@ -482,7 +482,7 @@ export class RouteModule {
     }
     if (event === 'nvOnDestory') {
       directiveList.forEach(directive => {
-        if (directive.instanceScope.nvOnDestory) directive.instanceScope.nvOnDestory();
+        lifecycleCaller(directive.instanceScope, 'nvOnDestory');
       });
     }
   }

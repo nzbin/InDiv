@@ -5,6 +5,27 @@ import { buildDirectiveScope } from './compiler-utils';
 import { lifecycleCaller } from '../lifecycle';
 
 /**
+ * construct Directives in Directive
+ *
+ * @export
+ * @param {IComponent} componentInstance
+ * @param {TComAndDir} componentAndDirectives
+ */
+export function directivesConstructor(componentInstance: IComponent, componentAndDirectives: TComAndDir): void {
+  componentInstance.directiveList = [];
+
+  componentAndDirectives.directives.forEach(directive => {
+    const declaration = componentInstance.declarationMap.get(directive.name);
+    componentInstance.directiveList.push({
+      nativeElement: directive.nativeElement,
+      inputs: directive.inputs,
+      instanceScope: null,
+      constructorFunction: declaration,
+    });
+  });
+}
+
+/**
  * mountDirective for Directives in Component
  *
  * @export
@@ -50,7 +71,7 @@ export function mountDirective(componentInstance: IComponent, componentAndDirect
   const cacheDirectiveListLength = cacheDirectiveList.length;
   for (let i = 0; i < cacheDirectiveListLength; i++) {
     const cache = cacheDirectiveList[i];
-    if (cache.instanceScope.nvOnDestory) cache.instanceScope.nvOnDestory();
+    lifecycleCaller(cache.instanceScope, 'nvOnDestory');
   }
 
   // after mount
@@ -58,25 +79,4 @@ export function mountDirective(componentInstance: IComponent, componentAndDirect
     const directive = componentInstance.directiveList[i];
     lifecycleCaller(directive.instanceScope, 'nvHasRender');
   }
-}
-
-/**
- * construct Directives in Directive
- *
- * @export
- * @param {IComponent} componentInstance
- * @param {TComAndDir} componentAndDirectives
- */
-export function directivesConstructor(componentInstance: IComponent, componentAndDirectives: TComAndDir): void {
-  componentInstance.directiveList = [];
-
-  componentAndDirectives.directives.forEach(directive => {
-    const declaration = componentInstance.declarationMap.get(directive.name);
-    componentInstance.directiveList.push({
-      nativeElement: directive.nativeElement,
-      inputs: directive.inputs,
-      instanceScope: null,
-      constructorFunction: declaration,
-    });
-  });
 }

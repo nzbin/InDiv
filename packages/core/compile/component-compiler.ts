@@ -88,7 +88,7 @@ export async function mountComponent(componentInstance: IComponent, componentAnd
   const cacheComponentListLength = cacheComponentList.length;
   for (let i = 0; i < cacheComponentListLength; i++) {
     const cache = cacheComponentList[i];
-    if (cache.instanceScope.nvOnDestory) cache.instanceScope.nvOnDestory();
+    lifecycleCaller(cache.instanceScope, 'nvOnDestory');
     emitDirectiveDestory(cache.instanceScope.directiveList);
     emitComponentDestory(cache.instanceScope.componentList);
   }
@@ -98,7 +98,7 @@ export async function mountComponent(componentInstance: IComponent, componentAnd
     const component = componentInstance.componentList[i];
     if (!foundCacheComponentList.find(cache => cache.nativeElement === component.nativeElement)) {
       await component.instanceScope.render();
-      // isServerRendering won't call nvAfterMount
+      // in ssr env indiv won't call nvAfterMount
       if (!component.instanceScope.$indivInstance.getIndivEnv.isServerRendering) lifecycleCaller(component.instanceScope, 'nvAfterMount');
     }
   }
@@ -172,7 +172,6 @@ export function buildComponentsAndDirectives(vnode: Vnode, componentAndDirective
  * @returns {Promise<IComponent>}
  */
 export async function componentCompiler(nativeElement: any, componentInstance: IComponent): Promise<IComponent> {
-  console.log(9999991, nativeElement);
   // for compile, @Component must init parseVnodeOptions, templateVnode and compileInstance
   if (!componentInstance.parseVnodeOptions) {
     componentInstance.parseVnodeOptions = {

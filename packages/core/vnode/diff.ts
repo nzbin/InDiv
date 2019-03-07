@@ -77,7 +77,6 @@ function diffAttributes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
       if (!oldVnodeAttr) {
         patchList.push({
           type: 4,
-          // oldValue: oldVnodeAttr,
           originVnode: oldVnode,
           changedValue: attr,
           attributeType: attr.type,
@@ -92,7 +91,6 @@ function diffAttributes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
         });
         patchList.push({
           type: 4,
-          // oldValue: oldVnodeAttr,
           originVnode: oldVnode,
           changedValue: attr,
           attributeType: attr.type,

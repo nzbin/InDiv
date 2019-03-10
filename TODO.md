@@ -41,6 +41,8 @@
 - [x] AOT compile
 - [x] lifecycleCaller
 - [ ] `<nv-content></nv-content>` and @ContentChild @ContentChildren
+- [ ] 检查变更 onPush
+- [ ] AOT compile with babylon and traversal
 - [ ] 注释节点
 - [ ] support Pipe
 - [ ] @indiv/cli

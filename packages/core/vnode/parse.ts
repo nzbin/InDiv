@@ -9,6 +9,9 @@ export type ParseOptions = {
 /**
  * vnode main method, parse a template HTML string to Vnode[]
  *
+ * html tag regex: (<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>)
+ * html comment tag regex: ((?:[^>]\s|^)<!--(?!<!)[^\[>][\s\S]*?-->)
+ *
  * @export
  * @param {string} template
  * @param {ParseOptions} [options={ components: [], directives: [] }]
@@ -16,7 +19,7 @@ export type ParseOptions = {
  */
 export function parseTemplateToVnode(template: string, options: ParseOptions = { components: [], directives: [] }): Vnode[] {
 
-  const tagRegex = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
+  const tagRegex = /(<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>)|((?:[^>]\s|^)<!--(?!<!)[^\[>][\s\S]*?-->)/g;
 
   const result: Vnode[] = [];
   let current: Vnode = null;
@@ -25,7 +28,9 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
   const byTag = {};
   let inComponent = false;
 
-  template.replace(tagRegex, (tag: string, index: number): string => {
+  // todo 不知道为什么？
+  // template.replace(tagRegex, (tag: string, index: number): string => {
+  template.replace(tagRegex, (tag: string, tag2: number, unknow: any, index: number): string => {
     if (inComponent) {
       if (tag !== `</${current.tagName}>`) return;
       else inComponent = false;
@@ -35,6 +40,19 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
     const start = index + tag.length;
     const nextChar = template.charAt(start);
     let parent = null;
+
+    // todo 增加注释类型
+    if (/((?:[^>]\s|^)<!--(?!<!)[^\[>][\s\S]*?-->)/.test(tag)) {
+      const aa = {
+        type: 'comment',
+        nodeValue: tag.replace(/^\s*<!--/, '').replace(/-->\s*$/, ''),
+        parentVnode: current,
+        template: tag,
+        voidElement: true,
+      };
+      console.log(4444444, aa, start, tag);
+      return;
+    }
 
     if (isOpen) {
       level++;
@@ -78,7 +96,7 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
         // a child to the current node.
         // parent = level === -1 ? result : arr[level].childNodes;
         parent = level === -1 ? null : arr[level];
-        
+
         // calculate correct end of the content slice in case there's
         // no tag after the text node.
         const end = template.indexOf('<', start);
@@ -102,6 +120,6 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
     }
     return null;
   });
-
+  console.log(9999999, result);
   return result;
 }

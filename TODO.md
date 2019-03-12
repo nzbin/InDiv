@@ -43,6 +43,7 @@
 - [ ] `<nv-content></nv-content>` and @ContentChild @ContentChildren
 - [ ] 检查变更 onPush
 - [ ] AOT compile with babylon and traversal
-- [ ] 注释节点
+- [x] comment vnode
+- [ ] force render api
 - [ ] support Pipe
 - [ ] @indiv/cli

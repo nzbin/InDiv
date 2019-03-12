@@ -1,9 +1,18 @@
+<a name="2.0.6"></a>
+# [2.0.6](https://github.com/DimaLiLongJi/InDiv/releases/tag/2.0.6) (2019-03-12)
+
+
+### Features
+
+* **package:@indiv/core** add lifecycleCaller，add comment node renderer
+* **package:@indiv/platform-browser** add comment node renderer
+* **package:@indiv/platform-server** add comment node renderer
+
+
+
 <a name="2.0.5"></a>
 # [2.0.5](https://github.com/DimaLiLongJi/InDiv/releases/tag/2.0.5) (2019-02-21)
 
-I am sorry, that npm packages are empty.
-
-Now from v2.0.5 all will not be empty.
 
 ### Fix
 
@@ -15,6 +24,8 @@ Now from v2.0.5 all will not be empty.
 * **package:@indiv/indiv-loader** fix npm
 
 
+
+**These versions have been deprecated.**
 
 <a name="2.0.4"></a>
 # [2.0.4](https://github.com/DimaLiLongJi/InDiv/releases/tag/2.0.4) (2019-02-21)

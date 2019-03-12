@@ -9,7 +9,7 @@ export type ParseOptions = {
 /**
  * vnode main method, parse a template HTML string to Vnode[]
  *
- * html tag regex: (<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>)
+ * html tag regex: (<(?!!--)(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>)
  * html comment tag regex: ((?:[^>]\s|^)<!--(?!<!)[^\[>][\s\S]*?-->)
  *
  * @export
@@ -18,9 +18,7 @@ export type ParseOptions = {
  * @returns {Vnode[]}
  */
 export function parseTemplateToVnode(template: string, options: ParseOptions = { components: [], directives: [] }): Vnode[] {
-
-  const tagRegex = /(<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>)|((?:[^>]\s|^)<!--(?!<!)[^\[>][\s\S]*?-->)/g;
-
+  const tagRegex = /(<(?!!--)(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>)|((?:[^>]\s|^)<!--(?!<!)[^\[>][\s\S]*?-->)/g;
   const result: Vnode[] = [];
   let current: Vnode = null;
   let level = -1;
@@ -28,7 +26,7 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
   const byTag = {};
   let inComponent = false;
 
-  template.replace(tagRegex, (tag: string, firstMatch: number, secendtMatch: any, index: number): string => {
+  template.replace(tagRegex, (tag: string, tagMatch: string, commentMatch: string, index: number): string => {
     if (inComponent) {
       if (tag !== `</${current.tagName}>`) return;
       else inComponent = false;
@@ -42,23 +40,19 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
     if (isOpen) {
       level++;
 
-      // 注释类型
-      if (secendtMatch) {
-        current = {
-          type: 'comment',
-          nodeValue: tag.replace(/^\s*<!--/, '').replace(/-->\s*$/, ''),
-          parentVnode: current,
-          template: tag,
-          voidElement: true,
-        };
-        console.log(333333, tag, firstMatch, secendtMatch);
-      }
+      // if tag is comment tag
+      if (commentMatch) current = {
+        type: 'comment',
+        nodeValue: tag.replace(/^\s*<!--/, '').replace(/-->\s*$/, ''),
+        parentVnode: current,
+        template: tag,
+        voidElement: true,
+      };
 
-      if (firstMatch) console.log(4444444, tag, firstMatch, secendtMatch);
-      // 其他类型
-      if (firstMatch) current = parseTag(tag, options.directives);
+      // if tag is other tag
+      if (tagMatch && !commentMatch) current = parseTag(tag, options.directives);
 
-      // 如果组件里含有该标签则更换为组件类型
+      // change tag into component
       if (current.type === 'tag' && options.components.indexOf(current.tagName) !== -1) {
         current.type = 'component';
         inComponent = true;
@@ -81,7 +75,7 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
 
       parent = arr[level - 1];
 
-      // 防止路由标签 <router-rende> 加入子 vnode
+      // protect route tag <router-rende> to be pure
       if (parent && parent.tagName !== 'router-render') {
         current.parentVnode = parent;
         parent.childNodes.push(current);
@@ -98,7 +92,6 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
         // a child to the current node.
         // parent = level === -1 ? result : arr[level].childNodes;
         parent = level === -1 ? null : arr[level];
-
         // calculate correct end of the content slice in case there's
         // no tag after the text node.
         const end = template.indexOf('<', start);

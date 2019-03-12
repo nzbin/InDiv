@@ -28,9 +28,7 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
   const byTag = {};
   let inComponent = false;
 
-  // todo 不知道为什么？
-  // template.replace(tagRegex, (tag: string, index: number): string => {
-  template.replace(tagRegex, (tag: string, tag2: number, unknow: any, index: number): string => {
+  template.replace(tagRegex, (tag: string, firstMatch: number, secendtMatch: any, index: number): string => {
     if (inComponent) {
       if (tag !== `</${current.tagName}>`) return;
       else inComponent = false;
@@ -41,23 +39,26 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
     const nextChar = template.charAt(start);
     let parent = null;
 
-    // todo 增加注释类型
-    if (/((?:[^>]\s|^)<!--(?!<!)[^\[>][\s\S]*?-->)/.test(tag)) {
-      const aa = {
-        type: 'comment',
-        nodeValue: tag.replace(/^\s*<!--/, '').replace(/-->\s*$/, ''),
-        parentVnode: current,
-        template: tag,
-        voidElement: true,
-      };
-      console.log(4444444, aa, start, tag);
-      return;
-    }
-
     if (isOpen) {
       level++;
 
-      current = parseTag(tag, options.directives);
+      // 注释类型
+      if (secendtMatch) {
+        current = {
+          type: 'comment',
+          nodeValue: tag.replace(/^\s*<!--/, '').replace(/-->\s*$/, ''),
+          parentVnode: current,
+          template: tag,
+          voidElement: true,
+        };
+        console.log(333333, tag, firstMatch, secendtMatch);
+      }
+
+      if (firstMatch) console.log(4444444, tag, firstMatch, secendtMatch);
+      // 其他类型
+      if (firstMatch) current = parseTag(tag, options.directives);
+
+      // 如果组件里含有该标签则更换为组件类型
       if (current.type === 'tag' && options.components.indexOf(current.tagName) !== -1) {
         current.type = 'component';
         inComponent = true;
@@ -80,6 +81,7 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
 
       parent = arr[level - 1];
 
+      // 防止路由标签 <router-rende> 加入子 vnode
       if (parent && parent.tagName !== 'router-render') {
         current.parentVnode = parent;
         parent.childNodes.push(current);
@@ -118,8 +120,7 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
         });
       }
     }
-    return null;
+    return tag;
   });
-  console.log(9999999, result);
   return result;
 }

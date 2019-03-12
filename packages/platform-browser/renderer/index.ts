@@ -109,6 +109,10 @@ export class PlatfromBrowserRenderer extends Renderer {
     return document.createTextNode(value);
   }
 
+  public creatCommentElement(value: string): any {
+    return document.createComment(value);
+  }
+
   public getAttribute(element: Element, name: string): string {
     return element.getAttribute(name);
   }

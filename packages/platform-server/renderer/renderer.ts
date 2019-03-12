@@ -110,6 +110,10 @@ export class PlatfromServerRenderer extends Renderer {
     return _document.createTextNode(value);
   }
 
+  public creatCommentElement(value: string): any {
+    return _document.createComment(value);
+  }
+
   public getAttribute(element: Element, name: string): string {
     return element.getAttribute(name);
   }

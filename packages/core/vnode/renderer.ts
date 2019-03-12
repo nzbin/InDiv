@@ -107,7 +107,7 @@ export abstract class Renderer {
   public abstract creatElement(tagName: string): any;
 
   /**
-   * create nativeElement by value
+   * create nativeTextElement by value
    *
    * @abstract
    * @param {string} value
@@ -115,6 +115,16 @@ export abstract class Renderer {
    * @memberof Renderer
    */
   public abstract creatTextElement(value: string): any;
+
+  /**
+   * create nativeCommentElement by value
+   *
+   * @abstract
+   * @param {string} value
+   * @returns {*}
+   * @memberof Renderer
+   */
+  public abstract creatCommentElement(value: string): any;
 
   /**
    * get attribute by name from nativeElement

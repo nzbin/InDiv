@@ -10,7 +10,8 @@ import { Renderer } from './renderer';
  */
 export function createNativeElement(createdVnode: Vnode, renderer: Renderer): any {
   if (createdVnode.type === 'text') return renderer.creatTextElement(createdVnode.nodeValue);
-  if (createdVnode.type !== 'text') return renderer.creatElement(createdVnode.tagName);
+  else if (createdVnode.type === 'comment') return renderer.creatCommentElement(createdVnode.nodeValue);
+  else return renderer.creatElement(createdVnode.tagName);
 }
 
 /**

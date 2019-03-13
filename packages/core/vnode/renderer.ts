@@ -29,10 +29,11 @@ export abstract class Renderer {
    *
    * @abstract
    * @param {string} name
-   * @returns {any[]}
+   * @param {*} [master]
+   * @returns {*}
    * @memberof Renderer
    */
-  public abstract getElementsByTagName(name: string): any;
+  public abstract getElementsByTagName(name: string, master?: any): any;
 
   /**
    * check nativeElement has childnodes or not

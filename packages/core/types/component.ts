@@ -6,14 +6,17 @@ import { Compile } from '../compile';
 
 export type TComAndDir = {
   components: {
-    nativeElement: any,
-    inputs: any,
-    name: string,
+    nativeElement: any;
+    inputs: any;
+    name: string;
+    nvContent?: Vnode[];
+    inComponent?: boolean;
   }[];
   directives: {
-    nativeElement: any,
-    inputs: any,
-    name: string,
+    nativeElement: any;
+    inputs: any;
+    name: string;
+    inComponent?: boolean;
   }[];
 };
 
@@ -22,6 +25,8 @@ export type ComponentList = {
   inputs: any;
   instanceScope: IComponent;
   constructorFunction: Function;
+  nvContent?: Vnode[];
+  inComponent?: boolean;
 };
 
 export interface IComponent {
@@ -32,12 +37,15 @@ export interface IComponent {
   watchStatus?: 'pending' | 'available';
   isWaitingRender?: boolean;
   compileInstance?: Compile;
+  parentComponent?: IComponent;
 
   template?: string;
   declarationMap?: Map<string, Function>;
   inputsList?: { propertyName: string; inputName: string;  }[];
   viewChildList?: { propertyName: string; selector: string | Function; }[];
   viewChildrenList?: { propertyName: string; selector: string | Function; }[];
+  contentChildList?: { propertyName: string; selector: string | Function; }[];
+  contentChildrenList?: { propertyName: string; selector: string | Function; }[];
   componentList?: ComponentList[];
   directiveList?: DirectiveList[];
   otherInjector?: Injector;
@@ -47,6 +55,7 @@ export interface IComponent {
   parseVnodeOptions?: ParseOptions;
   templateVnode?: Vnode[];
   saveVnode?: Vnode[];
+  nvContent?: Vnode[];
 
   nvOnInit?(): void;
   watchData?(): void;

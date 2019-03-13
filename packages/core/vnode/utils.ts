@@ -66,3 +66,16 @@ export function isRepeatNode(vnode: Vnode): boolean {
 export function isTextNode(vnode: Vnode): boolean {
   return vnode.type === 'text';
 }
+
+/**
+ * test tagName
+ *
+ * @export
+ * @param {Vnode} vnode
+ * @param {string} tagName
+ * @returns {boolean}
+ */
+export function isTagName(vnode: Vnode, tagName: string): boolean {
+  if (vnode.tagName === tagName) return true;
+  else return false;
+}

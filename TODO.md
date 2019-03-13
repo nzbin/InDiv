@@ -40,7 +40,8 @@
 - [x] @ViewChild @ViewChildren
 - [x] AOT compile
 - [x] lifecycleCaller
-- [ ] `<nv-content></nv-content>` and @ContentChild @ContentChildren
+- [x] `<nv-content></nv-content>`
+- [ ] @ContentChild @ContentChildren
 - [ ] 检查变更 onPush
 - [ ] AOT compile with babylon and traversal
 - [x] comment vnode

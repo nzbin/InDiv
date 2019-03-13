@@ -43,6 +43,7 @@ export class Vnode {
   public voidElement?: boolean = false;
   public template?: string;
   public index?: number;
+  public inComponent?: boolean = false;
 
   /**
    * Creates an instance of Vnode.
@@ -64,6 +65,7 @@ export class Vnode {
     this.checked = false;
     this.voidElement = options.voidElement;
     this.template = options.template;
+    if (options.inComponent) this.inComponent = true;
 
     if (options.attributes && options.attributes.length > 0) {
       options.attributes.forEach(attr => {

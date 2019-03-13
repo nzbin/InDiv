@@ -6,6 +6,7 @@ export type DirectiveList = {
     inputs: any;
     instanceScope: IDirective;
     constructorFunction: Function;
+    inComponent?: boolean;
 };
 
 

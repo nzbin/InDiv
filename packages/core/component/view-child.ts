@@ -39,7 +39,7 @@ export function buildViewChild(component: IComponent): void {
         const found = foundMap.find(value => (value.constructorFunction as any).selector === selector);
         if (found) (component as any)[propertyName] = found.instanceScope;
       } else {
-        const findElementRef = component.$indivInstance.getRenderer.getElementsByTagName(selector);
+        const findElementRef = component.$indivInstance.getRenderer.getElementsByTagName(selector, component.nativeElement);
         if (findElementRef && findElementRef.length > 0) (component as any)[propertyName] = new ElementRef(findElementRef[0]);
       }
     }
@@ -67,7 +67,7 @@ export function buildViewChildren(component: IComponent): void {
         (component as any)[propertyName] = (foundMap as any[]).map(value => {
           if ((value.constructorFunction as any).selector === selector) return value.instanceScope;
         });
-      } else (component as any)[propertyName] = Array.from(component.$indivInstance.getRenderer.getElementsByTagName(selector)).map((findElementRef) => new ElementRef(findElementRef));
+      } else (component as any)[propertyName] = Array.from(component.$indivInstance.getRenderer.getElementsByTagName(selector, component.nativeElement)).map((findElementRef) => new ElementRef(findElementRef));
     }
     if (utils.isFunction(selector)) {
       const foundMap: ComponentList[] | DirectiveList[] = buildFoundMap(component, selector);

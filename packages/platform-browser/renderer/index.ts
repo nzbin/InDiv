@@ -71,8 +71,9 @@ export class PlatfromBrowserRenderer extends Renderer {
     return vnodeList;
   }
 
-  public getElementsByTagName(name: string): HTMLCollectionOf<Element> {
-    return document.getElementsByTagName(name);
+  public getElementsByTagName(name: string, master?: any): HTMLCollectionOf<Element> {
+    if (master) return master.getElementsByTagName(name);
+    else return document.getElementsByTagName(name);
   }
 
   public hasChildNodes(nativeElement: Element): boolean {

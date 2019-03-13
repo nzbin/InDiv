@@ -27,10 +27,7 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
   let inComponent = false;
 
   template.replace(tagRegex, (tag: string, tagMatch: string, commentMatch: string, index: number): string => {
-    if (inComponent) {
-      if (tag !== `</${current.tagName}>`) return;
-      else inComponent = false;
-    }
+    if (inComponent && tag === `</${current.tagName}>`) inComponent = false;
 
     const isOpen = tag.charAt(1) !== '/';
     const start = index + tag.length;
@@ -51,6 +48,7 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
 
       // if tag is other tag
       if (tagMatch && !commentMatch) current = parseTag(tag, options.directives);
+      if (inComponent) current.inComponent = inComponent;
 
       // change tag into component
       if (current.type === 'tag' && options.components.indexOf(current.tagName) !== -1) {
@@ -58,7 +56,7 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
         inComponent = true;
       }
 
-      if (!current.voidElement && !inComponent && nextChar && nextChar !== '<' && !/^\s*$/.test(template.slice(start, template.indexOf('<', start)))) {
+      if (!current.voidElement && nextChar && nextChar !== '<' && !/^\s*$/.test(template.slice(start, template.indexOf('<', start)))) {
         current.childNodes.push({
           type: 'text',
           nodeValue: template.slice(start, template.indexOf('<', start)),
@@ -86,7 +84,7 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
 
     if (!isOpen || current.voidElement) {
       level--;
-      if (!inComponent && nextChar !== '<' && nextChar) {
+      if (nextChar !== '<' && nextChar) {
         // trailing text node
         // if we're at the root, push a base text node. otherwise add as
         // a child to the current node.

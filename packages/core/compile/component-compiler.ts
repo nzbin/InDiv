@@ -5,7 +5,7 @@ import { Compile } from './compile';
 import { buildComponentScope } from './compiler-utils';
 import { Vnode, parseTemplateToVnode } from '../vnode';
 import { mountDirective } from './directive-compiler';
-import { buildViewChild, buildViewChildren } from '../component';
+import { buildViewChild, buildViewChildren, buildContentChild, buildContentChildren } from '../component';
 import { lifecycleCaller } from '../lifecycle';
 
 /**
@@ -77,6 +77,9 @@ export async function mountComponent(componentInstance: IComponent, componentAnd
     }
 
     component.instanceScope.$indivInstance = componentInstance.$indivInstance;
+    // 赋值 <nv-content>的Vnode[] 给组件实例nvContent
+    component.instanceScope.nvContent = component.nvContent;
+    component.instanceScope.parentComponent = componentInstance;
 
     if (!cacheComponent) {
       lifecycleCaller(component.instanceScope, 'nvOnInit');
@@ -103,10 +106,17 @@ export async function mountComponent(componentInstance: IComponent, componentAnd
     }
   }
 
+  // todo inComponent 有问题
+  console.log(999999999999, componentInstance, componentAndDirectives, componentInstance.parentComponent);
+
   // build @ViewChild
   buildViewChild(componentInstance);
   // build @ViewChildren
   buildViewChildren(componentInstance);
+  // // build @Content
+  buildContentChild(componentInstance);
+  // build @ContentChild
+  buildContentChildren(componentInstance);
 }
 
 /**
@@ -126,6 +136,8 @@ export function componentsConstructor(componentInstance: IComponent, componentAn
       inputs: component.inputs,
       instanceScope: null,
       constructorFunction: declaration,
+      nvContent: component.nvContent,
+      inComponent: component.inComponent,
     });
   });
 }
@@ -138,16 +150,21 @@ export function componentsConstructor(componentInstance: IComponent, componentAn
  * @param {TComAndDir} componentAndDirectives
  */
 export function buildComponentsAndDirectives(vnode: Vnode, componentAndDirectives: TComAndDir): void {
+  if (vnode.childNodes && vnode.childNodes.length > 0) vnode.childNodes.forEach(child => buildComponentsAndDirectives(child, componentAndDirectives));
+
   if (vnode.type === 'text') return;
   const componentInputs: any = {};
 
   if (vnode.attributes && vnode.attributes.length > 0) {
     vnode.attributes.forEach(attr => {
-      if (attr.type === 'directive') componentAndDirectives.directives.push({
-        nativeElement: vnode.nativeElement,
-        inputs: attr.nvValue,
-        name: attr.name,
-      });
+      if (attr.type === 'directive') {
+        componentAndDirectives.directives.push({
+          nativeElement: vnode.nativeElement,
+          inputs: attr.nvValue,
+          name: attr.name,
+          inComponent: vnode.inComponent,
+        });
+      }
       if (attr.type === 'prop') componentInputs[attr.name] = attr.nvValue;
     });
   }
@@ -157,10 +174,10 @@ export function buildComponentsAndDirectives(vnode: Vnode, componentAndDirective
       nativeElement: vnode.nativeElement,
       inputs: componentInputs,
       name: vnode.tagName,
+      nvContent: vnode.childNodes,
+      inComponent: vnode.inComponent,
     });
   }
-
-  if (vnode.childNodes && vnode.childNodes.length > 0) vnode.childNodes.forEach(child => buildComponentsAndDirectives(child, componentAndDirectives));
 }
 
 /**

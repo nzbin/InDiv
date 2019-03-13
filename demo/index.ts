@@ -1,4 +1,4 @@
-import { InDiv, Component, Utils, NvModule, OnInit, DoCheck, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, ElementRef, HasRender, Input, ViewChild, ViewChildren, StateSetter, Watch } from '@indiv/core';
+import { InDiv, Component, Utils, NvModule, OnInit, DoCheck, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, ElementRef, HasRender, Input, ViewChild, ViewChildren, StateSetter, Watch, ContentChild, ContentChildren } from '@indiv/core';
 import { RouteChange, NvLocation, RouteModule, RouteCanActive } from '@indiv/router';
 import { PlatformBrowser } from '@indiv/platform-browser';
 import { HttpClient, HttpClientResponse } from '@indiv/common';
@@ -9,6 +9,12 @@ import { HeroSearchService, HeroSearchService1, HeroSearchService2 } from './ser
 import { PrivateService } from './private.service';
 
 class ValueType { }
+
+@Component({
+  selector: 'test-content-component',
+  template: '<p>这个是个测试组件content的东西</p>',
+})
+class TestContentComponent {}
 
 @Component({
   selector: 'pc-component',
@@ -234,11 +240,25 @@ class R2 implements OnInit, BeforeMount, AfterMount, DoCheck, RouteChange, OnDes
   template: (`
     <div>
       <p nv-on:click="click()">测试repeat组件: {{manName}}</p>
-    </div>`),
+    </div>
+    <div nv-repeat='num in repeatData'>
+      <nv-content></nv-content>
+    </div>
+    <nv-content></nv-content>
+`),
 })
 class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
   public state: any;
   @Input() public manName: any;
+  public repeatData: number[] = [1];
+  public man: {name: string} = {
+    name: 'fucker',
+  };
+
+  // @ContentChild('test-content-component') private testComponent: TestContentComponent;
+  // @ViewChild('router-render') private routerRenderElementRef: ElementRef;
+  @ContentChildren('test-directive') private testDirectiveString: TestDirective[];
+  @ViewChildren(TestDirective) private testDirective: TestDirective[];
 
   constructor(
     private httpClient: HttpClient,
@@ -261,7 +281,7 @@ class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
   }
 
   public nvAfterMount() {
-    console.log('TestComponent AfterMount');
+    console.log('TestComponent AfterMount', this.testDirectiveString);
   }
   public nvOnDestory() {
     console.log('TestComponent OnDestory');
@@ -280,7 +300,10 @@ class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
   <p>{{testNumber}}</p>
   <input nv-model="test.a" nv-on:click="show(test)" />
   <p test-directive="{test.a}" nv-id="232" nv-if="countState(a)" nv-on:click="changeInput()">{{a}}</p>
-  <test-component nv-repeat="man in testArray" nv-key="man.name" manName="{countState(man.name)}" nv-if="a"></test-component>
+  <test-component nv-repeat="man in testArray" nv-key="man.name" manName="{countState(man.name)}" nv-if="a">
+    <a>this is {{man.name}}</a>
+    <test-content-component test-directive="{test.a}"></test-content-component>
+  </test-component>
   <p nv-on:click="go()">
     <!-- container: {{countState(color)}} -->
     container: {{countState(color)}}
@@ -582,6 +605,7 @@ class M2 {
     M2,
   ],
   declarations: [
+    TestContentComponent,
     Container,
     PComponent,
     TestComponent,

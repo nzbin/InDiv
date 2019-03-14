@@ -12,12 +12,12 @@ import { ElementRef } from './element-ref';
 function buildFoundMap(component: IComponent, selector: string | Function): ComponentList[] | DirectiveList[] {
   let toFindMap: ComponentList[] | DirectiveList[];
   if (typeof selector === 'string') {
-    if ((component.parentComponent.declarationMap.get(selector) as any).nvType === 'nvComponent') toFindMap = component.parentComponent.componentList;
-    if ((component.parentComponent.declarationMap.get(selector) as any).nvType === 'nvDirective') toFindMap = component.parentComponent.directiveList;
+    if ((component.declarationMap.get(selector) as any).nvType === 'nvComponent') toFindMap = component.componentList;
+    if ((component.declarationMap.get(selector) as any).nvType === 'nvDirective') toFindMap = component.directiveList;
   }
   if (utils.isFunction(selector)) {
-    if ((selector as any).nvType === 'nvComponent') toFindMap = component.parentComponent.componentList;
-    if ((selector as any).nvType === 'nvDirective') toFindMap = component.parentComponent.directiveList;
+    if ((selector as any).nvType === 'nvComponent') toFindMap = component.componentList;
+    if ((selector as any).nvType === 'nvDirective') toFindMap = component.directiveList;
   }
   return toFindMap;
 }
@@ -30,13 +30,13 @@ function buildFoundMap(component: IComponent, selector: string | Function): Comp
  * @returns {void}
  */
 export function buildContentChild(component: IComponent): void {
-  if (!component.contentChildList || !component.parentComponent) return;
+  if (!component.contentChildList) return;
   component.contentChildList.forEach(({ propertyName, selector }) => {
     if (typeof selector === 'string') {
-      if (component.parentComponent.declarationMap.has(selector)) {
+      if (component.declarationMap.has(selector)) {
         const foundMap: ComponentList[] | DirectiveList[] = buildFoundMap(component, selector);
         if (!foundMap) return;
-        const found = foundMap.find(value => ((value.constructorFunction as any).selector === selector) && value.inComponent);
+        const found = foundMap.find(value => ((value.constructorFunction as any).selector === selector) && value.isFromContent);
         if (found) (component as any)[propertyName] = found.instanceScope;
       } else {
         const findElementRef = component.$indivInstance.getRenderer.getElementsByTagName(selector);
@@ -45,7 +45,7 @@ export function buildContentChild(component: IComponent): void {
     }
     if (utils.isFunction(selector)) {
       const foundMap: ComponentList[] | DirectiveList[] = buildFoundMap(component, selector);
-      if (foundMap) (component as any)[propertyName] = foundMap.find(value => (value.constructorFunction === selector) && value.inComponent).instanceScope;
+      if (foundMap) (component as any)[propertyName] = foundMap.find(value => (value.constructorFunction === selector) && value.isFromContent).instanceScope;
     }
   });
 }
@@ -58,21 +58,21 @@ export function buildContentChild(component: IComponent): void {
  * @returns {void}
  */
 export function buildContentChildren(component: IComponent): void {
-  if (!component.contentChildrenList || !component.parentComponent) return;
+  if (!component.contentChildrenList) return;
   component.contentChildrenList.forEach(({ propertyName, selector }) => {
     if (typeof selector === 'string') {
-      if (component.parentComponent.declarationMap.has(selector)) {
+      if (component.declarationMap.has(selector)) {
         const foundMap: ComponentList[] | DirectiveList[] = buildFoundMap(component, selector);
         if (!foundMap) return;
         (component as any)[propertyName] = (foundMap as any[]).map(value => {
-          if (((value.constructorFunction as any).selector === selector) && value.inComponent) return value.instanceScope;
+          if (((value.constructorFunction as any).selector === selector) && value.isFromContent) return value.instanceScope;
         });
       } else (component as any)[propertyName] = Array.from(component.$indivInstance.getRenderer.getElementsByTagName(selector)).map((findElementRef) => new ElementRef(findElementRef));
     }
     if (utils.isFunction(selector)) {
       const foundMap: ComponentList[] | DirectiveList[] = buildFoundMap(component, selector);
       if (foundMap) (component as any)[propertyName] = (foundMap as any[]).map(value => {
-        if (value.constructorFunction === selector && value.inComponent) return value.instanceScope;
+        if (value.constructorFunction === selector && value.isFromContent) return value.instanceScope;
       });
     }
   });

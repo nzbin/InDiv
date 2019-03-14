@@ -10,13 +10,13 @@ export type TComAndDir = {
     inputs: any;
     name: string;
     nvContent?: Vnode[];
-    inComponent?: boolean;
+    isFromContent: boolean;
   }[];
   directives: {
     nativeElement: any;
     inputs: any;
     name: string;
-    inComponent?: boolean;
+    isFromContent: boolean;
   }[];
 };
 
@@ -26,7 +26,7 @@ export type ComponentList = {
   instanceScope: IComponent;
   constructorFunction: Function;
   nvContent?: Vnode[];
-  inComponent?: boolean;
+  isFromContent: boolean;
 };
 
 export interface IComponent {
@@ -37,7 +37,6 @@ export interface IComponent {
   watchStatus?: 'pending' | 'available';
   isWaitingRender?: boolean;
   compileInstance?: Compile;
-  parentComponent?: IComponent;
 
   template?: string;
   declarationMap?: Map<string, Function>;

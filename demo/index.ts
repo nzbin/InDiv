@@ -1,4 +1,4 @@
-import { InDiv, Component, Utils, NvModule, OnInit, DoCheck, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, ElementRef, HasRender, Input, ViewChild, ViewChildren, StateSetter, Watch, ContentChild, ContentChildren } from '@indiv/core';
+import { InDiv, Component, Utils, NvModule, OnInit, DoCheck, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, ElementRef, HasRender, Input, ViewChild, ViewChildren, StateSetter, Watch, ContentChildren, ContentChild } from '@indiv/core';
 import { RouteChange, NvLocation, RouteModule, RouteCanActive } from '@indiv/router';
 import { PlatformBrowser } from '@indiv/platform-browser';
 import { HttpClient, HttpClientResponse } from '@indiv/common';
@@ -12,9 +12,16 @@ class ValueType { }
 
 @Component({
   selector: 'test-content-component',
-  template: '<p>这个是个测试组件content的东西</p>',
+  template: '<p nv-on:click="click()">这个是个测试组件content的东西 {{test}}</p>',
 })
-class TestContentComponent {}
+class TestContentComponent {
+  public test: number = 2;
+
+  public click() {
+    console.log(999999, this.test);
+    this.test = 1002;
+  }
+}
 
 @Component({
   selector: 'pc-component',
@@ -255,10 +262,10 @@ class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
     name: 'fucker',
   };
 
-  // @ContentChild('test-content-component') private testComponent: TestContentComponent;
-  // @ViewChild('router-render') private routerRenderElementRef: ElementRef;
-  @ContentChildren('test-directive') private testDirectiveString: TestDirective[];
-  @ViewChildren(TestDirective) private testDirective: TestDirective[];
+  @ContentChild('test-content-component') private testComponent: TestContentComponent;
+  // @ContentChild('router-render') private routerRenderElementRef: ElementRef;
+  // @ContentChildren('test-directive') private testDirectiveString: TestDirective[];
+  @ContentChildren(TestDirective) private testDirective: TestDirective[];
 
   constructor(
     private httpClient: HttpClient,
@@ -277,11 +284,11 @@ class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
   }
 
   public nvHasRender() {
-    console.log('TestComponent HasRender');
+    console.log('TestComponent HasRender', this.testComponent, this.testDirective);
   }
 
   public nvAfterMount() {
-    console.log('TestComponent AfterMount', this.testDirectiveString);
+    console.log('TestComponent AfterMount');
   }
   public nvOnDestory() {
     console.log('TestComponent OnDestory');

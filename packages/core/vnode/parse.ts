@@ -25,9 +25,13 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
   const arr: Vnode[] = [];
   const byTag = {};
   let inComponent = false;
+  const componentStack: Vnode[] = [];
 
   template.replace(tagRegex, (tag: string, tagMatch: string, commentMatch: string, index: number): string => {
-    if (inComponent && tag === `</${current.tagName}>`) inComponent = false;
+    if (inComponent && componentStack.length > 0 && tag === `</${componentStack[componentStack.length - 1].tagName}>`) {
+      componentStack.pop();
+      if (componentStack.length === 0) inComponent = false;
+    }
 
     const isOpen = tag.charAt(1) !== '/';
     const start = index + tag.length;
@@ -54,6 +58,7 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
       if (current.type === 'tag' && options.components.indexOf(current.tagName) !== -1) {
         current.type = 'component';
         inComponent = true;
+        componentStack.push(current);
       }
 
       if (!current.voidElement && nextChar && nextChar !== '<' && !/^\s*$/.test(template.slice(start, template.indexOf('<', start)))) {
@@ -63,6 +68,7 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
           parentVnode: current,
           template: template.slice(start, template.indexOf('<', start)),
           voidElement: true,
+          inComponent,
         });
       }
 
@@ -101,6 +107,7 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
           parentVnode: parent,
           template: nodeValue,
           voidElement: true,
+          inComponent,
         });
         if (!/^\s*$/.test(nodeValue) && parent && parent.tagName !== 'router-render') arr[level].childNodes.push({
           type: 'text',
@@ -108,6 +115,7 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
           parentVnode: parent,
           template: nodeValue,
           voidElement: true,
+          inComponent,
         });
       }
     }

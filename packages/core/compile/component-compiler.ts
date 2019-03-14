@@ -3,7 +3,7 @@ import { IComponent, ComponentList, TComAndDir, DirectiveList } from '../types';
 import { utils } from '../utils';
 import { Compile } from './compile';
 import { buildComponentScope } from './compiler-utils';
-import { Vnode, parseTemplateToVnode } from '../vnode';
+import { Vnode, parseTemplateToVnode, isTagName } from '../vnode';
 import { mountDirective } from './directive-compiler';
 import { buildViewChild, buildViewChildren, buildContentChild, buildContentChildren } from '../component';
 import { lifecycleCaller } from '../lifecycle';
@@ -77,9 +77,8 @@ export async function mountComponent(componentInstance: IComponent, componentAnd
     }
 
     component.instanceScope.$indivInstance = componentInstance.$indivInstance;
-    // 赋值 <nv-content>的Vnode[] 给组件实例nvContent
+    // 赋值 <nv-content>的 Vnode[] 给组件实例nvContent
     component.instanceScope.nvContent = component.nvContent;
-    component.instanceScope.parentComponent = componentInstance;
 
     if (!cacheComponent) {
       lifecycleCaller(component.instanceScope, 'nvOnInit');
@@ -106,17 +105,15 @@ export async function mountComponent(componentInstance: IComponent, componentAnd
     }
   }
 
-  // todo inComponent 有问题
-  console.log(999999999999, componentInstance, componentAndDirectives, componentInstance.parentComponent);
-
   // build @ViewChild
   buildViewChild(componentInstance);
   // build @ViewChildren
   buildViewChildren(componentInstance);
-  // // build @Content
-  buildContentChild(componentInstance);
   // build @ContentChild
+  buildContentChild(componentInstance);
+  // build @ContentChildren
   buildContentChildren(componentInstance);
+
 }
 
 /**
@@ -137,7 +134,7 @@ export function componentsConstructor(componentInstance: IComponent, componentAn
       instanceScope: null,
       constructorFunction: declaration,
       nvContent: component.nvContent,
-      inComponent: component.inComponent,
+      isFromContent: component.isFromContent,
     });
   });
 }
@@ -148,12 +145,19 @@ export function componentsConstructor(componentInstance: IComponent, componentAn
  * @export
  * @param {Vnode} vnode
  * @param {TComAndDir} componentAndDirectives
+ * @param {Vnode[]} contentComponentStack
  */
-export function buildComponentsAndDirectives(vnode: Vnode, componentAndDirectives: TComAndDir): void {
-  if (vnode.childNodes && vnode.childNodes.length > 0) vnode.childNodes.forEach(child => buildComponentsAndDirectives(child, componentAndDirectives));
-
+export function buildComponentsAndDirectives(vnode: Vnode, componentAndDirectives: TComAndDir, contentComponentStack: Vnode[]): void {
   if (vnode.type === 'text') return;
   const componentInputs: any = {};
+
+  // 判断栈是否为空，如果没空则证明是 <nv-content> 的子作用域的组件
+  const fromContent = contentComponentStack.length ? true : false;
+  let hasPushStack = false;
+  if (isTagName(vnode, 'nv-content') && vnode.childNodes && vnode.childNodes.length > 0) {
+    contentComponentStack.push(vnode);
+    hasPushStack = true;
+  }
 
   if (vnode.attributes && vnode.attributes.length > 0) {
     vnode.attributes.forEach(attr => {
@@ -162,7 +166,7 @@ export function buildComponentsAndDirectives(vnode: Vnode, componentAndDirective
           nativeElement: vnode.nativeElement,
           inputs: attr.nvValue,
           name: attr.name,
-          inComponent: vnode.inComponent,
+          isFromContent: fromContent,
         });
       }
       if (attr.type === 'prop') componentInputs[attr.name] = attr.nvValue;
@@ -175,9 +179,13 @@ export function buildComponentsAndDirectives(vnode: Vnode, componentAndDirective
       inputs: componentInputs,
       name: vnode.tagName,
       nvContent: vnode.childNodes,
-      inComponent: vnode.inComponent,
+      isFromContent: fromContent,
     });
   }
+
+  if (vnode.childNodes && vnode.childNodes.length > 0) vnode.childNodes.forEach(child => buildComponentsAndDirectives(child, componentAndDirectives, contentComponentStack));
+  // 深度优先遍历后，出栈
+  if (hasPushStack) contentComponentStack.pop();
 }
 
 /**
@@ -212,10 +220,12 @@ export async function componentCompiler(nativeElement: any, componentInstance: I
 
   // for save saveVnode in componentInstance
   componentInstance.saveVnode = saveVnode;
+  let componentAndDirectives: TComAndDir = { components: [], directives: [] };
+  // 定义一个来自 <nv-content> 的 Vnode 栈
+  let contentComponentStack: Vnode[] = [];
 
-  const componentAndDirectives: TComAndDir = { components: [], directives: [] };
-  saveVnode.forEach(vnode => buildComponentsAndDirectives(vnode, componentAndDirectives));
-
+  saveVnode.forEach(vnode => buildComponentsAndDirectives(vnode, componentAndDirectives, contentComponentStack));
+  console.log(999999, componentInstance, componentAndDirectives);
   // firstly mount directive
   try {
     mountDirective(componentInstance, componentAndDirectives);
@@ -230,6 +240,9 @@ export async function componentCompiler(nativeElement: any, componentInstance: I
   } catch (error) {
     throw new Error(`Error: ${error}, components of compoent ${(componentInstance.constructor as any).selector} were compiled failed!`);
   }
+
+  componentAndDirectives = null;
+  contentComponentStack = null;
 
   return componentInstance;
 }

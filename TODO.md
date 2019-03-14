@@ -41,7 +41,7 @@
 - [x] AOT compile
 - [x] lifecycleCaller
 - [x] `<nv-content></nv-content>`
-- [ ] @ContentChild @ContentChildren
+- [x] @ContentChild @ContentChildren
 - [ ] 检查变更 onPush
 - [ ] AOT compile with babylon and traversal
 - [x] comment vnode

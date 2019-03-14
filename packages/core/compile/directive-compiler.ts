@@ -21,7 +21,7 @@ export function directivesConstructor(componentInstance: IComponent, componentAn
       inputs: directive.inputs,
       instanceScope: null,
       constructorFunction: declaration,
-      inComponent: directive.inComponent,
+      isFromContent: directive.isFromContent,
     });
   });
 }

@@ -1,35 +1,15 @@
 import { IComponent, ComponentList, DirectiveList } from '../types';
 import { utils } from '../utils';
 import { ElementRef } from './element-ref';
-
-/**
- * to build foundMap for function buildViewChild, buildViewChildren
- *
- * @param {IComponent} component
- * @param {(string | Function)} selector
- * @returns {(ComponentList[] | DirectiveList[])}
- */
-function buildFoundMap(component: IComponent, selector: string | Function): ComponentList[] | DirectiveList[] {
-  let toFindMap: ComponentList[] | DirectiveList[];
-  if (typeof selector === 'string') {
-    if ((component.declarationMap.get(selector) as any).nvType === 'nvComponent') toFindMap = component.componentList;
-    if ((component.declarationMap.get(selector) as any).nvType === 'nvDirective') toFindMap = component.directiveList;
-  }
-  if (utils.isFunction(selector)) {
-    if ((selector as any).nvType === 'nvComponent') toFindMap = component.componentList;
-    if ((selector as any).nvType === 'nvDirective') toFindMap = component.directiveList;
-  }
-  return toFindMap;
-}
+import { buildFoundMap } from './utils';
 
 /**
  * for build @ViewChild in Component
  *
- * @export
  * @param {IComponent} component
  * @returns {void}
  */
-export function buildViewChild(component: IComponent): void {
+function buildViewChild(component: IComponent): void {
   if (!component.viewChildList) return;
   component.viewChildList.forEach(({ propertyName, selector }) => {
     if (typeof selector === 'string') {
@@ -53,11 +33,10 @@ export function buildViewChild(component: IComponent): void {
 /**
  * for build @ViewChildren in Component
  *
- * @export
  * @param {IComponent} component
  * @returns {void}
  */
-export function buildViewChildren(component: IComponent): void {
+function buildViewChildren(component: IComponent): void {
   if (!component.viewChildrenList) return;
   component.viewChildrenList.forEach(({ propertyName, selector }) => {
     if (typeof selector === 'string') {
@@ -76,6 +55,17 @@ export function buildViewChildren(component: IComponent): void {
       });
     }
   });
+}
+
+/**
+ * for build @ViewChild and @ViewChildren in Component
+ *
+ * @export
+ * @param {IComponent} component
+ */
+export function buildViewChildandChildren(component: IComponent): void {
+  buildViewChild(component);
+  buildViewChildren(component);
 }
 
 /**

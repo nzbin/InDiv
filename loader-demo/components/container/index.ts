@@ -22,6 +22,7 @@ export default class Container implements OnInit, AfterMount, DoCheck, HasRender
   public color: any = 'red';
   public test: any = {
     a: 3,
+    b: 'adc',
   };
   public a: any = 1;
   public b: any = 3;
@@ -107,6 +108,10 @@ export default class Container implements OnInit, AfterMount, DoCheck, HasRender
     // }, 1000);
   }
 
+  public changeName(man: any) {
+    man.name = '测试插槽';
+  }
+
   public nvRouteChange(lastRoute?: string, newRoute?: string) {
     console.log('nvRouteChange Container', lastRoute, newRoute);
   }
@@ -120,6 +125,7 @@ export default class Container implements OnInit, AfterMount, DoCheck, HasRender
   public nvBeforeMount() {
     this.testNumber = 3;
     this.testNumber = 4;
+    setTimeout(() => this.test.b = 'tank', 3000);
     console.log('nvBeforeMount Container');
   }
 

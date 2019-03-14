@@ -25,7 +25,7 @@ export type ComponentList = {
   inputs: any;
   instanceScope: IComponent;
   constructorFunction: Function;
-  nvContent?: Vnode[];
+  nvContent: Vnode[];
   isFromContent: boolean;
 };
 

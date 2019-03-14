@@ -5,7 +5,7 @@ import { Compile } from './compile';
 import { buildComponentScope } from './compiler-utils';
 import { Vnode, parseTemplateToVnode, isTagName } from '../vnode';
 import { mountDirective } from './directive-compiler';
-import { buildViewChild, buildViewChildren, buildContentChild, buildContentChildren } from '../component';
+import { buildViewChildandChildren, buildContentChildandChildren } from '../component';
 import { lifecycleCaller } from '../lifecycle';
 
 /**
@@ -105,15 +105,10 @@ export async function mountComponent(componentInstance: IComponent, componentAnd
     }
   }
 
-  // build @ViewChild
-  buildViewChild(componentInstance);
-  // build @ViewChildren
-  buildViewChildren(componentInstance);
-  // build @ContentChild
-  buildContentChild(componentInstance);
-  // build @ContentChildren
-  buildContentChildren(componentInstance);
-
+  // build @ViewChild @ViewChildren
+  buildViewChildandChildren(componentInstance);
+  // build @ContentChild @ContentChildren
+  buildContentChildandChildren(componentInstance);
 }
 
 /**
@@ -159,6 +154,8 @@ export function buildComponentsAndDirectives(vnode: Vnode, componentAndDirective
     hasPushStack = true;
   }
 
+  if (vnode.childNodes && vnode.childNodes.length > 0) vnode.childNodes.forEach(child => buildComponentsAndDirectives(child, componentAndDirectives, contentComponentStack));
+
   if (vnode.attributes && vnode.attributes.length > 0) {
     vnode.attributes.forEach(attr => {
       if (attr.type === 'directive') {
@@ -183,7 +180,6 @@ export function buildComponentsAndDirectives(vnode: Vnode, componentAndDirective
     });
   }
 
-  if (vnode.childNodes && vnode.childNodes.length > 0) vnode.childNodes.forEach(child => buildComponentsAndDirectives(child, componentAndDirectives, contentComponentStack));
   // 深度优先遍历后，出栈
   if (hasPushStack) contentComponentStack.pop();
 }
@@ -225,7 +221,7 @@ export async function componentCompiler(nativeElement: any, componentInstance: I
   let contentComponentStack: Vnode[] = [];
 
   saveVnode.forEach(vnode => buildComponentsAndDirectives(vnode, componentAndDirectives, contentComponentStack));
-  console.log(999999, componentInstance, componentAndDirectives);
+
   // firstly mount directive
   try {
     mountDirective(componentInstance, componentAndDirectives);

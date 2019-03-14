@@ -1,35 +1,15 @@
 import { IComponent, ComponentList, DirectiveList } from '../types';
 import { utils } from '../utils';
 import { ElementRef } from './element-ref';
-
-/**
- * to build foundMap for function buildContentChild, buildContentChildren
- *
- * @param {IComponent} component
- * @param {(string | Function)} selector
- * @returns {(ComponentList[] | DirectiveList[])}
- */
-function buildFoundMap(component: IComponent, selector: string | Function): ComponentList[] | DirectiveList[] {
-  let toFindMap: ComponentList[] | DirectiveList[];
-  if (typeof selector === 'string') {
-    if ((component.declarationMap.get(selector) as any).nvType === 'nvComponent') toFindMap = component.componentList;
-    if ((component.declarationMap.get(selector) as any).nvType === 'nvDirective') toFindMap = component.directiveList;
-  }
-  if (utils.isFunction(selector)) {
-    if ((selector as any).nvType === 'nvComponent') toFindMap = component.componentList;
-    if ((selector as any).nvType === 'nvDirective') toFindMap = component.directiveList;
-  }
-  return toFindMap;
-}
+import { buildFoundMap } from './utils';
 
 /**
  * for build @ContentChild in Component
  *
- * @export
  * @param {IComponent} component
  * @returns {void}
  */
-export function buildContentChild(component: IComponent): void {
+function buildContentChild(component: IComponent): void {
   if (!component.contentChildList) return;
   component.contentChildList.forEach(({ propertyName, selector }) => {
     if (typeof selector === 'string') {
@@ -39,7 +19,8 @@ export function buildContentChild(component: IComponent): void {
         const found = foundMap.find(value => ((value.constructorFunction as any).selector === selector) && value.isFromContent);
         if (found) (component as any)[propertyName] = found.instanceScope;
       } else {
-        const findElementRef = component.$indivInstance.getRenderer.getElementsByTagName(selector);
+        const contents: any[] = component.$indivInstance.getRenderer.getElementsByTagName('nv-content', component.nativeElement);
+        const findElementRef = component.$indivInstance.getRenderer.getElementsByTagName(selector, contents[0]);
         if (findElementRef && findElementRef.length > 0) (component as any)[propertyName] = new ElementRef(findElementRef[0]);
       }
     }
@@ -53,11 +34,10 @@ export function buildContentChild(component: IComponent): void {
 /**
  * for build @ContentChildren in Component
  *
- * @export
  * @param {IComponent} component
  * @returns {void}
  */
-export function buildContentChildren(component: IComponent): void {
+function buildContentChildren(component: IComponent): void {
   if (!component.contentChildrenList) return;
   component.contentChildrenList.forEach(({ propertyName, selector }) => {
     if (typeof selector === 'string') {
@@ -67,7 +47,16 @@ export function buildContentChildren(component: IComponent): void {
         (component as any)[propertyName] = (foundMap as any[]).map(value => {
           if (((value.constructorFunction as any).selector === selector) && value.isFromContent) return value.instanceScope;
         });
-      } else (component as any)[propertyName] = Array.from(component.$indivInstance.getRenderer.getElementsByTagName(selector)).map((findElementRef) => new ElementRef(findElementRef));
+      } else {
+        const contents: any[] = component.$indivInstance.getRenderer.getElementsByTagName('nv-content', component.nativeElement);
+        const propertyValues: any[] = [];
+        Array.from(contents).forEach(content => {
+          Array.from(component.$indivInstance.getRenderer.getElementsByTagName(selector, content)).forEach((findElementRef: any) => {
+            propertyValues.push(new ElementRef(findElementRef));
+          });
+        });
+        (component as any)[propertyName] = propertyValues;
+      }
     }
     if (utils.isFunction(selector)) {
       const foundMap: ComponentList[] | DirectiveList[] = buildFoundMap(component, selector);
@@ -76,6 +65,17 @@ export function buildContentChildren(component: IComponent): void {
       });
     }
   });
+}
+
+/**
+ * for build @ContentChild and @ContentChildren in Component
+ *
+ * @export
+ * @param {IComponent} component
+ */
+export function buildContentChildandChildren(component: IComponent): void {
+  buildContentChild(component);
+  buildContentChildren(component);
 }
 
 /**

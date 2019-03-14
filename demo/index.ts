@@ -263,8 +263,9 @@ class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
   };
 
   @ContentChild('test-content-component') private testComponent: TestContentComponent;
-  // @ContentChild('router-render') private routerRenderElementRef: ElementRef;
-  // @ContentChildren('test-directive') private testDirectiveString: TestDirective[];
+  @ContentChild('a') private tagA: HTMLElement;
+  @ContentChildren('test-directive') private testDirectiveString: TestDirective[];
+  @ContentChildren('a') private tagAs: TestDirective[];
   @ContentChildren(TestDirective) private testDirective: TestDirective[];
 
   constructor(
@@ -284,7 +285,7 @@ class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
   }
 
   public nvHasRender() {
-    console.log('TestComponent HasRender', this.testComponent, this.testDirective);
+    console.log('TestComponent HasRender', this.tagA, this.tagAs, this.testDirectiveString);
   }
 
   public nvAfterMount() {
@@ -460,13 +461,13 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
   public nvHasRender() {
     this.testNumber = 6;
     this.testNumber = 7;
-    console.log('nvHasRender Container', 33333333, this, this.testComponent, this.testDirective, this.routerRenderElementRef, this.testDirectiveString);
+    console.log('nvHasRender Container', 33333333, this.testComponent, this.testDirective, this.routerRenderElementRef, this.testDirectiveString);
   }
 
   public nvAfterMount() {
     // this.testNumber = 8;
     // this.testNumber = 9;
-    console.log('nvAfterMount Container', 222222, this, this.testComponent, this.testDirective, this.routerRenderElementRef, this.testDirectiveString);
+    console.log('nvAfterMount Container', 222222, this.testComponent, this.testDirective, this.routerRenderElementRef, this.testDirectiveString);
   }
 
   public go() {

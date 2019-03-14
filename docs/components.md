@@ -351,17 +351,19 @@ export default class AppComponent {
 
 ## 视图查询
 
-`@ViewChild @ViewChildren`属性装饰器，用于配置一个视图查询，获取模板中子元素，子组件或子指令。
+`@ViewChild @ViewChildren` 属性装饰器，用于配置一个视图查询，获取模板中子元素，子组件或子指令。
 
-当render阶段结束后，在`HasRender`和`nvAfterMount`生命周期可以获得被修饰的属性。
+当render阶段结束后，在 `HasRender` 和 `nvAfterMount` 生命周期可以获得被修饰的属性。
 
 如果视图的 DOM 发生了变化，出现了匹配该选择器的新的子节点，该属性就会被更新。
 
-`@ViewChild` 和 `@ViewChildren`用法：
+`@ViewChild` 和 `@ViewChildren` 用法：
 
-  1. 当参数为`string`时，如果为该组件可以使用的组件或指令的`selector`，则属性为匹配到的**组件或指令实例**的第一项或是全部
-  2. 当参数为`string`时，如果为该组件内部某个元素的`tag name`，则属性为匹配到的**ElementRef实例**的第一项或是全部
-  3. 当参数为`Function`时，如果为该组件可以使用的组件或指令的`class`，则属性为匹配到的**组件或指令实例**的第一项或是全部
+  1. 当参数为 `string` 时，如果为该组件可以使用的组件或指令的 `selector` ，则属性为匹配到的**组件或指令实例**的第一项或是全部
+  2. 当参数为 `string` 时，如果为该组件内部某个元素的 `tag name` ，则属性为匹配到的**ElementRef实例**的第一项或是全部
+  3. 当参数为 `Function` 时，如果为该组件可以使用的组件或指令的 `class` ，则属性为匹配到的**组件或指令实例**的第一项或是全部
+
+> app.component.ts
 
 ```typescript
 import { Component, StateSetter, SetState, Watch, ViewChild, ElementRef } from '@indiv/core';
@@ -399,6 +401,148 @@ export default class AppComponent {
   public upDateAge(age: number) {
     this.age = age;
     // this.setState({ age: 24 });
+  }
+}
+```
+
+
+## 视图插槽（v2.0.6新增）
+
+和 `HTML` 元素一样，我们经常需要在父组件里面向一个子组件传递内容，像这样：
+
+```html
+<show-age age="{age}" upDateAge="{upDateAge}">
+  <a>我的年龄是：{{age}}</a>
+  <!-- 我是注释 -->
+</show-age>
+```
+
+类似 [Vue的<slot></slot>](https://cn.vuejs.org/v2/guide/components.html#%E9%80%9A%E8%BF%87%E6%8F%92%E6%A7%BD%E5%88%86%E5%8F%91%E5%86%85%E5%AE%B9) 和 angualr 的 `<ng-content></ng-content>` ，
+
+InDiv 提供了 `<nv-content></nv-content>` 这个标签，用来简单地指代父组件嵌套给子组件的内容。
+
+> app.component.ts
+
+```typescript
+import { Component, StateSetter, SetState, Watch, ViewChild, ElementRef } from '@indiv/core';
+import ShowAgeComponent from 'components/show-age/show-age.component';
+
+@Component({
+    selector: 'app-component',
+    template: (`
+        <div class="app-component-container">
+          <input nv-model="name"/>
+          <p nv-on:click="addAge()">name: {{name}}</p>
+          <show-age age="{age}" upDateAge="{upDateAge}">
+            <a>我的年龄是：{{age}}</a>
+            <!-- 我是注释 -->
+          </show-age>
+        </div>
+    `),
+})
+export default class AppComponent {
+  public name: string = 'InDiv';
+  @Watch() public age: number;
+
+  @ViewChild('show-age') public showAgeInstance: ShowAgeComponent;
+  @ViewChildren('show-age') public showAgeInstances: ShowAgeComponent[];
+  @ViewChild(ShowAgeComponent) public showAgeInstance: ShowAgeComponent;
+  @ViewChildren(ShowAgeComponent) public showAgeInstances: ShowAgeComponent[];
+  @ViewChild('p') public pElement: ElementRef;
+  @ViewChildren('p') public pElements: ElementRef[];
+
+  @StateSetter() public setState: SetState;
+
+  constructor() {}
+
+  public addAge(): void {
+    this.setState({ age: 24 });
+  }
+
+  public upDateAge(age: number) {
+    this.age = age;
+    // this.setState({ age: 24 });
+  }
+}
+```
+
+我们在父组件中为子组件添加一个标签，子组件需要相应地使用标签 `<nv-content></nv-content>` ，父组件插入的标签才会在视图中出现。
+
+> components/show-age/show-age.component.ts
+
+```typescript
+import { Component, StateSetter, SetState, nvReceiveInputs, Input } from '@indiv/core';
+
+@Component({
+    selector: 'show-age',
+    template: (`
+    <p nv-on:click="updateAge()">age: {{age}}</p>
+    <nv-content></nv-content>
+    `),
+})
+export default class ShowAgeComponent implements nvReceiveInputs {
+  @Input('age') public age: number;
+  @Input('upDateAge') public changeAge: (age: number) => void;
+
+  @StateSetter() public setState: SetState;
+
+  constructor() {}
+
+  public nvReceiveInputs(nextInputs: { age: number }): void {
+    this.age = nextInputs.age;
+  }
+
+  public updateAge() {
+    this.changeAge(3);
+  }
+}
+```
+
+
+## 视图插槽查询（v2.0.6）
+
+像试图查询一样，InDiv 也提供了一组 `@ContentChild` `@ContentChildren` 来查询视图插槽中的组件，指令和元素。
+
+当render阶段结束后，在 `HasRender `和 `nvAfterMount` 生命周期可以获得被修饰的属性。
+
+`@ContentChild` 和 `@ContentChildren`用法：
+
+  1. 当参数为`string`时，如果为该组件**视图插槽内**的组件或指令的`selector`，则属性为匹配到的**组件或指令实例**的第一项或是全部
+  2. 当参数为`string`时，如果为该组件**视图插槽内**的某个元素的`tag name`，则属性为匹配到的**ElementRef实例**的第一项或是全部
+  3. 当参数为`Function`时，如果为该组件**视图插槽内**使用的组件或指令的`class`，则属性为匹配到的**组件或指令实例**的第一项或是全部
+
+> components/show-age/show-age.component.ts
+
+```typescript
+import { Component, StateSetter, SetState, nvReceiveInputs, Input, AfterMount, ContentChild, ContentChildren } from '@indiv/core';
+
+@Component({
+    selector: 'show-age',
+    template: (`
+    <p nv-on:click="updateAge()">age: {{age}}</p>
+    <nv-content></nv-content>
+    `),
+})
+export default class ShowAgeComponent implements nvReceiveInputs, AfterMount {
+  @Input('age') public age: number;
+  @Input('upDateAge') public changeAge: (age: number) => void;
+  @ContentChild('a') public htmlElementA: HTMLElement;
+  @ContentChildren('a') public htmlElementAs: HTMLElement[];
+
+  @StateSetter() public setState: SetState;
+
+  constructor() {}
+
+  public nvAfterMount(): void {
+    console.log('ContentChild', this.htmlElementA, this.htmlElementAs);
+  }
+
+  public nvReceiveInputs(nextInputs: { age: number }): void {
+    this.age = nextInputs.age;
+  }
+
+  public updateAge() {
+    this.changeAge(3);
   }
 }
 ```

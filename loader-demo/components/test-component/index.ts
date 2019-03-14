@@ -1,5 +1,8 @@
-import { InDiv, Component, AfterMount, ReceiveInputs, OnDestory, ElementRef, HasRender, Input } from '@indiv/core';
+import { InDiv, Component, AfterMount, ReceiveInputs, OnDestory, ElementRef, HasRender, Input, ContentChild, ContentChildren } from '@indiv/core';
 import { HttpClient } from '@indiv/common';
+
+import { TestContentComponent } from '../test-content-component';
+import { TestDirective } from '../../directives/test-directive';
 
 @Component({
   selector: 'test-component',
@@ -8,6 +11,16 @@ import { HttpClient } from '@indiv/common';
 export class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
   public state: any;
   @Input() public manName: any;
+
+  public man: {name: string} = {
+    name: 'fucker',
+  };
+
+  @ContentChild('test-content-component') private testComponent: TestContentComponent;
+  @ContentChild('a') private tagA: HTMLElement;
+  @ContentChildren('test-directive') private testDirectiveString: TestDirective[];
+  @ContentChildren('a') private tagAs: TestDirective[];
+  @ContentChildren(TestDirective) private testDirective: TestDirective[];
 
   constructor(
     private httpClient: HttpClient,
@@ -26,7 +39,7 @@ export class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasR
   }
 
   public nvHasRender() {
-    console.log('TestComponent HasRender');
+    console.log('TestComponent HasRender', this.tagA, this.tagAs, this.testDirectiveString);
   }
 
   public nvAfterMount() {

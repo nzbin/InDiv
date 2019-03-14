@@ -1,10 +1,10 @@
 <a name="2.0.6"></a>
-# [2.0.6](https://github.com/DimaLiLongJi/InDiv/releases/tag/2.0.6) (2019-03-12)
+# [2.0.6](https://github.com/DimaLiLongJi/InDiv/releases/tag/2.0.6) (2019-03-14)
 
 
 ### Features
 
-* **package:@indiv/core** add lifecycleCaller，add comment node renderer
+* **package:@indiv/core** add `lifecycleCaller`，add comment node renderer, add `@ContentChild` `@ContentChildren` `<nv-content>`
 * **package:@indiv/platform-browser** add comment node renderer
 * **package:@indiv/platform-server** add comment node renderer
 

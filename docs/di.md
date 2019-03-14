@@ -140,29 +140,29 @@ class TestComponent {
 
 至此，配置依赖提供商的地方有4个
 
-  - 根`NvModule`及非懒加载`NvModule`的`provides`
+  - 根 `NvModule` 及非懒加载 `NvModule` 的 `provides`
 
-  - 懒加载`NvModule`的`provides`
+  - 懒加载 `NvModule` 的 `provides`
 
-  - 指令组件的`provides`
+  - 指令组件的 `provides`
 
-  - 服务自身的 `@Injectable()`的`providedIn`
+  - 服务自身的 `@Injectable()` 的 `providedIn`
 
 关于在哪里配置提供商的不同选择将导致一些差异：最终包的大小、服务的范围和服务的生命周期。
 
-  - 根`NvModule`及非懒加载`NvModule`的`provides`中声明提供商时，将被注入到全局的注入器（全局IOC容器）`rootInjector: Injector`，整个应用都可以直接依赖该服务并且如果服务提供商被指定为单例时，将成为全局单例
+  - 根 `NvModule` 及非懒加载 `NvModule` 的 `provides` 中声明提供商时，将被注入到全局的注入器（全局IOC容器）`rootInjector: Injector`，整个应用都可以直接依赖该服务并且如果服务提供商被指定为单例时，将成为全局单例
 
-  - 懒加载`NvModule`的`provides`中声明提供商时，将被注入到模块级别的注入器（全局IOC容器）`privateInjector: Injector`，每个来自懒加载模块的组件指定都可以注入来自懒加载模块注入器的单例服务，并且该服务在模块级别的注入器中将成为单例且不会影响到全局注入器
+  - 懒加载 `NvModule` 的 `provides` 中声明提供商时，将被注入到模块级别的注入器（全局IOC容器）`privateInjector: Injector`，每个来自懒加载模块的组件指定都可以注入来自懒加载模块注入器的单例服务，并且该服务在模块级别的注入器中将成为单例且不会影响到全局注入器
 
-  - 指令组件的`provides`将被注入到指令组件级的注入器 `privateInjector: Injector`，每个组件指令实例将拥有独立的服务提供商实例
+  - 指令组件的 `provides` 将被注入到指令组件级的注入器 `privateInjector: Injector`，每个组件指令实例将拥有独立的服务提供商实例
 
-  - 当你在服务自身的 `@Injectable()` 装饰器`providedIn`中指定提供商时，如果`providedIn`为`root`将直接注入到全局的注入器 `rootInjector: Injector`；如果`providedIn`为某个模块，将直接注入到该模块的`provides`
+  - 当你在服务自身的 `@Injectable()` 装饰器 `providedIn` 中指定提供商时，如果 `providedIn` 为 `root` 将直接注入到全局的注入器 `rootInjector: Injector`；如果 `providedIn` 为某个模块，将直接注入到该模块的 `provides`
 
-假设现在我们有个用户服务`UserService`，并且在多个地方我们都使用并且希望注入的是同一个服务实例。
+假设现在我们有个用户服务 `UserService` ，并且在多个地方我们都使用并且希望注入的是同一个服务实例。
 
-这种情况下，通过指定`UserService`的 `providedIn: root` 来提供 `UserService` 就是不错的选择。
+这种情况下，通过指定 `UserService` 的 `providedIn: root` 来提供 `UserService` 就是不错的选择。
 
-所以总结一下，我们现在拥有三级注入器，第一级为 `rootInjector`，第二级为懒加载模块的`privateInjector`，第三级为组件的注入器`privateInjector`
+所以总结一下，我们现在拥有三级注入器，第一级为 `rootInjector`，第二级为懒加载模块的 `privateInjector`，第三级为组件的注入器 `privateInjector`
 
 
 ## 注入器冒泡
@@ -178,7 +178,7 @@ class TestComponent {
 
 当一个组件申请获得一个依赖时，InDiv 先尝试用 该组件自己的注入器 来满足它。**跟 angular 的冒泡不同，并不会上其父组件注入器去寻找依赖**
 
-如果组件自己的注入器并不存在对应的注入器并且该组件来自懒加载的模块，则工厂方法会向上一级别的注入器 懒加载模块注入器 来满足该需求。
+如果组件自己的注入器并不存在对应的注入器并且该组件来自懒加载的模块，则工厂方法会向上一级别的注入器 **懒加载的模块注入器** 来满足该需求。
 
 如果仍旧没找到需要的依赖，最终 InDiv 会去 全局注入器`rootInjector` 中寻找依赖。
 

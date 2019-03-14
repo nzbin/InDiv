@@ -18,6 +18,94 @@
 * 本文档假设你已经熟悉了 JavaScript，TypeScript，和来自最新标准的一些知识，比如 class 和 模块
 * 下列代码范例都是用最新版本的 TypeScript 写的，利用 类型 实现依赖注入，并使用装饰器来提供元数据
 
+#### Demo
+
+逻辑文件
+
+```typescript
+import { InDiv, Component, AfterMount, ReceiveInputs, OnDestory, ElementRef, HasRender, Input, ContentChild, ContentChildren } from '@indiv/core';
+import { HttpClient } from '@indiv/common';
+
+import { TestContentComponent } from '@/test-content-component';
+import { TestDirective } from '@/directives/test-directive';
+
+@Component({
+  selector: 'test-component',
+  templateUrl: './template.html',
+})
+export class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
+  public state: any;
+  @Input() public manName: any;
+
+  public man: {name: string} = {
+    name: 'ajiaxi',
+  };
+
+  @ContentChild('test-content-component') private testComponent: TestContentComponent;
+  @ContentChild('a') private tagA: HTMLElement;
+  @ContentChildren('test-directive') private testDirectiveString: TestDirective[];
+  @ContentChildren('a') private tagAs: TestDirective[];
+  @ContentChildren(TestDirective) private testDirective: TestDirective[];
+
+  constructor(
+    private httpClient: HttpClient,
+    private indiv: InDiv,
+    private element: ElementRef,
+  ) {
+    this.httpClient.get('/success').subscribe({
+      next: (value: any) => { console.log('repsonse', value); },
+    });
+  }
+
+  public click() {
+    this.manName = 'li junhe';
+  }
+
+  public nvHasRender() {
+    console.log('TestComponent HasRender', this.tagA, this.tagAs, this.testDirectiveString);
+  }
+
+  public nvAfterMount() {
+    console.log('TestComponent AfterMount');
+  }
+  public nvOnDestory() {
+    console.log('TestComponent OnDestory');
+  }
+
+  public nvReceiveInputs(p: any) {
+    console.log('test-component nvReceiveInputs', p);
+  }
+}
+```
+
+模板
+
+
+```html
+<!-- container: {{countState(color)}} -->
+<div class="fucck" nv-class="test.b" nv-id="'cc'">
+  <p>{{testNumber}}</p>
+  <input nv-model="test.a" nv-on:click="show(test)" />
+  <p test-directive="{test.a}" nv-id="232" nv-if="countState(a)" nv-on:click="changeInput()">{{a}}</p>
+  <test-component nv-on:click="changeName(man)" nv-repeat="man in testArray" nv-key="man.name" manName="{countState(man.name)}" nv-if="a">
+    <a>this is {{man.name}}</a>
+    <test-content-component test-directive="{test.a}"></test-content-component>
+  </test-component>
+  <p nv-on:click="go()">
+    <!-- container: {{countState(color)}} -->
+    container: {{countState(color)}}
+  </p>
+  <input type="number" nv-model="a" />
+  <div nv-repeat="man in testArray" nv-key="man.name">
+    <div nv-on:click="show(testArray2, '你111')" nv-text="man.name"></div>
+    <div>
+      <p>性别：{{countState(man.sex, $index)}}</p>
+    </div>
+  </div>
+  <router-render></router-render>
+</div>
+```
+
 #### 反馈
 
 * 你可以和我一起做贡献！你可以到 [Github](https://github.com/DimaLiLongJi/InDiv) 上的仓库中提出文档方面的问题，并创建Pull Requests

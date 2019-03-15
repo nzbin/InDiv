@@ -1,5 +1,6 @@
 import { Injector } from '../di';
 import { InDiv } from '../indiv';
+import { TProviders } from './nv-module';
 
 export type DirectiveList = {
     nativeElement: any;
@@ -11,6 +12,7 @@ export type DirectiveList = {
 
 
 export interface IDirective {
+    [key: string]: any;
     _save_inputs?: any;
     nativeElement?: Element | any;
     $indivInstance?: InDiv | any;
@@ -19,6 +21,7 @@ export interface IDirective {
     directiveList?: DirectiveList[];
     otherInjector?: Injector;
     privateInjector?: Injector;
+    privateProviders?: TProviders;
 
     nvOnInit?(): void;
     nvBeforeMount?(): void;

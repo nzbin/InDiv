@@ -435,9 +435,9 @@ export class RouteModule {
       this.emitDirectiveEvent(component.directiveList, 'nvRouteChange');
       this.emitComponentEvent(component.componentList, 'nvRouteChange');
       if (i >= index + 1) {
-        lifecycleCaller(component, 'nvOnDestory');
         this.emitDirectiveEvent(component.directiveList, 'nvOnDestory');
         this.emitComponentEvent(component.componentList, 'nvOnDestory');
+        lifecycleCaller(component, 'nvOnDestory');
       }
     });
     this.hasRenderComponentList.length = index + 1;
@@ -459,9 +459,9 @@ export class RouteModule {
     }
     if (event === 'nvOnDestory') {
       componentList.forEach(component => {
-        lifecycleCaller(component.instanceScope, 'nvOnDestory');
         this.emitDirectiveEvent(component.instanceScope.directiveList, event);
         this.emitComponentEvent(component.instanceScope.componentList, event);
+        lifecycleCaller(component.instanceScope, 'nvOnDestory');
       });
     }
   }

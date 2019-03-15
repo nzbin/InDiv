@@ -1,4 +1,4 @@
-import { InDiv, Component, Utils, NvModule, OnInit, DoCheck, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, ElementRef, HasRender, Input, ViewChild, ViewChildren, StateSetter, Watch, ContentChildren, ContentChild } from '@indiv/core';
+import { InDiv, Component, Utils, NvModule, OnInit, DoCheck, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, ElementRef, HasRender, Input, ViewChild, ViewChildren, StateSetter, Watch, ContentChildren, ContentChild, ChangeDetectionStrategy, MarkForCheck, TMarkForCheck } from '@indiv/core';
 import { RouteChange, NvLocation, RouteModule, RouteCanActive } from '@indiv/router';
 import { PlatformBrowser } from '@indiv/platform-browser';
 import { HttpClient, HttpClientResponse } from '@indiv/common';
@@ -103,7 +103,6 @@ class PComponent implements DoCheck, BeforeMount, ReceiveInputs, OnDestory {
     `),
 })
 class R1 implements OnInit, BeforeMount, DoCheck, RouteChange, OnDestory, RouteCanActive {
-  public hSr: HeroSearchService;
   @StateSetter() public setState: SetState;
   public a: string = 'a11';
   public b: number = 2;
@@ -253,10 +252,15 @@ class R2 implements OnInit, BeforeMount, AfterMount, DoCheck, RouteChange, OnDes
     </div>
     <nv-content></nv-content>
 `),
+  providers: [
+    HeroSearchService,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
   public state: any;
   @Input() public manName: any;
+  @MarkForCheck() public markForCheck: TMarkForCheck;
   public repeatData: number[] = [1];
   public man: {name: string} = {
     name: 'fucker',
@@ -272,8 +276,10 @@ class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
     private httpClient: HttpClient,
     private indiv: InDiv,
     private element: ElementRef,
+    private heroSearchService: HeroSearchService,
   ) {
     console.log(55544333, 'init TestComponent', this.indiv, this.element);
+    this.heroSearchService.test(988);
     this.httpClient.get('/success').subscribe({
       next: (value: any) => { console.log(4444, value); },
     });
@@ -282,6 +288,9 @@ class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
   public click() {
     console.log('this.manName', this.manName);
     this.manName = 'fuck!';
+    this.markForCheck().then(() => {
+      console.log('渲染完成');
+    });
   }
 
   public nvHasRender() {
@@ -302,13 +311,14 @@ class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
 
 @Component({
   selector: 'container-wrap',
+  // changeDetection: ChangeDetectionStrategy.OnPush,
   template: (`
   <!-- container: {{countState(color)}} -->
-  <div class="fucck" nv-class="test.b" nv-id="'cc'">
+  <div class="fucck" nv-class="test.a" nv-id="'cc'">
   <p>{{testNumber}}</p>
   <input nv-model="test.a" nv-on:click="show(test)" />
   <p test-directive="{test.a}" nv-id="232" nv-if="countState(a)" nv-on:click="changeInput()">{{a}}</p>
-  <test-component nv-repeat="man in testArray" nv-key="man.name" manName="{countState(man.name)}" nv-if="a">
+  <test-component nv-repeat="man in testArray" nv-key="man.id" manName="{countState(man.name)}" nv-if="a">
     <a>this is {{man.name}}</a>
     <test-content-component test-directive="{test.a}"></test-content-component>
   </test-component>
@@ -366,6 +376,7 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
     {
       name: 'gerry',
       sex: '男',
+      id: 1,
       job: [
         {
           id: 1,
@@ -384,6 +395,7 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
     {
       name: 'nina',
       sex: '女',
+      id: 2,
       // job: ['老师', '英语老师', '美1'],
       job: [
         {
@@ -405,6 +417,7 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
   // public testArray2: any = ['程序员2'];
   public props: any;
   @StateSetter() public setState: SetState;
+  @MarkForCheck() public markForCheck: TMarkForCheck;
   public http$: Observable<HttpClientResponse>;
 
   @ViewChild('test-component') private testComponent: TestComponent;
@@ -435,13 +448,13 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
     // });
     this.hss.test();
     console.log('value', this.value);
-    // setTimeout(() => {
-    //   this.setState({
-    //     test: {
-    //       a: 5,
-    //     },
-    //   });
-    // }, 1000);
+    setTimeout(() => {
+      this.setState({
+        test: {
+          a: 5,
+        },
+      });
+    }, 1000);
   }
 
   public nvRouteChange(lastRoute?: string, newRoute?: string) {
@@ -508,8 +521,9 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
       a: 5,
       testArray: [
         {
-          name: 'gerry',
+          name: 'gerry1',
           sex: '女',
+          id: 1,
           job: [
             {
               id: 1,
@@ -528,6 +542,7 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
         {
           name: 'gerry2',
           sex: '男2',
+          id: 3,
           job: [
             {
               id: 1,
@@ -544,8 +559,9 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
           ],
         },
         {
-          name: 'nina',
+          name: 'nina3',
           sex: '男',
+          id: 2,
           job: [
             {
               id: 1,
@@ -563,6 +579,7 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
         }],
     });
     this.a = 100;
+    this.markForCheck();
   }
 
   private httpHandler = (value: any) => {

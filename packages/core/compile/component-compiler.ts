@@ -5,7 +5,7 @@ import { Compile } from './compile';
 import { buildComponentScope } from './compiler-utils';
 import { Vnode, parseTemplateToVnode, isTagName } from '../vnode';
 import { mountDirective } from './directive-compiler';
-import { buildViewChildandChildren, buildContentChildandChildren } from '../component';
+import { buildViewChildandChildren, buildContentChildandChildren, ChangeDetectionStrategy } from '../component';
 import { lifecycleCaller } from '../lifecycle';
 
 /**
@@ -26,9 +26,9 @@ function emitDirectiveDestory(directiveList: DirectiveList[]): void {
  */
 function emitComponentDestory(componentList: ComponentList[]): void {
   componentList.forEach(component => {
-    lifecycleCaller(component.instanceScope, 'nvOnDestory');
     emitDirectiveDestory(component.instanceScope.directiveList);
     emitComponentDestory(component.instanceScope.componentList);
+    lifecycleCaller(component.instanceScope, 'nvOnDestory');
   });
 }
 
@@ -70,7 +70,8 @@ export async function mountComponent(componentInstance: IComponent, componentAnd
             });
           }
         }
-
+        // 标记组件为脏组件
+        component.isDirty = true;
       }
     } else {
       component.instanceScope = buildComponentScope(component.constructorFunction, component.inputs, component.nativeElement, componentInstance);
@@ -90,18 +91,26 @@ export async function mountComponent(componentInstance: IComponent, componentAnd
   const cacheComponentListLength = cacheComponentList.length;
   for (let i = 0; i < cacheComponentListLength; i++) {
     const cache = cacheComponentList[i];
-    lifecycleCaller(cache.instanceScope, 'nvOnDestory');
     emitDirectiveDestory(cache.instanceScope.directiveList);
     emitComponentDestory(cache.instanceScope.componentList);
+    lifecycleCaller(cache.instanceScope, 'nvOnDestory');
   }
 
   // render, only component which isn't rendered will be rendered and called 
   for (let i = 0; i < componentListLength; i++) {
     const component = componentInstance.componentList[i];
+    // 如果没找到该组件
     if (!foundCacheComponentList.find(cache => cache.nativeElement === component.nativeElement)) {
       await component.instanceScope.render();
       // in ssr env indiv won't call nvAfterMount
       if (!component.instanceScope.$indivInstance.getIndivEnv.isServerRendering) lifecycleCaller(component.instanceScope, 'nvAfterMount');
+    } else {
+      // 如果找到该组件 并且为脏组件
+      if (component.isDirty) {
+        // 如果是 OnPush 模式的话，则需要触发一次更新
+        if (component.instanceScope.nvChangeDetection === ChangeDetectionStrategy.OnPush) await component.instanceScope.render();
+        component.isDirty = false;
+      }
     }
   }
 
@@ -130,6 +139,7 @@ export function componentsConstructor(componentInstance: IComponent, componentAn
       constructorFunction: declaration,
       nvContent: component.nvContent,
       isFromContent: component.isFromContent,
+      isDirty: false,
     });
   });
 }

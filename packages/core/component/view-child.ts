@@ -86,7 +86,7 @@ export function ViewChild(selector: Function | string): (target: IComponent, pro
   return function (target: IComponent, propertyName: string): any {
     if (!target.viewChildList) target.viewChildList = [];
     target.viewChildList.push({ propertyName, selector });
-    return (target as any)[propertyName];
+    return target[propertyName];
   };
 }
 
@@ -108,6 +108,6 @@ export function ViewChildren(selector: Function | string): (target: IComponent, 
   return function (target: IComponent, propertyName: string): any {
     if (!target.viewChildrenList) target.viewChildrenList = [];
     target.viewChildrenList.push({ selector, propertyName });
-    return (target as any)[propertyName];
+    return target[propertyName];
   };
 }

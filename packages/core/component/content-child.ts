@@ -96,7 +96,7 @@ export function ContentChild(selector: Function | string): (target: IComponent, 
   return function (target: IComponent, propertyName: string): any {
     if (!target.contentChildList) target.contentChildList = [];
     target.contentChildList.push({ propertyName, selector });
-    return (target as any)[propertyName];
+    return target[propertyName];
   };
 }
 
@@ -118,7 +118,7 @@ export function ContentChildren(selector: Function | string): (target: IComponen
   return function (target: IComponent, propertyName: string): any {
     if (!target.contentChildrenList) target.contentChildrenList = [];
     target.contentChildrenList.push({ selector, propertyName });
-    return (target as any)[propertyName];
+    return target[propertyName];
   };
 }
 

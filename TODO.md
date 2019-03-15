@@ -42,9 +42,9 @@
 - [x] lifecycleCaller
 - [x] `<nv-content></nv-content>`
 - [x] @ContentChild @ContentChildren
-- [ ] 检查变更 onPush
-- [ ] AOT compile with babylon and traversal
+- [x] 检查变更 onPush
+- [x] force render api
 - [x] comment vnode
-- [ ] force render api
+- [ ] AOT compile with babylon and traversal
 - [ ] support Pipe
 - [ ] @indiv/cli

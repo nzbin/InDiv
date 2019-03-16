@@ -1,6 +1,7 @@
 import { IComponent } from '../types';
 import { Vnode, TAttributes } from "../vnode";
 import { isFromVM, buildProps, argumentsIsReady, getVMFunctionArguments, getValueByValue, getVMVal, getVMFunction, setVMVal } from './utils';
+import { ChangeDetectionStrategy } from '../component';
 
 /**
  * compile util for nv-repeat DOM
@@ -204,6 +205,11 @@ export class CompileRepeatUtil {
           utilVm._setValueByValue(watchData[index], exp, key, vals);
         }
       } else throw new Error(`directive: nv-model can\'t use recognize this prop ${exp}`);
+      // OnPush 模式要允许触发更新
+      if ((vm as IComponent).nvChangeDetection === ChangeDetectionStrategy.OnPush) {
+        if ((vm as IComponent).nvDoCheck) (vm as IComponent).nvDoCheck();
+        (vm as IComponent).render();
+      }
     };
 
     const sameEventType = vnode.eventTypes.find(_eventType => _eventType.type === 'input');

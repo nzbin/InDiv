@@ -311,7 +311,7 @@ class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
 
 @Component({
   selector: 'container-wrap',
-  // changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: (`
   <!-- container: {{countState(color)}} -->
   <div class="fucck" nv-class="test.a" nv-id="'cc'">
@@ -359,7 +359,6 @@ class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
   <!-- <b nv-href="countState(man.sex, $index)"></b> -->
 `),
 })
-
 class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
   @Watch() public aaaaa: number;
   public ss: HeroSearchService;

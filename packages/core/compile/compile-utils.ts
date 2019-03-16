@@ -4,7 +4,7 @@ import { Vnode, TAttributes, isRepeatNode, isTextNode, isDirective, isEventDirec
 import { cloneVnode, copyRepeatData, isFromVM, buildProps, argumentsIsReady, getVMFunctionArguments, getValueByValue, getVMVal, getVMFunction, setVMVal, valueIsReady } from './utils';
 import { utils } from '../utils';
 import { CompileRepeatUtil } from './compile-repeat-util';
-
+import { ChangeDetectionStrategy } from '../component';
 
 /**
  * compile util for Compiler
@@ -156,6 +156,11 @@ export class CompileUtil {
       event.preventDefault();
       if (!utils.hasWindowAndDocument()) return;
       if (isFromVM(vm, exp)) setVMVal(vm, exp, (event.target as HTMLInputElement).value);
+      // OnPush 模式要允许触发更新
+      if ((vm as IComponent).nvChangeDetection === ChangeDetectionStrategy.OnPush) {
+        if ((vm as IComponent).nvDoCheck) (vm as IComponent).nvDoCheck();
+        (vm as IComponent).render();
+      }
     };
 
     const sameEventType = vnode.eventTypes.find(_eventType => _eventType.type === 'input');

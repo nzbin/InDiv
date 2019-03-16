@@ -49,6 +49,6 @@ export interface IComponent extends IDirective {
 
   watchData?(): void;
   render?(): Promise<IComponent>;
-  nvDoCheck?(oldState?: any): void;
+  nvDoCheck?(): void;
   compiler?(nativeElement: Element | any, componentInstace: IComponent): Promise<IComponent>;
 }

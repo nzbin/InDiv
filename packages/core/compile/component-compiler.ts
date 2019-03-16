@@ -108,7 +108,10 @@ export async function mountComponent(componentInstance: IComponent, componentAnd
       // 如果找到该组件 并且为脏组件
       if (component.isDirty) {
         // 如果是 OnPush 模式的话，则需要触发一次更新
-        if (component.instanceScope.nvChangeDetection === ChangeDetectionStrategy.OnPush) await component.instanceScope.render();
+        if (component.instanceScope.nvChangeDetection === ChangeDetectionStrategy.OnPush) {
+          if (component.instanceScope.nvDoCheck) component.instanceScope.nvDoCheck();
+          await component.instanceScope.render();
+        }
         component.isDirty = false;
       }
     }

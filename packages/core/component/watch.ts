@@ -1,6 +1,5 @@
 import { utils } from '../utils';
 import { IComponent } from '../types';
-import { ChangeDetectionStrategy } from './change-detection';
 
 export type TFnWatcher = (oldData?: any) => void;
 export type TFnRender = () => any;

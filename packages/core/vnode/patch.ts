@@ -10,7 +10,8 @@ import { Renderer } from './renderer';
  */
 export function createNativeElement(createdVnode: Vnode, renderer: Renderer): any {
   if (createdVnode.type === 'text') return renderer.creatTextElement(createdVnode.nodeValue);
-  if (createdVnode.type !== 'text') return renderer.creatElement(createdVnode.tagName);
+  else if (createdVnode.type === 'comment') return renderer.creatCommentElement(createdVnode.nodeValue);
+  else return renderer.creatElement(createdVnode.tagName);
 }
 
 /**
@@ -56,16 +57,15 @@ export function createNativeElementAndChildrens(createdVnode: Vnode, renderer: R
  * renderVnode 对比完render node
  * 
  * REMOVE_TAG: 0, 移除nativeElement
- * MOVE_TAG: 1, 移动位置
- * CREATE_TAG: 2, 创建nativeElement
+ * CREATE_TAG: 1, 创建nativeElement
+ * MOVE_TAG: 2, 移动位置（插入或添加或删除）
  * REPLACE_ATTRIBUTES: 3, 移除属性
  * ADD_ATTRIBUTES: 4, 设置属性 
- * TEXT: 5, 更改文字: 5
- * value: 6, 更改 input textarea select value 的值: 6
- * repeatData: 7, 更改 node 的 repeatData: 7, render过来的的被复制的值
+ * TEXT: 5, 更改文字
+ * value: 6, 更改 input textarea select 等表单的 value 值
+ * repeatData: 7, 更改 node 的 repeatData（nv-repeat的根数据）
  * REMOVE_EVENT: 8, 移除 node 事件
  * ADD_EVENT: 9, 添加 node 事件
- * value: 10, 更改 node 的 eventTypes: 10, 修改node的eventTypes
  *
  * @export
  * @param {IPatchList[]} patchList

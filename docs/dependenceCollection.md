@@ -2,7 +2,7 @@
 
 状态的变更与追踪，在mvvm框架中都决定了视图的呈现。
 
-不管是angular的脏检查zonejs暴力代理，还是vue的响应式和react的State与Props，其实全部是为了解决view与model的状态匹配问题。
+不管是 [angular](https://www.angular.cn/) 的脏检查 [zonejs](https://github.com/angular/zone.js) 暴力代理，还是 [vue](https://cn.vuejs.org/index.html) 的响应式和 [react](https://react.docschina.org/) 的State与Props，其实全部是为了解决view与model的状态匹配问题。
 
 借鉴vue的响应式原理，InDiv 也决定使用 `Object.defineProperty` 这个原生api追踪监听状态。
 
@@ -95,9 +95,9 @@ export default class AppComponent {
 
 但是在实际开发中，其实不需要对组件实例中所有的属性都进行追踪监听或是diff，而且因为静态化的原因，所有需要检测变更（被该组件所依赖的）的属性都可以在实例化之前获得。
 
-因此 InDiv 在组件开始状态监听之前对模板中用到 **所有来自实例中的成员属性的 `name`** 都添加到了一个数组中。
+因此 InDiv 在组件开始状态监听之前对模板中用到 **所有来自实例中的成员属性** 都添加到了一个数组中。
 
-组件将仅仅监听这个数组中出现的 `name` 来避免一些不必要的监听及触发的无用渲染造成的性能浪费。
+组件将仅仅监听这个数组中出现属性来避免一些不必要的监听及触发的无用渲染造成的性能浪费。
 
 > @indiv/core/component/utils.ts
 
@@ -121,7 +121,7 @@ export function collectDependencesFromViewModel(componentInstance: IComponent): 
 
 这里就是 `Watch` 这个属性解释器存在的意义了。
 
-之前我们已经对 `AppComponent` 中 `age：number` 添加过 `@Watch()` 了，因此所有导致 `age` 变化的行为都会触发 `DoCheck` 和视图渲染。（当然这里不需要，因为age已经作为input被加入到监听队列中了）
+之前我们已经对 `AppComponent` 中 `age：number` 添加过 `@Watch()` 了，因此所有导致 `age` 变化的行为都会触发 `DoCheck` 和视图渲染。（当然这里不需要，因为 `age` 已经作为 `input` 被加入到监听队列中了）
 
 > app.component.ts
 

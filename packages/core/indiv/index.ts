@@ -3,6 +3,7 @@ import { factoryCreator, rootInjector } from '../di';
 import { getModuleFromRootInjector } from '../nv-module';
 import { Renderer, Vnode } from '../vnode';
 import { ElementRef } from '../component';
+import { lifecycleCaller } from '../lifecycle';
 
 interface Type<T = any> extends Function {
   new(...args: any[]): T;
@@ -244,8 +245,8 @@ export class InDiv {
     // set otherInjector for components from loadModule to be used
     component.otherInjector = otherInjector;
 
-    if (component.nvOnInit) component.nvOnInit();
-    if (component.watchData) component.watchData();
+    lifecycleCaller(component, 'nvOnInit');
+    lifecycleCaller(component, 'watchData');
     if (!component.template) throw new Error('must set template or templateUrl in bootstrap component');
 
     return component;
@@ -266,10 +267,10 @@ export class InDiv {
   public async runComponentRenderer<R = Element>(component: IComponent, nativeElement: R, initVnode?: Vnode[]): Promise<IComponent> {
     const template = component.template;
     if (template && typeof template === 'string' && nativeElement) {
-      if (component.nvBeforeMount) component.nvBeforeMount();
+      lifecycleCaller(component, 'nvBeforeMount');
       await this.render<R>(component, nativeElement, initVnode);
 
-      if (component.nvAfterMount && !this.isServerRendering) component.nvAfterMount();
+      if (!this.isServerRendering) lifecycleCaller(component, 'nvAfterMount');
       return component;
 
     } else {

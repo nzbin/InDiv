@@ -7,6 +7,7 @@ import { PComponent } from '../components/pc-component';
 import { R1 } from '../components/r1';
 import { TestComponent } from '../components/test-component';
 import Container from '../components/container';
+import { TestContentComponent } from '../components/test-content-component';
 
 import { M2 } from './m2';
 
@@ -18,6 +19,7 @@ import { M2 } from './m2';
     Container,
     PComponent,
     TestComponent,
+    TestContentComponent,
     R1,
   ],
   exports: [

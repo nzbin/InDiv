@@ -1,10 +1,10 @@
 import { IComponent } from "../types";
 
-import { Vnode, TAttributes, isRepeatNode, isTextNode, isDirective, isEventDirective, isPropOrNvDirective } from "../vnode";
+import { Vnode, TAttributes, isRepeatNode, isTextNode, isDirective, isEventDirective, isPropOrNvDirective, isTagName } from "../vnode";
 import { cloneVnode, copyRepeatData, isFromVM, buildProps, argumentsIsReady, getVMFunctionArguments, getValueByValue, getVMVal, getVMFunction, setVMVal, valueIsReady } from './utils';
 import { utils } from '../utils';
 import { CompileRepeatUtil } from './compile-repeat-util';
-
+import { ChangeDetectionStrategy } from '../component';
 
 /**
  * compile util for Compiler
@@ -156,6 +156,11 @@ export class CompileUtil {
       event.preventDefault();
       if (!utils.hasWindowAndDocument()) return;
       if (isFromVM(vm, exp)) setVMVal(vm, exp, (event.target as HTMLInputElement).value);
+      // OnPush 模式要允许触发更新
+      if ((vm as IComponent).nvChangeDetection === ChangeDetectionStrategy.OnPush) {
+        if ((vm as IComponent).nvDoCheck) (vm as IComponent).nvDoCheck();
+        (vm as IComponent).render();
+      }
     };
 
     const sameEventType = vnode.eventTypes.find(_eventType => _eventType.type === 'input');
@@ -337,6 +342,9 @@ export class CompileUtil {
       repeatData.$index = index;
       child.repeatData = repeatData;
       copyRepeatData(child, repeatData);
+      // 转移到 <nv-content>到组件视图上
+      const isNvContentVNode = isTagName(child, 'nv-content');
+      if (isNvContentVNode) child.childNodes = vm.nvContent.map((nvContent: Vnode) => cloneVnode(nvContent, null, child));
 
       const nodeAttrs = child.attributes;
       const text = child.template;
@@ -358,7 +366,8 @@ export class CompileUtil {
           }
         });
       }
-      if (child.childNodes && child.childNodes.length > 0) this.repeatChildrenUpdaterByKey(child, value, expFather, index, vm, watchValue);
+      // 如果该组件是 <nv-content></nv-content> 则不会参与子组件的更新
+      if (!isNvContentVNode && child.childNodes && child.childNodes.length > 0) this.repeatChildrenUpdaterByKey(child, value, expFather, index, vm, watchValue);
     });
   }
 

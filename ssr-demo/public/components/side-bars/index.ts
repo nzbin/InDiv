@@ -1,5 +1,5 @@
 import { Subscription } from 'rxjs';
-import { Component, OnInit, OnDestory, Input, HasRender, AfterMount } from '@indiv/core';
+import { Component, OnInit, OnDestory, Input, ContentChild, ContentChildren, AfterMount, ChangeDetectionStrategy, MarkForCheck, TMarkForCheck } from '@indiv/core';
 import { RouteChange, NvLocation } from '@indiv/router';
 
 import { navs } from '../../constants/nav';
@@ -17,6 +17,7 @@ type nav = {
     selector: 'side-bar',
     template: (`
         <div class="side-bar-container">
+            <nv-content></nv-content>
             <div class="nav-wrap" nv-class="_nav.active" nv-repeat="_nav in navs">
                 <a class="nav" nv-on:click="location.set(_nav.to)">{{_nav.name}}</a>
                 <div class="child-wrap" nv-if="_nav.child">
@@ -32,27 +33,23 @@ type nav = {
             </button>
         </div>
     `),
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 
-export default class SideBar implements OnInit, RouteChange, OnDestory, HasRender, AfterMount {
+export default class SideBar implements OnInit, AfterMount, RouteChange, OnDestory {
     public navs: nav[] = navs();
     public num: number = 1;
     public subscribeToken: Subscription;
     @Input() handleSideBar: () => void;
+    @ContentChild('a') htmltemplateA: any;
+    @ContentChildren('a') htmltemplateAs: any[];
+    @MarkForCheck() marker: TMarkForCheck;
 
     constructor(
         private testS: TestService,
         private location: NvLocation,
     ) {
         this.subscribeToken = this.testS.subscribe(this.subscribe);
-    }
-
-    public nvAfterMount() {
-        console.log(33333, 'SideBar nvAfterMount')
-    }
-
-    public nvHasRender() {
-        console.log(44444, 'SideBar nvHasRender')
     }
 
     public subscribe(value: any) {
@@ -64,7 +61,11 @@ export default class SideBar implements OnInit, RouteChange, OnDestory, HasRende
         console.log('SideBar onInit', this.navs);
     }
 
-    public nvRouteChange(lastRoute: string, newRoute: string): void {
+    public nvAfterMount() {
+        console.log('SideBar afterMount', this.htmltemplateA, this.htmltemplateAs);
+    }
+
+    public nvRouteChange(lastRoute?: string, newRoute?: string): void {
         this.showColor();
     }
 
@@ -87,6 +88,9 @@ export default class SideBar implements OnInit, RouteChange, OnDestory, HasRende
                     }
                 });
             }
+        });
+        this.marker().then(() => {
+            console.log('渲染完成');
         });
     }
 

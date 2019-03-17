@@ -24,10 +24,10 @@ export function parseTag(tag: string, directives: string[]): Vnode {
     checked: false,
     voidElement: false,
     template: tag,
+    inComponent: false,
   };
 
   // const attrRegex = /[\w-:]+(\=['"]([^=-]*)['"]){0,1}/g;
-  // todo optimize regular expressions
   const attrRegex = /[\w-:]+((\=[']([^']*)['])|(\=["]([^"]*)["])){0,1}/g;
   const voidElementList = [
     'area',

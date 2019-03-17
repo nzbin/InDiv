@@ -1,9 +1,9 @@
-import { IDirective, TInjectTokenProvider, TUseClassProvider, TUseValueProvider } from '../types';
-import { injected, Injector, rootInjector } from '../di';
+import { IDirective, TProviders } from '../types';
+import { injected, rootInjector } from '../di';
 
 export type TDirectiveOptions = {
   selector: string;
-  providers?: (Function | TUseClassProvider | TUseValueProvider)[];
+  providers?: TProviders;
 };
 
 /**
@@ -22,19 +22,7 @@ export function Directive(options: TDirectiveOptions): (_constructor: Function) 
     (_constructor as any).nvType = 'nvDirective';
     (_constructor as any).selector = options.selector;
     const vm: IDirective = _constructor.prototype;
-
-    vm.privateInjector = new Injector();
-    if (options.providers && options.providers.length > 0) {
-      const length = options.providers.length;
-      for (let i = 0; i < length; i++) {
-        const service = options.providers[i];
-        if ((service as TInjectTokenProvider).provide) {
-          if ((service as TUseClassProvider).useClass || (service as TUseValueProvider).useValue) vm.privateInjector.setProvider((service as TInjectTokenProvider).provide, service);
-        } else {
-          vm.privateInjector.setProvider(service as Function, service as Function);
-        }
-      }
-    }
+    if (options.providers) vm.privateProviders = [...options.providers];
 
     vm.declarationMap = new Map();
   };

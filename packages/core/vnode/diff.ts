@@ -28,16 +28,17 @@ function diffChildNodes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
         });
       }
       if (sameCodeFromNewCode) {
-        const sameCodeIndexFromNewCode = newVnode.childNodes.findIndex(nChild => nChild === sameCodeFromNewCode);
-        if (sameCodeIndexFromNewCode !== index) {
+        const sameCodeFromNewCodeIndex = newVnode.childNodes.findIndex(nChild => nChild === sameCodeFromNewCode);
+        if (sameCodeFromNewCodeIndex !== index) {
           patchList.push({
             type: 2,
-            newIndex: sameCodeIndexFromNewCode,
+            newIndex: sameCodeFromNewCodeIndex,
             oldIndex: index,
             parentVnode: oldVnode,
             changedVnode: oChild,
           });
         }
+        oChild.inComponent = sameCodeFromNewCode.inComponent;
         diffVnode(oChild, sameCodeFromNewCode, patchList);
         sameCodeFromNewCode.checked = true;
       }
@@ -77,7 +78,6 @@ function diffAttributes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
       if (!oldVnodeAttr) {
         patchList.push({
           type: 4,
-          // oldValue: oldVnodeAttr,
           originVnode: oldVnode,
           changedValue: attr,
           attributeType: attr.type,
@@ -92,7 +92,6 @@ function diffAttributes(oldVnode: Vnode, newVnode: Vnode, patchList: IPatchList[
         });
         patchList.push({
           type: 4,
-          // oldValue: oldVnodeAttr,
           originVnode: oldVnode,
           changedValue: attr,
           attributeType: attr.type,

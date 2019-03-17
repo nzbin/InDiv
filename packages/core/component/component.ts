@@ -1,15 +1,17 @@
-import { IComponent, TInjectTokenProvider, TUseClassProvider, TUseValueProvider } from '../types';
+import { IComponent, TProviders } from '../types';
 
 import { WatcherDependences } from './watch';
-import { injected, Injector, rootInjector } from '../di';
+import { injected, rootInjector } from '../di';
 import { collectDependencesFromViewModel } from './utils';
 import { componentCompiler } from '../compile';
+import { ChangeDetectionStrategy } from './change-detection';
 
 export type TComponentOptions = {
   selector: string;
   template?: string;
   templateUrl?: string;
-  providers?: (Function | TUseClassProvider | TUseValueProvider)[];
+  providers?: TProviders;
+  changeDetection?: ChangeDetectionStrategy,
 };
 
 /**
@@ -34,21 +36,17 @@ export function Component(options: TComponentOptions): (_constructor: Function) 
     (_constructor as any).selector = options.selector;
     const vm: IComponent = _constructor.prototype;
     if (options.template) vm.template = options.template;
+    if (options.providers) vm.privateProviders = [...options.providers];
 
-    vm.watchStatus = 'available';
-    vm.isWaitingRender = false;
-
-    vm.privateInjector = new Injector();
-    if (options.providers && options.providers.length > 0) {
-      const length = options.providers.length;
-      for (let i = 0; i < length; i++) {
-        const service = options.providers[i];
-        if ((service as TInjectTokenProvider).provide) {
-          if ((service as TUseClassProvider).useClass || (service as TUseValueProvider).useValue) vm.privateInjector.setProvider((service as TInjectTokenProvider).provide, service);
-        } else {
-          vm.privateInjector.setProvider(service as Function, service as Function);
-        }
-      }
+    // 变更策略
+    if (options.changeDetection === ChangeDetectionStrategy.Default) {
+      vm.nvChangeDetection = options.changeDetection;
+      vm.watchStatus = 'available';
+      vm.isWaitingRender = false;
+    } else {
+      vm.nvChangeDetection = options.changeDetection;
+      vm.watchStatus = 'disable';
+      vm.isWaitingRender = false;
     }
 
     vm.declarationMap = new Map();
@@ -58,9 +56,12 @@ export function Component(options: TComponentOptions): (_constructor: Function) 
     vm.directiveList = [];
 
     vm.watchData = function (): void {
+      // OnPush 模式只能通过 inputs 触发更新，所以直接跳出
+      if ((this as IComponent).nvChangeDetection === ChangeDetectionStrategy.OnPush) return;
+
       if (!(this as IComponent).dependencesList) (this as IComponent).dependencesList = [];
       collectDependencesFromViewModel(this);
-      (this as IComponent).dependencesList.forEach(dependence => WatcherDependences(this, dependence));
+      (this as IComponent).dependencesList.forEach(dependence => WatcherDependences(this as IComponent, dependence));
     };
 
     vm.render = async function (): Promise<IComponent> {

@@ -1,35 +1,15 @@
 import { IComponent, ComponentList, DirectiveList } from '../types';
 import { utils } from '../utils';
 import { ElementRef } from './element-ref';
-
-/**
- * to build foundMap for function buildViewChild, buildViewChildren
- *
- * @param {IComponent} component
- * @param {(string | Function)} selector
- * @returns {(ComponentList[] | DirectiveList[])}
- */
-function buildFoundMap(component: IComponent, selector: string | Function): ComponentList[] | DirectiveList[] {
-  let toFindMap: ComponentList[] | DirectiveList[];
-  if (typeof selector === 'string') {
-    if ((component.declarationMap.get(selector) as any).nvType === 'nvComponent') toFindMap = component.componentList;
-    if ((component.declarationMap.get(selector) as any).nvType === 'nvDirective') toFindMap = component.directiveList;
-  }
-  if (utils.isFunction(selector)) {
-    if ((selector as any).nvType === 'nvComponent') toFindMap = component.componentList;
-    if ((selector as any).nvType === 'nvDirective') toFindMap = component.directiveList;
-  }
-  return toFindMap;
-}
+import { buildFoundMap } from './utils';
 
 /**
  * for build @ViewChild in Component
  *
- * @export
  * @param {IComponent} component
  * @returns {void}
  */
-export function buildViewChild(component: IComponent): void {
+function buildViewChild(component: IComponent): void {
   if (!component.viewChildList) return;
   component.viewChildList.forEach(({ propertyName, selector }) => {
     if (typeof selector === 'string') {
@@ -39,7 +19,7 @@ export function buildViewChild(component: IComponent): void {
         const found = foundMap.find(value => (value.constructorFunction as any).selector === selector);
         if (found) (component as any)[propertyName] = found.instanceScope;
       } else {
-        const findElementRef = component.$indivInstance.getRenderer.getElementsByTagName(selector);
+        const findElementRef = component.$indivInstance.getRenderer.getElementsByTagName(selector, component.nativeElement);
         if (findElementRef && findElementRef.length > 0) (component as any)[propertyName] = new ElementRef(findElementRef[0]);
       }
     }
@@ -53,11 +33,10 @@ export function buildViewChild(component: IComponent): void {
 /**
  * for build @ViewChildren in Component
  *
- * @export
  * @param {IComponent} component
  * @returns {void}
  */
-export function buildViewChildren(component: IComponent): void {
+function buildViewChildren(component: IComponent): void {
   if (!component.viewChildrenList) return;
   component.viewChildrenList.forEach(({ propertyName, selector }) => {
     if (typeof selector === 'string') {
@@ -67,7 +46,7 @@ export function buildViewChildren(component: IComponent): void {
         (component as any)[propertyName] = (foundMap as any[]).map(value => {
           if ((value.constructorFunction as any).selector === selector) return value.instanceScope;
         });
-      } else (component as any)[propertyName] = Array.from(component.$indivInstance.getRenderer.getElementsByTagName(selector)).map((findElementRef) => new ElementRef(findElementRef));
+      } else (component as any)[propertyName] = Array.from(component.$indivInstance.getRenderer.getElementsByTagName(selector, component.nativeElement)).map((findElementRef) => new ElementRef(findElementRef));
     }
     if (utils.isFunction(selector)) {
       const foundMap: ComponentList[] | DirectiveList[] = buildFoundMap(component, selector);
@@ -76,6 +55,17 @@ export function buildViewChildren(component: IComponent): void {
       });
     }
   });
+}
+
+/**
+ * for build @ViewChild and @ViewChildren in Component
+ *
+ * @export
+ * @param {IComponent} component
+ */
+export function buildViewChildandChildren(component: IComponent): void {
+  buildViewChild(component);
+  buildViewChildren(component);
 }
 
 /**
@@ -96,7 +86,7 @@ export function ViewChild(selector: Function | string): (target: IComponent, pro
   return function (target: IComponent, propertyName: string): any {
     if (!target.viewChildList) target.viewChildList = [];
     target.viewChildList.push({ propertyName, selector });
-    return (target as any)[propertyName];
+    return target[propertyName];
   };
 }
 
@@ -118,6 +108,6 @@ export function ViewChildren(selector: Function | string): (target: IComponent, 
   return function (target: IComponent, propertyName: string): any {
     if (!target.viewChildrenList) target.viewChildrenList = [];
     target.viewChildrenList.push({ selector, propertyName });
-    return (target as any)[propertyName];
+    return target[propertyName];
   };
 }

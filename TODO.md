@@ -38,6 +38,13 @@
 - [x] vnode to string
 - [x] SSR 服务端渲染 server side render: @indiv/platform-server
 - [x] @ViewChild @ViewChildren
-- [ ] @indiv/cli
 - [x] AOT compile
+- [x] lifecycleCaller
+- [x] `<nv-content></nv-content>`
+- [x] @ContentChild @ContentChildren
+- [x] 检查变更 onPush
+- [x] force render api
+- [x] comment vnode
+- [ ] AOT compiler with babylon and traversal
 - [ ] support Pipe
+- [ ] @indiv/cli

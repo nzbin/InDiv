@@ -45,6 +45,6 @@
 - [x] 检查变更 onPush
 - [x] force render api
 - [x] comment vnode
-- [ ] AOT compile with babylon and traversal
+- [ ] AOT compiler with babylon and traversal
 - [ ] support Pipe
 - [ ] @indiv/cli

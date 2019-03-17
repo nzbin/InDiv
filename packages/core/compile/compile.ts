@@ -1,5 +1,5 @@
-import { parseTemplateToVnode, Vnode, ParseOptions, IPatchList, diffVnode, patchVnode, isRepeatNode, isElementNode, isTextNode, isDirective, isEventDirective, isPropOrNvDirective } from '../vnode';
-import { argumentsIsReady, valueIsReady } from './utils';
+import { parseTemplateToVnode, Vnode, ParseOptions, IPatchList, diffVnode, patchVnode, isRepeatNode, isElementNode, isTextNode, isDirective, isEventDirective, isPropOrNvDirective, isTagName } from '../vnode';
+import { argumentsIsReady, valueIsReady, cloneVnode } from './utils';
 import { CompileUtil } from './compile-utils';
 import { IComponent } from '../types';
 
@@ -101,6 +101,9 @@ export class Compile {
 
       // after compile repeatNode, remove repeatNode
       if (isRepeatNode(_fragmentChild) && fragment.indexOf(_fragmentChild) !== -1) fragment.splice(fragment.indexOf(_fragmentChild), 1);
+
+      // 如果是 <nv-content> 则内部来自父组件
+      if (isTagName(_fragmentChild, 'nv-content')) _fragmentChild.childNodes = this.componentInstance.nvContent.map(nvContent => cloneVnode(nvContent, null, _fragmentChild));
     });
   }
 

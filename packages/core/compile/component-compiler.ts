@@ -3,9 +3,10 @@ import { IComponent, ComponentList, TComAndDir, DirectiveList } from '../types';
 import { utils } from '../utils';
 import { Compile } from './compile';
 import { buildComponentScope } from './compiler-utils';
-import { Vnode, parseTemplateToVnode } from '../vnode';
+import { Vnode, parseTemplateToVnode, isTagName } from '../vnode';
 import { mountDirective } from './directive-compiler';
-import { buildViewChild, buildViewChildren } from '../component';
+import { buildViewChildandChildren, buildContentChildandChildren, ChangeDetectionStrategy } from '../component';
+import { lifecycleCaller } from '../lifecycle';
 
 /**
  * use lifecycle nvDestory for @Directive
@@ -14,7 +15,7 @@ import { buildViewChild, buildViewChildren } from '../component';
  */
 function emitDirectiveDestory(directiveList: DirectiveList[]): void {
   directiveList.forEach(directive => {
-    if (directive.instanceScope.nvOnDestory) directive.instanceScope.nvOnDestory();
+    lifecycleCaller(directive.instanceScope, 'nvOnDestory');
   });
 }
 
@@ -25,9 +26,9 @@ function emitDirectiveDestory(directiveList: DirectiveList[]): void {
  */
 function emitComponentDestory(componentList: ComponentList[]): void {
   componentList.forEach(component => {
-    if (component.instanceScope.nvOnDestory) component.instanceScope.nvOnDestory();
     emitDirectiveDestory(component.instanceScope.directiveList);
     emitComponentDestory(component.instanceScope.componentList);
+    lifecycleCaller(component.instanceScope, 'nvOnDestory');
   });
 }
 
@@ -69,43 +70,57 @@ export async function mountComponent(componentInstance: IComponent, componentAnd
             });
           }
         }
-
+        // 标记组件为脏组件
+        component.isDirty = true;
       }
     } else {
       component.instanceScope = buildComponentScope(component.constructorFunction, component.inputs, component.nativeElement, componentInstance);
     }
 
     component.instanceScope.$indivInstance = componentInstance.$indivInstance;
+    // 赋值 <nv-content>的 Vnode[] 给组件实例nvContent
+    component.instanceScope.nvContent = component.nvContent;
 
-    if (component.instanceScope.nvOnInit && !cacheComponent) component.instanceScope.nvOnInit();
-    if (component.instanceScope.watchData && !cacheComponent) component.instanceScope.watchData();
-    if (component.instanceScope.nvBeforeMount && !cacheComponent) component.instanceScope.nvBeforeMount();
+    if (!cacheComponent) {
+      lifecycleCaller(component.instanceScope, 'nvOnInit');
+      lifecycleCaller(component.instanceScope, 'watchData');
+      lifecycleCaller(component.instanceScope, 'nvBeforeMount');
+    }
   }
   // the rest should use nvOnDestory to destory
   const cacheComponentListLength = cacheComponentList.length;
   for (let i = 0; i < cacheComponentListLength; i++) {
     const cache = cacheComponentList[i];
-    if (cache.instanceScope.nvOnDestory) cache.instanceScope.nvOnDestory();
     emitDirectiveDestory(cache.instanceScope.directiveList);
     emitComponentDestory(cache.instanceScope.componentList);
+    lifecycleCaller(cache.instanceScope, 'nvOnDestory');
   }
 
   // render, only component which isn't rendered will be rendered and called 
   for (let i = 0; i < componentListLength; i++) {
     const component = componentInstance.componentList[i];
+    // 如果没找到该组件
     if (!foundCacheComponentList.find(cache => cache.nativeElement === component.nativeElement)) {
       await component.instanceScope.render();
-      // isServerRendering won't call nvAfterMount
-      if (component.instanceScope.nvAfterMount && !component.instanceScope.$indivInstance.getIndivEnv.isServerRendering) component.instanceScope.nvAfterMount();
+      // in ssr env indiv won't call nvAfterMount
+      if (!component.instanceScope.$indivInstance.getIndivEnv.isServerRendering) lifecycleCaller(component.instanceScope, 'nvAfterMount');
+    } else {
+      // 如果找到该组件 并且为脏组件
+      if (component.isDirty) {
+        // 如果是 OnPush 模式的话，则需要触发一次更新
+        if (component.instanceScope.nvChangeDetection === ChangeDetectionStrategy.OnPush) {
+          if (component.instanceScope.nvDoCheck) component.instanceScope.nvDoCheck();
+          await component.instanceScope.render();
+        }
+        component.isDirty = false;
+      }
     }
   }
 
-  // build @ViewChild
-  buildViewChild(componentInstance);
-  // build @ViewChildren
-  buildViewChildren(componentInstance);
-
-  if (componentInstance.nvHasRender) componentInstance.nvHasRender();
+  // build @ViewChild @ViewChildren
+  buildViewChildandChildren(componentInstance);
+  // build @ContentChild @ContentChildren
+  buildContentChildandChildren(componentInstance);
 }
 
 /**
@@ -125,6 +140,9 @@ export function componentsConstructor(componentInstance: IComponent, componentAn
       inputs: component.inputs,
       instanceScope: null,
       constructorFunction: declaration,
+      nvContent: component.nvContent,
+      isFromContent: component.isFromContent,
+      isDirty: false,
     });
   });
 }
@@ -135,18 +153,32 @@ export function componentsConstructor(componentInstance: IComponent, componentAn
  * @export
  * @param {Vnode} vnode
  * @param {TComAndDir} componentAndDirectives
+ * @param {Vnode[]} contentComponentStack
  */
-export function buildComponentsAndDirectives(vnode: Vnode, componentAndDirectives: TComAndDir): void {
+export function buildComponentsAndDirectives(vnode: Vnode, componentAndDirectives: TComAndDir, contentComponentStack: Vnode[]): void {
   if (vnode.type === 'text') return;
   const componentInputs: any = {};
 
+  // 判断栈是否为空，如果没空则证明是 <nv-content> 的子作用域的组件
+  const fromContent = contentComponentStack.length ? true : false;
+  let hasPushStack = false;
+  if (isTagName(vnode, 'nv-content') && vnode.childNodes && vnode.childNodes.length > 0) {
+    contentComponentStack.push(vnode);
+    hasPushStack = true;
+  }
+
+  if (vnode.childNodes && vnode.childNodes.length > 0) vnode.childNodes.forEach(child => buildComponentsAndDirectives(child, componentAndDirectives, contentComponentStack));
+
   if (vnode.attributes && vnode.attributes.length > 0) {
     vnode.attributes.forEach(attr => {
-      if (attr.type === 'directive') componentAndDirectives.directives.push({
-        nativeElement: vnode.nativeElement,
-        inputs: attr.nvValue,
-        name: attr.name,
-      });
+      if (attr.type === 'directive') {
+        componentAndDirectives.directives.push({
+          nativeElement: vnode.nativeElement,
+          inputs: attr.nvValue,
+          name: attr.name,
+          isFromContent: fromContent,
+        });
+      }
       if (attr.type === 'prop') componentInputs[attr.name] = attr.nvValue;
     });
   }
@@ -156,10 +188,13 @@ export function buildComponentsAndDirectives(vnode: Vnode, componentAndDirective
       nativeElement: vnode.nativeElement,
       inputs: componentInputs,
       name: vnode.tagName,
+      nvContent: vnode.childNodes,
+      isFromContent: fromContent,
     });
   }
 
-  if (vnode.childNodes && vnode.childNodes.length > 0) vnode.childNodes.forEach(child => buildComponentsAndDirectives(child, componentAndDirectives));
+  // 深度优先遍历后，出栈
+  if (hasPushStack) contentComponentStack.pop();
 }
 
 /**
@@ -194,9 +229,11 @@ export async function componentCompiler(nativeElement: any, componentInstance: I
 
   // for save saveVnode in componentInstance
   componentInstance.saveVnode = saveVnode;
+  let componentAndDirectives: TComAndDir = { components: [], directives: [] };
+  // 定义一个来自 <nv-content> 的 Vnode 栈
+  let contentComponentStack: Vnode[] = [];
 
-  const componentAndDirectives: TComAndDir = { components: [], directives: [] };
-  saveVnode.forEach(vnode => buildComponentsAndDirectives(vnode, componentAndDirectives));
+  saveVnode.forEach(vnode => buildComponentsAndDirectives(vnode, componentAndDirectives, contentComponentStack));
 
   // firstly mount directive
   try {
@@ -208,9 +245,13 @@ export async function componentCompiler(nativeElement: any, componentInstance: I
   // then mount component
   try {
     await mountComponent(componentInstance, componentAndDirectives);
+    lifecycleCaller(componentInstance, 'nvHasRender');
   } catch (error) {
     throw new Error(`Error: ${error}, components of compoent ${(componentInstance.constructor as any).selector} were compiled failed!`);
   }
+
+  componentAndDirectives = null;
+  contentComponentStack = null;
 
   return componentInstance;
 }

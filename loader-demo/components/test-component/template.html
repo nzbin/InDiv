@@ -1,3 +1,10 @@
+<!-- <div>
+  <p nv-on:click="click()">测试repeat组件: {{manName}}</p>
+</div> -->
 <div>
   <p nv-on:click="click()">测试repeat组件: {{manName}}</p>
 </div>
+<div nv-repeat='num in repeatData'>
+  <nv-content></nv-content>
+</div>
+<nv-content></nv-content>

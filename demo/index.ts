@@ -1,4 +1,4 @@
-import { InDiv, Component, Utils, NvModule, OnInit, DoCheck, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, ElementRef, HasRender, Input, ViewChild, ViewChildren, StateSetter, Watch } from '@indiv/core';
+import { InDiv, Component, Utils, NvModule, OnInit, DoCheck, BeforeMount, AfterMount, ReceiveInputs, SetState, OnDestory, ElementRef, HasRender, Input, ViewChild, ViewChildren, StateSetter, Watch, ContentChildren, ContentChild, ChangeDetectionStrategy, MarkForCheck, TMarkForCheck } from '@indiv/core';
 import { RouteChange, NvLocation, RouteModule, RouteCanActive } from '@indiv/router';
 import { PlatformBrowser } from '@indiv/platform-browser';
 import { HttpClient, HttpClientResponse } from '@indiv/common';
@@ -9,6 +9,19 @@ import { HeroSearchService, HeroSearchService1, HeroSearchService2 } from './ser
 import { PrivateService } from './private.service';
 
 class ValueType { }
+
+@Component({
+  selector: 'test-content-component',
+  template: '<p nv-on:click="click()">这个是个测试组件content的东西 {{test}}</p>',
+})
+class TestContentComponent {
+  public test: number = 2;
+
+  public click() {
+    console.log(999999, this.test);
+    this.test = 1002;
+  }
+}
 
 @Component({
   selector: 'pc-component',
@@ -90,7 +103,6 @@ class PComponent implements DoCheck, BeforeMount, ReceiveInputs, OnDestory {
     `),
 })
 class R1 implements OnInit, BeforeMount, DoCheck, RouteChange, OnDestory, RouteCanActive {
-  public hSr: HeroSearchService;
   @StateSetter() public setState: SetState;
   public a: string = 'a11';
   public b: number = 2;
@@ -234,18 +246,40 @@ class R2 implements OnInit, BeforeMount, AfterMount, DoCheck, RouteChange, OnDes
   template: (`
     <div>
       <p nv-on:click="click()">测试repeat组件: {{manName}}</p>
-    </div>`),
+    </div>
+    <div nv-repeat='num in repeatData'>
+      <nv-content></nv-content>
+    </div>
+    <nv-content></nv-content>
+`),
+  providers: [
+    HeroSearchService,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
   public state: any;
   @Input() public manName: any;
+  @MarkForCheck() public markForCheck: TMarkForCheck;
+  public repeatData: number[] = [1];
+  public man: {name: string} = {
+    name: 'fucker',
+  };
+
+  @ContentChild('test-content-component') private testComponent: TestContentComponent;
+  @ContentChild('a') private tagA: HTMLElement;
+  @ContentChildren('test-directive') private testDirectiveString: TestDirective[];
+  @ContentChildren('a') private tagAs: TestDirective[];
+  @ContentChildren(TestDirective) private testDirective: TestDirective[];
 
   constructor(
     private httpClient: HttpClient,
     private indiv: InDiv,
     private element: ElementRef,
+    private heroSearchService: HeroSearchService,
   ) {
     console.log(55544333, 'init TestComponent', this.indiv, this.element);
+    this.heroSearchService.test(988);
     this.httpClient.get('/success').subscribe({
       next: (value: any) => { console.log(4444, value); },
     });
@@ -254,10 +288,13 @@ class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
   public click() {
     console.log('this.manName', this.manName);
     this.manName = 'fuck!';
+    this.markForCheck().then(() => {
+      console.log('渲染完成');
+    });
   }
 
   public nvHasRender() {
-    console.log('TestComponent HasRender');
+    console.log('TestComponent HasRender', this.tagA, this.tagAs, this.testDirectiveString);
   }
 
   public nvAfterMount() {
@@ -274,44 +311,60 @@ class TestComponent implements OnDestory, ReceiveInputs, AfterMount, HasRender {
 
 @Component({
   selector: 'container-wrap',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: (`
-  <div class="fucck" nv-class="test.b" nv-id="'cc'">
-    <input nv-model="test.a" nv-on:click="show(test)" />
-    <p test-directive="{test.a}" nv-id="232" nv-if="countState(a)" nv-on:click="changeInput()">{{a}}</p>
-    <test-component nv-repeat="man in testArray" nv-key="man.name" manName="{countState(man.name)}" nv-if="a"></test-component>
-    <p nv-on:click="go()">container: {{countState(color)}}</p>
-    <input type="number" nv-model="a" />
-    <div nv-repeat="man in testArray" nv-key="man.name">
-        <div nv-on:click="show(testArray2, '你111')" nv-text="man.name"></div>
-        <div><p>性别：{{countState(man.sex, $index)}}</p></div>
-        <a nv-href="countState(man.sex, $index)">a {{man.sex}}</a>
-        <img nv-src="man.sex" nv-alt="man.sex" />
-        <test-component nv-key="man.name" manName="{countState2(man.name, bd)}"  nv-repeat="bd in testArray2"></test-component>
-        <p nv-key="man.name" nv-class="man.name" nv-id="bd" nv-repeat="bd in testArray2">{{bd}}</p>
-        <input nv-on:click="show(_b, $index)" nv-repeat="_b in testArray2" nv-model="_b"  nv-class="_b" />
-        <input nv-model="test.a"/>
-        <div class="fuck" nv-class="man.name" nv-repeat="c in man.job" nv-key="c.id">
-           <input nv-on:click="show(c, $index)" nv-model="c.name" nv-class="c.id" />
-           <p test-directive="{'123'}" nv-key="man.name" nv-class="man.name" nv-id="c.name">{{man.name}}</p>
-           <div nv-repeat="_bb in man.job">
-            <p nv-class="man.name" nv-repeat="_test in testArray2">
-              {{_test}}: {{man.name}} is {{_bb.name}}
-              <a nv-class="_bbc" nv-repeat="_bbc in testArray2">{{man.name}} {{_bb.name}}</a>
-            </p>
-           </div>
-        </div>
+  <!-- container: {{countState(color)}} -->
+  <div class="fucck" nv-class="test.a" nv-id="'cc'">
+  <p>{{testNumber}}</p>
+  <input nv-model="test.a" nv-on:click="show(test)" />
+  <p test-directive="{test.a}" nv-id="232" nv-if="countState(a)" nv-on:click="changeInput()">{{a}}</p>
+  <test-component nv-repeat="man in testArray" nv-key="man.id" manName="{countState(man.name)}" nv-if="a">
+    <a>this is {{man.name}}</a>
+    <test-content-component test-directive="{test.a}"></test-content-component>
+  </test-component>
+  <p nv-on:click="go()">
+    <!-- container: {{countState(color)}} -->
+    container: {{countState(color)}}
+    <!-- <a nv-href="countState(man.sex, $index)">a {{man.sex}}</a> -->
+  </p>
+  <!-- <a nv-href="countState(man.sex, $index)">a {{man.sex}}</a> -->
+  <input type="number" nv-model="a" />
+  <!-- <a nv-href="countState(man.sex, $index)">a {{man.sex}}</a> -->
+  <div nv-repeat="man in testArray" nv-key="man.name">
+    <!-- <a nv-href="countState(man.sex, $index)">a {{man.sex}}</a> -->
+    <div nv-on:click="show(testArray2, '你111')" nv-text="man.name"></div>
+    <div>
+      <p>性别：{{countState(man.sex, $index)}}</p>
     </div>
-    <router-render></router-render>
+    <!-- <a nv-href="countState(man.sex, $index)">a {{man.sex}}</a>
+      <img nv-src="man.sex" nv-alt="man.sex" />
+      <test-component nv-key="man.name" manName="{countState2(man.name, bd)}"  nv-repeat="bd in testArray2"></test-component>
+      <p nv-key="man.name" nv-class="man.name" nv-id="bd" nv-repeat="bd in testArray2">{{bd}}</p>
+      <input nv-on:click="show(_b, $index)" nv-repeat="_b in testArray2" nv-model="_b"  nv-class="_b" />
+      <input nv-model="test.a"/>
+      <div class="fuck" nv-class="man.name" nv-repeat="c in man.job" nv-key="c.id">
+         <input nv-on:click="show(c, $index)" nv-model="c.name" nv-class="c.id" />
+         <p test-directive="{'123'}" nv-key="man.name" nv-class="man.name" nv-id="c.name">{{man.name}}</p>
+         <div nv-repeat="_bb in man.job">
+          <p nv-class="man.name" nv-repeat="_test in testArray2">
+            {{_test}}: {{man.name}} is {{_bb.name}}
+            <a nv-class="_bbc" nv-repeat="_bbc in testArray2">{{man.name}} {{_bb.name}}</a>
+          </p>
+         </div>
+      </div> -->
   </div>
-  <p>1111</p>
+  <router-render></router-render>
+</div>
+<p>1111</p>
+  <!-- <b nv-href="countState(man.sex, $index)"></b> -->
 `),
 })
-
 class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
   @Watch() public aaaaa: number;
   public ss: HeroSearchService;
   public ss2: HeroSearchService1;
   public state: any;
+  public testNumber: number = 4;
   public color: any = 'red';
   public test: any = {
     a: 3,
@@ -322,6 +375,7 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
     {
       name: 'gerry',
       sex: '男',
+      id: 1,
       job: [
         {
           id: 1,
@@ -340,6 +394,7 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
     {
       name: 'nina',
       sex: '女',
+      id: 2,
       // job: ['老师', '英语老师', '美1'],
       job: [
         {
@@ -361,6 +416,7 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
   // public testArray2: any = ['程序员2'];
   public props: any;
   @StateSetter() public setState: SetState;
+  @MarkForCheck() public markForCheck: TMarkForCheck;
   public http$: Observable<HttpClientResponse>;
 
   @ViewChild('test-component') private testComponent: TestComponent;
@@ -408,12 +464,22 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
     console.log('nvOnInit Container', this.location.get());
   }
 
+  public nvBeforeMount() {
+    // this.testNumber = 11;
+    // this.testNumber = 12;
+    console.log('nvBeforeMount Container');
+  }
+
   public nvHasRender() {
-    console.log('nvHasRender Container', 33333333, this, this.testComponent, this.testDirective, this.routerRenderElementRef, this.testDirectiveString);
+    this.testNumber = 6;
+    this.testNumber = 7;
+    console.log('nvHasRender Container', 33333333, this.testComponent, this.testDirective, this.routerRenderElementRef, this.testDirectiveString);
   }
 
   public nvAfterMount() {
-    console.log('nvAfterMount Container', 222222, this, this.testComponent, this.testDirective, this.routerRenderElementRef, this.testDirectiveString);
+    // this.testNumber = 8;
+    // this.testNumber = 9;
+    console.log('nvAfterMount Container', 222222, this.testComponent, this.testDirective, this.routerRenderElementRef, this.testDirectiveString);
   }
 
   public go() {
@@ -454,8 +520,9 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
       a: 5,
       testArray: [
         {
-          name: 'gerry',
+          name: 'gerry1',
           sex: '女',
+          id: 1,
           job: [
             {
               id: 1,
@@ -474,6 +541,7 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
         {
           name: 'gerry2',
           sex: '男2',
+          id: 3,
           job: [
             {
               id: 1,
@@ -490,8 +558,9 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
           ],
         },
         {
-          name: 'nina',
+          name: 'nina3',
           sex: '男',
+          id: 2,
           job: [
             {
               id: 1,
@@ -509,6 +578,7 @@ class Container implements OnInit, AfterMount, DoCheck, HasRender, RouteChange {
         }],
     });
     this.a = 100;
+    this.markForCheck();
   }
 
   private httpHandler = (value: any) => {
@@ -559,6 +629,7 @@ class M2 {
     M2,
   ],
   declarations: [
+    TestContentComponent,
     Container,
     PComponent,
     TestComponent,

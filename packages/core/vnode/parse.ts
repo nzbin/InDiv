@@ -9,26 +9,28 @@ export type ParseOptions = {
 /**
  * vnode main method, parse a template HTML string to Vnode[]
  *
+ * html tag regex: (<(?!!--)(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>)
+ * html comment tag regex: ((?:[^>]\s|^)<!--(?!<!)[^\[>][\s\S]*?-->)
+ *
  * @export
  * @param {string} template
  * @param {ParseOptions} [options={ components: [], directives: [] }]
  * @returns {Vnode[]}
  */
 export function parseTemplateToVnode(template: string, options: ParseOptions = { components: [], directives: [] }): Vnode[] {
-
-  const tagRegex = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
-
+  const tagRegex = /(<(?!!--)(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>)|((?:[^>]\s|^)<!--(?!<!)[^\[>][\s\S]*?-->)/g;
   const result: Vnode[] = [];
   let current: Vnode = null;
   let level = -1;
   const arr: Vnode[] = [];
   const byTag = {};
   let inComponent = false;
+  const componentStack: Vnode[] = [];
 
-  template.replace(tagRegex, (tag: string, index: number): string => {
-    if (inComponent) {
-      if (tag !== `</${current.tagName}>`) return;
-      else inComponent = false;
+  template.replace(tagRegex, (tag: string, tagMatch: string, commentMatch: string, index: number): string => {
+    if (inComponent && componentStack.length > 0 && tag === `</${componentStack[componentStack.length - 1].tagName}>`) {
+      componentStack.pop();
+      if (componentStack.length === 0) inComponent = false;
     }
 
     const isOpen = tag.charAt(1) !== '/';
@@ -39,19 +41,34 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
     if (isOpen) {
       level++;
 
-      current = parseTag(tag, options.directives);
+      // if tag is comment tag
+      if (commentMatch) current = {
+        type: 'comment',
+        nodeValue: tag.replace(/^\s*<!--/, '').replace(/-->\s*$/, ''),
+        parentVnode: current,
+        template: tag,
+        voidElement: true,
+      };
+
+      // if tag is other tag
+      if (tagMatch && !commentMatch) current = parseTag(tag, options.directives);
+      if (inComponent) current.inComponent = inComponent;
+
+      // change tag into component
       if (current.type === 'tag' && options.components.indexOf(current.tagName) !== -1) {
         current.type = 'component';
         inComponent = true;
+        componentStack.push(current);
       }
 
-      if (!current.voidElement && !inComponent && nextChar && nextChar !== '<' && !/^\s*$/.test(template.slice(start, template.indexOf('<', start)))) {
+      if (!current.voidElement && nextChar && nextChar !== '<' && !/^\s*$/.test(template.slice(start, template.indexOf('<', start)))) {
         current.childNodes.push({
           type: 'text',
           nodeValue: template.slice(start, template.indexOf('<', start)),
           parentVnode: current,
           template: template.slice(start, template.indexOf('<', start)),
           voidElement: true,
+          inComponent,
         });
       }
 
@@ -62,6 +79,7 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
 
       parent = arr[level - 1];
 
+      // protect route tag <router-rende> to be pure
       if (parent && parent.tagName !== 'router-render') {
         current.parentVnode = parent;
         parent.childNodes.push(current);
@@ -72,13 +90,12 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
 
     if (!isOpen || current.voidElement) {
       level--;
-      if (!inComponent && nextChar !== '<' && nextChar) {
+      if (nextChar !== '<' && nextChar) {
         // trailing text node
         // if we're at the root, push a base text node. otherwise add as
         // a child to the current node.
         // parent = level === -1 ? result : arr[level].childNodes;
         parent = level === -1 ? null : arr[level];
-        
         // calculate correct end of the content slice in case there's
         // no tag after the text node.
         const end = template.indexOf('<', start);
@@ -90,6 +107,7 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
           parentVnode: parent,
           template: nodeValue,
           voidElement: true,
+          inComponent,
         });
         if (!/^\s*$/.test(nodeValue) && parent && parent.tagName !== 'router-render') arr[level].childNodes.push({
           type: 'text',
@@ -97,11 +115,11 @@ export function parseTemplateToVnode(template: string, options: ParseOptions = {
           parentVnode: parent,
           template: nodeValue,
           voidElement: true,
+          inComponent,
         });
       }
     }
-    return null;
+    return tag;
   });
-
   return result;
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, HasRender, Input } from '@indiv/core';
+import { Component, OnInit, AfterMount, Input, ChangeDetectionStrategy } from '@indiv/core';
 import hljs from 'highlight.js';
 
 @Component({
@@ -10,8 +10,9 @@ import hljs from 'highlight.js';
             </blockquote>
         </div>
     `),
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class CodeShower implements OnInit, HasRender {
+export default class CodeShower implements OnInit, AfterMount {
     @Input() public codes: string;
     @Input() public type: string;
 
@@ -24,7 +25,7 @@ export default class CodeShower implements OnInit, HasRender {
         console.log(this.codes);
     }
 
-    public nvHasRender() {
+    public nvAfterMount() {
         document.querySelectorAll('pre code').forEach((dom) => {
             hljs.highlightBlock(dom);
         });

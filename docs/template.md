@@ -76,3 +76,13 @@
 ## 组件`inputs`
 
 具体详情见 <a href="#/components?id=组件通信-inputs" target="_blank">组件</a>
+
+## 注释（v2.0.6）
+
+使用 `HTML` 标准注释
+
+```html
+<p>
+  <!-- 这是一个注释 -->
+</p>
+```

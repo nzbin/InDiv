@@ -1,4 +1,6 @@
+import { TProviders } from '../types';
 import { rootInjector, Injector } from './injector';
+import { buildPrivateInjector } from './build-private-injector';
 
 /**
  * injectionCreator: build arguments for factoryCreator
@@ -17,23 +19,28 @@ import { rootInjector, Injector } from './injector';
  * @param {Function} _constructor
  * @param {Injector} [otherInjector]
  * @param {Map<any, any>} [provideAndInstanceMap]
- * @returns {any[]}
+ * @returns {{ args: any[], privateInjector?: Injector }}
  */
-export function injectionCreator(_constructor: Function, otherInjector?: Injector, provideAndInstanceMap?: Map<any, any>): any[] {
+export function injectionCreator(_constructor: Function, otherInjector?: Injector, provideAndInstanceMap?: Map<any, any>): { args: any[], privateInjector?: Injector } {
     const args: any[] = [];
 
     let _needInjectedClass: any[] = [];
     if ((_constructor as any)._needInjectedClass) _needInjectedClass = (_constructor as any)._needInjectedClass;
     if ((_constructor as any).injectTokens) _needInjectedClass = (_constructor as any).injectTokens;
 
-    if (_needInjectedClass.length === 0) return args;
+    if (_needInjectedClass.length === 0) return { args };
+
+    // build privateInjector
+    let privateInjector: Injector;
+    if ((_constructor.prototype as any).privateProviders as TProviders) privateInjector = buildPrivateInjector((_constructor.prototype as any).privateProviders as TProviders);
 
     _needInjectedClass.forEach((key: Function) => {
         // inject internal type for NvModule
         if (provideAndInstanceMap && provideAndInstanceMap.has(key)) return args.push(provideAndInstanceMap.get(key));
 
-        if ((_constructor.prototype as any).privateInjector as Injector) {
-            const _constructorService = ((_constructor.prototype as any).privateInjector as Injector).getProvider(key);
+        // private injector of instance
+        if (privateInjector) {
+            const _constructorService = privateInjector.getProvider(key);
             if (_constructorService && !_constructorService.useClass && !_constructorService.useValue) return args.push(factoryCreator(_constructorService, otherInjector, provideAndInstanceMap));
             if (_constructorService && _constructorService.useClass) return args.push(factoryCreator(_constructorService.useClass, otherInjector, provideAndInstanceMap));
             if (_constructorService && _constructorService.useValue) return args.push(_constructorService.useValue);
@@ -72,7 +79,7 @@ export function injectionCreator(_constructor: Function, otherInjector?: Injecto
         }
     });
 
-    return args;
+    return { args, privateInjector };
 }
 
 /**
@@ -89,7 +96,8 @@ export function injectionCreator(_constructor: Function, otherInjector?: Injecto
  * @returns {*}
  */
 export function factoryCreator<K = any, V = any>(_constructor: Function, otherInjector?: Injector, provideAndInstanceMap?: Map<K, V>): any {
-    const args = injectionCreator(_constructor, otherInjector, provideAndInstanceMap);
+    const { args, privateInjector } = injectionCreator(_constructor, otherInjector, provideAndInstanceMap);
     const factoryInstance = new (_constructor as any)(...args);
+    factoryInstance.privateInjector = privateInjector;
     return factoryInstance;
 }

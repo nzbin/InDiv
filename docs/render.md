@@ -26,6 +26,7 @@ export abstract class Renderer {
   public abstract isContainted(parent: any, child: any): boolean;
   public abstract creatElement(tagName: string): any;
   public abstract creatTextElement(value: string): any;
+  public abstract creatCommentElement(value: string): any; // v2.0.6新增，创建注释节点
   public abstract getAttribute(element: any, name: string): any;
   public abstract setAttribute(element: any, name: string, value: any): void;
   public abstract setNvAttribute(element: any, name: string, value: any): void;

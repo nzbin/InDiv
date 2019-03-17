@@ -171,13 +171,16 @@ export function isFromVM(vm: any, exp: string): boolean {
  * repeat data by attribute in DOM: repeatData
  * isComponent: clone Component need add isComponent=true
  *
+ * @export
  * @param {Vnode} vnode
  * @param {*} [repeatData]
+ * @param {Vnode} [parentVnode]
  * @returns {Vnode}
  */
-export function cloneVnode(vnode: Vnode, repeatData?: any): Vnode {
+export function cloneVnode(vnode: Vnode, repeatData?: any, parentVnode?: Vnode): Vnode {
   const newVnode = new Vnode(vnode);
-  newVnode.repeatData = { ...repeatData };
+  if (repeatData) newVnode.repeatData = { ...repeatData };
+  if (parentVnode) newVnode.parentVnode = parentVnode;
   copyRepeatData(newVnode, repeatData);
   copyParentVnode(newVnode);
   return newVnode;
@@ -246,4 +249,3 @@ export function setVMVal(vm: any, exp: string, value: any): void {
     });
   }
 }
-

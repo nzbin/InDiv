@@ -72,8 +72,9 @@ export class PlatfromServerRenderer extends Renderer {
     return vnodeList;
   }
 
-  public getElementsByTagName(name: string): HTMLCollectionOf<Element> {
-    return _document.getElementsByTagName(name);
+  public getElementsByTagName(name: string, master?: any): HTMLCollectionOf<Element> {
+    if (master) return master.getElementsByTagName(name);
+    else return _document.getElementsByTagName(name);
   }
 
   public hasChildNodes(nativeElement: Element): boolean {
@@ -108,6 +109,10 @@ export class PlatfromServerRenderer extends Renderer {
 
   public creatTextElement(value: string): any {
     return _document.createTextNode(value);
+  }
+
+  public creatCommentElement(value: string): any {
+    return _document.createComment(value);
   }
 
   public getAttribute(element: Element, name: string): string {

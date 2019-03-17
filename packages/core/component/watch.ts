@@ -58,7 +58,7 @@ export function watchData(data: any, propertyName: string, target: IComponent, w
  */
 export function watchDataByKey(target: IComponent, propertyName: string, watcher?: TFnWatcher, render?: TFnRender): void {
   if (!target || typeof target !== 'object') return;
-  let data = (target as any)[propertyName];
+  let data = target[propertyName];
   Object.defineProperty(target, propertyName, {
     configurable: true,
     enumerable: true,
@@ -81,11 +81,11 @@ export function watchDataByKey(target: IComponent, propertyName: string, watcher
  * recursive watch dependens in target
  *
  * @export
- * @param {*} target
+ * @param {IComponent} target
  * @param {string} propertyName
  */
-export function WatcherDependences(target: any, propertyName: string) {
-  const data = (target as any)[propertyName];
+export function WatcherDependences(target: IComponent, propertyName: string) {
+  const data = target[propertyName];
 
   if (!target.render) throw new Error(`function WatcherDependences can only be used in @Component!`);
 
@@ -113,6 +113,6 @@ export function Watch(): (target: any, propertyName: string) => any {
   return function (target: any, propertyName: string): any {
     if (target.dependencesList && target.dependencesList.indexOf(propertyName) === -1) target.dependencesList.push(propertyName);
     if (!target.dependencesList) target.dependencesList = [propertyName];
-    return (target as any)[propertyName];
+    return target[propertyName];
   };
 }

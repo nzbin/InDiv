@@ -2,6 +2,29 @@ import { DirectiveList, IComponent, TComAndDir } from '../types';
 
 import { utils } from '../utils';
 import { buildDirectiveScope } from './compiler-utils';
+import { lifecycleCaller } from '../lifecycle';
+
+/**
+ * construct Directives in Directive
+ *
+ * @export
+ * @param {IComponent} componentInstance
+ * @param {TComAndDir} componentAndDirectives
+ */
+export function directivesConstructor(componentInstance: IComponent, componentAndDirectives: TComAndDir): void {
+  componentInstance.directiveList = [];
+
+  componentAndDirectives.directives.forEach(directive => {
+    const declaration = componentInstance.declarationMap.get(directive.name);
+    componentInstance.directiveList.push({
+      nativeElement: directive.nativeElement,
+      inputs: directive.inputs,
+      instanceScope: null,
+      constructorFunction: declaration,
+      isFromContent: directive.isFromContent,
+    });
+  });
+}
 
 /**
  * mountDirective for Directives in Component
@@ -43,39 +66,18 @@ export function mountDirective(componentInstance: IComponent, componentAndDirect
 
     directive.instanceScope.$indivInstance = componentInstance.$indivInstance;
 
-    if (directive.instanceScope.nvOnInit && !cacheDirective) directive.instanceScope.nvOnInit();
+    if (!cacheDirective) lifecycleCaller(directive.instanceScope, 'nvOnInit');
   }
   // the rest should use nvOnDestory
   const cacheDirectiveListLength = cacheDirectiveList.length;
   for (let i = 0; i < cacheDirectiveListLength; i++) {
     const cache = cacheDirectiveList[i];
-    if (cache.instanceScope.nvOnDestory) cache.instanceScope.nvOnDestory();
+    lifecycleCaller(cache.instanceScope, 'nvOnDestory');
   }
 
   // after mount
   for (let i = 0; i < directiveListLength; i++) {
     const directive = componentInstance.directiveList[i];
-    if (directive.instanceScope.nvHasRender) directive.instanceScope.nvHasRender();
+    lifecycleCaller(directive.instanceScope, 'nvHasRender');
   }
-}
-
-/**
- * construct Directives in Directive
- *
- * @export
- * @param {IComponent} componentInstance
- * @param {TComAndDir} componentAndDirectives
- */
-export function directivesConstructor(componentInstance: IComponent, componentAndDirectives: TComAndDir): void {
-  componentInstance.directiveList = [];
-
-  componentAndDirectives.directives.forEach(directive => {
-    const declaration = componentInstance.declarationMap.get(directive.name);
-    componentInstance.directiveList.push({
-      nativeElement: directive.nativeElement,
-      inputs: directive.inputs,
-      instanceScope: null,
-      constructorFunction: declaration,
-    });
-  });
 }

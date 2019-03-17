@@ -1,4 +1,3 @@
-import { InDiv } from '../indiv';
 import { Injector } from '../di';
 
 export type TInjectTokenProvider = {
@@ -18,10 +17,14 @@ export type TUseValueProvider = {
   useValue: any;
 };
 
+export type TProvider = Function | TUseClassProvider | TUseValueProvider;
+
+export type TProviders = TProvider[];
+
 export interface INvModule {
   imports?: Function[];
   declarations?: Function[];
-  providers?: (Function | TUseClassProvider | TUseValueProvider)[];
+  providers?: TProviders;
   exports?: Function[];
   exportsList?: Function[];
   bootstrap?: Function;

@@ -159,6 +159,8 @@ module.exports = {
 
 直接访问`http://localhost:2234/demo/a` 就可以访问到由`dev.html`已经渲染出了路由配置中的`/a`的组件了。
 
+**如果组件使用了 `templateUrl`，应该先使用 webpack 先编译一遍再引入到后端渲染方法中**
+
 
 ## 原理
 

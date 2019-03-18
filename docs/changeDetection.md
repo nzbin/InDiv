@@ -35,7 +35,7 @@
 
 偷一张 angular 的图：
 
-<!-- [change detector](https://github.com/DimaLiLongJi/my-blog/blob/master/img/404-bg.jpg?raw=true) -->
+![change detector](https://raw.githubusercontent.com/DimaLiLongJi/InDiv/develop/docs/img/cb.png)
 
 这是很明显的，因为这可以单独地控制每个组件的变更检测何时发生以及如何执行。
 

@@ -7,10 +7,14 @@
 
 ## 什么是InDiv
 
-#### InDiv 是一个mvvm库。它能帮你构建 Web 应用。InDiv 集字符串模板、HTML模板、依赖注入和一些其他实践于一身。
+#### InDiv 是一个类 angular mvvm库
+
+它能帮你构建 Web 应用。InDiv 集字符串模板、HTML模板、依赖注入和一些其他实践于一身。
+
+InDiv 采用与 angular 类似的项目结构，提供相似的概念和 api 以减少学习成本。
 
 * InDiv 是单词 individual 的缩写，我撸它的时候借鉴了很多 angular，react，vue 的模式与概念
-* 本文档版本对应 InDiv 2.0.0 + 版本
+* 本文档版本对应 InDiv 2.0.5 + 版本
 * 在此致敬 angular，react 和 vue的大佬开发者们。感谢他们为前端做出的巨大贡献
 
 #### 基本假设

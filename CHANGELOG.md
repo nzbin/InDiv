@@ -1,3 +1,13 @@
+<a name="2.0.7"></a>
+# [2.0.7](https://github.com/DimaLiLongJi/InDiv/releases/tag/2.0.7) (2019-03-21)
+
+
+### Features
+
+* **package:@indiv/indiv-loader** add HTML into dependences of Webpack for watching changes
+
+
+
 <a name="2.0.6"></a>
 # [2.0.6](https://github.com/DimaLiLongJi/InDiv/releases/tag/2.0.6) (2019-03-17)
 

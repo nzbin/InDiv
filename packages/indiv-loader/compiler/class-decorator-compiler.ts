@@ -8,9 +8,9 @@ import path from 'path';
  * @param {string} rootPath
  * @param {*} body
  * @param {{ components: string[], directives: string[] }} parseVnodeOptions
- * @param {Map<string, { templateString: string; classBody: any; }>} componentMap
+ * @param {Map<string, { templateUrl: string; templateString: string; classBody: any; }>} componentMap
  */
-export function classDecoratorCompiler(rootPath: string, body: any, parseVnodeOptions: { components: string[], directives: string[] }, componentMap: Map<string, { templateString: string; classBody: any; }>): void {
+export function classDecoratorCompiler(rootPath: string, body: any, parseVnodeOptions: { components: string[], directives: string[] }, componentMap: Map<string, { templateUrl: string , templateString: string; classBody: any; }>): void {
   if (body.decorators) {
     body.decorators.forEach((decorator: any) => {
       if (decorator.expression && decorator.expression.callee && decorator.expression.callee.name === 'Component') {
@@ -29,6 +29,7 @@ export function classDecoratorCompiler(rootPath: string, body: any, parseVnodeOp
               const templatePath = path.resolve(rootPath, templateProperty.value.value);
               const templateString = fs.readFileSync(templatePath).toString();
               componentMap.set(selector, {
+                templateUrl: templatePath,
                 templateString,
                 classBody: body,
               });

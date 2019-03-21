@@ -29,7 +29,7 @@ export default function indivLoader(source: string): string {
     components: [],
     directives: [],
   };
-  const componentMap = new Map<string, { templateString: string; classBody: any }>();
+  const componentMap = new Map<string, { templateUrl: string; templateString: string; classBody: any }>();
 
   // build templateUrl from Decorator
   let ast;
@@ -45,9 +45,11 @@ export default function indivLoader(source: string): string {
   } catch (e) {
     that.emitError(e);
   }
-
+  // this.addDependency
   // build ast with templateUrl
+  // add template into dependency
   componentMap.forEach((templateInfo) => {
+    that.addDependency(templateInfo.templateUrl);
     classPropertyCompiler(templateInfo, useTypeScript);
   });
 

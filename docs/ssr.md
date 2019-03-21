@@ -162,10 +162,21 @@ module.exports = {
 **如果组件使用了 `templateUrl`，应该先使用 webpack 先编译一遍再引入到后端渲染方法中**
 
 
+## 同构
+
+**注意**
+
+现阶段（v2.0.7）如果组件使用了 HTML 模板的话，则无法使用同构。
+
+因为 `templateUrl` 读取模板暂时还未实现。（先立个flag）
+
+因此 只有使用 `template` 的组件才可以同构！
+
+
 ## 原理
 
 作为跨平台渲染的一部分，得益于@indiv/core 提供的 `Renderer`，通过`jsdom`库实现了一套服务端的DOM操作。
 
-由于浏览器端的路由是依据 `history.pushState`等浏览器API, 所以想直接渲染路由的话是无法在服务端实现的。
+由于浏览器端的路由是依据 `history.pushState` 等浏览器API, 所以想直接渲染路由的话是无法在服务端实现的。
 
 因此在@indiv/platform-server 的`renderToString` 方法里，实现了一套与`@indiv/router`类似的路由机制。

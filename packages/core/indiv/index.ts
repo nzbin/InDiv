@@ -198,6 +198,12 @@ export class InDiv {
     this.declarations = [...this.rootModule.declarations];
   }
 
+  public templateChecker(component: IComponent): void {}
+
+  public setTemplateChecker(checker: (component: IComponent) => void): void {
+    this.templateChecker = checker;
+  }
+
   /**
    * init InDiv and renderModuleBootstrap()
    *
